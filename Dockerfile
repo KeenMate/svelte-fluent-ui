@@ -38,7 +38,7 @@ COPY ./tsconfig.json \
   ./svelte.config.js \
   ./vite.config.ts ./
 
-COPY ./.svelte-kit ./.svelte-kit
+# COPY ./.svelte-kit ./.svelte-kit
 COPY ./static/ ./static
 COPY ./src/ ./src
 
