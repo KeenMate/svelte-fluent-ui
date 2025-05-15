@@ -1,0 +1,5 @@
+svelte-fluent-ui.demo.keenmate.com:80
+{
+    root * /srv
+    file_server
+}
