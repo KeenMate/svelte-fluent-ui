@@ -42,26 +42,12 @@
   import Tree from "$lib/components/Tree.svelte";
   import TreeItem from "$lib/components/TreeItem.svelte";
   import { ButtonAppearance } from "@fluentui/web-components";
-  import { onMount } from "svelte";
 
-  let textValue = $state("");
+  
   let checked = $state(true);
   let selectedValue = $state("");
 
-  let textFieldSelect;
-
-  onMount(() => {
-    console.log("🚀 ~ onMount ~ onMount:", onMount)
-    setTimeout(() => {
-      console.log("🚀 ~ setTimeout ~ textFieldSelect:", textFieldSelect);
-
-      textFieldSelect();
-    }, 3500);
-  });
-
-  function onTextInputChanged(ev) {
-    console.log("🚀 ~ onTextInputChanged ~ ev:", ev.target.value);
-  }
+ 
 </script>
 
 <div class="demo-page">
@@ -81,12 +67,8 @@
     <div class="component-title">Inputs</div>
     <div class="grid">
       <TextInput
-        bind:select={textFieldSelect}
-        bind:value={textValue}
         placeholder="Enter text"
-        oninput={onTextInputChanged}
       />
-      {textValue}
       <Textarea placeholder="Multiline text" />
       <Checkbox bind:checked>Accept</Checkbox>
       <Switch bind:checked>Toggle</Switch>
