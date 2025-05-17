@@ -50,7 +50,7 @@
  
 </script>
 
-<div class="demo-page">
+<div class="content">
   <h1>Fluent UI Svelte – Full Component Demo</h1>
 
   <!-- Example Section -->

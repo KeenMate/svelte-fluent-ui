@@ -1,5 +1,39 @@
 <script lang="ts">
+  import type {
+    IFluentProps,
+    IInteractiveFluentProps,
+  } from "$lib/fluent-ui/types.js";
   import "@fluentui/web-components/text-input.js";
+  import type {
+    TextInputAppearance,
+    TextInputType,
+  } from "@fluentui/web-components/text-input/index.js";
+
+  interface IProps extends IInteractiveFluentProps, IFluentProps {
+    value?: string;
+    placeholder?: string;
+    appearance?: TextInputAppearance;
+    disabled?: boolean;
+    readonly?: boolean;
+    required?: boolean;
+    type?: TextInputType;
+    name?: string;
+    autofocus?: boolean;
+
+    select?: () => void;
+    checkValidity?: () => boolean;
+    reportValidity?: () => boolean;
+    setCustomValidity: (message: string) => any;
+    setValidity?: (flags: any, message: any, anchor: any) => void;
+    setSelectionRange?: (
+      start: number,
+      end: number,
+      direction?: "forward" | "backward" | "none"
+    ) => void;
+
+    oninput?: (ev: InputEvent) => void;
+    onchange?: (ev: Event) => void;
+  }
 
   let {
     value = $bindable(),
@@ -20,7 +54,7 @@
 
     oninput = undefined,
     onchange = undefined,
-  } = $props();
+  }: IProps = $props();
 
   let textField: HTMLElement & {
     value: string;
@@ -35,7 +69,7 @@
     ) => void;
   };
 
-  function handleInput(event: Event) {
+  function handleInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
     value = target.value;
     oninput?.(event);
