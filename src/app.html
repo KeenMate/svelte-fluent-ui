@@ -1,10 +1,13 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A layout example with a side menu that hides on mobile, just like the Pure website."
+    />
     <title>Responsive Side Menu &ndash; Layout Examples &ndash; Pure</title>
     <link
       rel="stylesheet"
@@ -12,19 +15,26 @@
       integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css"
+    />
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="%sveltekit.assets%/css/fonts.css">
-    <link rel="stylesheet" href="%sveltekit.assets%/css/main.css">
-	 %sveltekit.head%
-</head>
-<body data-sveltekit-preload-data="hover">
+    <link rel="stylesheet" href="%sveltekit.assets%/css/fonts.css" />
+    <link rel="stylesheet" href="%sveltekit.assets%/css/main.css" />
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
     <div id="layout">%sveltekit.body%</div>
-  </body>
-<!-- 
+
+    <!-- 
 <div id="layout">
     
 
@@ -68,7 +78,6 @@
     </div>
 </div> -->
 
-<script src="/js/ui.js"></script>
-
-</body>
+    <script src="/js/ui.js"></script>
+  </body>
 </html>

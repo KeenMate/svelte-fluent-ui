@@ -3,6 +3,10 @@ body {
   color: #777;
 }
 
+.pure-g {
+  gap: 1rem;
+}
+
 .pure-img-responsive {
   max-width: 100%;
   height: auto;
@@ -243,26 +247,31 @@ Hides the menu at `48em`, but modify this based on your app's needs.
   }
 }
 
-table.property-table td {
+table.member-table {
+  width: 100%;
+  max-width: 40rem;
+}
+
+table.member-table td {
   border-left: unset;
 }
 
-table.property-table tbody tr.property {
-  background-color: #084c61; 
+table.member-table tbody tr.property {
+  background-color: #084c61;
   color: white;
 }
 
-table.property-table tbody tr.callback {
-  background-color: #f7b05b; 
+table.member-table tbody tr.callback {
+  background-color: #f7b05b;
   color: black;
 }
 
-table.property-table tbody tr.slot {
-  background-color: #7cb518; 
+table.member-table tbody tr.slot {
+  background-color: #7cb518;
   color: white;
 }
 
-table.property-table tbody tr.action {
+table.member-table tbody tr.action {
   background-color: #271033;
   color: white;
 }
