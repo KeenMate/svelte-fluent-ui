@@ -23,7 +23,7 @@
 		select?: () => void;
 		checkValidity?: () => boolean;
 		reportValidity?: () => boolean;
-		setCustomValidity: (message: string) => any;
+		setCustomValidity?: (message: string) => any;
 		setValidity?: (flags: any, message: any, anchor: any) => void;
 		setSelectionRange?: (
 			start: number,
@@ -78,13 +78,6 @@
 	function handleChange(event: Event) {
 		onchange?.(event)
 	}
-
-	// Sync internal state with prop if changed externally
-	$effect(() => {
-		// if (value !== state.value) {
-		//   state.value = value;
-		// }
-	})
 
 	// Expose methods
 	select = () => {

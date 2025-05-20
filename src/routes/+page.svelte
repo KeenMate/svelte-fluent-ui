@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "$lib/fluent-ui/index.js"
+	import "$lib/fluent-ui/setup.js"
 
 	import Accordion from "$lib/components/Accordion.svelte"
 	import AccordionItem from "$lib/components/AccordionItem.svelte"
@@ -42,52 +42,29 @@
 	import Tree from "$lib/components/Tree.svelte"
 	import TreeItem from "$lib/components/TreeItem.svelte"
 	import {ButtonAppearance} from "@fluentui/web-components"
-
-
-	let checked       = $state(true)
-	let selectedValue = $state("")
-
-
 </script>
 
-<div class="content">
-	<h1>Fluent UI Svelte – Full Component Demo</h1>
+<h1>Fluent UI Svelte – Full Component Demo</h1>
 
-	<!-- Example Section -->
+<!-- Example Section -->
+<div class="components">
 	<div class="component-section">
-		<div class="component-title">Button</div>
+		<div class="component-title">
+			<Link href="/components/forms">Forms</Link>
+		</div>
 		<div class="grid">
-			<Button appearance={ButtonAppearance.primary}>Primary</Button>
-			<AnchorButton href="#">Anchor</AnchorButton>
-			<CompoundButton secondaryContent="More info">Compound</CompoundButton>
+			<TextInput placeholder="Enter text" />
 		</div>
 	</div>
 
 	<div class="component-section">
-		<div class="component-title">Inputs</div>
-		<div class="grid">
-			<TextInput
-				placeholder="Enter text"
-			/>
-			<Textarea placeholder="Multiline text" />
-			<Checkbox bind:checked>Accept</Checkbox>
-			<Switch bind:checked>Toggle</Switch>
-			<Slider min="0" max="100" value="50" />
-			<RatingDisplay value="3" max="5" />
+		<div class="component-title">
+			<Link href="/components/buttons">
+				Buttons
+			</Link>
 		</div>
-	</div>
-
-	<div class="component-section">
-		<div class="component-title">Selectors</div>
 		<div class="grid">
-			<Dropdown>
-				<Option value="A">A</Option>
-				<Option value="B">B</Option>
-			</Dropdown>
-			<RadioGroup name="example">
-				<Radio value="yes">Yes</Radio>
-				<Radio value="no">No</Radio>
-			</RadioGroup>
+			<Button appearance={ButtonAppearance.primary}>Button</Button>
 		</div>
 	</div>
 
@@ -103,8 +80,8 @@
 				<AccordionItem header="Item 2">Content 2</AccordionItem>
 			</Accordion>
 			<Tree>
-				<TreeItem
-				>Root
+				<TreeItem>
+					Root
 					<TreeItem>Child</TreeItem>
 				</TreeItem>
 			</Tree>
@@ -112,7 +89,7 @@
 	</div>
 
 	<div class="component-section">
-		<div class="component-title">Feedback & Utility</div>
+		<div class="component-title">Miscellaneous </div>
 		<div class="grid">
 			<Badge appearance="accent">New</Badge>
 			<CounterBadge count="5" />
@@ -166,31 +143,6 @@
 	</div>
 </div>
 
-<style>
-	.demo-page {
-		max-width: 1100px;
-		margin: auto;
-		padding: 2rem;
-		font-family: sans-serif;
-	}
-
-	.component-section {
-		border: 1px solid #ccc;
-		border-radius: 8px;
-		margin-bottom: 2rem;
-		padding: 1rem;
-	}
-
-	.component-title {
-		font-size: 1.25rem;
-		font-weight: bold;
-		margin-bottom: 1rem;
-	}
-
-	.grid {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		align-items: center;
-	}
-</style>
+<!--<style lang="scss">-->
+<!--	@import ;-->
+<!--</style>-->

@@ -12,26 +12,22 @@
 	<div class="pure-menu">
 		<a class="pure-menu-heading" href="/">List of components</a>
 		<ul class="pure-menu-list">
+			<li class="pure-menu-heading">Components</li>
 			<li class="pure-menu-item">
-				<a href="/text-input" class="pure-menu-link">Text input</a>
+				<a href="/components/forms" class="pure-menu-link">Forms</a>
 			</li>
 			<li class="pure-menu-item">
-				<a href="#about" class="pure-menu-link">About</a>
+				<a href="/components/interactive" class="pure-menu-link">Interactive</a>
 			</li>
-
-			<li class="pure-menu-item menu-item-divided pure-menu-selected">
-				<a href="#" class="pure-menu-link">Services</a>
-			</li>
-
-			<li class="pure-menu-item">
-				<a href="#contact" class="pure-menu-link">Contact</a>
-			</li>
+			<!--<li class="pure-menu-item">-->
+			<!--	<a href="#about" class="pure-menu-link">About</a>-->
+			<!--</li>-->
 		</ul>
 	</div>
 </div>
 
 <div id="main">
-
-	{@render children()}
-
+	<div class="content">
+		{@render children()}
+	</div>
 </div>
