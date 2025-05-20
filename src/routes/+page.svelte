@@ -7,37 +7,21 @@
 	import Badge from "$lib/components/Badge.svelte"
 	import Button from "$lib/components/Button.svelte"
 	import Checkbox from "$lib/components/Checkbox.svelte"
-	import CompoundButton from "$lib/components/CompoundButton.svelte"
-	import CounterBadge from "$lib/components/CounterBadge.svelte"
 	import Dialog from "$lib/components/Dialog.svelte"
-	import DialogBody from "$lib/components/DialogBody.svelte"
 	import Divider from "$lib/components/Divider.svelte"
-	import Drawer from "$lib/components/Drawer.svelte"
-	import DrawerBody from "$lib/components/DrawerBody.svelte"
 	import Dropdown from "$lib/components/Dropdown.svelte"
-	import Field from "$lib/components/Field.svelte"
-	import Image from "$lib/components/Image.svelte"
-	import Label from "$lib/components/Label.svelte"
-	import Link from "$lib/components/Link.svelte"
 	import Menu from "$lib/components/Menu.svelte"
-	import MenuButton from "$lib/components/MenuButton.svelte"
 	import MenuItem from "$lib/components/MenuItem.svelte"
-	import MenuList from "$lib/components/MenuList.svelte"
-	import MessageBar from "$lib/components/MessageBar.svelte"
 	import Option from "$lib/components/Option.svelte"
 	import ProgressBar from "$lib/components/Progress.svelte"
 	import Radio from "$lib/components/Radio.svelte"
 	import RadioGroup from "$lib/components/RadioGroup.svelte"
-	import RatingDisplay from "$lib/components/RatingDisplay.svelte"
 	import Slider from "$lib/components/Slider.svelte"
-	import Spinner from "$lib/components/Spinner.svelte"
 	import Switch from "$lib/components/Switch.svelte"
 	import TabPanel from "$lib/components/TabPanel.svelte"
-	import TabList from "$lib/components/TabList.svelte"
-	import Text from "$lib/components/Text.svelte"
 	import TextInput from "$lib/components/TextField.svelte"
 	import Textarea from "$lib/components/Textarea.svelte"
-	import ToggleButton from "$lib/components/ToggleButton.svelte"
+	
 	import Tooltip from "$lib/components/Tooltip.svelte"
 	import Tree from "$lib/components/Tree.svelte"
 	import TreeItem from "$lib/components/TreeItem.svelte"
@@ -51,18 +35,18 @@
 <div class="components">
 	<div class="component-section">
 		<div class="component-title">
-			<Link href="/components/forms">Forms</Link>
+			<!-- <Link href="/components/forms">Forms</Link> -->
 		</div>
 		<div class="grid">
-			<TextInput placeholder="Enter text" />
+			<!-- <TextInput placeholder="Enter text" /> -->
 		</div>
 	</div>
 
 	<div class="component-section">
 		<div class="component-title">
-			<Link href="/components/buttons">
+			<!-- <Link href="/components/buttons">
 				Buttons
-			</Link>
+			</Link> -->
 		</div>
 		<div class="grid">
 			<Button appearance={ButtonAppearance.primary}>Button</Button>
@@ -72,10 +56,10 @@
 	<div class="component-section">
 		<div class="component-title">Navigation / Layout</div>
 		<div class="grid">
-			<TabList>
+			<!-- <TabList>
 				<TabPanel>Tab 1 content</TabPanel>
 				<TabPanel>Tab 2 content</TabPanel>
-			</TabList>
+			</TabList> -->
 			<Accordion>
 				<AccordionItem header="Item 1">Content 1</AccordionItem>
 				<AccordionItem header="Item 2">Content 2</AccordionItem>
@@ -93,13 +77,13 @@
 		<div class="component-title">Miscellaneous </div>
 		<div class="grid">
 			<Badge appearance="accent">New</Badge>
-			<CounterBadge count="5" />
+			<!-- <CounterBadge count="5" /> -->
 			<ProgressBar value="75" />
-			<Spinner />
+			<!-- <Spinner /> -->
 			<Tooltip content="Helpful info">
 				<Button>Hover me</Button>
 			</Tooltip>
-			<MessageBar>Important message here</MessageBar>
+			<!-- <MessageBar>Important message here</MessageBar> -->
 		</div>
 	</div>
 
@@ -107,31 +91,31 @@
 		<div class="component-title">Menus & Dialogs</div>
 		<div class="grid">
 			<Menu>
-				<MenuButton>Open Menu</MenuButton>
-				<MenuList slot="menu">
+				<!-- <MenuButton>Open Menu</MenuButton> -->
+				<!-- <MenuList slot="menu">
 					<MenuItem>Item A</MenuItem>
 					<MenuItem>Item B</MenuItem>
-				</MenuList>
+				</MenuList> -->
 			</Menu>
 			<Dialog>
-				<DialogBody>This is a dialog</DialogBody>
+				<!-- <DialogBody>This is a dialog</DialogBody> -->
 			</Dialog>
-			<Drawer>
+			<!-- <Drawer>
 				<DrawerBody>This is a drawer</DrawerBody>
-			</Drawer>
+			</Drawer> -->
 		</div>
 	</div>
 
 	<div class="component-section">
 		<div class="component-title">Text, Media, Misc</div>
 		<div class="grid">
-			<Text>Sample text</Text>
+			<!-- <Text>Sample text</Text>
 			<Label for="input">Label</Label>
 			<Image src="https://via.placeholder.com/100" alt="Placeholder" />
 			<Link href="https://example.com">Example Link</Link>
 			<Field label="Name">
 				<TextInput id="name" />
-			</Field>
+			</Field> -->
 		</div>
 	</div>
 
@@ -139,7 +123,7 @@
 		<div class="component-title">Decorative & Structural</div>
 		<div class="grid">
 			<Divider />
-			<ToggleButton>Toggle Me</ToggleButton>
+			<!-- <ToggleButton>Toggle Me</ToggleButton> -->
 		</div>
 	</div>
 </div>
