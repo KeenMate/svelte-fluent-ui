@@ -80,10 +80,12 @@
   <div class="component-section">
     <div class="component-title">Selectors</div>
     <div class="grid">
+      <h3>Dropdown</h3>
       <Dropdown>
         <Option value="A">A</Option>
         <Option value="B">B</Option>
       </Dropdown>
+      <h3>RadioGroup</h3>
       <RadioGroup name="example">
         <Radio value="yes">Yes</Radio>
         <Radio value="no">No</Radio>
