@@ -41,6 +41,7 @@
 	import Tooltip from "$lib/components/Tooltip.svelte"
 	import Tree from "$lib/components/Tree.svelte"
 	import TreeItem from "$lib/components/TreeItem.svelte"
+  	import Listbox from "$lib/components/Listbox.svelte"
 	import {ButtonAppearance} from "@fluentui/web-components"
 </script>
 

@@ -30,6 +30,8 @@
 				<Dropdown>
 					<Option value="A">A</Option>
 					<Option value="B">B</Option>
+					<Option value="Selected" selected>Selected</Option>
+					<Option value="Disabled" disabled={true}>Disabled</Option>
 				</Dropdown>
 			</div>
 		</div>
