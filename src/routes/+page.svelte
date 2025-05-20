@@ -42,12 +42,10 @@
   import Tree from "$lib/components/Tree.svelte";
   import TreeItem from "$lib/components/TreeItem.svelte";
   import { ButtonAppearance } from "@fluentui/web-components";
+  import Listbox from "$lib/components/Listbox.svelte";
 
-  
   let checked = $state(true);
   let selectedValue = $state("");
-
- 
 </script>
 
 <div class="content">
@@ -66,9 +64,7 @@
   <div class="component-section">
     <div class="component-title">Inputs</div>
     <div class="grid">
-      <TextInput
-        placeholder="Enter text"
-      />
+      <TextInput placeholder="Enter text" />
       <Textarea placeholder="Multiline text" />
       <Checkbox bind:checked>Accept</Checkbox>
       <Switch bind:checked>Toggle</Switch>
@@ -84,7 +80,16 @@
       <Dropdown>
         <Option value="A">A</Option>
         <Option value="B">B</Option>
+        <Option value="Selected" selected>Selected</Option>
+        <Option value="Disabled" disabled={true}>Disabled</Option>
       </Dropdown>
+
+      <h3>Listbox</h3>
+      <!-- <Listbox>
+        <Option value="A">A</Option>
+        <Option value="B">B</Option>
+      </Listbox> -->
+
       <h3>RadioGroup</h3>
       <RadioGroup name="example">
         <Radio value="yes">Yes</Radio>

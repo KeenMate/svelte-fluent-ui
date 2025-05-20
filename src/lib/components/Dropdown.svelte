@@ -1,3 +1,12 @@
+<script module>
+  import {
+    DropdownDefinition,
+    FluentDesignSystem,
+  } from "@fluentui/web-components";
+
+  DropdownDefinition.define(FluentDesignSystem.registry);
+</script>
+
 <script lang="ts">
   import "@fluentui/web-components/dropdown.js";
   import "@fluentui/web-components/listbox.js";
@@ -11,7 +20,7 @@
     autofocus?: boolean;
     name?: string;
     options?: Array<{ value: string; label: string }>;
-    children: any;
+    children?: any;
     onInput?: (e: Event) => void;
     onChange?: (e: Event) => void;
   }
@@ -64,7 +73,6 @@
 
 <fluent-dropdown
   bind:this={dropdown}
-  {value}
   {placeholder}
   {disabled}
   {required}

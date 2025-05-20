@@ -1,14 +1,21 @@
 <script lang="ts">
-	import "@fluentui/web-components/option.js"
+  import "@fluentui/web-components/option.js";
 
-	interface IProps {
+  interface IProps {
+    value: string;
+    children: any;
+    selected?: boolean;
+    disabled?: boolean;
+  }
 
-	}
-
-	let {}: IProps = $props()
+  let {
+    value,
+    children,
+    selected = false,
+    disabled = false,
+  }: IProps = $props();
 </script>
 
-<fluent-option>
-	<!-- todo: finish Option -->
+<fluent-option {value} {selected} {disabled}>
+  {@render children()}
 </fluent-option>
-
