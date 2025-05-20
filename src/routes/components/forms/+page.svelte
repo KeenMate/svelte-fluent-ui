@@ -1,10 +1,8 @@
 <script lang="ts">
 	import {
-		Radio,
-		RadioGroup,
 		Dropdown,
 		Option,
-		TextInput,
+		TextField,
 		Link
 	} from "$lib/index.js"
 </script>
@@ -20,7 +18,7 @@
 				</Link>
 			</div>
 			<div class="grid">
-				<TextInput placeholder="Text input" />
+				<TextField placeholder="Text input" />
 			</div>
 		</div>
 

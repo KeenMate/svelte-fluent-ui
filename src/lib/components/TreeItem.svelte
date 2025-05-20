@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/tree-item.js"
+	import {fluentTreeItem, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentTreeItem()
+	)
 
 	interface IProps {
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {onMount} from "svelte"
 
-	import TextInput from "$lib/components/TextInput.svelte"
+	import TextField from "$lib/components/TextField.svelte"
 
 	let textValue = $state("")
 	let textFieldSelect: () => void
@@ -200,7 +200,7 @@
 
 	<h2 class="content-subhead">Examples</h2>
 	<p>
-		<TextInput
+		<TextField
 			bind:select={textFieldSelect}
 			bind:value={textValue}
 			placeholder="Enter text"

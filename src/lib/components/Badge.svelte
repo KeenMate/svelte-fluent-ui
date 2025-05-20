@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/badge.js"
+	import {fluentBadge, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentBadge()
+	)
 
 	interface IProps {
 

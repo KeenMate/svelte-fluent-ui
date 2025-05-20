@@ -1,5 +1,10 @@
 <script lang="ts">
-	import "@fluentui/web-components/menu.js"
+	import {fluentMenu, fluentMenuItem, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentMenu(),
+		fluentMenuItem()
+	)
 
 	interface IProps {
 

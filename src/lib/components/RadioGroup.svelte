@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/radio-group.js"
+	import {fluentRadioGroup, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentRadioGroup()
+	)
 
 	interface IProps {
 

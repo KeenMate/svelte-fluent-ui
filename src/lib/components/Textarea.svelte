@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/textarea.js"
+	import {fluentTextArea, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentTextArea()
+	)
 
 	interface IProps {
 

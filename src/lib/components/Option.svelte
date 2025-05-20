@@ -1,21 +1,25 @@
 <script lang="ts">
-  import "@fluentui/web-components/option.js";
+	import {fluentOption, provideFluentDesignSystem} from "@fluentui/web-components"
 
-  interface IProps {
-    value: string;
-    children: any;
-    selected?: boolean;
-    disabled?: boolean;
-  }
+	provideFluentDesignSystem().register(
+		fluentOption()
+	)
 
-  let {
-    value,
-    children,
-    selected = false,
-    disabled = false,
-  }: IProps = $props();
+	interface IProps {
+		value: string;
+		children: any;
+		selected?: boolean;
+		disabled?: boolean;
+	}
+
+	let {
+		    value,
+		    children,
+		    selected = false,
+		    disabled = false,
+	    }: IProps = $props()
 </script>
 
 <fluent-option {value} {selected} {disabled}>
-  {@render children()}
+	{@render children()}
 </fluent-option>

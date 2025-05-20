@@ -1,24 +1,36 @@
 <script lang="ts">
-  import "@fluentui/web-components/checkbox.js";
+	import {fluentCheckbox, provideFluentDesignSystem} from "@fluentui/web-components"
 
-  interface IProps {
-    autofocus: boolean;
-    checked: boolean;
-    children?: any;
-    disabled?: boolean;
-    required: boolean;
-    value: string;
+	provideFluentDesignSystem().register(
+		fluentCheckbox()
+	)
 
-    checkValidity?: () => boolean;
-    reportValidity?: () => boolean;
-    setCustomValidity: (message: string) => any;
-    setValidity?: (flags: any, message: any, anchor: any) => void;
-  }
+	interface IProps {
+		autofocus: boolean;
+		checked: boolean;
+		children?: any;
+		disabled?: boolean;
+		required: boolean;
+		value: string;
 
-  let { checked = $bindable(), children = undefined }: IProps = $props();
+		checkValidity?: () => boolean;
+		reportValidity?: () => boolean;
+		setCustomValidity: (message: string) => any;
+		setValidity?: (flags: any, message: any, anchor: any) => void;
+	}
+
+	let {
+		checked = $bindable(),
+    disabled = undefined,
+    children = undefined
+	}: IProps = $props()
 </script>
 
-<fluent-checkbox>
-  <!-- todo: finish Checkbox -->
-  {@render children?.()}
+<fluent-checkbox
+	{checked}
+	{disabled}
+	oncheckedchanged={ev => checked = ev.checked}
+>
+	<!-- todo: finish Checkbox -->
+	{@render children?.()}
 </fluent-checkbox>

@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/tree.js"
+	import {fluentTreeView, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentTreeView()
+	)
 
 	interface IProps {
 
@@ -8,7 +12,7 @@
 	let {}: IProps = $props()
 </script>
 
-<fluent-tree>
+<fluent-tree-view>
 	<!-- todo: finish Tree -->
-</fluent-tree>
+</fluent-tree-view>
 

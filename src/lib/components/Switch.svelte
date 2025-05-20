@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/switch.js"
+	import {fluentSwitch, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentSwitch()
+	)
 
 	interface IProps {
 		checked: boolean

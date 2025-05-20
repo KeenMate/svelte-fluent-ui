@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/tab.js"
+	import {fluentTab, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentTab()
+	)
 
 	interface IProps {
 

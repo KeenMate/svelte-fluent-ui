@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/listbox.js"
+	import {fluentListbox, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentListbox()
+	)
 
 	interface IProps {
 

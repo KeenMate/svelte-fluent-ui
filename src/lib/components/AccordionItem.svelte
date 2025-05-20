@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/accordion-item.js"
+	import {fluentAccordionItem, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentAccordionItem()
+	)
 
 	interface IProps {
 

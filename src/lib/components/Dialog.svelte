@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/dialog.js"
+	import {fluentDialog, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentDialog()
+	)
 
 	interface IProps {
 

@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/slider.js"
+	import {fluentSlider, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentSlider()
+	)
 
 	interface IProps {
 

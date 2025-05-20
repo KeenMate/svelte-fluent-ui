@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/tooltip.js"
+	import {fluentTooltip, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentTooltip()
+	)
 
 	interface IProps {
 

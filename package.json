@@ -57,7 +57,7 @@
 		"svelte"
 	],
 	"dependencies": {
-		"@fluentui/web-components": "^3.0.0-beta.98",
+		"@fluentui/web-components": "^2.6.1",
 		"@sveltejs/adapter-static": "^3.0.8",
 		"sass-embedded": "^1.89.0"
 	}

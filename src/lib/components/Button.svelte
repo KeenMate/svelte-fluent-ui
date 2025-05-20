@@ -1,75 +1,71 @@
 <script lang="ts">
-  import "@fluentui/web-components/button.js";
-  import type {
-    IFluentProps,
-    IInteractiveFluentProps,
-    SlotType,
-  } from "../fluent-ui/types.js";
-  import type {
-    ButtonAppearance,
-    ButtonShape,
-    ButtonSize,
-  } from "@fluentui/web-components";
+	import {fluentButton, provideFluentDesignSystem} from "@fluentui/web-components"
 
-  interface IButtonProps extends IInteractiveFluentProps, IFluentProps {
-    appearance?: ButtonAppearance;
-    iconOnly?: boolean;
-    name?: string;
-    size?: ButtonSize;
-    shape?: ButtonShape;
-    type?: string;
-    value?: string;
+	provideFluentDesignSystem().register(
+		fluentButton()
+	)
+	import type {
+		SlotType,
+	} from "../fluent-ui/types.js"
+	import type {
+		ButtonAppearance,
+	} from "@fluentui/web-components"
 
-    children?: SlotType;
-    start?: SlotType;
-    end?: SlotType;
-  }
+	interface IProps {
+		appearance?: string
+		autofocus?: string
+		disabled?: string
+		form?: string
+		formaction?: string
+		formenctype?: string
+		formmethod?: string
+		formnovalidate?: string
+		formtarget?: string
+		name?: string
+		type?: string
+		value?: string
+		start?: SlotType
+		end?: SlotType
+		children?: SlotType
+	}
 
-  let {
-    disabled = undefined,
-    disabledFocusable = undefined,
-    formaction = undefined,
-    form = undefined,
-    formenctype = undefined,
-    formmethod = undefined,
-    formnovalidate = undefined,
-    formtarget = undefined,
-    appearance = undefined,
-    iconOnly = undefined,
-    name = undefined,
-    size = undefined,
-    shape = undefined,
-    type = undefined,
-    value = undefined,
-    children = undefined,
-    start = undefined,
-    end = undefined,
-  }: IButtonProps = $props();
+	let {
+		    appearance = undefined,
+		    autofocus = undefined,
+		    disabled = undefined,
+		    form = undefined,
+		    formaction = undefined,
+		    formenctype = undefined,
+		    formmethod = undefined,
+		    formnovalidate = undefined,
+		    formtarget = undefined,
+		    name = undefined,
+		    type = undefined,
+		    value = undefined,
+		    start = undefined,
+		    end = undefined,
+		    children = undefined
+	    }: IProps = $props()
 </script>
 
-<!-- todo: make Button here -->
 <fluent-button
-  {type}
-  {name}
-  {value}
-  {appearance}
-  {size}
-  {shape}
-  {formaction}
-  {form}
-  {formenctype}
-  {formmethod}
-  {formnovalidate}
-  {formtarget}
-  {disabled}
-  disabled-focusable={disabledFocusable}
-  icon-only={iconOnly}
+	{type}
+	{name}
+	{value}
+	{appearance}
+	{formaction}
+	{form}
+	{formenctype}
+	{formmethod}
+	{formnovalidate}
+	{formtarget}
+	{disabled}
 >
-  <template slot="start">
-    {@render start?.()}
-  </template>
-  {@render children?.()}
-  <template slot="end">
-    {@render end?.()}
-  </template>
+	<template slot="start">
+		{@render start?.()}
+	</template>
+	{@render children?.()}
+	<template slot="end">
+		{@render end?.()}
+	</template>
 </fluent-button>

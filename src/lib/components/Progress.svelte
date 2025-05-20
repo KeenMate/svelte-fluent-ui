@@ -1,5 +1,9 @@
 <script lang="ts">
-	import "@fluentui/web-components/progress-bar.js"
+	import {fluentProgress, provideFluentDesignSystem} from "@fluentui/web-components"
+
+	provideFluentDesignSystem().register(
+		fluentProgress()
+	)
 
 	interface IProps {
 
