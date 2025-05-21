@@ -1,12 +1,12 @@
 #layout {
 	--width: 250px;
 
-	padding-left: calc(1 * #{var(--width)});
+	padding-left: calc(1 * var(--width));
+	transition: none;
 }
 
 #menu {
-
 	width: var(--width);
-	left: calc(1 * #{var(--width)});
-	margin-left: calc(-1 * #{var(--width)});
+	left: calc(1 * var(--width));
+	margin-left: calc(-1 * var(--width));
 }
