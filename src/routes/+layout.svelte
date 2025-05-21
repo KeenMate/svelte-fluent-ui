@@ -1,4 +1,5 @@
 <script>
+	import "../assets/styles/demo-pages.css"
 	let {children} = $props()
 </script>
 
