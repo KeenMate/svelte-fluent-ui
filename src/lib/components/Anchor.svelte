@@ -1,18 +1,19 @@
 <script lang="ts">
-	import {fluentAnchor, provideFluentDesignSystem
+	import {
+		fluentAnchor, provideFluentDesignSystem
 	}
-	from
-	"@fluentui/web-components"
+		from
+			"@fluentui/web-components"
 
 	provideFluentDesignSystem().register(
 		fluentAnchor()
 	)
 
-	interface IProps {
+	type Props = {
 
 	}
 
-	let {}: IProps = $props()
+	let {}: Props = $props()
 </script>
 
 <fluent-anchor>

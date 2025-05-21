@@ -6,12 +6,12 @@
 	)
 	import type {
 		SlotType,
-	} from "../fluent-ui/types.js"
+	} from "../types.js"
 	import type {
 		ButtonAppearance,
 	} from "@fluentui/web-components"
 
-	interface IProps {
+	type Props = {
 		appearance?: string
 		autofocus?: string
 		disabled?: string
@@ -27,25 +27,27 @@
 		start?: SlotType
 		end?: SlotType
 		children?: SlotType
+		onClick?: (ev: MouseEvent) => void
 	}
 
 	let {
-		    appearance = undefined,
-		    autofocus = undefined,
-		    disabled = undefined,
-		    form = undefined,
-		    formaction = undefined,
-		    formenctype = undefined,
-		    formmethod = undefined,
+		    appearance     = undefined,
+		    autofocus      = undefined,
+		    disabled       = undefined,
+		    form           = undefined,
+		    formaction     = undefined,
+		    formenctype    = undefined,
+		    formmethod     = undefined,
 		    formnovalidate = undefined,
-		    formtarget = undefined,
-		    name = undefined,
-		    type = undefined,
-		    value = undefined,
-		    start = undefined,
-		    end = undefined,
-		    children = undefined
-	    }: IProps = $props()
+		    formtarget     = undefined,
+		    name           = undefined,
+		    type           = undefined,
+		    value          = undefined,
+		    start          = undefined,
+		    end            = undefined,
+		    children       = undefined,
+		    onClick       = undefined,
+	    }: Props = $props()
 </script>
 
 <fluent-button
@@ -60,6 +62,7 @@
 	{formnovalidate}
 	{formtarget}
 	{disabled}
+	onclick={onClick}
 >
 	<template slot="start">
 		{@render start?.()}

@@ -5,7 +5,7 @@
 		fluentCheckbox()
 	)
 
-	interface IProps {
+	type Props = {
 		autofocus: boolean;
 		checked: boolean;
 		children?: any;
@@ -20,10 +20,10 @@
 	}
 
 	let {
-		checked = $bindable(),
-    disabled = undefined,
-    children = undefined
-	}: IProps = $props()
+		    checked  = $bindable(),
+		    disabled = undefined,
+		    children = undefined
+	    }: Props = $props()
 </script>
 
 <fluent-checkbox

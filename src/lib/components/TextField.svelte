@@ -1,12 +1,12 @@
 <script lang="ts">
 	import {fluentTextField, provideFluentDesignSystem} from "@fluentui/web-components"
-	import type {SlotType} from "../fluent-ui/types.js"
+	import type {SlotType} from "../types.js"
 
 	provideFluentDesignSystem().register(
 		fluentTextField()
 	)
 
-	interface IProps {
+	type Props = {
 		value?: string
 		placeholder?: string
 		appearance?: string
@@ -17,7 +17,7 @@
 		name?: string
 		label?: string
 		autofocus?: boolean
-		children: SlotType
+		children?: SlotType
 
 		setSelectionRange?: (
 			start: number,
@@ -45,7 +45,7 @@
 
 		    onInput     = undefined,
 		    onChange    = undefined,
-	    }: IProps = $props()
+	    }: Props = $props()
 
 	let element: HTMLElement & {
 		value: string

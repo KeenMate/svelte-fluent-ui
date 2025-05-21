@@ -5,7 +5,7 @@
 		fluentSwitch()
 	)
 
-	interface IProps {
+	type Props = {
 		checked: boolean
 		children?: any
 	}
@@ -13,7 +13,7 @@
 	let {
 		    checked  = $bindable(),
 		    children = undefined
-	    }: IProps = $props()
+	    }: Props = $props()
 </script>
 
 <fluent-switch>

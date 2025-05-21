@@ -5,7 +5,7 @@
 		fluentOption()
 	)
 
-	interface IProps {
+	type Props = {
 		value: string;
 		children: any;
 		selected?: boolean;
@@ -17,7 +17,7 @@
 		    children,
 		    selected = false,
 		    disabled = false,
-	    }: IProps = $props()
+	    }: Props = $props()
 </script>
 
 <fluent-option {value} {selected} {disabled}>

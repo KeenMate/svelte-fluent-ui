@@ -5,11 +5,11 @@
 		fluentRadio()
 	)
 
-	interface IProps {
+	type Props = {
 
 	}
 
-	let {}: IProps = $props()
+	let {}: Props = $props()
 </script>
 
 <fluent-radio>
