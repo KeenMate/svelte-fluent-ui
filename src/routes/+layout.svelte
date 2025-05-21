@@ -1,5 +1,6 @@
 <script>
 	import "../assets/styles/demo-pages.css"
+
 	let {children} = $props()
 </script>
 
@@ -15,10 +16,10 @@
 		<ul class="pure-menu-list">
 			<li class="pure-menu-heading">Components</li>
 			<li class="pure-menu-item">
-				<a href="/components/forms" class="pure-menu-link">Forms</a>
+				<a href="/forms" class="pure-menu-link">Forms</a>
 			</li>
 			<li class="pure-menu-item">
-				<a href="/components/interactive" class="pure-menu-link">Interactive</a>
+				<a href="/interactive" class="pure-menu-link">Interactive</a>
 			</li>
 			<!--<li class="pure-menu-item">-->
 			<!--	<a href="#about" class="pure-menu-link">About</a>-->

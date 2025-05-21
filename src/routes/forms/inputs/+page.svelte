@@ -4,18 +4,18 @@
 	import TextField from "$lib/components/TextField.svelte"
 
 	let textValue = $state("")
-	let textFieldSelect: () => void
+	let textField: HTMLElement & {select: Function}
 
 	onMount(() => {
 		console.log("🚀 ~ onMount ~ onMount:", onMount)
 		setTimeout(() => {
-			console.log("🚀 ~ setTimeout ~ textFieldSelect:", textFieldSelect)
+			console.log("🚀 ~ setTimeout ~ textField.select:", textField.select)
 
-			textFieldSelect()
+			textField.select()
 		}, 3500)
 	})
 
-	function onTextInputChanged(ev) {
+	function onTextInputChanged(ev: InputEvent) {
 		console.log("🚀 ~ onTextInputChanged ~ ev:", ev.target.value)
 	}
 </script>
@@ -201,10 +201,10 @@
 	<h2 class="content-subhead">Examples</h2>
 	<p>
 		<TextField
-			bind:select={textFieldSelect}
+			bind:this={textField}
 			bind:value={textValue}
 			placeholder="Enter text"
-			oninput={onTextInputChanged}
+			onInput={onTextInputChanged}
 		/>
 	</p>
 </div>

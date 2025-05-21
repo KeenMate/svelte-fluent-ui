@@ -1,131 +1,129 @@
 <script lang="ts">
-  import "$lib/fluent-ui/setup.js";
+	import "$lib/fluent-ui/setup.js"
 
-  import Accordion from "$lib/components/Accordion.svelte";
-  import AccordionItem from "$lib/components/AccordionItem.svelte";
-  import AnchorButton from "$lib/components/Anchor.svelte";
-  import Badge from "$lib/components/Badge.svelte";
-  import Button from "$lib/components/Button.svelte";
-  import Checkbox from "$lib/components/Checkbox.svelte";
-  import Dialog from "$lib/components/Dialog.svelte";
-  import Divider from "$lib/components/Divider.svelte";
-  import Dropdown from "$lib/components/Dropdown.svelte";
-  import Menu from "$lib/components/Menu.svelte";
-  import MenuItem from "$lib/components/MenuItem.svelte";
-  import Option from "$lib/components/Option.svelte";
-  import ProgressBar from "$lib/components/Progress.svelte";
-  import Radio from "$lib/components/Radio.svelte";
-  import RadioGroup from "$lib/components/RadioGroup.svelte";
-  import Slider from "$lib/components/Slider.svelte";
-  import Switch from "$lib/components/Switch.svelte";
-  import TabPanel from "$lib/components/TabPanel.svelte";
-  import TextInput from "$lib/components/TextField.svelte";
-  import Textarea from "$lib/components/Textarea.svelte";
+	import {
+		Accordion,
+		AccordionItem,
+		Badge,
+		Button,
+		Dialog,
+		Divider,
+		Menu,
+		ProgressBar,
+		Tooltip,
+		Tree,
+		TreeItem,
+		TextField
+	} from "$lib/index.js"
+	import {ButtonAppearance} from "$lib/fluent-ui/constants/button.js"
 
-  import Tooltip from "$lib/components/Tooltip.svelte";
-  import Tree from "$lib/components/Tree.svelte";
-  import TreeItem from "$lib/components/TreeItem.svelte";
-  import Listbox from "$lib/components/Listbox.svelte";
-  import { ButtonAppearance } from "@fluentui/web-components";
+	let dialogElement: any
 </script>
 
 <h1>Fluent UI Svelte – Full Component Demo</h1>
 
 <!-- Example Section -->
 <div class="components">
-  <div class="component-section">
-    <div class="component-title">
-      <!-- <Link href="/components/forms">Forms</Link> -->
-    </div>
-    <div class="grid">
-      <!-- <TextInput placeholder="Enter text" /> -->
-    </div>
-  </div>
+	<div class="component-section">
+		<div class="component-title">
+			<a href="/forms">Forms</a>
+		</div>
+		<div class="grid">
+			<TextField placeholder="Enter text" />
+		</div>
+	</div>
 
-  <div class="component-section">
-    <div class="component-title">
-      <!-- <Link href="/components/buttons">
+	<div class="component-section">
+		<div class="component-title">
+			<a href="/buttons">
 				Buttons
-			</Link> -->
-    </div>
-    <div class="grid">
-      <Button appearance={ButtonAppearance.primary}>Button</Button>
-    </div>
-  </div>
+			</a>
+		</div>
+		<div class="grid">
+			<Button appearance={ButtonAppearance.accent}>Button</Button>
+		</div>
+	</div>
 
-  <div class="component-section">
-    <div class="component-title">Navigation / Layout</div>
-    <div class="grid">
-      <!-- <TabList>
+	<div class="component-section">
+		<div class="component-title">Navigation / Layout</div>
+		<div class="grid">
+			<!-- <TabList>
 				<TabPanel>Tab 1 content</TabPanel>
 				<TabPanel>Tab 2 content</TabPanel>
 			</TabList> -->
-      <Accordion>
-        <AccordionItem header="Item 1">Content 1</AccordionItem>
-        <AccordionItem header="Item 2">Content 2</AccordionItem>
-      </Accordion>
-      <Tree>
-        <TreeItem>
-          Root
-          <TreeItem>Child</TreeItem>
-        </TreeItem>
-      </Tree>
-    </div>
-  </div>
+			<Accordion>
+				<AccordionItem header="Item 1">Content 1</AccordionItem>
+				<AccordionItem header="Item 2">Content 2</AccordionItem>
+			</Accordion>
+			<Tree>
+				<TreeItem>
+					Root
+					<TreeItem>Child</TreeItem>
+				</TreeItem>
+			</Tree>
+		</div>
+	</div>
 
-  <div class="component-section">
-    <div class="component-title">Miscellaneous</div>
-    <div class="grid">
-      <Badge appearance="accent">New</Badge>
-      <!-- <CounterBadge count="5" /> -->
-      <ProgressBar value="75" />
-      <!-- <Spinner /> -->
-      <Tooltip content="Helpful info">
-        <Button>Hover me</Button>
-      </Tooltip>
-      <!-- <MessageBar>Important message here</MessageBar> -->
-    </div>
-  </div>
+	<div class="component-section">
+		<div class="component-title">Miscellaneous</div>
+		<div class="grid">
+			<Badge appearance="accent">New</Badge>
+			<!-- <CounterBadge count="5" /> -->
+			<ProgressBar value="75" />
+			<!-- <Spinner /> -->
+			<Tooltip content="Helpful info">
+				<Button>Hover me</Button>
+			</Tooltip>
+			<!-- <MessageBar>Important message here</MessageBar> -->
+		</div>
+	</div>
 
-  <div class="component-section">
-    <div class="component-title">Menus & Dialogs</div>
-    <div class="grid">
-      <Menu>
-        <!-- <MenuButton>Open Menu</MenuButton> -->
-        <!-- <MenuList slot="menu">
+	<div class="component-section">
+		<div class="component-title">Menus & Dialogs</div>
+		<div class="grid">
+			<Menu>
+				<!-- <MenuButton>Open Menu</MenuButton> -->
+				<!-- <MenuList slot="menu">
 					<MenuItem>Item A</MenuItem>
 					<MenuItem>Item B</MenuItem>
 				</MenuList> -->
-      </Menu>
-      <Dialog>
-        <!-- <DialogBody>This is a dialog</DialogBody> -->
-      </Dialog>
-      <!-- <Drawer>
+			</Menu>
+			<Button appearance={ButtonAppearance.lightweight} onClick={dialogElement?.show}>
+				Show dialog
+			</Button>
+			<Dialog
+				bind:this={dialogElement}
+				modal
+				trapFocus
+			>
+				This is a dialog
+			</Dialog>
+			<!-- <Drawer>
 				<DrawerBody>This is a drawer</DrawerBody>
 			</Drawer> -->
-    </div>
-  </div>
+		</div>
+	</div>
 
-  <div class="component-section">
-    <div class="component-title">Text, Media, Misc</div>
-    <div class="grid">
-      <!-- <Text>Sample text</Text>
+	<div class="component-section">
+		<div class="component-title">Text, Media, Misc</div>
+		<div class="grid">
+			<!-- <Text>Sample text</Text>
 			<Label for="input">Label</Label>
 			<Image src="https://via.placeholder.com/100" alt="Placeholder" />
 			<Link href="https://example.com">Example Link</Link>
 			<Field label="Name">
 				<TextInput id="name" />
 			</Field> -->
-    </div>
-  </div>
+		</div>
+	</div>
 
-  <div class="component-section">
-    <div class="component-title">Decorative & Structural</div>
-    <div class="grid">
-      <Divider />
-      <!-- <ToggleButton>Toggle Me</ToggleButton> -->
-    </div>
-  </div>
+	<div class="component-section">
+		<div class="component-title">Decorative & Structural</div>
+		<div class="grid">
+			<Divider />
+			<!-- <ToggleButton>Toggle Me</ToggleButton> -->
+		</div>
+	</div>
 </div>
 
 <!--<style lang="scss">-->
