@@ -8,6 +8,7 @@
 
 	let gpuSelectedValue: string = $state("")
 	let comboboxSelectedValue: string = $state("")
+	let checkboxValue: boolean = $state(false)
 </script>
 
 <div class="forms">
@@ -59,17 +60,60 @@
 
 			<div class="grid">
 				<div>
+					<div class="tw:mb-2">
+						<div>
+							<Checkbox bind:checked={checkboxValue}>
+								Check me
+							</Checkbox>
+						</div>
+						{#if checkboxValue}
+							Yes
+						{:else}
+							No
+						{/if}
+					</div>
+
 					<div>
-						<Checkbox bind:checked={checkboxValue}>
-							Check me
+						<Checkbox bind:checked={checkboxValue} disabled>
+							I'm disabled
 						</Checkbox>
 					</div>
-					{#if checkboxValue}
-						Yes
-					{:else}
-						No
-					{/if}
+					<!-- note: intermediate state not working -->
+					<!--<div>-->
+					<!--	<Checkbox-->
+					<!--		bind:checked={checkboxWithIntermediateValue}-->
+					<!--		withIntermediate-->
+					<!--	>-->
+					<!--		Intermediate value-->
+					<!--	</Checkbox>-->
+					<!--</div>-->
+				</div>
+			</div>
+		</div>
 
+		<div class="component-section">
+			<div class="component-title">Radios</div>
+
+			<div class="grid">
+				<div>
+					<div class="tw:mb-2">
+						<div>
+							<Checkbox bind:checked={checkboxValue}>
+								Check me
+							</Checkbox>
+						</div>
+						{#if checkboxValue}
+							Yes
+						{:else}
+							No
+						{/if}
+					</div>
+
+					<div>
+						<Checkbox bind:checked={checkboxValue} disabled>
+							I'm disabled
+						</Checkbox>
+					</div>
 					<!-- note: intermediate state not working -->
 					<!--<div>-->
 					<!--	<Checkbox-->
