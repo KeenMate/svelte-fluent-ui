@@ -29,8 +29,6 @@
 		required?: boolean
 		autofocus?: any
 		name?: string
-		onComboboxChange?: any
-		onControlInput?: any
 	}
 
 	let {
@@ -47,8 +45,6 @@
 		    required         = undefined,
 		    autofocus        = undefined,
 		    name             = undefined,
-		    onComboboxChange = undefined,
-		    onControlInput   = undefined,
 		    children         = undefined,
 		    ...restProps
 	    }: Props = $props()
@@ -98,16 +94,6 @@
 		// reactivity-loop seems to be handled well by Svelte alone...
 		value = $selectedValue
 	})
-
-	function handleOnComboboxChange(ev: Event) {
-		// console.log("handleOnComboboxChange", ev)
-		onComboboxChange?.()
-	}
-
-	function handleOnControlInput(ev: Event) {
-		// console.log("handleOnControlInput", ev)
-		onControlInput?.()
-	}
 </script>
 
 <fluent-combobox
@@ -123,8 +109,6 @@
 	{required}
 	{autofocus}
 	{name}
-	oncomboboxchange={handleOnComboboxChange}
-	oncontrolinput={handleOnControlInput}
 	{...restProps}
 >
 	{#if children}
