@@ -1,12 +1,7 @@
 svelte-fluent-ui.demo.keenmate.com:80
 {
     root * /srv
+    encode
+    try_files {path} /index.html
     file_server
-
-# to redirect all request to / for SPA router to work
-    handle_errors {
-    @notFound expression `{http.error.status_code} == 404`
-    rewrite @notFound /
-    respond @notFound 200
-    }
 }
