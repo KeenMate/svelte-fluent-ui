@@ -15,6 +15,7 @@
 	import {ButtonAppearance} from "$lib/fluent-ui/constants/button.js"
 
 	let dialogElement: any
+	let counter: number = $state(0)
 </script>
 
 <div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
@@ -38,7 +39,18 @@
 				</a>
 			</div>
 			<div class="grid">
-				<Button appearance={ButtonAppearance.accent}>Button</Button>
+				<Button
+					appearance={ButtonAppearance.accent}
+					onClick={() => counter++}
+				>
+					Button ({counter})
+				</Button>
+				<Button
+					appearance={ButtonAppearance.stealth}
+					onClick={() => counter = 0}
+				>
+					Reset
+				</Button>
 			</div>
 		</div>
 
