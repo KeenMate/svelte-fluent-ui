@@ -2,7 +2,7 @@
 	import {
 		Option,
 		TextField,
-	} from "$lib/index.js"
+	} from "$lib"
 	import Combobox from "$lib/components/Combobox.svelte"
 
 	let gpuSelectedValue: string = $state("")
@@ -15,7 +15,7 @@
 	<div class="components">
 		<div class="component-section">
 			<div class="component-title">
-				<a href="/forms/input">
+				<a href="/components/forms/input">
 					Inputs
 				</a>
 			</div>
@@ -33,7 +33,7 @@
 					<Option value="1" label="GTX 1060">GTX 1060</Option>
 					<Option value="2" label="GTX 1070">GTX 1070</Option>
 					<Option value="3" label="GTX 1080">GTX 1080</Option>
-					<Option value="4" label="GTX 1090" disabled>GTX 1090</Option>
+					<Option value="4" label="GTX 1090">GTX 1090</Option>
 				</Combobox>
 
 				<h3>With autocomplete</h3>
@@ -41,7 +41,7 @@
 					<Option value="1">GTX 1060</Option>
 					<Option value="2">GTX 1070</Option>
 					<Option value="3">GTX 1080</Option>
-					<Option value="4" disabled>GTX 1090</Option>
+					<Option value="4">GTX 1090</Option>
 				</Combobox>
 
 				<h3>Disabled</h3>

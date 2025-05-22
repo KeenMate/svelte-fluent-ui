@@ -13,14 +13,18 @@
 
 <div id="menu">
 	<div class="pure-menu">
-		<a class="pure-menu-heading" href="/">List of components</a>
+		<a class="pure-menu-heading tw:text-center" href="/">Svelte FluentUI</a>
 		<ul class="pure-menu-list">
-			<li class="pure-menu-heading">Components</li>
 			<li class="pure-menu-item">
-				<a href="/forms" class="pure-menu-link">Forms</a>
+				<a href="/components" class="pure-menu-link">
+					Components
+				</a>
 			</li>
 			<li class="pure-menu-item">
-				<a href="/interactive" class="pure-menu-link">Interactive</a>
+				<a href="/components/forms" class="pure-menu-link">Forms</a>
+			</li>
+			<li class="pure-menu-item">
+				<a href="/components/interactive" class="pure-menu-link">Interactive</a>
 			</li>
 			<!--<li class="pure-menu-item">-->
 			<!--	<a href="#about" class="pure-menu-link">About</a>-->
