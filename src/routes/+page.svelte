@@ -62,9 +62,9 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>checkbox</td>
-				<td></td>
+				<td>Intermediate state does not work</td>
 			</tr>
 			<tr>
 				<td></td>
@@ -74,7 +74,7 @@
 			<tr>
 				<td>Initial tests</td>
 				<td>combobox</td>
-				<td>Disable option is displayed as disabled, but can still be selected</td>
+				<td></td>
 			</tr>
 			<tr>
 				<td></td>
