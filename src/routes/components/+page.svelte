@@ -25,7 +25,7 @@
 	<div class="components">
 		<div class="component-section">
 			<div class="component-title">
-				<a href="/forms">Forms</a>
+				<a href="/components/forms">Forms</a>
 			</div>
 			<div class="grid">
 				<TextField placeholder="Enter text" />
@@ -34,7 +34,7 @@
 
 		<div class="component-section">
 			<div class="component-title">
-				<a href="/buttons">
+				<a href="/components/buttons">
 					Buttons
 				</a>
 			</div>

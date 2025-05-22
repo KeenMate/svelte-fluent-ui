@@ -2,7 +2,7 @@
 	import {
 		Option,
 		TextField,
-	} from "$lib"
+	} from "$lib/index.js"
 	import Combobox from "$lib/components/Combobox.svelte"
 
 	let gpuSelectedValue: string = $state("")
