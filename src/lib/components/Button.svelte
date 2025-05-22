@@ -6,7 +6,7 @@
 	)
 	import type {
 		SlotType,
-	} from "../types.js"
+	} from "../types/index.js"
 	import type {
 		ButtonAppearance,
 	} from "@fluentui/web-components"

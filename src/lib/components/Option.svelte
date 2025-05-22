@@ -1,5 +1,7 @@
 <script lang="ts">
 	import {fluentOption, provideFluentDesignSystem} from "@fluentui/web-components"
+	import {getContext} from "svelte"
+	import type {ComboboxSelectedValueSvelteContext} from "../types/combobox.js"
 
 	provideFluentDesignSystem().register(
 		fluentOption()
@@ -7,19 +9,42 @@
 
 	type Props = {
 		value: string;
-		children: any;
+		label?: string;
+		style?: string
+		onClick?: Function
 		selected?: boolean;
 		disabled?: boolean;
+		children: any;
 	}
 
 	let {
 		    value,
-		    children,
-		    selected = false,
+		    label = undefined,
 		    disabled = false,
+		    selected = undefined,
+				onClick = undefined,
+		    children,
 	    }: Props = $props()
+
+	const selectedValue = getContext<ComboboxSelectedValueSvelteContext>("selectedValue")
+
+	function handleOnClick(ev) {
+		console.log("Option on click", {
+			ev,
+			$selectedValue
+		})
+		$selectedValue = value
+
+		onClick?.(ev)
+	}
 </script>
 
-<fluent-option {value} {selected} {disabled}>
+<fluent-option
+	{value}
+	selected={selected !== undefined ? selected : $selectedValue === value}
+	data-option-label={label}
+	{disabled}
+	onclick={handleOnClick}
+>
 	{@render children()}
 </fluent-option>

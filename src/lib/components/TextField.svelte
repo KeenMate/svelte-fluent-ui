@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {fluentTextField, provideFluentDesignSystem} from "@fluentui/web-components"
-	import type {SlotType} from "../types.js"
+	import type {SlotType} from "../types/index.js"
 
 	provideFluentDesignSystem().register(
 		fluentTextField()
