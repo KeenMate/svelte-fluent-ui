@@ -14,7 +14,7 @@
 	} from "$lib/index.js"
 	import {ButtonAppearance} from "$lib/fluent-ui/constants/button.js"
 
-	let dialogElement: any
+	let dialogElement: any = $state()
 	let counter: number = $state(0)
 </script>
 
