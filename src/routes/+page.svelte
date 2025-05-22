@@ -65,7 +65,7 @@
 	<td></td>
 	</tr>
 <tr>
-	<td></td>
+	<td>Initial tests</td>
 	<td>button</td>
 	<td></td>
 	</tr>
