@@ -18,7 +18,7 @@
 	let counter: number = $state(0)
 </script>
 
-<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
+<div>
 	<h1>Fluent UI Svelte – Full Component Demo</h1>
 
 	<!-- Example Section -->

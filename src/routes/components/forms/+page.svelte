@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		Checkbox,
 		Option,
 		TextField,
 	} from "$lib/index.js"
@@ -50,6 +51,35 @@
 					<Option value="2">Option 2</Option>
 					<Option value="3">Option 3</Option>
 				</Combobox>
+			</div>
+		</div>
+
+		<div class="component-section">
+			<div class="component-title">Checkboxes</div>
+
+			<div class="grid">
+				<div>
+					<div>
+						<Checkbox bind:checked={checkboxValue}>
+							Check me
+						</Checkbox>
+					</div>
+					{#if checkboxValue}
+						Yes
+					{:else}
+						No
+					{/if}
+
+					<!-- note: intermediate state not working -->
+					<!--<div>-->
+					<!--	<Checkbox-->
+					<!--		bind:checked={checkboxWithIntermediateValue}-->
+					<!--		withIntermediate-->
+					<!--	>-->
+					<!--		Intermediate value-->
+					<!--	</Checkbox>-->
+					<!--</div>-->
+				</div>
 			</div>
 		</div>
 	</div>
