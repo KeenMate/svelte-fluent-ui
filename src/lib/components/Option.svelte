@@ -29,6 +29,10 @@
 	const selectedValue = getContext<ComboboxSelectedValueSvelteContext>("selectedValue")
 
 	function handleOnClick(ev) {
+		if (disabled) {
+			return
+		}
+
 		console.log("Option on click", {
 			ev,
 			$selectedValue

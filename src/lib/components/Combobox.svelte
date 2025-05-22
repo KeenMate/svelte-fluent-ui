@@ -24,6 +24,7 @@
 		placeholder?: string
 		position?: string
 		disabled?: boolean
+		readonly?: boolean
 		appearance?: string
 		required?: boolean
 		autofocus?: any
@@ -41,6 +42,7 @@
 		    placeholder      = undefined,
 		    position         = undefined,
 		    disabled         = undefined,
+		    readonly         = undefined,
 		    appearance       = undefined,
 		    required         = undefined,
 		    autofocus        = undefined,
@@ -61,6 +63,7 @@
 		selectedIndex: number
 	}) | undefined = undefined
 
+	// update value: above -> down
 	$effect(() => {
 		if (value === untrack(() => $selectedValue)) {
 			return
@@ -81,8 +84,13 @@
 		}
 	})
 
+	// update value: below -> up
 	$effect(() => {
 		if (untrack(() => value) === $selectedValue) {
+			return
+		}
+		if (untrack(() => readonly || disabled)) {
+			$selectedValue = value
 			return
 		}
 
@@ -110,6 +118,7 @@
 	{placeholder}
 	{position}
 	{disabled}
+	{readonly}
 	{appearance}
 	{required}
 	{autofocus}
@@ -118,9 +127,6 @@
 	oncontrolinput={handleOnControlInput}
 	{...restProps}
 >
-	<Option value="qweqwe">
-		The value: {value}
-	</Option>
 	{#if children}
 		{@render children()}
 	{:else}
