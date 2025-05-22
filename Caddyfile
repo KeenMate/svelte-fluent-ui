@@ -8,4 +8,5 @@ svelte-fluent-ui.demo.keenmate.com:80
     @notFound expression `{http.error.status_code} == 404`
     rewrite @notFound /
     respond @notFound 200
+    }
 }
