@@ -1,20 +1,6 @@
-# Svelte library
+# Svelte FluentUI (Svelte wrapper)
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
-
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
+A Svelte wrapper of FluentUI web components in version 2.6.x, because 3.x.x version is too new and missing too many components.
 
 ## Developing
 
