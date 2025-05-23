@@ -21,7 +21,7 @@
 </script>
 
 <div class="header">
-	<h1>Text field</h1>
+	<h1>Checkbox</h1>
 </div>
 
 <div class="content">

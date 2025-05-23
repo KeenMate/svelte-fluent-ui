@@ -29,122 +29,111 @@
 		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
 			<h2>Members</h2>
 			<table class="pure-table member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="4">Members</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>value</td>
-					<td>string</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>placeholder</td>
-					<td>string</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>appearance</td>
-					<td>TextInputAppearance</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>disabled</td>
-					<td>boolean</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>readonly</td>
-					<td>boolean</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>required</td>
-					<td>boolean</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>type</td>
-					<td>TextInputType</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>name</td>
-					<td>string</td>
-					<td>undefined</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>autofocus</td>
-					<td>boolean</td>
-					<td>undefined</td>
-				</tr>
+  <tbody>
+    <tr class="property">
+      <td colspan="5">Members</td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>value</td>
+      <td>string</td>
+      <td>undefined</td>
+      <td>bindable</td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>placeholder</td>
+      <td>string</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>appearance</td>
+      <td>string</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>readonly</td>
+      <td>boolean</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>required</td>
+      <td>boolean</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>type</td>
+      <td>string</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>name</td>
+      <td>string</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>label</td>
+      <td>string</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="property">
+      <td></td>
+      <td>autofocus</td>
+      <td>boolean</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
 
+    <tr class="callback">
+      <td colspan="5">Callbacks</td>
+    </tr>
+    <tr class="callback">
+      <td></td>
+      <td>onInput</td>
+      <td>(ev: InputEvent) => void</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+    <tr class="callback">
+      <td></td>
+      <td>onChange</td>
+      <td>(ev: Event) => void</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
 
-				<tr class="property">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-
-				<tr class="property">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-
-				<tr class="callback">
-					<td colspan="4">Callbacks</td>
-				</tr>
-				<tr class="callback">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-
-				<tr class="callback">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-
-				<tr class="slot">
-					<td colspan="4">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-
-				<tr class="slot">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-
-				<tr class="slot">
-					<td></td>
-					<td>Value</td>
-					<td>text</td>
-					<td>undefined</td>
-				</tr>
-				</tbody>
-			</table>
+    <tr class="slot">
+      <td colspan="5">Slots</td>
+    </tr>
+    <tr class="slot">
+      <td></td>
+      <td>children</td>
+      <td>SlotType</td>
+      <td>undefined</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 		</div>
 		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
 			<h2 class="content-subhead">Actions</h2>
