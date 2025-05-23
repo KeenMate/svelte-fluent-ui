@@ -137,14 +137,18 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>radio</td>
-				<td></td>
+				<td>
+					Wrapped radios have ugly missing spacing (cannot be added so far)
+				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>radio-group</td>
-				<td></td>
+				<td>
+					Wrapped radios have ugly missing spacing (cannot be added so far)
+				</td>
 			</tr>
 			<tr>
 				<td></td>
