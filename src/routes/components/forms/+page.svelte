@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {
 		Checkbox,
-		Option,
+		Option, Radio, RadioGroup,
 		TextField,
 	} from "$lib/index.js"
 	import Combobox from "$lib/components/Combobox.svelte"
@@ -9,6 +9,7 @@
 	let gpuSelectedValue: string = $state("")
 	let comboboxSelectedValue: string = $state("")
 	let checkboxValue: boolean = $state(false)
+	let radioValue: string | null = $state("option_4")
 </script>
 
 <div class="forms">
@@ -27,7 +28,7 @@
 		</div>
 
 		<div class="component-section">
-			<div class="component-title">Selectors</div>
+			<div class="component-title">Comboboxes</div>
 			<div class="grid">
 				<h3>Default: {gpuSelectedValue}</h3>
 
@@ -98,31 +99,35 @@
 				<div>
 					<div class="tw:mb-2">
 						<div>
-							<Checkbox bind:checked={checkboxValue}>
-								Check me
-							</Checkbox>
+							<RadioGroup
+								bind:value={radioValue}
+								name="first-radio"
+								class="tw:flex tw:flex-wrap tw:gap-1"
+							>
+								<Radio value="option_1">Option 1</Radio>
+								<Radio value="option_2">Option 2</Radio>
+								<Radio value="option_3">Option 3</Radio>
+								<Radio value="option_4">Option 4</Radio>
+							</RadioGroup>
 						</div>
-						{#if checkboxValue}
-							Yes
-						{:else}
-							No
-						{/if}
+						Value is: {radioValue}
 					</div>
-
-					<div>
-						<Checkbox bind:checked={checkboxValue} disabled>
-							I'm disabled
-						</Checkbox>
+					<div class="tw:mb-2">
+						<div>
+							<RadioGroup
+								bind:value={radioValue}
+								name="second-radio"
+								orientation="vertical"
+								class="tw:flex tw:flex-wrap tw:gap-1"
+							>
+								<Radio value="option_1">Option 1</Radio>
+								<Radio value="option_2">Option 2</Radio>
+								<Radio value="option_3">Option 3</Radio>
+								<Radio value="option_4">Option 4</Radio>
+							</RadioGroup>
+						</div>
+						Value is: {radioValue}
 					</div>
-					<!-- note: intermediate state not working -->
-					<!--<div>-->
-					<!--	<Checkbox-->
-					<!--		bind:checked={checkboxWithIntermediateValue}-->
-					<!--		withIntermediate-->
-					<!--	>-->
-					<!--		Intermediate value-->
-					<!--	</Checkbox>-->
-					<!--</div>-->
 				</div>
 			</div>
 		</div>
