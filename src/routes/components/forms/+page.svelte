@@ -128,6 +128,21 @@
 						</div>
 						Value is: {radioValue}
 					</div>
+					<div class="tw:mb-2">
+						<div>
+							<RadioGroup
+								bind:value={radioValue}
+								name="second-radio"
+								class="tw:flex tw:flex-wrap tw:gap-1"
+								disabled
+							>
+								<Radio value="option_1">Option 1</Radio>
+								<Radio value="option_2">Option 2</Radio>
+								<Radio value="option_3">Option 3</Radio>
+								<Radio value="option_4">Option 4</Radio>
+							</RadioGroup>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
