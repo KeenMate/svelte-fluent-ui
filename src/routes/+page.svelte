@@ -63,7 +63,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>checkbox</td>
+				<td><a href="/components/checkbox">checkbox</a></td>
 				<td>Intermediate state does not work</td>
 			</tr>
 			<tr>
@@ -73,7 +73,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>combobox</td>
+				<td><a href="/components/combobox">combobox</a></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -193,7 +193,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>text-field</td>
+				<td><a href="/components/text-field">text-field</a></td>
 				<td></td>
 			</tr>
 			<tr>

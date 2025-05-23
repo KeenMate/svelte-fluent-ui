@@ -21,17 +21,17 @@
 </script>
 
 <div class="header">
-	<h1>Text input</h1>
+	<h1>Text field</h1>
 </div>
 
 <div class="content">
 	<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Properties</h2>
+			<h2>Members</h2>
 			<table class="pure-table member-table">
 				<tbody>
 				<tr class="property">
-					<td colspan="4">Properties</td>
+					<td colspan="4">Members</td>
 				</tr>
 				<tr class="property">
 					<td></td>
