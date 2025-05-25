@@ -13,7 +13,7 @@
 		value?: ValueType
 		multi?: boolean
 		children?: SlotType
-		[rest: string]: any
+		[prop: string]: any
 	}
 
 	let {

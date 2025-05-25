@@ -32,9 +32,12 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>badge</td>
-				<td></td>
+				<td>
+					Now, only "accent" appearance works. <br>
+					Colors need CSS variables to be defined (<pre class="tw:inline">--badge-color-[color]</pre>)
+				</td>
 			</tr>
 			<tr>
 				<td></td>

@@ -12,7 +12,7 @@
 		readonly?: boolean
 		disabled?: boolean
 		children?: SlotType
-		[rest: string]: any
+		[prop: string]: any
 	}
 
 	let {

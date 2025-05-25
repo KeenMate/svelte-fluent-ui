@@ -81,6 +81,7 @@
 		<div class="component-section">
 			<div class="component-title">Miscellaneous</div>
 			<div class="grid">
+				<Badge appearance="filled" color="danger">Badge 2</Badge>
 				<Badge appearance="accent">New</Badge>
 				<!-- <CounterBadge count="5" /> -->
 				<ProgressBar value="75" />

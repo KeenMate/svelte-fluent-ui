@@ -18,7 +18,7 @@
 		icon?: SlotType
 		children?: SlotType
 		onChange?: (ev: Event, isExpanded: boolean) => void
-		[rest: string]: any
+		[prop: string]: any
 	}
 
 	let {
