@@ -23,7 +23,7 @@
 		...restProps
   }: Props = $props()
 
-	const ctx: any = getContext("radioGroup")
+	const ctx: any = getContext("radio-group")
 
 	function handleOnClick(ev: MouseEvent) {
 		// console.log("radio clicked", ev)

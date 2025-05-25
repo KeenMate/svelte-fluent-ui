@@ -77,9 +77,9 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Not planned</td>
 				<td>data-grid</td>
-				<td></td>
+				<td>Does not seem to be much flexible</td>
 			</tr>
 			<tr>
 				<td></td>

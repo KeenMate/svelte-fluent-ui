@@ -31,7 +31,7 @@
 		setValue
 	})
 
-	setContext("radioGroup", ctx)
+	setContext("radio-group", ctx)
 
 	function setValue(newValue: string) {
 		if (disabled || readonly) {

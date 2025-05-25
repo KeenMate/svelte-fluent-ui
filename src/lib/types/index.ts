@@ -7,3 +7,8 @@ export type OptionItem = {
 	label: string
 	disabled: boolean
 }
+
+export type FluentAccordionSvelteContext = {
+	// in case of expand mode = "single" value will be an array of length 1 or null if nothing is expanded
+	value: string[] | null | undefined
+}

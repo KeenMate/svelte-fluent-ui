@@ -3,7 +3,7 @@
 		Accordion,
 		AccordionItem,
 		Badge,
-		Button,
+		Button, DataGrid,
 		Dialog,
 		Divider,
 		Menu,
@@ -16,6 +16,7 @@
 
 	let dialogElement: any = $state()
 	let counter: number = $state(0)
+	let expandedAccordionItem: string | null = $state(null)
 </script>
 
 <div>
@@ -55,22 +56,25 @@
 		</div>
 
 		<div class="component-section">
-			<div class="component-title">Navigation / Layout</div>
-			<div class="grid">
-				<!-- <TabList>
-					<TabPanel>Tab 1 content</TabPanel>
-					<TabPanel>Tab 2 content</TabPanel>
-				</TabList> -->
-				<Accordion>
-					<AccordionItem header="Item 1">Content 1</AccordionItem>
-					<AccordionItem header="Item 2">Content 2</AccordionItem>
+			<div class="component-title">
+				<a href="/components/navigation-layout">
+					Navigation / Layout
+				</a>
+			</div>
+			<div>
+				<span>Selected: {expandedAccordionItem}</span> <br>
+
+				<Button onClick={() => expandedAccordionItem = null}>
+					Reset
+				</Button>
+			</div>
+
+			<div>
+				<Accordion bind:value={expandedAccordionItem}>
+					<AccordionItem id="my-accordion-1" header="Item 1">Content 1</AccordionItem>
+					<AccordionItem id="my-accordion-2" header="Item 2">Content 2</AccordionItem>
+					<AccordionItem id="my-accordion-3" header="Item 3">Content 3</AccordionItem>
 				</Accordion>
-				<Tree>
-					<TreeItem>
-						Root
-						<TreeItem>Child</TreeItem>
-					</TreeItem>
-				</Tree>
 			</div>
 		</div>
 
