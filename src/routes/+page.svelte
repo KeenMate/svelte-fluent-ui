@@ -17,7 +17,7 @@
 			</thead>
 			<tbody>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>accordion</td>
 				<td></td>
 			</tr>
