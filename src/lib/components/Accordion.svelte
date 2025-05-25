@@ -46,13 +46,13 @@
 		window.requestAnimationFrame(() => {
 			const accordionItemId = accordionItemTarget.dataset.customId!
 			const accordionItemIsExpanded = accordionItemTarget.attributes["expanded" as unknown as number]?.value === ""
-			console.log("Accordion change", {
-				ev,
-				accordionItemTarget,
-				accordionItemId,
-				expandedValue: accordionItemTarget.attributes["expanded" as unknown as number]?.value,
-				accordionItemIsExpanded
-			})
+			// console.log("Accordion change", {
+			// 	ev,
+			// 	accordionItemTarget,
+			// 	accordionItemId,
+			// 	expandedValue: accordionItemTarget.attributes["expanded" as unknown as number]?.value,
+			// 	accordionItemIsExpanded
+			// })
 
 			if ((ev.target as HTMLElement)?.nodeName !== "FLUENT-ACCORDION-ITEM") {
 				return
@@ -84,7 +84,7 @@
 		}
 
 		value = newValue
-		ctx.value = toContextValue(newValue)
+		// ctx.value = toContextValue(newValue)
 	}
 
 	function toContextValue(value: ValueType): string[] | null | undefined {
