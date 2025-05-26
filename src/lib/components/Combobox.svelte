@@ -2,16 +2,18 @@
 	import {
 		provideFluentDesignSystem,
 		fluentCombobox,
-	} from "@fluentui/web-components";
-	import type { OptionItem, SelectedValue, SlotType } from "../types/index.js";
-	import Option from "$lib/components/Option.svelte";
-	import { setContext, untrack } from "svelte";
-	import type { SelectedOptionSvelteContext } from "../types/combobox.js";
-	import { writable } from "svelte/store";
+	} from "@fluentui/web-components"
+	import type {OptionItem, SelectedValue, SlotType} from "../types/index.js"
+	import Option from "$lib/components/Option.svelte"
+	import {setContext, untrack} from "svelte"
+	import type {SelectedOptionSvelteContext, ValueType} from "../types/combobox.js"
+	import {get, type Readable, writable} from "svelte/store"
+	import {createSelectedOptions} from "../data/selected-options.svelte.js"
 
-	provideFluentDesignSystem().register(fluentCombobox());
+	provideFluentDesignSystem().register(fluentCombobox())
 
 	type Props = {
+		id: string
 		value: SelectedValue;
 		options?: OptionItem[];
 		children?: SlotType;
@@ -29,82 +31,107 @@
 	};
 
 	let {
-		value = $bindable(),
-		options = undefined,
-		autocomplete = undefined,
-		open = undefined,
-		currentValue = undefined,
-		placeholder = undefined,
-		position = undefined,
-		disabled = undefined,
-		readonly = undefined,
-		appearance = undefined,
-		required = undefined,
-		autofocus = undefined,
-		name = undefined,
-		children = undefined,
-		...restProps
-	}: Props = $props();
+		id,
+		    value        = $bindable(),
+		    options      = undefined,
+		    autocomplete = undefined,
+		    open         = undefined,
+		    currentValue = undefined,
+		    placeholder  = undefined,
+		    position     = undefined,
+		    disabled     = undefined,
+		    readonly     = undefined,
+		    appearance   = undefined,
+		    required     = undefined,
+		    autofocus    = undefined,
+		    name         = undefined,
+		    children     = undefined,
+		    ...restProps
+	    }: Props = $props()
 
-	const selectedValue = writable<SelectedValue>(value);
+	const selectedOptions = createSelectedOptions(value)
 	setContext<SelectedOptionSvelteContext>(
-		"selected-option",
-		selectedValue,
-	);
+		"selected-options",
+		selectedOptions,
+	)
 
 	let element:
-		| (HTMLElement & {
-				// it is an array of <fluent-option> elements (but this is close enough :))
-				options: HTMLOptionElement[];
-				value: OptionItem["value"];
-				selectedIndex: number;
-		  })
-		| undefined = undefined;
+		    | (HTMLElement & {
+		    // it is an array of <fluent-option> elements (but this is close enough :))
+		    options: HTMLOptionElement[];
+		    value: OptionItem["value"];
+		    selectedIndex: number;
+	    })
+		    | undefined = undefined
 
-	// update value: above -> down
+	// $inspect(id, "combobox selected options", selectedOptions.value)
+
+	// update value: V
 	$effect(() => {
-		if (value === untrack(() => $selectedValue)) {
-			return;
+		// console.log(id, "combobox V", {
+		// 	value: untrack(() => $state.snapshot(value)),
+		// 	selectedOptions: untrack(() => $state.snapshot(selectedOptions.value)),
+		// 	equal:           isValueEqualToContext(untrack(() => value), untrack(() => selectedOptions.value))
+		// })
+		if (isValueEqualToContext(value, untrack(() => selectedOptions.value))) {
+			// console.log(id, "combobox V equal", {value, selectedOptions: untrack(() => selectedOptions.value)})
+			return
 		}
 
 		// reactivity-loop seems to be handled well by Svelte alone...
-		$selectedValue = value;
+		selectedOptions.value = untrack(() => selectedOptions.toContextValue)($state.snapshot(value))
 
 		// this is used to update this combobox's visible selected value's text inside the input
 		if (element) {
 			const selectedOptionElement = element.options.find(
-				(x: HTMLOptionElement) => x.value === value,
-			);
-			const selectedIndex = element.options.findIndex(
-				(x: HTMLOptionElement) => x.value === value,
-			);
+				(x: HTMLOptionElement) => x.value === value?.[0],
+			)
+			const selectedIndex         = element.options.findIndex(
+				(x: HTMLOptionElement) => x.value === value?.[0],
+			)
 
 			if (
-				(element.value !== value || element.selectedIndex !== selectedIndex) &&
+				(element.value !== value?.[0] || element.selectedIndex !== selectedIndex) &&
 				selectedOptionElement
 			) {
-				element.value =
+				element.value         =
 					selectedOptionElement.dataset.optionLabel ||
-					selectedOptionElement.innerText.trim();
-				element.selectedIndex = selectedIndex;
+					selectedOptionElement.innerText.trim()
+				element.selectedIndex = selectedIndex
 			}
 		}
-	});
+	})
 
-	// update value: below -> up
+	// update value: ^
 	$effect(() => {
-		if (untrack(() => value) === $selectedValue) {
-			return;
+		// console.log(id, "combobox ^", {
+		// 	value: untrack(() => $state.snapshot(value)),
+		// 	selectedOptions: $state.snapshot(untrack(() => selectedOptions.value)),
+		// 	equal:           isValueEqualToContext(untrack(() => value), untrack(() => selectedOptions.value))
+		// })
+		if (isValueEqualToContext(untrack(() => value), selectedOptions.value)) {
+			// console.log(id,
+			// 	"combobox ^ equal",
+			// 	{value: untrack(() => value), selectedOptions: $state.snapshot(selectedOptions.value)}
+			// )
+			return
 		}
 		if (untrack(() => readonly || disabled)) {
-			$selectedValue = value;
-			return;
+			selectedOptions.set(untrack(() => $state.snapshot(value)))
+			return
 		}
 
-		// console.log("setting value in effect", $selectedValue)
+		// console.log(id, "setting value in effect", $selectedValue)
 		// reactivity-loop seems to be handled well by Svelte alone...
-		value = $selectedValue;
-	});
+		value = $state.snapshot(selectedOptions.value)
+	})
+
+	function isValueEqualToContext(value: ValueType, ctxValue: SelectedValue) {
+		return (!value && !ctxValue)
+			|| (value instanceof Array
+				? value[0]
+				: value) === ctxValue?.[0]
+	}
 </script>
 
 <fluent-combobox

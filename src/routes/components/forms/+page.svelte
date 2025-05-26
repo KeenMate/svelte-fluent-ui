@@ -1,16 +1,18 @@
 <script lang="ts">
 	import {
+		Button,
 		Checkbox, Listbox,
 		Option, Radio, RadioGroup,
 		TextField,
 	} from "$lib/index.js"
 	import Combobox from "$lib/components/Combobox.svelte"
 
-	let gpuSelectedValue: string = $state("")
-	let comboboxSelectedValue: string = $state("")
+	let gpuSelectedValue: string[] | null | undefined = $state(null)
+	let comboboxSelectedValue: string[] | null | undefined = $state(null)
 	let checkboxValue: boolean = $state(false)
 	let radioValue: string | null = $state("option_4")
 	let listboxValue: string | null = $state(null)
+	// let listboxMultiValue: string[] | null = $state(null)
 </script>
 
 <div class="forms">
@@ -19,7 +21,7 @@
 	<div class="components">
 		<div class="component-section">
 			<div class="component-title">
-				<a href="/components/forms/input">
+				<a href="/components/forms/text-field">
 					Inputs
 				</a>
 			</div>
@@ -33,7 +35,7 @@
 			<div class="grid">
 				<h3>Default: {gpuSelectedValue}</h3>
 
-				<Combobox bind:value={gpuSelectedValue} placeholder="Select a graphics card">
+				<Combobox id="combo-1" bind:value={gpuSelectedValue} placeholder="Select a graphics card">
 					<Option value="1" label="GTX 1060">GTX 1060</Option>
 					<Option value="2" label="GTX 1070">GTX 1070</Option>
 					<Option value="3" label="GTX 1080">GTX 1080</Option>
@@ -41,7 +43,7 @@
 				</Combobox>
 
 				<h3>With autocomplete</h3>
-				<Combobox bind:value={gpuSelectedValue} autocomplete="both" placeholder="Select a graphics card">
+				<Combobox id="combo-2" bind:value={gpuSelectedValue} autocomplete="both" placeholder="Select a graphics card">
 					<Option value="1">GTX 1060</Option>
 					<Option value="2">GTX 1070</Option>
 					<Option value="3">GTX 1080</Option>
@@ -49,7 +51,7 @@
 				</Combobox>
 
 				<h3>Disabled</h3>
-				<Combobox bind:value={comboboxSelectedValue} disabled placeholder="Select an option">
+				<Combobox id="combo-disabled" bind:value={comboboxSelectedValue} disabled placeholder="Select an option">
 					<Option value="1">Option 1</Option>
 					<Option value="2">Option 2</Option>
 					<Option value="3">Option 3</Option>
@@ -151,13 +153,38 @@
 		<div class="component-section">
 			<div class="component-title">Listboxes</div>
 
-			<div class="grid">
-				<Listbox bind:value={listboxValue}>
-					<Option value="listbox-option-1">Option 1</Option>
-					<Option value="listbox-option-2">Option 2</Option>
-					<Option value="listbox-option-3">Option 3</Option>
-				</Listbox>
+			<div>
+				<div>
+					Selected value: {listboxValue}
+				</div>
+				<div>
+					<Button onClick={() => listboxValue = null}>
+						Reset
+					</Button>
+				</div>
+
+				<div>
+					<Listbox bind:value={listboxValue}>
+						<Option value="listbox-option-1">Option 1</Option>
+						<Option value="listbox-option-2">Option 2</Option>
+						<Option value="listbox-option-3">Option 3</Option>
+					</Listbox>
+				</div>
 			</div>
+
+			<!--<div>-->
+			<!--	<div>-->
+			<!--		Selected multi value: {listboxMultiValue?.join(", ")}-->
+			<!--	</div>-->
+
+			<!--	<div>-->
+			<!--		<Listbox bind:value={listboxMultiValue} multi>-->
+			<!--			<Option value="listbox-option-1">Option 1</Option>-->
+			<!--			<Option value="listbox-option-2">Option 2</Option>-->
+			<!--			<Option value="listbox-option-3">Option 3</Option>-->
+			<!--		</Listbox>-->
+			<!--	</div>-->
+			<!--</div>-->
 		</div>
 	</div>
 </div>

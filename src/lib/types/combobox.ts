@@ -1,4 +1,10 @@
-import type {SelectedValue} from "./index.js"
-import type {Writable} from "svelte/store"
+import type {OptionItem, SelectedValue} from "./index.js"
+import {type Readable, writable, type Writable} from "svelte/store"
 
-export type SelectedOptionSvelteContext = Writable<SelectedValue>
+export type ValueType = string | string[] | null | undefined
+
+export type SelectedOptionSvelteContext = {
+	value: SelectedValue
+	set(val: ValueType): void
+	toggle(val: OptionItem["value"]): void
+}

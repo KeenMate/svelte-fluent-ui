@@ -8,36 +8,36 @@
 	)
 
 	type Props = {
-		value: string;
-		label?: string;
+		value: string
+		label?: string
 		style?: string
 		onClick?: Function
-		selected?: boolean;
-		disabled?: boolean;
-		children: any;
+		selected?: boolean
+		disabled?: boolean
+		children: any
 	}
 
 	let {
 		    value,
-		    label = undefined,
+		    label    = undefined,
 		    disabled = false,
 		    selected = undefined,
-				onClick = undefined,
+		    onClick  = undefined,
 		    children,
 	    }: Props = $props()
 
-	const selectedValue = getContext<SelectedOptionSvelteContext>("selected-option")
+	const selectedValue = getContext<SelectedOptionSvelteContext>("selected-options")
 
-	function handleOnClick(ev) {
+	function handleOnClick(ev: MouseEvent) {
 		if (disabled) {
 			return
 		}
 
 		console.log("Option on click", {
 			ev,
-			$selectedValue
+			selectedValue: selectedValue.value
 		})
-		$selectedValue = [value]
+		selectedValue.toggle(value)
 
 		onClick?.(ev)
 	}
@@ -45,7 +45,7 @@
 
 <fluent-option
 	{value}
-	selected={selected !== undefined ? selected : $selectedValue === value}
+	selected={selected !== undefined ? selected : selectedValue.value?.includes(value)}
 	data-option-label={label}
 	{disabled}
 	onclick={handleOnClick}

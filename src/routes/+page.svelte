@@ -110,7 +110,7 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>listbox</td>
 				<td></td>
 			</tr>
