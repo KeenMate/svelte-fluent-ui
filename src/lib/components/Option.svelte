@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {fluentOption, provideFluentDesignSystem} from "@fluentui/web-components"
 	import {getContext} from "svelte"
-	import type {ComboboxSelectedValueSvelteContext} from "../types/combobox.js"
+	import type {SelectedOptionSvelteContext} from "../types/combobox.js"
 
 	provideFluentDesignSystem().register(
 		fluentOption()
@@ -26,7 +26,7 @@
 		    children,
 	    }: Props = $props()
 
-	const selectedValue = getContext<ComboboxSelectedValueSvelteContext>("selectedValue")
+	const selectedValue = getContext<SelectedOptionSvelteContext>("selected-option")
 
 	function handleOnClick(ev) {
 		if (disabled) {
@@ -37,7 +37,7 @@
 			ev,
 			$selectedValue
 		})
-		$selectedValue = value
+		$selectedValue = [value]
 
 		onClick?.(ev)
 	}

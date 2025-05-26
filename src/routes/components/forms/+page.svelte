@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		Checkbox,
+		Checkbox, Listbox,
 		Option, Radio, RadioGroup,
 		TextField,
 	} from "$lib/index.js"
@@ -10,6 +10,7 @@
 	let comboboxSelectedValue: string = $state("")
 	let checkboxValue: boolean = $state(false)
 	let radioValue: string | null = $state("option_4")
+	let listboxValue: string | null = $state(null)
 </script>
 
 <div class="forms">
@@ -144,6 +145,18 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<div class="component-section">
+			<div class="component-title">Listboxes</div>
+
+			<div class="grid">
+				<Listbox bind:value={listboxValue}>
+					<Option value="listbox-option-1">Option 1</Option>
+					<Option value="listbox-option-2">Option 2</Option>
+					<Option value="listbox-option-3">Option 3</Option>
+				</Listbox>
 			</div>
 		</div>
 	</div>

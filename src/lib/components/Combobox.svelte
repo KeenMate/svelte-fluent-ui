@@ -6,7 +6,7 @@
 	import type { OptionItem, SelectedValue, SlotType } from "../types/index.js";
 	import Option from "$lib/components/Option.svelte";
 	import { setContext, untrack } from "svelte";
-	import type { ComboboxSelectedValueSvelteContext } from "../types/combobox.js";
+	import type { SelectedOptionSvelteContext } from "../types/combobox.js";
 	import { writable } from "svelte/store";
 
 	provideFluentDesignSystem().register(fluentCombobox());
@@ -47,8 +47,8 @@
 	}: Props = $props();
 
 	const selectedValue = writable<SelectedValue>(value);
-	setContext<ComboboxSelectedValueSvelteContext>(
-		"selectedValue",
+	setContext<SelectedOptionSvelteContext>(
+		"selected-option",
 		selectedValue,
 	);
 

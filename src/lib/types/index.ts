@@ -1,6 +1,6 @@
 export type SlotType = any
 
-export type SelectedValue = OptionItem["value"] | null
+export type SelectedValue = OptionItem["value"][] | undefined | null
 
 export type OptionItem = {
 	value: string

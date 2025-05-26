@@ -1,3 +1,9 @@
 fluent-combobox {
 	min-width: unset;
 }
+
+fluent-listbox {
+	&:focus-within:not([disabled]) {
+		outline: none;
+	}
+}
