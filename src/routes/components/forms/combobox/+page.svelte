@@ -10,8 +10,9 @@
 	];
 
 	let value = $state("");
-	let value1 = $state("");
-	let combobox1: HTMLElement;
+	let value1: string | null = $state(null);
+	let gpuSelectedValue: string | null = $state(null)
+	let comboboxSelectedValue: string | null = $state(null)
 </script>
 
 <div class="header">
@@ -208,5 +209,28 @@
 			options={stOptions}
 		></Combobox>
 		Selected value: {value1}
+	</p>
+
+
+
+	<h3>With autocomplete</h3>
+	<p>
+		<Combobox id="combo-2" bind:value={gpuSelectedValue} autocomplete="both" placeholder="Select a graphics card">
+			<Option value="1">GTX 1060</Option>
+			<Option value="2">GTX 1070</Option>
+			<Option value="3">GTX 1080</Option>
+			<Option value="4">GTX 1090</Option>
+		</Combobox>
+		Selected value: {gpuSelectedValue}
+	</p>
+
+	<h3>Disabled</h3>
+	<p>
+		<Combobox id="combo-disabled" bind:value={comboboxSelectedValue} disabled placeholder="Select an option">
+			<Option value="1">Option 1</Option>
+			<Option value="2">Option 2</Option>
+			<Option value="3">Option 3</Option>
+		</Combobox>
+		Selected value: {comboboxSelectedValue}
 	</p>
 </div>

@@ -15,6 +15,7 @@
 		selected?: boolean
 		disabled?: boolean
 		children: any
+		[prop: string]: any
 	}
 
 	let {
@@ -24,6 +25,7 @@
 		    selected = undefined,
 		    onClick  = undefined,
 		    children,
+		    ...restProps
 	    }: Props = $props()
 
 	const selectedValue = getContext<SelectedOptionSvelteContext>("selected-options")
@@ -48,6 +50,7 @@
 	selected={selected !== undefined ? selected : selectedValue.value?.includes(value)}
 	data-option-label={label}
 	{disabled}
+	{...restProps}
 	onclick={handleOnClick}
 >
 	{@render children()}

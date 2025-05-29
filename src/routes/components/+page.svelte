@@ -35,7 +35,7 @@
 
 		<div class="component-section">
 			<div class="component-title">
-				<a href="/components/buttons">
+				<a href="/components/button">
 					Buttons
 				</a>
 			</div>
@@ -61,36 +61,26 @@
 					Navigation / Layout
 				</a>
 			</div>
-			<div>
-				<span>Selected: {expandedAccordionItem}</span> <br>
 
-				<Button onClick={() => expandedAccordionItem = null}>
-					Reset
-				</Button>
-			</div>
+			<p>
+				Accordion, Stack, Page&nbsp;layout and the rest&mldr;
+			</p>
+			<!-- note: takes too much space for just a simple tile navigation item -->
+			<!--<div>-->
+			<!--	<span>Selected: {expandedAccordionItem}</span> <br>-->
 
-			<div>
-				<Accordion bind:value={expandedAccordionItem}>
-					<AccordionItem id="my-accordion-1" header="Item 1">Content 1</AccordionItem>
-					<AccordionItem id="my-accordion-2" header="Item 2">Content 2</AccordionItem>
-					<AccordionItem id="my-accordion-3" header="Item 3">Content 3</AccordionItem>
-				</Accordion>
-			</div>
-		</div>
+			<!--	<Button onClick={() => expandedAccordionItem = null}>-->
+			<!--		Reset-->
+			<!--	</Button>-->
+			<!--</div>-->
 
-		<div class="component-section">
-			<div class="component-title">Miscellaneous</div>
-			<div class="grid">
-				<Badge appearance="filled" color="danger">Badge 2</Badge>
-				<Badge appearance="accent">New</Badge>
-				<!-- <CounterBadge count="5" /> -->
-				<ProgressBar value="75" />
-				<!-- <Spinner /> -->
-				<Tooltip content="Helpful info">
-					<Button>Hover me</Button>
-				</Tooltip>
-				<!-- <MessageBar>Important message here</MessageBar> -->
-			</div>
+			<!--<div>-->
+			<!--	<Accordion bind:value={expandedAccordionItem}>-->
+			<!--		<AccordionItem id="my-accordion-1" header="Item 1">Content 1</AccordionItem>-->
+			<!--		<AccordionItem id="my-accordion-2" header="Item 2">Content 2</AccordionItem>-->
+			<!--		<AccordionItem id="my-accordion-3" header="Item 3">Content 3</AccordionItem>-->
+			<!--	</Accordion>-->
+			<!--</div>-->
 		</div>
 
 		<div class="component-section">
@@ -122,13 +112,15 @@
 		<div class="component-section">
 			<div class="component-title">Text, Media, Misc</div>
 			<div class="grid">
-				<!-- <Text>Sample text</Text>
-				<Label for="input">Label</Label>
-				<Image src="https://via.placeholder.com/100" alt="Placeholder" />
-				<Link href="https://example.com">Example Link</Link>
-				<Field label="Name">
-					<TextInput id="name" />
-				</Field> -->
+				<Badge appearance="filled" color="danger">Badge 2</Badge>
+				<Badge appearance="accent">New</Badge>
+				<!-- <CounterBadge count="5" /> -->
+				<ProgressBar value="75" />
+				<!-- <Spinner /> -->
+				<Button id="hover-button">Hover me</Button>
+				<Tooltip anchor="hover-button">
+					Helpful info
+				</Tooltip>
 			</div>
 		</div>
 

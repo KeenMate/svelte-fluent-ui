@@ -28,6 +28,7 @@
 		end?: SlotType
 		children?: SlotType
 		onClick?: (ev: MouseEvent) => void
+		[prop: string]: any
 	}
 
 	let {
@@ -47,6 +48,7 @@
 		    end            = undefined,
 		    children       = undefined,
 		    onClick       = undefined,
+		...restProps
 	    }: Props = $props()
 </script>
 
@@ -62,6 +64,7 @@
 	{formnovalidate}
 	{formtarget}
 	{disabled}
+	{...restProps}
 	onclick={onClick}
 >
 	<template slot="start">

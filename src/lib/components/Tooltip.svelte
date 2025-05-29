@@ -2,8 +2,7 @@
 	import { fluentTooltip, fluentAnchoredRegion, provideFluentDesignSystem } from "@fluentui/web-components";
 	import type { SlotType } from "../types/index.js";
 
-	provideFluentDesignSystem().register(fluentAnchoredRegion());
-	provideFluentDesignSystem().register(fluentTooltip());
+	provideFluentDesignSystem().register(fluentTooltip(), fluentAnchoredRegion());
 
 	type Props = {
 		class?: string;
