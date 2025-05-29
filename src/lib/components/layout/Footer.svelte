@@ -13,12 +13,12 @@
 	    }: Props = $props()
 </script>
 
-<header
+<footer
 	{...restProps}
 	style="height: 50px; {restProps?.style || ''}"
-	class="header {restProps?.class || ''}"
+	class="footer {restProps?.class || ''}"
 >
 	<div class="header-gutters">
 		{@render children?.()}
 	</div>
-</header>
+</footer>

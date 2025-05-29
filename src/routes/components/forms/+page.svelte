@@ -4,8 +4,8 @@
 		Checkbox, Listbox,
 		Option, Radio, RadioGroup,
 		TextField,
+		Combobox
 	} from "$lib/index.js"
-	import Combobox from "$lib/components/Combobox.svelte"
 
 	let gpuSelectedValue: string[] | null | undefined = $state(null)
 	let comboboxSelectedValue: string[] | null | undefined = $state(null)

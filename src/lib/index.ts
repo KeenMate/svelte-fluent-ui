@@ -1,3 +1,4 @@
+export * from "./components/layout/index.js"
 export {default as AccordionItem} from "./components/AccordionItem.svelte"
 export {default as Accordion} from "./components/Accordion.svelte"
 export {default as AnchorButton} from "./components/Anchor.svelte"

@@ -1,13 +1,9 @@
 <script lang="ts">
 	import {
 		Accordion, AccordionItem, Button,
-		Checkbox,
-		Option, Radio, RadioGroup,
-		TextField,
 	} from "$lib/index.js"
-	import Combobox from "$lib/components/Combobox.svelte"
 
-	let expandedAccordionItem: string | null = $state("my-accordion-3")
+	let expandedAccordionItem: string | null        = $state("my-accordion-3")
 	let expandedAccordionItemMulti: string[] | null = $state([
 		"my-multi-accordion-1",
 		"my-multi-accordion-2"

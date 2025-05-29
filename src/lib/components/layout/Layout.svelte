@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import type {SlotType} from "../../types/index.js"
 
 	type Props = {
@@ -13,12 +12,9 @@
 	    }: Props = $props()
 </script>
 
-<header
+<div
 	{...restProps}
-	style="height: 50px; {restProps?.style || ''}"
-	class="header {restProps?.class || ''}"
+	class="layout {restProps?.class || ''}"
 >
-	<div class="header-gutters">
-		{@render children?.()}
-	</div>
-</header>
+	{@render children?.()}
+</div>

@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-
-	import Combobox from "$lib/components/Combobox.svelte";
-	import { Option } from "$lib/index.js";
+	import { Combobox, Option } from "$lib/index.js";
 
 	const stOptions = [
 		{ value: "ds9", label: "Deep Space 9" },
