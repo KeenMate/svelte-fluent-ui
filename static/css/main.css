@@ -295,3 +295,7 @@ table.member-table tbody tr.action {
 	background-color: #271033;
 	color: white;
 }
+
+table.member-table tbody tr > td:not(:last-child) {
+	font-family: monospace;
+}
