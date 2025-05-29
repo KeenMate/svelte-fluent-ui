@@ -1,18 +1,5 @@
 <script lang="ts">
 	import Tooltip from "$lib/components/Tooltip.svelte"
-	import {onMount} from "svelte"
-
-	let tooltipVisible = $state(false)
-
-	onMount(() => {
-		setTimeout(() => {
-			const tooltip = document.querySelector("fluent-tooltip")
-			const anchor = tooltip?.anchor
-			console.log("Tooltip element:", tooltip)
-			console.log("Tooltip anchor:", anchor)
-			console.log("Resolved anchor element:", document.getElementById(anchor))
-		}, 500)
-	})
 </script>
 
 <div class="header">
@@ -84,14 +71,31 @@
 	<h3>Tooltip on hover</h3>
 	<p>
 		<span
-			id="hover-target"
-			on:mouseenter={() => (tooltipVisible = true)}
-			on:mouseleave={() => (tooltipVisible = false)}
-		>
-			Hover
+			id="hover-target">
+			Top tooltip
 		</span>
 
-		<Tooltip anchor="hover-target" visible={tooltipVisible} delay={100} autoUpdateMode="auto"
+		<Tooltip anchor="hover-target" autoUpdateMode="auto"
+			>Testovaci text</Tooltip
+		>
+	</p>
+	<p>
+		<span
+			id="hover-target2">
+			Right tooltip
+		</span>
+
+		<Tooltip anchor="hover-target2" autoUpdateMode="auto" position="end"
+			>Testovaci text</Tooltip
+		>
+	</p>
+	<p>
+		<span
+			id="hover-target3">
+			Always active
+		</span>
+
+		<Tooltip anchor="hover-target3" autoUpdateMode="auto" position="end" visible={true}
 			>Testovaci text</Tooltip
 		>
 	</p>

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { fluentTooltip, provideFluentDesignSystem } from "@fluentui/web-components";
+	import { fluentTooltip, fluentAnchoredRegion, provideFluentDesignSystem } from "@fluentui/web-components";
 	import type { SlotType } from "../types/index.js";
 
+	provideFluentDesignSystem().register(fluentAnchoredRegion());
 	provideFluentDesignSystem().register(fluentTooltip());
 
 	type Props = {
@@ -16,6 +17,7 @@
 		verticalViewportLock?: boolean;
 		children?: SlotType;
 		maxWidth?: string;
+		[prop:string]:any;
 	};
 
 	let {
