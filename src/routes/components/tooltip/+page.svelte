@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Tooltip from "$lib/components/Tooltip.svelte"
+	import {Tooltip} from "$lib/index.js"
 </script>
 
 <div class="header">

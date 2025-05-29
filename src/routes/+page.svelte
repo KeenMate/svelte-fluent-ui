@@ -74,7 +74,7 @@
 				<td>color</td>
 				<td></td>
 			</tr>
-			<tr>
+			<tr>	
 				<td>Initial tests</td>
 				<td><a href="/components/combobox">combobox</a></td>
 				<td></td>
@@ -209,8 +209,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>tooltip</td>
+				<td>Initial tests</td>
+				<td><a href="/components/tooltip">tooltip</a></td>
 				<td></td>
 			</tr>
 			<tr>
