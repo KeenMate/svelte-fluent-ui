@@ -95,8 +95,8 @@
 			Always active
 		</span>
 
-		<Tooltip anchor="hover-target3" autoUpdateMode="auto" position="end" visible={true}
-			>Testovaci text</Tooltip
+		<Tooltip anchor="hover-target3" autoUpdateMode="anchor" position="end" visible={true}
+			><bold> Tenhle text je jinaci a bold nejde</bold></Tooltip
 		>
 	</p>
 </div>
