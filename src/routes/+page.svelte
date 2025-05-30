@@ -130,8 +130,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>number-field</td>
+				<td>Initial tests</td>
+				<td><a href="/components/number-field">number-field</a></td>
 				<td></td>
 			</tr>
 			<tr>
