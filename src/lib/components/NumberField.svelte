@@ -44,8 +44,8 @@
 	}: Props = $props();
 
 	step ??= 1;
-	min ??= 0;
-	max ??= 1000;
+	min ??= -Infinity;
+	max ??= Infinity;
 
 	let element: HTMLElement & {
 		value: string;

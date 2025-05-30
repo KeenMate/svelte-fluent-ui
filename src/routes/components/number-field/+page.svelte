@@ -55,7 +55,7 @@
 	<h2 class="content-subhead">Examples</h2>
 
 	<h3>Age number field</h3>
-	<NumberField label="Age" placeholder="Enter age" max={100} />
+	<NumberField label="Age" placeholder="Enter age" />
 
 	<h3>With min=1, max=20, and step=5</h3>
 	<NumberField label="Step 5" min={1} max={20} step={5} value={testValue} />
