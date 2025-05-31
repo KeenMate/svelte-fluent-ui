@@ -184,8 +184,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>switch</td>
+				<td>Initial Tests</td>
+				<td><a href="/components/switch">switch</a></td>
 				<td></td>
 			</tr>
 			<tr>
