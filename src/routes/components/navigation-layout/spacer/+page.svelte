@@ -37,13 +37,13 @@
 				<tr class="slot">
 					<td colspan="5">Slots</td>
 				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
+				<!--<tr class="slot">-->
+				<!--	<td></td>-->
+				<!--	<td>children</td>-->
+				<!--	<td>any</td>-->
+				<!--	<td>undefined</td>-->
+				<!--	<td></td>-->
+				<!--</tr>-->
 				</tbody>
 			</table>
 
