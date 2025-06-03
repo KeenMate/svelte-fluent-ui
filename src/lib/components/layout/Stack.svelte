@@ -32,7 +32,7 @@
 		`stack-${orientation?.toLowerCase() === "vertical" ? 'vertical' : 'horizontal'}`,
 		verticalAlign && `vertical-align-${verticalAlign.toLowerCase()}`,
 		horizontalAlign && `horizontal-align-${horizontalAlign.toLowerCase()}`,
-		...restProps.class
+		restProps.class
 	]
 			.filter(x => x)
 			.join(" ")
