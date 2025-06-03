@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NumberField } from "$lib/index.js"
+	import { NumberField } from "$lib"
 
 	let testValue="10";
 </script>

@@ -141,7 +141,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td><a href="/components/number-field">number-field</a></td>
+				<td><a href="/components/forms/number-field">number-field</a></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -205,7 +205,7 @@
 			</tr>
 			<tr>
 				<td>Initial Tests</td>
-				<td><a href="/components/switch">switch</a></td>
+				<td><a href="/components/forms/switch">switch</a></td>
 				<td></td>
 			</tr>
 			<tr>
