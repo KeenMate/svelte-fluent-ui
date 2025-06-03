@@ -22,50 +22,50 @@ fluent-listbox {
 		flex-direction: column-reverse;
 	}
 
-	.horizontal-align-left {
-		align-items: flex-end;
+	&.horizontal-align-left {
+		align-items: flex-start;
 	}
 
-	.horizontal-align-start {
-		align-items: flex-end;
+	&.horizontal-align-start {
+		align-items: flex-start;
 	}
 
-	.horizontal-align-center {
+	&.horizontal-align-center {
 		align-items: center;
 	}
 
-	.horizontal-align-right {
-		align-items: flex-start;
+	&.horizontal-align-right {
+		align-items: flex-end;
 	}
 
-	.horizontal-align-end {
-		align-items: flex-start;
+	&.horizontal-align-end {
+		align-items: flex-end;
 	}
 
-	.horizontal-align-stretch {
+	&.horizontal-align-stretch {
 		align-items: stretch;
 	}
 
 	//.horizontal-align-space-between {
 	//}
 
-	.vertical-align-top {
+	&.vertical-align-top {
 		justify-content: flex-start;
 	}
 
-	.vertical-align-center {
+	&.vertical-align-center {
 		justify-content: center;
 	}
 
-	.vertical-align-bottom {
+	&.vertical-align-bottom {
 		justify-content: flex-end;
 	}
 
-	.vertical-align-stretch {
+	&.vertical-align-stretch {
 		justify-content: stretch;
 	}
 
-	.vertical-align-space-between {
+	&.vertical-align-space-between {
 		justify-content: space-between;
 	}
 
@@ -78,47 +78,47 @@ fluent-listbox {
 		flex-direction: row-reverse;
 	}
 
-	.horizontal-align-left {
+	&.horizontal-align-left {
 		justify-content: left;
 	}
 
-	.horizontal-align-start {
+	&.horizontal-align-start {
 		justify-content: flex-start;
 	}
 
-	.horizontal-align-center {
+	&.horizontal-align-center {
 		justify-content: center;
 	}
 
-	.horizontal-align-right {
+	&.horizontal-align-right {
 		justify-content: right;
 	}
 
-	.horizontal-align-end {
+	&.horizontal-align-end {
 		justify-content: flex-end;
 	}
 
-	.horizontal-align-stretch {
+	&.horizontal-align-stretch {
 		justify-content: stretch;
 	}
 
-	.horizontal-align-space-between {
+	&.horizontal-align-space-between {
 		justify-content: space-between;
 	}
 
-	.vertical-align-top {
+	&.vertical-align-top {
 		align-items: flex-start;
 	}
 
-	.vertical-align-center {
+	&.vertical-align-center {
 		align-items: center;
 	}
 
-	.vertical-align-bottom {
+	&.vertical-align-bottom {
 		align-items: flex-end;
 	}
 
-	.vertical-align-stretch {
+	&.vertical-align-stretch {
 		align-items: stretch;
 	}
 
