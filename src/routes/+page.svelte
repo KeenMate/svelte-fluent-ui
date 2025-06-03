@@ -74,7 +74,7 @@
 				<td>color</td>
 				<td></td>
 			</tr>
-			<tr>	
+			<tr>
 				<td>Initial tests</td>
 				<td><a href="/components/combobox">combobox</a></td>
 				<td></td>
@@ -107,6 +107,11 @@
 			<tr>
 				<td></td>
 				<td>horizontal-scroll</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/navigation-layout/layout">layout</a></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -176,6 +181,11 @@
 			<tr>
 				<td></td>
 				<td>slider-label</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/navigation-layout/stack">stack</a></td>
 				<td></td>
 			</tr>
 			<tr>
