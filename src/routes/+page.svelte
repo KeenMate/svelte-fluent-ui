@@ -40,6 +40,11 @@
 				</td>
 			</tr>
 			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/navigation-layout/body-content">body-content</a></td>
+				<td></td>
+			</tr>
+			<tr>
 				<td></td>
 				<td>breadcrumb</td>
 				<td></td>

@@ -81,6 +81,13 @@
 				</a>
 			</div>
 		</div>
+		<div class="component-section">
+			<div class="component-title">
+				<a href="/components/navigation-layout/body-content">
+					BodyContent
+				</a>
+			</div>
+		</div>
 	</div>
 </div>
 
