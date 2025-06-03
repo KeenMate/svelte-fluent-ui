@@ -185,6 +185,11 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
+				<td><a href="/components/navigation-layout/spacer">spacer</a></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Initial tests</td>
 				<td><a href="/components/navigation-layout/stack">stack</a></td>
 				<td></td>
 			</tr>

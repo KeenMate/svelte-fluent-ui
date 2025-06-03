@@ -74,6 +74,13 @@
 				</a>
 			</div>
 		</div>
+		<div class="component-section">
+			<div class="component-title">
+				<a href="/components/navigation-layout/spacer">
+					Spacer
+				</a>
+			</div>
+		</div>
 	</div>
 </div>
 
