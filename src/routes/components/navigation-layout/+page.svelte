@@ -67,6 +67,13 @@
 				</a>
 			</div>
 		</div>
+		<div class="component-section">
+			<div class="component-title">
+				<a href="/components/navigation-layout/stack">
+					Stack
+				</a>
+			</div>
+		</div>
 	</div>
 </div>
 
