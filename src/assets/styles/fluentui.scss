@@ -1,3 +1,7 @@
+@import "./fluent-ui/reboot";
+@import "fluent-ui/constructed-stylesheet";
+@import "./fluent-ui/fluent-calendar";
+
 fluent-combobox {
 	min-width: unset;
 }

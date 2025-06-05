@@ -66,6 +66,15 @@
 			</tr>
 			<tr>
 				<td></td>
+				<td>
+					<a href="/components/forms/calendar">
+						calendar
+					</a>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td></td>
 				<td>card</td>
 				<td></td>
 			</tr>
