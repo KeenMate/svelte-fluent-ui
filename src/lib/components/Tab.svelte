@@ -1,18 +1,115 @@
-<script lang="ts">
-	import {fluentTab, provideFluentDesignSystem} from "@fluentui/web-components"
+<!-- <script lang="ts">
+	import { fluentTab, fluentTabPanel, provideFluentDesignSystem } from "@fluentui/web-components";
+	import type { SlotType } from "../types/index.js";
 
-	provideFluentDesignSystem().register(
-		fluentTab()
-	)
+	provideFluentDesignSystem().register(fluentTab(), fluentTabPanel());
 
 	type Props = {
+		class?: string;
+		style?: string;
+		id?: string;
+		disabled?: boolean;
+		ariaLabel?: string;
+		label?: string;
+		icon?: SlotType;
+		header?: SlotType;
+		content?: SlotType;
+		childContent?: SlotType;
+		loadingContent?: SlotType;
+		labelEditable?: boolean;
+		showClose?: boolean;
+		overflow?: string;
+		visible?: boolean;
+		onCloseClick?: () => void;
+		[prop: string]: any;
+	};
 
-	}
-
-	let {}: Props = $props()
+	let {
+		class: className = "",
+		style = "",
+		id = undefined,
+		disabled = undefined,
+		ariaLabel = undefined,
+		label = undefined,
+		icon = undefined,
+		header = undefined,
+		content = undefined,
+		childContent = undefined,
+		loadingContent = undefined,
+		labelEditable = false,
+		showClose = false,
+		overflow = undefined,
+		visible = true,
+		onCloseClick = undefined,
+		...restProps
+	}: Props = $props();
 </script>
 
-<fluent-tab>
-	<!-- todo: finish Tab -->
-</fluent-tab>
+{#if visible}
+	<fluent-tab
+		class={className}
+		{style}
+		{id}
+		{disabled}
+		aria-label={ariaLabel || label}
+		{overflow}
+		{...restProps}
+	>
+		{#if icon}
+			{@render icon?.()}
+		{/if}
 
+		{#if header}
+			{@render header?.()}
+		{:else if labelEditable}
+			<span
+				contenteditable="true"
+				autocapitalize="off"
+				spellcheck="false"
+				title="Click to edit this tab name"
+				style="padding: 3px 5px;"
+			>
+				{label}
+			</span>
+		{:else if label}
+			{label}
+		{/if}
+
+		{#if showClose}
+			<fluent-icon
+				value="dismiss"
+				width="12px"
+				class="fluent-tab-close"
+				title="Close"
+				on:click={onCloseClick}
+			/>
+		{/if}
+	</fluent-tab>
+
+	<fluent-tab-panel style={style} class={className} id={`${id}-panel`}>
+		{@render content?.()}
+		{@render childContent?.()}
+	</fluent-tab-panel>
+{/if} -->
+
+
+<script lang="ts">
+	import { fluentTab, fluentTabPanel, provideFluentDesignSystem } from "@fluentui/web-components";
+	provideFluentDesignSystem().register(fluentTab(), fluentTabPanel());
+
+	type Props = {
+		id : string;
+		label? : string;
+		content? : string;
+	};
+
+	let {
+		id = "",
+		label = "",
+		content = "",
+		...restProps
+	}: Props = $props();
+</script>
+
+<fluent-tab id={id}>{label}</fluent-tab>
+<fluent-tab-panel id={`${id}-panel`}>{content}</fluent-tab-panel>
