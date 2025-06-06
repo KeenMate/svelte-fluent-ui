@@ -74,8 +74,12 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>card</td>
+				<td>Initial tests</td>
+				<td>
+					<a href="/components/card">
+						card
+					</a>
+				</td>
 				<td></td>
 			</tr>
 			<tr>

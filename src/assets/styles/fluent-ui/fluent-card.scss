@@ -1,0 +1,9 @@
+fluent-card {
+	padding: calc(var(--design-unit)* 5px);
+
+	&.area-restricted {
+		content-visibility: visible;
+		contain: none;
+	}
+
+}
