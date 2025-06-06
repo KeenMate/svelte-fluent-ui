@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Switch } from "$lib";
+	import { Switch } from "$lib/index.js";
 	let switchState = false;
 </script>
 

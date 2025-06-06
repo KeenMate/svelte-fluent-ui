@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { fluentTabs, provideFluentDesignSystem } from "@fluentui/web-components";
 	import type { SlotType } from "../types/index.js";
 
@@ -65,26 +65,4 @@
 			<fluent-menu-item label={item.label} onclick={() => item.onClick?.()} />
 		{/each}
 	</fluent-menu>
-{/if} -->
-
-<script lang="ts">
-	import {
-		provideFluentDesignSystem,
-		fluentTabs,
-		fluentTab,
-		fluentTabPanel
-	} from '@fluentui/web-components';
-
-	provideFluentDesignSystem().register(
-		fluentTabs(),
-		fluentTab(),
-		fluentTabPanel()
-	);
-
-	export let id: string;
-	export let activeId: string;
-</script>
-
-<fluent-tabs id={id} activeid={activeId}>
-	<slot />
-</fluent-tabs>
+{/if}

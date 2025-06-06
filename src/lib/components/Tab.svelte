@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { fluentTab, fluentTabPanel, provideFluentDesignSystem } from "@fluentui/web-components";
 	import type { SlotType } from "../types/index.js";
 
@@ -48,7 +48,7 @@
 {#if visible}
 	<fluent-tab
 		class={className}
-		{style}
+		style={`margin-right: 0.5rem; ${style}`}
 		{id}
 		{disabled}
 		aria-label={ariaLabel || label}
@@ -90,26 +90,91 @@
 		{@render content?.()}
 		{@render childContent?.()}
 	</fluent-tab-panel>
-{/if} -->
+{/if}
 
-
-<script lang="ts">
+<!-- <script lang="ts">
 	import { fluentTab, fluentTabPanel, provideFluentDesignSystem } from "@fluentui/web-components";
+	import type { SlotType } from "../types/index.js";
+
 	provideFluentDesignSystem().register(fluentTab(), fluentTabPanel());
 
 	type Props = {
-		id : string;
-		label? : string;
-		content? : string;
+		class?: string;
+		style?: string;
+		id?: string;
+		disabled?: boolean;
+		ariaLabel?: string;
+		label?: string;
+		icon?: SlotType;
+		header?: SlotType;
+		content?: SlotType;
+		loadingContent?: SlotType;
+		labelEditable?: boolean;
+		showClose?: boolean;
+		overflow?: string;
+		visible?: boolean;
+		onCloseClick?: () => void;
+		[prop: string]: any;
 	};
 
 	let {
-		id = "",
-		label = "",
-		content = "",
+		class: className = "",
+		style = "",
+		id = undefined,
+		disabled = undefined,
+		ariaLabel = undefined,
+		label = undefined,
+		icon = undefined,
+		header = undefined,
+		content = undefined,
+		loadingContent = undefined,
+		labelEditable = false,
+		showClose = false,
+		overflow = undefined,
+		visible = true,
+		onCloseClick = undefined,
 		...restProps
 	}: Props = $props();
 </script>
 
-<fluent-tab id={id}>{label}</fluent-tab>
-<fluent-tab-panel id={`${id}-panel`}>{content}</fluent-tab-panel>
+{#if visible}
+	<fluent-tab
+		class={className}
+		{style}
+		{id}
+		{disabled}
+		aria-label={ariaLabel || label}
+		{overflow}
+		{...restProps}
+	>
+		
+		{#if labelEditable}
+			<span
+				contenteditable="true"
+				autocapitalize="off"
+				spellcheck="false"
+				title="Click to edit this tab name"
+				style="padding: 3px 5px;"
+			>
+				{label}
+			</span>
+		{:else if label}
+			{label}
+		{/if}
+
+		{#if showClose}
+			<fluent-icon
+				value="dismiss"
+				width="12px"
+				class="fluent-tab-close"
+				title="Close"
+				on:click={onCloseClick}
+			/>
+		{/if}
+	</fluent-tab>
+
+	<fluent-tab-panel style={style} class={className} id={`${id}-panel`}>
+		<slot />
+	</fluent-tab-panel>
+{/if} -->
+
