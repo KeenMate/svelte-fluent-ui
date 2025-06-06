@@ -263,17 +263,17 @@
 			</ul>
 		</div>
 		<div class="tw:flex-1">
-			<h3>Years calendar</h3>
-			<p>
-				Selected {value.toLocaleDateString()}
-			</p>
-			<Calendar
-				bind:pickerMonth
-				{value}
-				view="years"
-				disabledDateFunc={getIsDateDisabled}
-				{onDateSelected}
-			/>
+			<!--<h3>Years calendar</h3>-->
+			<!--<p>-->
+			<!--	Selected {value.toLocaleDateString()}-->
+			<!--</p>-->
+			<!--<Calendar-->
+			<!--	bind:pickerMonth-->
+			<!--	{value}-->
+			<!--	view="years"-->
+			<!--	disabledDateFunc={getIsDateDisabled}-->
+			<!--	{onDateSelected}-->
+			<!--/>-->
 		</div>
 	</div>
 </div>
