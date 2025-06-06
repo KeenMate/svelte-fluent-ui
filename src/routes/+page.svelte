@@ -18,7 +18,11 @@
 			<tbody>
 			<tr>
 				<td>Initial tests</td>
-				<td>accordion</td>
+				<td>
+					<a href="/components/navigation-layout/accordion">
+						accordion
+					</a>
+				</td>
 				<td></td>
 			</tr>
 			<tr>
@@ -56,16 +60,13 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>button</td>
+				<td>
+					<a href="/components/button">button</a>
+				</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>calendar</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>
 					<a href="/components/forms/calendar">
 						calendar
