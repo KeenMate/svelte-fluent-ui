@@ -1,15 +1,12 @@
 <script lang="ts">
 	import {fluentButton, provideFluentDesignSystem} from "@fluentui/web-components"
+	import type {
+		SlotType,
+	} from "../types/index.js"
 
 	provideFluentDesignSystem().register(
 		fluentButton()
 	)
-	import type {
-		SlotType,
-	} from "../types/index.js"
-	import type {
-		ButtonAppearance,
-	} from "@fluentui/web-components"
 
 	type Props = {
 		appearance?: string
