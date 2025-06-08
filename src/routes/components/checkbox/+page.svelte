@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-
 	import Checkbox from "$lib/components/Checkbox.svelte";
 
 	let value:boolean = $state();

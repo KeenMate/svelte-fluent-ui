@@ -1,16 +1,12 @@
 <script lang="ts">
 	import {
-		Accordion,
-		AccordionItem,
 		Badge,
-		Button, DataGrid,
+		Button,
 		Dialog,
 		Divider,
 		Menu,
 		ProgressBar, TextField,
 		Tooltip,
-		Tree,
-		TreeItem
 	} from "$lib/index.js"
 	import {ButtonAppearance} from "$lib/fluent-ui/constants/button.js"
 

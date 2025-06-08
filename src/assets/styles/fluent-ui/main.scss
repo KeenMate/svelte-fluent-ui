@@ -1,7 +1,7 @@
-@import "reboot";
-@import "constructed-stylesheet";
-@import "fluent-calendar";
-@import "fluent-card";
+@forward "reboot";
+@forward "constructed-stylesheet";
+@forward "fluent-calendar";
+@forward "fluent-card";
 
 fluent-combobox {
 	min-width: unset;

@@ -9,6 +9,8 @@
 		{ value: "tos", label: "The Original series", disabled: true }
 	];
 
+	let combobox1: HTMLElement
+
 	let value = $state("");
 	let value1: string | null = $state(null);
 	let gpuSelectedValue: string | null = $state(null)

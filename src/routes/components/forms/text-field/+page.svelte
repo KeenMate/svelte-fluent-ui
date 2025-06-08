@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {onMount} from "svelte"
-
-	import TextField from "$lib/components/TextField.svelte"
+	import {TextField} from "$lib/index.js"
 
 	let textValue = $state("")
 	let textField: HTMLElement & {select: Function}

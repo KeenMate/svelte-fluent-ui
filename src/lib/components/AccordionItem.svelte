@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {fluentAccordionItem, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {FluentAccordionSvelteContext, SlotType} from "../types/index.js"
-	import {getContext, untrack} from "svelte"
+	import {getContext} from "svelte"
 
 	provideFluentDesignSystem().register(
 		fluentAccordionItem()

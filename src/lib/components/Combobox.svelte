@@ -7,7 +7,6 @@
 	import Option from "$lib/components/Option.svelte"
 	import {setContext, untrack} from "svelte"
 	import type {SelectedOptionSvelteContext, ValueType} from "../types/combobox.js"
-	import {get, type Readable, writable} from "svelte/store"
 	import {createSelectedOptions} from "../data/selected-options.svelte.js"
 
 	provideFluentDesignSystem().register(fluentCombobox())
