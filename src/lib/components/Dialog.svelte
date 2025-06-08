@@ -1,3 +1,11 @@
+<script lang="ts" module>
+	export type HTMLDialogElement = HTMLElement & {
+		show: VoidFunction
+		hide: VoidFunction
+		toggle: VoidFunction
+	}
+</script>
+
 <script lang="ts">
 	import {fluentDialog, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {SlotType} from "../types/index.js"
@@ -19,6 +27,7 @@
 		children?: SlotType
 		actions?: SlotType
 		dismissButtonText?: SlotType
+		[prop: string]: any
 	}
 
 	let {
@@ -33,6 +42,7 @@
 		    children = undefined,
 		    actions = undefined,
 		    dismissButtonText = undefined,
+		...restProps
 	    }: Props = $props()
 
 	let element: HTMLElement & {
@@ -48,6 +58,7 @@
 		visible = true
 		element.show()
 	}
+
 	export function hide() {
 		if (!element) {
 			return
@@ -56,10 +67,24 @@
 		visible = false
 		element.hide()
 	}
+
+	export function toggle() {
+		if (!element) {
+			return
+		}
+
+		visible = !visible
+		if (visible) {
+			element.show()
+		} else {
+			element.hide()
+		}
+	}
 </script>
 
 <fluent-dialog
 	bind:this={element}
+	{...restProps}
 	{modal}
 	hidden={!visible}
 	{trapFocus}
