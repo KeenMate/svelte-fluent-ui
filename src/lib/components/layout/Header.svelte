@@ -16,7 +16,7 @@
 <header
 	{...restProps}
 	style="height: 50px; {restProps?.style || ''}"
-	class="header {restProps?.class || ''}"
+	class="fluent-header {restProps?.class || ''}"
 >
 	<div class="header-gutters">
 		{@render children?.()}
