@@ -31,14 +31,14 @@
 		class="fluent-nav-link"
 		{...restProps}
 	>
-	<span class="positioning-region">
-		<span class="content-region">
-			{@render icon?.()}
+		<span class="positioning-region">
+			<span class="content-region">
+				{@render icon?.()}
 
-			<span class="fluent-nav-text">
-				{@render children?.()}
+				<span class="fluent-nav-text">
+					{@render children?.()}
+				</span>
 			</span>
 		</span>
-	</span>
 	</a>
 </NavItem>

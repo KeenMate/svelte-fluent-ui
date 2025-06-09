@@ -1,5 +1,9 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
+	import {getContext} from "svelte"
+	import type {NavGroupSvelteContext} from "../../fluent-ui/types/nav-group.js"
+	import PositioningRegion from "$lib/components/PositioningRegion.svelte"
+	import ContentRegion from "$lib/components/ContentRegion.svelte"
 
 	type Props = {
 		children?: SlotType
@@ -12,6 +16,8 @@
 		    children = undefined,
 		    ...restProps
 	    }: Props = $props()
+
+	const isInNavGroup = getContext<NavGroupSvelteContext>("nav-group")
 </script>
 
 <div
@@ -20,5 +26,14 @@
 	role="menuitem"
 	{...restProps}
 >
-	{@render children?.()}
+	{#if isInNavGroup}
+		<PositioningRegion>
+			<ContentRegion>
+				{@render children?.()}
+			</ContentRegion>
+		</PositioningRegion>
+	{:else}
+		{@render children?.()}
+	{/if}
+
 </div>

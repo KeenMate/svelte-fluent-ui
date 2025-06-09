@@ -154,6 +154,13 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td></td>
+				<td>
+					<a href="/components/navigation-layout/navigation">navigation</a>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>Initial tests</td>
 				<td><a href="/components/forms/number-field">number-field</a></td>
 				<td></td>
