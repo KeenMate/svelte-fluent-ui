@@ -1,0 +1,3616 @@
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Accordion/FluentAccordionItem.razor.rz.scp.css */
+[dir='rtl'] fluent-accordion-item::part(button) {
+	text-align: right;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Anchor/FluentAnchor.razor.rz.scp.css */
+
+fluent-anchor[appearance="hypertext"]::part(start) {
+	display: unset;
+	position: relative;
+	top: calc(var(--design-unit) * 1px);
+}
+
+fluent-anchor[appearance="hypertext"]::part(end) {
+	display: unset;
+	position: relative;
+	top: calc(var(--design-unit) * 1px);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/AnchoredRegion/FluentAnchoredRegion.razor.rz.scp.css */
+fluent-anchored-region {
+	pointer-events: none;
+}
+
+fluent-anchored-region > * {
+	pointer-events: all;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/AppBar/FluentAppBar.razor.rz.scp.css */
+.fluent-appbar {
+	--appbar-item-size: 68;
+}
+
+.fluent-appbar-item {
+	width: calc(var(--appbar-item-size) * 1px);
+	--appbar-active-indicator-width: calc(var(--design-unit) * 0.5px);
+	height: calc(var(--appbar-item-size) * 1px - 20px);
+}
+
+.fluent-appbar-item:hover {
+	background-color: var(--neutral-fill-secondary-rest);
+}
+
+// a {
+//	color: inherit;
+//	text-decoration: none;
+//	font-size: var(--type-ramp-minus-2-font-size);
+//	line-height: var(--type-ramp-minus-2-line-height);
+//	position: relative;
+//	display: inline-block;
+//	height: 100%;
+//	width: 100%;
+//}
+
+a .stack-vertical {
+	padding: calc(var(--design-unit) * 1px) calc(var(--appbar-active-indicator-width) + (var(--design-unit) * 1.5px));
+	height: 100%;
+}
+
+div[part="label"] {
+	color: var(--neutral-foreground-rest);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	text-align: center;
+}
+
+.fluent-appbar[orientation=vertical] .fluent-appbar-item:not([inpopover]) a.active::before {
+	content: "";
+	position: absolute;
+	width: var(--appbar-active-indicator-width);
+	height: 100%;
+	background-color: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	top: 0;
+	left: calc(var(--design-unit) * 0.5px);
+	right: unset;
+}
+
+.fluent-appbar[orientation=vertical] .fluent-appbar-item.fluent-appbar-item-local:not([inpopover]) a.active::before {
+	all: initial;
+}
+
+[dir='rtl'] .fluent-appbar[orientation=vertical] .fluent-appbar-item:not([inpopover]) a.active::before {
+	right: calc(var(--design-unit) * 0.5px);
+	left: unset;
+}
+
+[dir='rtl'] .fluent-appbar[orientation=vertical] .fluent-appbar-item.fluent-appbar-item-local:not([inpopover]) a.active::before {
+	all: initial;
+}
+
+.fluent-popover-content .fluent-popover-body {
+	margin-top: 0 !important;
+}
+
+.fluent-appbar-item:hover svg[part="icon-rest"],
+.fluent-appbar-item:not(:hover):not(.active) svg[part="icon-active"],
+.fluent-appbar-item:not(:hover) a.active svg[part="icon-rest"],
+.fluent-appbar-item[overflow] {
+	display: none;
+}
+
+.fluent-appbar-item:not(:hover) .active svg[part="icon-active"] {
+	display: block;
+}
+
+.fluent-appbar-item[inpopover]:not(:hover) a.active svg[part="icon-active"] {
+	display: none;
+}
+
+.fluent-appbar-item[inpopover=true]:not(:hover) a.active svg[part="icon-rest"] {
+	display: block;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/BodyContent/FluentBodyContent.razor.rz.scp.css */
+.body-content {
+	margin: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+	align-items: flex-start;
+	height: 100%;
+	width: 100%;
+	font-family: var(--body-font);
+	font-weight: normal;
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Button/FluentButton.razor.rz.scp.css */
+.loading-button {
+	position: relative;
+	height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+	display: inline-block;
+}
+
+.loading-button fluent-progress-ring {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 16px;
+	height: 16px;
+	cursor: not-allowed;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Card/FluentCard.razor.rz.scp.css */
+fluent-card {
+	padding: calc(var(--design-unit) * 5px);
+}
+
+.fluent-card-minimal-style {
+	height: var(--card-height, 100%);
+	width: var(--card-width, 100%);
+	contain: content;
+	background: var(--fill-color);
+	color: var(--neutral-foreground-rest);
+	border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-layer-rest);
+	border-radius: calc(var(--layer-corner-radius) * 1px);
+	box-shadow: var(--elevation-shadow-card-rest);
+	padding: calc(var(--design-unit) * 5px);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/CollapsibleRegion/FluentCollapsibleRegion.razor.rz.scp.css */
+.fluent-collapsible-region-container {
+	overflow: hidden;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/CounterBadge/FluentCounterBadge.razor.rz.scp.css */
+.fluentui-counterbadge-container {
+	display: inline;
+	position: relative;
+	height: 100%;
+}
+
+.fluentui-counterbadge {
+	position: absolute;
+	z-index: 10;
+	font-size: var(--type-ramp-minus-2-font-size);
+	font-weight: 600;
+	border-radius: 10000px;
+	letter-spacing: 0;
+	min-width: 10px;
+	padding: 4px 4px;
+	line-height: 1;
+	text-align: center;
+	text-indent: 0;
+	white-space: nowrap;
+	box-sizing: content-box;
+	cursor: default;
+}
+
+.fluentui-counterbadge[dot-only] {
+	width: var(--design-unit);
+	min-width: unset;
+	height: var(--design-unit);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DataGrid/Columns/ColumnBase.razor.rz.scp.css */
+.col-title {
+	padding: 6px 16px;
+	user-select: none;
+}
+
+.col-title-text {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-weight: 600;
+}
+
+th.col-justify-center svg {
+	align-content: center;
+	text-align: center;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DataGrid/FluentDataGrid.razor.rz.scp.css */
+.fluent-data-grid {
+	--fluent-data-grid-resize-handle-color: var(--accent-fill-rest);
+	--fluent-data-grid-resize-handle-width: 1px;
+	--fluent-data-grid-header-opacity: 0.5;
+	width: auto;
+	flex: 1;
+	border-collapse: collapse;
+	align-items: center;
+	height: max-content;
+	margin-bottom: 0px;
+}
+
+.fluent-data-grid.grid {
+	display: grid;
+}
+
+.grid thead,
+.grid tbody {
+	display: contents;
+}
+
+.grid tr {
+	display: contents;
+}
+
+.fluent-data-grid tbody tr .hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+.col-options, .col-resize {
+	position: absolute;
+	min-width: 250px;
+	top: 2.7rem;
+	background: var(--neutral-layer-2);
+	border: 1px solid var(--neutral-layer-3);
+	border-radius: 0.3rem;
+	box-shadow: 0 3px 8px 1px var(--neutral-layer-4);
+	padding: 1rem;
+	visibility: hidden;
+	z-index: 1;
+}
+
+[dir=rtl] .col-options {
+	left: unset;
+}
+
+.col-justify-end .col-options,
+.col-justify-right .col-options {
+	left: unset;
+	margin-right: 0.6rem;
+}
+
+[dir=rtl] .col-justify-end .col-options,
+[dir=rtl] .col-justify-right .col-options {
+	right: unset;
+	margin-left: 0.6rem;
+}
+
+
+.resize-options {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+.resize-handle {
+	position: absolute;
+	top: 5px;
+	right: 0;
+	left: unset;
+	bottom: 0;
+	height: 30px;
+	cursor: col-resize;
+	width: 6px;
+	border-inline-end: var(--fluent-data-grid-resize-handle-width) solid var(--fluent-data-grid-resize-handle-color);
+	opacity: var(--fluent-data-grid-header-opacity);
+}
+
+//.fluent-header {
+//	padding: 0;
+//	z-index: 3;
+//}
+
+tr[row-type='sticky-header'] > th {
+	position: sticky;
+	top: 0;
+	background-color: var(--neutral-fill-stealth-rest);
+	z-index: 2;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DataGrid/FluentDataGridCell.razor.rz.scp.css */
+//th, td {
+//	border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-divider-rest);
+//}
+//
+//td {
+//	padding: 6px 16px;
+//	overflow: hidden;
+//	text-overflow: ellipsis;
+//	white-space: nowrap;
+//	align-content: center;
+//}
+
+
+td.col-justify-center {
+	text-align: center;
+}
+
+td.col-justify-end,
+td.col-justify-right {
+	text-align: end;
+}
+
+th.col-justify-end > div {
+	justify-content: flex-end;
+}
+
+
+td.grid-cell-placeholder:after {
+	content: '\2026'; /*horizontal ellipsis*/
+	opacity: 0.75;
+}
+
+
+.empty-content-cell,
+.loading-content-cell {
+	font-weight: 600;
+	text-align: center;
+	height: 100%;
+	user-select: none;
+}
+
+.multiline-text {
+	white-space: inherit;
+	overflow: auto;
+	word-break: break-word;
+	align-content: start;
+}
+
+.column-header {
+	font-weight: 600;
+	text-align: center;
+	position: relative;
+	padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) 1px calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+}
+
+.col-sort-button {
+	width: calc(100% - 20px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.col-sort-button::part(content) {
+	overflow: hidden;
+}
+
+.col-options-button {
+	padding-inline-start: 4px;
+}
+
+.col-justify-start .col-sort-button::part(control) {
+	justify-content: start;
+	overflow: hidden;
+	opacity: 1
+}
+
+.col-justify-center .col-sort-button::part(control) {
+	justify-content: center;
+	overflow: hidden;
+	opacity: 1
+}
+
+.col-justify-end .col-sort-button::part(control) {
+	justify-content: end;
+	overflow: hidden;
+	opacity: 1
+}
+
+
+.col-justify-end .col-sort-button::part(start) {
+	margin-inline-end: 2px;
+}
+
+.col-justify-start .col-sort-button::part(end),
+.col-justify-center .col-sort-button::part(end) {
+	margin-inline-start: 2px;
+}
+
+.col-justify-start .col-title {
+	text-align: left;
+}
+
+.col-justify-center .col-title {
+	text-align: center;
+}
+
+.col-justify-end .col-title {
+	text-align: end;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DataGrid/FluentDataGridRow.razor.rz.scp.css */
+.sticky-header {
+	z-index: 3;
+}
+
+.hover:not([row-type='header'],[row-type='sticky-header'],.loading-content-row):hover td:not(.empty-content-cell) {
+	cursor: pointer;
+	background-color: var(--datagrid-hover-color, var(--neutral-fill-stealth-hover));
+}
+
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DateTime/FluentCalendar.razor.rz.scp.css */
+/*
+    "Days" View
+*/
+.fluent-calendar {
+	--calendar-cell-size: 28px;
+	--calendar-gap: 2px;
+	--multi-select-opacity: 0.2;
+	font-family: var(--body-font);
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+	color: var(--neutral-foreground-rest);
+	width: calc((var(--calendar-cell-size) + 2 * var(--calendar-gap)) * 7);
+	height: calc((var(--calendar-cell-size) + 3 * var(--calendar-gap)) * 8);
+	user-select: none;
+}
+
+/* Header: month name and month navigation */
+.fluent-calendar .title {
+	display: flex;
+	padding: calc(var(--design-unit) * 2px);
+	font-weight: 600;
+	width: 100%;
+	height: calc(var(--calendar-cell-size) + 4 * var(--calendar-gap));
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.fluent-calendar .title > .label {
+	vertical-align: middle;
+	cursor: pointer;
+	width: 100%;
+}
+
+.fluent-calendar .title > .label[readonly] {
+	cursor: default;
+}
+
+.fluent-calendar .change-period {
+	float: right;
+	display: flex;
+	margin-right: -6px;
+}
+
+.fluent-calendar .change-period > .previous,
+.fluent-calendar .change-period > .next {
+	width: var(--calendar-cell-size);
+	height: var(--calendar-cell-size);
+	margin-left: calc(2 * var(--calendar-gap));
+	text-align: center;
+	cursor: pointer;
+}
+
+.fluent-calendar .change-period > .previous:not([disabled]):hover,
+.fluent-calendar .change-period > .next:not([disabled]):hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+.fluent-calendar .change-period > .previous svg,
+.fluent-calendar .change-period > .next svg {
+	width: 16px;
+	fill: var(--neutral-fill-strong-focus);
+}
+
+/* List of days */
+.fluent-calendar .days {
+	text-align: center;
+}
+
+.fluent-calendar .week-days,
+.fluent-calendar .week {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-gap: var(--calendar-gap);
+	border: 0px;
+	padding: 0px;
+}
+
+.fluent-calendar .day,
+.fluent-calendar .week-day {
+	border: 1px solid transparent;
+	width: var(--calendar-cell-size);
+	height: var(--calendar-cell-size);
+	line-height: var(--calendar-cell-size);
+	padding: 0px;
+	box-sizing: initial;
+}
+
+/* Week names */
+.fluent-calendar .week-day {
+	font-weight: 600;
+}
+
+/* Days */
+.fluent-calendar .day {
+	border: calc(var(--stroke-width) * 1px) solid transparent;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	cursor: pointer;
+}
+
+.fluent-calendar[readonly] .day {
+	cursor: default;
+}
+
+.fluent-calendar:not([readonly]) .day:not([disabled]):not([inactive]):not([today]):hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+/* Inactive and Disabled */
+.fluent-calendar .day[inactive] {
+	color: var(--neutral-stroke-focus);
+	cursor: default;
+}
+
+.fluent-calendar .day[disabled] {
+	color: var(--neutral-stroke-focus);
+	cursor: default;
+}
+
+.fluent-calendar .day[disabled]::before { /* strikethrough */
+	transform: translate(-4px, 0px) rotate(45deg);
+	content: "";
+	display: inline-block;
+	width: calc(var(--calendar-cell-size) * .8);
+	height: calc(var(--stroke-width) * 1px);
+	background: currentcolor;
+	position: absolute;
+	margin-top: calc(var(--calendar-cell-size) / 2);
+	transform-origin: center center;
+	z-index: 1;
+}
+
+/* Today */
+.fluent-calendar .day:not([selected]):not([multi-day])[today] {
+	color: var(--foreground-on-accent-rest);
+	background: var(--accent-fill-rest);
+	border-radius: 50%;
+	position: relative;
+}
+
+/* Selected */
+.fluent-calendar .day[selected] {
+	color: var(--accent-fill-rest);
+	border: 1px solid var(--accent-fill-rest);
+	background: var(--fill-color);
+}
+
+/* Selected Multiple Days */
+.fluent-calendar .day[multi-day],
+.fluent-calendar .day[multi-start],
+.fluent-calendar .day[multi-end] {
+	position: relative;
+}
+
+.fluent-calendar .day[multi-day]::before,
+.fluent-calendar .day[multi-start]::before,
+.fluent-calendar .day[multi-end]::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	background: var(--accent-fill-rest);
+	opacity: var(--multi-select-opacity);
+}
+
+.fluent-calendar .day[multi-start]::before {
+	border-top-left-radius: 50%;
+	border-bottom-left-radius: 50%;
+}
+
+.fluent-calendar .day[multi-end]::before {
+	border-top-right-radius: 50%;
+	border-bottom-right-radius: 50%;
+}
+
+.fluent-calendar .day[multi-day-over] {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+/* Animations */
+.fluent-calendar .animation-running-down {
+	animation: 0.2s fluent-text-animation-down-b-vb0cufqdm4 ease-out;
+}
+
+.fluent-calendar .animation-running-up {
+	animation: 0.2s fluent-text-animation-up-b-vb0cufqdm4 ease-out;
+}
+
+.fluent-calendar .animation-none {
+	animation: none;
+}
+
+[dir="rtl"] .fluent-calendar .day[disabled]::before {
+	transform: translate(4px, 0px) rotate(45deg);
+}
+
+/*
+    "Months" View
+*/
+.fluent-month {
+	--month-cell-size: 28px;
+	--month-cell-height: 48px;
+	--month-gap: 2px;
+	font-family: var(--body-font);
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+	color: var(--neutral-foreground-rest);
+	min-width: 220px;
+	max-width: calc((var(--month-cell-size) + 2 * var(--month-gap)) * 7);
+	user-select: none;
+}
+
+/* Header: Year name and navigation arrows */
+.fluent-month .title {
+	display: flex;
+	padding: calc(var(--design-unit) * 2px);
+	font-weight: 600;
+	width: 100%;
+	height: calc(var(--month-cell-size) + 4 * var(--month-gap));
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.fluent-month .title > .label {
+	vertical-align: middle;
+	cursor: pointer;
+	width: 100%;
+}
+
+.fluent-month .title > .label[readonly] {
+	cursor: default;
+}
+
+.fluent-month .change-period {
+	float: right;
+	display: flex;
+	margin-right: -6px;
+}
+
+.fluent-month .change-period > .previous,
+.fluent-month .change-period > .next {
+	width: var(--month-cell-size);
+	height: var(--month-cell-size);
+	margin-left: calc(2 * var(--month-gap));
+	text-align: center;
+	cursor: pointer;
+}
+
+.fluent-month .change-period > .previous:not([disabled]):hover,
+.fluent-month .change-period > .next:not([disabled]):hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+.fluent-month .change-period > .previous svg,
+.fluent-month .change-period > .next svg {
+	width: 16px;
+	fill: var(--neutral-fill-strong-focus);
+}
+
+/* List of months */
+.fluent-month .months {
+	text-align: center;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-gap: var(--month-gap);
+	width: 100%;
+}
+
+.fluent-month .month {
+	display: flex;
+	height: var(--month-cell-height);
+	border: calc(var(--stroke-width) * 1px) solid transparent;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.fluent-month[readonly] .month {
+	cursor: default;
+}
+
+.fluent-month:not([readonly]) .month:not([disabled]):hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+.fluent-month .month[selected] {
+	color: var(--accent-fill-rest);
+	border: 1px solid var(--accent-fill-rest);
+	background: var(--fill-color);
+}
+
+.fluent-month .month[disabled] {
+	color: var(--neutral-stroke-focus);
+	cursor: default;
+}
+
+/* Animations */
+.fluent-month .animation-running-down {
+	animation: 0.2s fluent-text-animation-down-b-vb0cufqdm4 ease-out;
+}
+
+.fluent-month .animation-running-up {
+	animation: 0.2s fluent-text-animation-up-b-vb0cufqdm4 ease-out;
+}
+
+.fluent-month .animation-none {
+	animation: none;
+}
+
+/*
+    "Years" View
+*/
+.fluent-year {
+	--year-cell-size: 28px;
+	--year-cell-height: 48px;
+	--year-gap: 2px;
+	font-family: var(--body-font);
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+	color: var(--neutral-foreground-rest);
+	min-width: 220px;
+	max-width: calc((var(--year-cell-size) + 2 * var(--year-gap)) * 7);
+	user-select: none;
+}
+
+/* Header: Multiple years and navigation arrows */
+.fluent-year .title {
+	display: flex;
+	padding: calc(var(--design-unit) * 2px);
+	font-weight: 600;
+	width: 100%;
+	height: calc(var(--year-cell-size) + 4 * var(--year-gap));
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.fluent-year .title > .label {
+	vertical-align: middle;
+}
+
+.fluent-year .title > .label[readonly] {
+	cursor: default;
+}
+
+.fluent-year .change-period {
+	float: right;
+	display: flex;
+	margin-right: -6px;
+}
+
+.fluent-year .change-period > .previous,
+.fluent-year .change-period > .next {
+	width: var(--year-cell-size);
+	height: var(--year-cell-size);
+	margin-left: calc(2 * var(--year-gap));
+	text-align: center;
+	cursor: pointer;
+}
+
+.fluent-year .change-period > .previous:not([disabled]):hover,
+.fluent-year .change-period > .next:not([disabled]):hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+.fluent-year .change-period > .previous svg,
+.fluent-year .change-period > .next svg {
+	width: 16px;
+	fill: var(--neutral-fill-strong-focus);
+}
+
+/* List of years */
+.fluent-year .years {
+	text-align: center;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-gap: var(--year-gap);
+	width: 100%;
+}
+
+.fluent-year .year {
+	display: flex;
+	height: var(--year-cell-height);
+	border: calc(var(--stroke-width) * 1px) solid transparent;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.fluent-year[readonly] .year {
+	cursor: default;
+}
+
+.fluent-year:not([readonly]) .year:not([disabled]):hover {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+.fluent-year .year[selected] {
+	color: var(--accent-fill-rest);
+	border: 1px solid var(--accent-fill-rest);
+	background: var(--fill-color);
+}
+
+.fluent-year .year[disabled] {
+	color: var(--neutral-stroke-focus);
+	cursor: default;
+}
+
+/* Animations */
+.fluent-year .animation-running-down {
+	animation: 0.2s fluent-text-animation-down-b-vb0cufqdm4 ease-out;
+}
+
+.fluent-year .animation-running-up {
+	animation: 0.2s fluent-text-animation-up-b-vb0cufqdm4 ease-out;
+}
+
+.fluent-year .animation-none {
+	animation: none;
+}
+
+@keyframes fluent-text-animation-up-b-vb0cufqdm4 {
+	0% {
+		opacity: 0;
+		transform: translateY(80%);
+	}
+
+	20% {
+		opacity: 0;
+	}
+
+	80% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+}
+
+@keyframes fluent-text-animation-down-b-vb0cufqdm4 {
+	0% {
+		opacity: 0;
+		transform: translateY(-80%);
+	}
+
+	20% {
+		opacity: 0;
+	}
+
+	80% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DateTime/FluentDatePicker.razor.rz.scp.css */
+.fluent-datepicker-popup {
+
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/DateTime/FluentTimePicker.razor.rz.scp.css */
+.fluent-timepicker {
+	min-width: 110px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Dialog/ContentComponents/FluentSplashScreen.razor.rz.scp.css */
+.fluent-launch {
+	font-family: var(--body-font);
+	-webkit-font-smoothing: antialiased;
+	background-color: white;
+	color: rgb(73, 72, 71);
+	--accent-fill-rest: #d3d3d3;
+	user-select: none;
+}
+
+.fluent-launch h1 {
+	font-size: 32px;
+	font-weight: 600;
+	margin-top: 40px;
+	line-height: 40px;
+	margin: 40px 0px 0px 0px;
+	user-select: none;
+}
+
+.fluent-launch h2 {
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 32px;
+	margin: 24px 0px 50px 0px;
+	user-select: none;
+}
+
+.fluent-launch h3 {
+	font-size: 12px;
+	font-weight: 300;
+	margin: 0px;
+	user-select: none;
+}
+
+.fluent-launch p {
+	user-select: none;
+}
+
+.fluent-launch .icon {
+	width: 150px;
+	margin: 20px 0px 0px 0px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Dialog/ContentComponents/MessageBox.razor.rz.scp.css */
+.fluent-messagebox {
+	font-family: var(--body-font);
+	-webkit-font-smoothing: antialiased;
+	color: var(--neutral-foreground-rest);
+	word-break: break-word;
+}
+
+.fluent-messagebox .icon {
+	min-width: 24px;
+	margin: 4px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Dialog/FluentDialog.razor.rz.scp.css */
+fluent-dialog::part(control) {
+	--dialog-padding: calc(var(--design-unit) * 6 * 1px);
+	position: relative;
+	padding: var(--dialog-padding);
+	width: calc(var(--dialog-width) - 2 * var(--dialog-padding));
+	height: calc(var(--dialog-height) - 2 * var(--dialog-padding));
+}
+
+fluent-dialog:has(div[class~="fluent-dialog-body"]):not(:is(fluent-dialog[class~="right"], fluent-dialog[class~="left"]) )::part(control) {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto 1fr auto;
+	grid-template-areas:
+        'dialog-header'
+        'dialog-body'
+        'dialog-footer';
+}
+
+fluent-dialog[class~="right"]::part(control),
+fluent-dialog[class~="left"]::part(control) {
+	display: flex;
+	flex-direction: column;
+	border-radius: unset;
+	border-width: 0;
+	--dialog-height: 100dvh;
+	overflow-y: auto;
+}
+
+:is(fluent-dialog[class~="right"], fluent-dialog[class~="left"]) .fluent-dialog-body {
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+fluent-dialog[class~="right"]::part(control) {
+	position: absolute;
+	right: 0;
+}
+
+fluent-dialog[class~="left"]::part(control) {
+	position: absolute;
+	left: 0;
+}
+
+fluent-dialog .fluent-dialog-header {
+	grid-area: dialog-header;
+	padding: 0 0 var(--dialog-padding) 0;
+}
+
+fluent-dialog .fluent-dialog-footer {
+	grid-area: dialog-footer;
+	margin-top: auto;
+	padding: var(--dialog-padding) 0 0 0;
+}
+
+fluent-dialog:has(div[class~="fluent-dialog-body"]) .fluent-dialog-footer {
+	grid-area: dialog-footer;
+	margin-top: auto;
+	padding-top: var(--dialog-padding);
+	right: 0px;
+}
+
+fluent-dialog .fluent-dialog-body {
+	grid-area: dialog-body;
+	width: 100%;
+	height: auto;
+	min-height: 80px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Drag/FluentDropZone.razor.rz.scp.css */
+div[draggable='true'] {
+	cursor: move;
+}
+
+div[dragged-over] {
+	background-color: lightgray;
+	opacity: 0.6;
+	animation: blinker 1s linear infinite;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Footer/FluentFooter.razor.rz.scp.css */
+.footer {
+	display: flex;
+	z-index: 10;
+	flex-direction: row;
+	font-family: var(--body-font);
+	font-weight: normal;
+	font-size: var(--type-ramp-minus-1-font-size);
+	line-height: var(--type-ramp-minus-1-line-height);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Forms/FluentValidationMessage.razor.rz.scp.css */
+.validation-message {
+	color: var(--error);
+	font-size: var(--type-ramp-minus-1-font-size);
+	display: flex;
+	align-items: center;
+	column-gap: 4px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Grid/FluentGrid.razor.rz.scp.css */
+.fluent-grid {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+}
+
+.fluent-grid > div {
+	margin: 0;
+	box-sizing: border-box;
+}
+
+/* Spacing */
+
+.fluent-grid[spacing="1"] {
+	width: calc(100% + 8px);
+	margin: -4px;
+}
+
+.fluent-grid[spacing="1"] > div {
+	padding: 4px;
+}
+
+.fluent-grid[spacing="2"] {
+	width: calc(100% + 16px);
+	margin: -8px;
+}
+
+.fluent-grid[spacing="2"] > div {
+	padding: 8px;
+}
+
+.fluent-grid[spacing="3"] {
+	width: calc(100% + 24px);
+	margin: -12px;
+}
+
+.fluent-grid[spacing="3"] > div {
+	padding: 12px;
+}
+
+.fluent-grid[spacing="4"] {
+	width: calc(100% + 32px);
+	margin: -16px;
+}
+
+.fluent-grid[spacing="4"] > div {
+	padding: 16px;
+}
+
+.fluent-grid[spacing="5"] {
+	width: calc(100% + 40px);
+	margin: -20px;
+}
+
+.fluent-grid[spacing="5"] > div {
+	padding: 20px;
+}
+
+.fluent-grid[spacing="6"] {
+	width: calc(100% + 48px);
+	margin: -24px;
+}
+
+.fluent-grid[spacing="6"] > div {
+	padding: 24px;
+}
+
+.fluent-grid[spacing="7"] {
+	width: calc(100% + 56px);
+	margin: -28px;
+}
+
+.fluent-grid[spacing="7"] > div {
+	padding: 28px;
+}
+
+.fluent-grid[spacing="8"] {
+	width: calc(100% + 64px);
+	margin: -32px;
+}
+
+.fluent-grid[spacing="8"] > div {
+	padding: 32px;
+}
+
+.fluent-grid[spacing="9"] {
+	width: calc(100% + 72px);
+	margin: -36px;
+}
+
+.fluent-grid[spacing="9"] > div {
+	padding: 36px;
+}
+
+.fluent-grid[spacing="10"] {
+	width: calc(100% + 80px);
+	margin: -40px;
+}
+
+.fluent-grid[spacing="10"] > div {
+	padding: 40px;
+}
+
+
+/* Size xs */
+
+.fluent-grid > div[xs="auto"] {
+	flex-grow: 0;
+	max-width: none;
+	flex-basis: auto;
+}
+
+.fluent-grid > div[xs="true"] {
+	flex-grow: 1;
+	max-width: 100%;
+	flex-basis: 0;
+}
+
+.fluent-grid > div[xs="0"] {
+	flex: 1;
+	max-width: fit-content;
+}
+
+.fluent-grid > div[xs="1"] {
+	flex-grow: 0;
+	max-width: 8.333%;
+	flex-basis: 8.3333%;
+}
+
+.fluent-grid > div[xs="2"] {
+	flex-grow: 0;
+	max-width: 16.667%;
+	flex-basis: 16.667%;
+}
+
+.fluent-grid > div[xs="3"] {
+	flex-grow: 0;
+	max-width: 25%;
+	flex-basis: 25%;
+}
+
+.fluent-grid > div[xs="4"] {
+	flex-grow: 0;
+	max-width: 33.333%;
+	flex-basis: 33.333%;
+}
+
+.fluent-grid > div[xs="5"] {
+	flex-grow: 0;
+	max-width: 41.667%;
+	flex-basis: 41.667%;
+}
+
+.fluent-grid > div[xs="6"] {
+	flex-grow: 0;
+	max-width: 50%;
+	flex-basis: 50%;
+}
+
+.fluent-grid > div[xs="7"] {
+	flex-grow: 0;
+	max-width: 58.333%;
+	flex-basis: 58.333%;
+}
+
+.fluent-grid > div[xs="8"] {
+	flex-grow: 0;
+	max-width: 66.667%;
+	flex-basis: 66.667%;
+}
+
+.fluent-grid > div[xs="9"] {
+	flex-grow: 0;
+	max-width: 75%;
+	flex-basis: 75%;
+}
+
+.fluent-grid > div[xs="10"] {
+	flex-grow: 0;
+	max-width: 83.333%;
+	flex-basis: 83.333%;
+}
+
+.fluent-grid > div[xs="11"] {
+	flex-grow: 0;
+	max-width: 91.667%;
+	flex-basis: 91.667%;
+}
+
+.fluent-grid > div[xs="12"] {
+	flex-grow: 0;
+	max-width: 100%;
+	flex-basis: 100%;
+}
+
+
+@media(min-width: 600px) {
+
+	/* Size sm */
+
+	.fluent-grid > div[sm="auto"] {
+		flex-grow: 0;
+		max-width: none;
+		flex-basis: auto;
+	}
+
+	.fluent-grid > div[sm="true"] {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+
+	.fluent-grid > div[sm="0"] {
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.fluent-grid > div[sm="1"] {
+		flex-grow: 0;
+		max-width: 8.333%;
+		flex-basis: 8.3333%;
+	}
+
+	.fluent-grid > div[sm="2"] {
+		flex-grow: 0;
+		max-width: 16.667%;
+		flex-basis: 16.667%;
+	}
+
+	.fluent-grid > div[sm="3"] {
+		flex-grow: 0;
+		max-width: 25%;
+		flex-basis: 25%;
+	}
+
+	.fluent-grid > div[sm="4"] {
+		flex-grow: 0;
+		max-width: 33.333%;
+		flex-basis: 33.333%;
+	}
+
+	.fluent-grid > div[sm="5"] {
+		flex-grow: 0;
+		max-width: 41.667%;
+		flex-basis: 41.667%;
+	}
+
+	.fluent-grid > div[sm="6"] {
+		flex-grow: 0;
+		max-width: 50%;
+		flex-basis: 50%;
+	}
+
+	.fluent-grid > div[sm="7"] {
+		flex-grow: 0;
+		max-width: 58.333%;
+		flex-basis: 58.333%;
+	}
+
+	.fluent-grid > div[sm="8"] {
+		flex-grow: 0;
+		max-width: 66.667%;
+		flex-basis: 66.667%;
+	}
+
+	.fluent-grid > div[sm="9"] {
+		flex-grow: 0;
+		max-width: 75%;
+		flex-basis: 75%;
+	}
+
+	.fluent-grid > div[sm="10"] {
+		flex-grow: 0;
+		max-width: 83.333%;
+		flex-basis: 83.333%;
+	}
+
+	.fluent-grid > div[sm="11"] {
+		flex-grow: 0;
+		max-width: 91.667%;
+		flex-basis: 91.667%;
+	}
+
+	.fluent-grid > div[sm="12"] {
+		flex-grow: 0;
+		max-width: 100%;
+		flex-basis: 100%;
+	}
+}
+
+@media(min-width: 960px) {
+
+	/* Size md */
+
+	.fluent-grid > div[md="auto"] {
+		flex-grow: 0;
+		max-width: none;
+		flex-basis: auto;
+	}
+
+	.fluent-grid > div[md="true"] {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+
+	.fluent-grid > div[md="0"] {
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.fluent-grid > div[md="1"] {
+		flex-grow: 0;
+		max-width: 8.333%;
+		flex-basis: 8.3333%;
+	}
+
+	.fluent-grid > div[md="2"] {
+		flex-grow: 0;
+		max-width: 16.667%;
+		flex-basis: 16.667%;
+	}
+
+	.fluent-grid > div[md="3"] {
+		flex-grow: 0;
+		max-width: 25%;
+		flex-basis: 25%;
+	}
+
+	.fluent-grid > div[md="4"] {
+		flex-grow: 0;
+		max-width: 33.333%;
+		flex-basis: 33.333%;
+	}
+
+	.fluent-grid > div[md="5"] {
+		flex-grow: 0;
+		max-width: 41.667%;
+		flex-basis: 41.667%;
+	}
+
+	.fluent-grid > div[md="6"] {
+		flex-grow: 0;
+		max-width: 50%;
+		flex-basis: 50%;
+	}
+
+	.fluent-grid > div[md="7"] {
+		flex-grow: 0;
+		max-width: 58.333%;
+		flex-basis: 58.333%;
+	}
+
+	.fluent-grid > div[md="8"] {
+		flex-grow: 0;
+		max-width: 66.667%;
+		flex-basis: 66.667%;
+	}
+
+	.fluent-grid > div[md="9"] {
+		flex-grow: 0;
+		max-width: 75%;
+		flex-basis: 75%;
+	}
+
+	.fluent-grid > div[md="10"] {
+		flex-grow: 0;
+		max-width: 83.333%;
+		flex-basis: 83.333%;
+	}
+
+	.fluent-grid > div[md="11"] {
+		flex-grow: 0;
+		max-width: 91.667%;
+		flex-basis: 91.667%;
+	}
+
+	.fluent-grid > div[md="12"] {
+		flex-grow: 0;
+		max-width: 100%;
+		flex-basis: 100%;
+	}
+}
+
+@media(min-width: 1280px) {
+
+	/* Size lg */
+
+	.fluent-grid > div[lg="auto"] {
+		flex-grow: 0;
+		max-width: none;
+		flex-basis: auto;
+	}
+
+	.fluent-grid > div[lg="true"] {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+
+	.fluent-grid > div[lg="0"] {
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.fluent-grid > div[lg="1"] {
+		flex-grow: 0;
+		max-width: 8.333%;
+		flex-basis: 8.3333%;
+	}
+
+	.fluent-grid > div[lg="2"] {
+		flex-grow: 0;
+		max-width: 16.667%;
+		flex-basis: 16.667%;
+	}
+
+	.fluent-grid > div[lg="3"] {
+		flex-grow: 0;
+		max-width: 25%;
+		flex-basis: 25%;
+	}
+
+	.fluent-grid > div[lg="4"] {
+		flex-grow: 0;
+		max-width: 33.333%;
+		flex-basis: 33.333%;
+	}
+
+	.fluent-grid > div[lg="5"] {
+		flex-grow: 0;
+		max-width: 41.667%;
+		flex-basis: 41.667%;
+	}
+
+	.fluent-grid > div[lg="6"] {
+		flex-grow: 0;
+		max-width: 50%;
+		flex-basis: 50%;
+	}
+
+	.fluent-grid > div[lg="7"] {
+		flex-grow: 0;
+		max-width: 58.333%;
+		flex-basis: 58.333%;
+	}
+
+	.fluent-grid > div[lg="8"] {
+		flex-grow: 0;
+		max-width: 66.667%;
+		flex-basis: 66.667%;
+	}
+
+	.fluent-grid > div[lg="9"] {
+		flex-grow: 0;
+		max-width: 75%;
+		flex-basis: 75%;
+	}
+
+	.fluent-grid > div[lg="10"] {
+		flex-grow: 0;
+		max-width: 83.333%;
+		flex-basis: 83.333%;
+	}
+
+	.fluent-grid > div[lg="11"] {
+		flex-grow: 0;
+		max-width: 91.667%;
+		flex-basis: 91.667%;
+	}
+
+	.fluent-grid > div[lg="12"] {
+		flex-grow: 0;
+		max-width: 100%;
+		flex-basis: 100%;
+	}
+}
+
+@media(min-width: 1920px) {
+
+	/* Size xl */
+
+	.fluent-grid > div[xl="auto"] {
+		flex-grow: 0;
+		max-width: none;
+		flex-basis: auto;
+	}
+
+	.fluent-grid > div[xl="true"] {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+
+	.fluent-grid > div[xl="0"] {
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.fluent-grid > div[xl="1"] {
+		flex-grow: 0;
+		max-width: 8.333%;
+		flex-basis: 8.3333%;
+	}
+
+	.fluent-grid > div[xl="2"] {
+		flex-grow: 0;
+		max-width: 16.667%;
+		flex-basis: 16.667%;
+	}
+
+	.fluent-grid > div[xl="3"] {
+		flex-grow: 0;
+		max-width: 25%;
+		flex-basis: 25%;
+	}
+
+	.fluent-grid > div[xl="4"] {
+		flex-grow: 0;
+		max-width: 33.333%;
+		flex-basis: 33.333%;
+	}
+
+	.fluent-grid > div[xl="5"] {
+		flex-grow: 0;
+		max-width: 41.667%;
+		flex-basis: 41.667%;
+	}
+
+	.fluent-grid > div[xl="6"] {
+		flex-grow: 0;
+		max-width: 50%;
+		flex-basis: 50%;
+	}
+
+	.fluent-grid > div[xl="7"] {
+		flex-grow: 0;
+		max-width: 58.333%;
+		flex-basis: 58.333%;
+	}
+
+	.fluent-grid > div[xl="8"] {
+		flex-grow: 0;
+		max-width: 66.667%;
+		flex-basis: 66.667%;
+	}
+
+	.fluent-grid > div[xl="9"] {
+		flex-grow: 0;
+		max-width: 75%;
+		flex-basis: 75%;
+	}
+
+	.fluent-grid > div[xl="10"] {
+		flex-grow: 0;
+		max-width: 83.333%;
+		flex-basis: 83.333%;
+	}
+
+	.fluent-grid > div[xl="11"] {
+		flex-grow: 0;
+		max-width: 91.667%;
+		flex-basis: 91.667%;
+	}
+
+	.fluent-grid > div[xl="12"] {
+		flex-grow: 0;
+		max-width: 100%;
+		flex-basis: 100%;
+	}
+}
+
+@media(min-width: 2560px) {
+
+	/* Size xxl */
+
+	.fluent-grid > div[xxl="auto"] {
+		flex-grow: 0;
+		max-width: none;
+		flex-basis: auto;
+	}
+
+	.fluent-grid > div[xxl="true"] {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+
+	.fluent-grid > div[xxl="0"] {
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.fluent-grid > div[xxl="1"] {
+		flex-grow: 0;
+		max-width: 8.333%;
+		flex-basis: 8.3333%;
+	}
+
+	.fluent-grid > div[xxl="2"] {
+		flex-grow: 0;
+		max-width: 16.667%;
+		flex-basis: 16.667%;
+	}
+
+	.fluent-grid > div[xxl="3"] {
+		flex-grow: 0;
+		max-width: 25%;
+		flex-basis: 25%;
+	}
+
+	.fluent-grid > div[xxl="4"] {
+		flex-grow: 0;
+		max-width: 33.333%;
+		flex-basis: 33.333%;
+	}
+
+	.fluent-grid > div[xxl="5"] {
+		flex-grow: 0;
+		max-width: 41.667%;
+		flex-basis: 41.667%;
+	}
+
+	.fluent-grid > div[xxl="6"] {
+		flex-grow: 0;
+		max-width: 50%;
+		flex-basis: 50%;
+	}
+
+	.fluent-grid > div[xxl="7"] {
+		flex-grow: 0;
+		max-width: 58.333%;
+		flex-basis: 58.333%;
+	}
+
+	.fluent-grid > div[xxl="8"] {
+		flex-grow: 0;
+		max-width: 66.667%;
+		flex-basis: 66.667%;
+	}
+
+	.fluent-grid > div[xxl="9"] {
+		flex-grow: 0;
+		max-width: 75%;
+		flex-basis: 75%;
+	}
+
+	.fluent-grid > div[xxl="10"] {
+		flex-grow: 0;
+		max-width: 83.333%;
+		flex-basis: 83.333%;
+	}
+
+	.fluent-grid > div[xxl="11"] {
+		flex-grow: 0;
+		max-width: 91.667%;
+		flex-basis: 91.667%;
+	}
+
+	.fluent-grid > div[xxl="12"] {
+		flex-grow: 0;
+		max-width: 100%;
+		flex-basis: 100%;
+	}
+}
+
+/* Hidden */
+
+@media (max-width: 599.98px) {
+	.fluent-grid > div[hidden-when~="xs"] {
+		display: none;
+	}
+}
+
+@media (min-width: 600px) and (max-width: 959.98px) {
+	.fluent-grid > div[hidden-when~="sm"] {
+		display: none;
+	}
+}
+
+@media (min-width: 960px) and (max-width: 1279.98px) {
+	.fluent-grid > div[hidden-when~="md"] {
+		display: none;
+	}
+}
+
+@media (min-width: 1280px) and (max-width: 1919.98px) {
+	.fluent-grid > div[hidden-when~="lg"] {
+		display: none;
+	}
+}
+
+@media (min-width: 1920px) and (max-width: 2559.98px) {
+	.fluent-grid > div[hidden-when~="xl"] {
+		display: none;
+	}
+}
+
+@media (min-width: 2560px) {
+	.fluent-grid > div[hidden-when~="xxl"] {
+		display: none;
+	}
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Header/FluentHeader.razor.rz.scp.css */
+.fluent-header {
+	display: flex;
+	z-index: 10;
+	flex-shrink: 0;
+	background-color: var(--accent-fill-rest);
+	font-family: var(--body-font);
+	font-weight: bold;
+	font-size: var(--type-ramp-plus-1-font-size);
+	line-height: var(--type-ramp-plus-1-line-height);
+	color: var(--fill-color);
+}
+
+.fluent-header .header-gutters {
+	display: flex;
+	position: relative;
+	align-items: center;
+	width: 100%;
+	margin: 0.5rem 1.5rem;
+}
+
+.fluent-header .header-fixed-top {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/InputFile/FluentInputFile.razor.rz.scp.css */
+.fluent-inputfile-container {
+	display: grid;
+	grid-gap: 10px;
+	background-color: var(--neutral-fill-hover);
+	border: 1px dashed var(--accent-fill-rest);
+}
+
+.fluent-inputfile-container[drop-files] {
+	border: 1px solid var(--accent-fill-rest);
+}
+
+.fluent-inputfile-container .inputfile-content {
+	grid-column: 1;
+	grid-row: 1;
+	text-align: center;
+	align-self: center;
+	justify-self: center;
+}
+
+.fluent-inputfile-container:has(input[type='file']:focus-visible) {
+	outline: calc(var(--focus-stroke-width) * 1px) solid var(--focus-stroke-outer);
+	outline-offset: calc(var(--focus-stroke-width) * -1px);
+}
+
+.fluent-inputfile-container input[type='file'] {
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+
+.fluent-inputfile-container label,
+.fluent-inputfile-container a {
+	color: var(--accent-fill-rest);
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.fluent-inputfile-container .inputfile-progress {
+	padding-top: 20px;
+	height: 50px;
+	margin: 0px 15%;
+	text-align: center;
+	line-height: 8px;
+	font-size: var(--type-ramp-minus-2-font-size);
+}
+
+.fluent-inputfile-container[disabled], .fluent-inputfile-container[disabled="true"] {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Label/FluentInputLabel.razor.rz.scp.css */
+.fluent-input-label {
+	display: flex;
+	color: var(--neutral-foreground-rest);
+	cursor: pointer;
+	font-family: var(--body-font);
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+	font-weight: initial;
+	font-variation-settings: var(--type-ramp-base-font-variations);
+	margin-bottom: calc(var(--design-unit) * 1px);
+	align-items: center;
+}
+
+.fluent-input-label[orientation='horizontal'] {
+	margin-bottom: 0;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Label/FluentLabel.razor.rz.scp.css */
+/*
+    --type-ramp-base-font-size: 14px;
+    --type-ramp-base-line-height: 20px;
+*/
+.fluent-typography {
+	font-family: var(--body-font);
+	color: var(--neutral-foreground-rest);
+	font-style: normal;
+}
+
+.fluent-typography:not([default-margin]) {
+	margin-block: 0px;
+}
+
+.fluent-typography[typo='body'] {
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[typo='subject'] {
+	font-size: var(--type-ramp-plus-1-font-size);
+	line-height: var(--type-ramp-plus-1-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[typo='header'] {
+	font-size: var(--type-ramp-plus-2-font-size);
+	line-height: var(--type-ramp-plus-2-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[typo='pane-header'] {
+	font-size: var(--type-ramp-plus-3-font-size);
+	line-height: var(--type-ramp-plus-3-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[typo='email-header'] {
+	font-size: var(--type-ramp-plus-4-font-size);
+	line-height: var(--type-ramp-plus-4-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[typo='page-title'] {
+	font-size: var(--type-ramp-plus-5-font-size);
+	line-height: var(--type-ramp-plus-5-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[typo='hero-title'] {
+	font-size: var(--type-ramp-plus-6-font-size);
+	line-height: var(--type-ramp-plus-6-line-height);
+	font-weight: 400;
+}
+
+.fluent-typography[bold] {
+	font-weight: 600;
+}
+
+.fluent-typography[bolder] {
+	font-weight: 800;
+}
+
+.fluent-typography[disabled] {
+	opacity: var(--disabled-opacity);
+}
+
+.fluent-typo-left {
+	text-align: left;
+}
+
+.fluent-typo-center {
+	text-align: center;
+}
+
+.fluent-typo-right {
+	text-align: right;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Layout/FluentLayout.razor.rz.scp.css */
+.layout {
+	height: 100%;
+	width: 100%;
+	position: relative;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.layout[orientation='horizontal'] {
+	flex-direction: row;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/List/FluentAutocomplete.razor.rz.scp.css */
+.fluent-autocomplete-multiselect div[role=listbox] {
+	overflow-y: auto;
+	max-height: 300px;
+	outline: none;
+	padding: 2px;
+	display: inline-flex;
+	flex-direction: column;
+}
+
+.fluent-autocomplete-multiselect div[role=listbox] fluent-option {
+	min-height: 32px;
+}
+
+/* This first fluent-option will be selected when user presses Enter */
+.fluent-autocomplete-multiselect div[role=listbox] fluent-option:not([disabled])[selectable] {
+	border: var(--neutral-fill-strong-hover) solid 1px;
+}
+
+.fluent-autocomplete-multiselect div[role=listbox] fluent-option:not([disabled]):not([selected])[selectable]::before {
+	background: unset !important;
+}
+
+.fluent-autocomplete-multiselect fluent-text-field::part(start) {
+	max-width: calc(100% - 80px);
+}
+
+.fluent-autocomplete-next {
+	height: 25px;
+}
+
+.fluent-autocomplete-previous {
+	height: 25px;
+}
+
+/* Auto-height */
+.fluent-autocomplete-multiselect[auto-height] .auto-height {
+	width: max-content;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 4px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.fluent-autocomplete-multiselect[auto-height] fluent-text-field::part(root) {
+	min-height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+	height: auto;
+	padding: 4px 0;
+}
+
+
+.fluent-autocomplete-multiselect[single-select] fluent-text-field::part(control) {
+	display: none;
+}
+
+.fluent-autocomplete-multiselect[single-select] fluent-text-field:not([disabled]):active::after {
+	width: 100%;
+}
+
+.fluent-autocomplete-multiselect[single-select] fluent-text-field::part(start) {
+	max-width: calc(100% - 40px);
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+
+	.fluent-autocomplete-multiselect div[role=listbox] {
+		border: calc(var(--stroke-width) * 1px) solid transparent;
+	}
+
+	.fluent-autocomplete-multiselect div[role=listbox] fluent-option:not([disabled]):not([selected])[selectable] {
+		forced-color-adjust: none;
+		background: highlight;
+		color: highlighttext;
+	}
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/List/FluentPersona.razor.rz.scp.css */
+.fluent-persona {
+	display: flex;
+	width: fit-content;
+	border-radius: 999px;
+	align-items: center;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.fluent-persona .initials {
+	display: flex;
+	color: var(--fill-color);
+	background: var(--accent-stroke-control-active);
+	font-weight: 600;
+	border-radius: 50%;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1/1;
+}
+
+.fluent-persona[position='start'] .initials {
+	order: 3;
+}
+
+.fluent-persona .initials img {
+	border-radius: 50%;
+	aspect-ratio: 1 / 1;
+	width: auto;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.fluent-persona .name {
+	margin-inline-start: 16px;
+}
+
+.fluent-persona[position='start'] .name {
+	order: 1;
+	margin-inline-start: 0px;
+	margin-inline-end: 16px;
+}
+
+.fluent-persona .close {
+	display: flex;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	margin: 0px 4px;
+}
+
+.fluent-persona[position='start'] .close {
+	order: 2;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Main/FluentMain.razor.rz.scp.css */
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/MenuButton/FluentMenuButton.razor.rz.scp.css */
+.fluent-menubutton-container {
+	position: relative;
+
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/MessageBar/FluentMessageBar.razor.rz.scp.css */
+/* OneRow */
+
+.fluent-messagebar {
+	font-family: var(--body-font);
+	background-color: var(--neutral-layer-floating);
+	color: var(--neutral-foreground-rest);
+	display: grid;
+	grid-template-columns: 24px 1fr auto;
+	width: 100%;
+	padding: 0px 3px;
+	align-items: center;
+	min-height: 36px;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	padding: 0 12px;
+	column-gap: 8px;
+}
+
+.fluent-messagebar[animation="fadein"] {
+	animation: fadein-b-il8a3vjczq 1.5s;
+}
+
+.fluent-messagebar-container-action {
+	display: flex;
+	padding: 6px 0px;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+}
+
+.fluent-messagebar.intent-info {
+	background-color: #f5f5f5;
+	border: 1px solid #d1d1d1;
+
+}
+
+.fluent-messagebar.dark.intent-info {
+	background-color: #141414;
+	border: 1px solid #666;
+}
+
+.fluent-messagebar.intent-warning {
+	background-color: #FDF6F3;
+	border: 1px solid #f4bfab;
+}
+
+.fluent-messagebar.dark.intent-warning {
+	background-color: #411200;
+	border: 1px solid #DA3B01;
+}
+
+.fluent-messagebar.intent-error {
+	background-color: #FDF3F4;
+	border: 1px solid #f1bbbc;
+}
+
+.fluent-messagebar.dark.intent-error {
+	background-color: #3F1011;
+	border: 1px solid #D13438;
+}
+
+.fluent-messagebar.intent-success {
+	background-color: #f1faf1;
+	border: 1px solid #9fd89f;
+}
+
+.fluent-messagebar.dark.intent-success {
+	background-color: #052505;
+	border: 1px solid #107C10;
+}
+
+.fluent-messagebar.intent-custom {
+	background-color: var(--neutral-layer-1);
+	border: 1px solid var(--neutral-stroke-layer-rest);
+}
+
+.fluent-messagebar-icon {
+	grid-column: 1;
+	display: flex;
+	justify-content: center;
+}
+
+.fluent-messagebar-message {
+	grid-column: 2;
+	padding: 10px 0;
+	align-self: center;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+
+}
+
+.fluent-messagebar-message .title {
+	font-weight: 600;
+	padding: 0 4px 0 0;
+
+}
+
+.fluent-messagebar-message fluent-anchor {
+	margin-inline-start: 5px;
+}
+
+.fluent-messagebar-action {
+	height: 24px;
+
+}
+
+.fluent-messagebar-close {
+	grid-column: 3;
+	padding: 4px;
+	justify-self: center;
+	align-self: center;
+	fill: var(--neutral-fill-strong-active);
+	cursor: pointer;
+	max-width: 16px;
+	max-height: 16px;
+}
+
+/* Notification */
+
+.fluent-messagebar-notification {
+	font-family: var(--body-font);
+	color: var(--neutral-foreground-rest);
+	display: grid;
+	grid-template-columns: 24px 1fr auto;
+	grid-template-rows: 36px 1fr auto;
+	width: 100%;
+	min-height: 36px;
+	padding: 0 12px;
+	column-gap: 8px;
+}
+
+.fluent-messagebar-notification.intent-info {
+	fill: #797775; /* Gray */
+}
+
+.fluent-messagebar-notification.intent-warning {
+	fill: #d83b01; /* Orange */
+}
+
+.fluent-messagebar-notification.intent-error {
+	fill: #a80000; /* Red */
+}
+
+.fluent-messagebar-notification.intent-success {
+	fill: #107c10; /* Green */
+}
+
+.fluent-messagebar-notification-icon {
+	grid-column: 1;
+	grid-row: 1;
+	display: flex;
+	justify-content: center;
+}
+
+.fluent-messagebar-notification-message {
+	grid-column: 2;
+	grid-row: 1;
+	padding: 10px 0;
+	align-self: center;
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 16px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.fluent-messagebar-notification-content {
+	grid-column: 1 / 4;
+	grid-row: 2;
+	padding: 6px 6px;
+}
+
+.fluent-messagebar-notification-content fluent-anchor {
+	margin-inline-start: 5px;
+}
+
+.fluent-messagebar-notification-action {
+	margin-left: 5px;
+}
+
+.fluent-messagebar-notification-close {
+	grid-column: 3;
+	grid-row: 1;
+	padding: 4px;
+	display: flex;
+	justify-content: center;
+	justify-self: center;
+	cursor: pointer;
+}
+
+.fluent-messagebar-notification-time {
+	grid-column: 2 / 4;
+	grid-row: 3;
+	font-size: 12px;
+	right: 10px;
+	text-align: right;
+	padding: 0px 4px 4px 0px;
+}
+
+@keyframes fadein-b-il8a3vjczq {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/MessageBar/FluentMessageBarProvider.razor.rz.scp.css */
+.fluent-messagebar-provider {
+	display: flex;
+	flex-direction: column;
+	row-gap: calc(var(--design-unit) * 2px);
+	padding-bottom: calc(var(--design-unit) * 1px);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/NavMenu/FluentNavGroup.razor.rz.scp.css */
+.fluent-nav-link,
+.fluent-nav-link:hover {
+	width: 100%;
+	color: inherit;
+	align-items: center;
+	text-decoration: none;
+	display: flex;
+}
+
+.fluent-nav-link.notactive:focus-within {
+	outline-offset: 1px;
+}
+
+.fluent-nav-icon {
+	min-width: 20px;
+}
+
+.fluent-nav-group.disabled {
+	color: var(--neutral-fill-secondary-rest) !important;
+	pointer-events: none;
+}
+
+.fluent-nav-group.disabled .fluent-nav-icon {
+	fill: var(--neutral-stroke-rest) !important;
+}
+
+
+/* Group expand/collapse */
+.expand-collapse-button {
+	position: absolute;
+	right: calc(var(--design-unit) * 2px);
+	left: unset;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	width: calc((((var(--base-height-multiplier) / 2) * var(--design-unit)) + ((var(--design-unit) * var(--density)) / 2) + (var(--design-unit) * 2)) * 1px);
+	height: calc((((var(--base-height-multiplier) / 2) * var(--design-unit)) + ((var(--design-unit) * var(--density)) / 2) + (var(--design-unit) * 2)) * 1px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+[dir="rtl"] * .expand-collapse-button {
+	position: absolute;
+	left: calc(var(--design-unit) * 2px);
+	right: unset;
+}
+
+.expand-collapse-button:hover {
+	background: var(--tree-item-expand-collapse-hover)
+}
+
+.expand-collapse-button svg {
+	transition: transform 0.1s linear 0s;
+	pointer-events: none;
+}
+
+[dir="rtl"] * .expand-collapse-button svg {
+	transform: rotate(180deg);
+}
+
+.rotate.expand-collapse-button svg {
+	transform: rotate(90deg);
+}
+
+:not(.expanded) .items {
+	display: none;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/NavMenu/FluentNavLink.razor.rz.scp.css */
+.fluent-nav-link {
+	width: 100%;
+	color: inherit;
+	align-items: center;
+	text-decoration: none;
+	display: flex;
+}
+
+.fluent-nav-icon:not(fluent-menu-item) {
+	min-width: 20px;
+}
+
+.fluent-nav-link.disabled:not(fluent-menu-item, a) {
+	color: var(--neutral-foreground-rest) !important;
+	opacity: var(--disabled-opacity);
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+
+a.disabled .content-region {
+	opacity: var(--disabled-opacity);
+}
+
+
+.fluent-nav-link.disabled .fluent-nav-icon {
+	fill: var(--neutral-foreground-rest) !important;
+	opacity: var(--disabled-opacity);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/NavMenu/FluentNavMenu.razor.rz.scp.css */
+/*  NavMenu */
+.fluent-nav-menu {
+	padding: 0 2px;
+
+}
+
+.fluent-nav-item.expander:focus-within {
+	outline-offset: 1px;
+}
+
+.fluent-nav-item {
+	margin: calc(var(--design-unit) * 1px) 0;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* Hover and active highlighting */
+.fluent-nav-item .positioning-region:hover:not(:has(.disabled)) {
+	cursor: pointer;
+	background: var(--neutral-fill-secondary-rest);
+}
+
+/* Active item indicator */
+.fluent-nav-item a.active .positioning-region::before {
+	content: "";
+	display: block;
+	position: absolute;
+	right: unset;
+	width: 3px;
+	height: calc(((var(--base-height-multiplier) + var(--density)) * var(--design-unit) / 2) * 1px);
+	background: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	margin: calc(var(--design-unit) * 2px) 2px;
+	z-index: 5;
+}
+
+[dir='rtl'] * .fluent-nav-item a.active .positioning-region::before {
+	left: unset;
+}
+
+.content-region {
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	width: 100%;
+	margin-inline-start: calc(var(--design-unit) * 2px);
+}
+
+/* Nav items */
+.fluent-nav-item .positioning-region {
+	display: flex;
+	width: 100%;
+	position: relative;
+	align-items: center;
+	box-sizing: border-box;
+	background: var(--neutral-fill-stealth-rest);
+	border: calc(var(--stroke-width) * 1px) solid transparent;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	min-height: calc(((var(--base-height-multiplier) + var(--density)) * var(--design-unit) + 1) * 1px);
+}
+
+.fluent-nav-group .fluent-nav-item:last-of-type, .fluent-nav-menu .fluent-nav-item:last-of-type {
+	margin-bottom: 2px;
+}
+
+fluent-menu-item .fluent-nav-link {
+	width: 100%;
+	color: inherit;
+	align-items: center;
+	text-decoration: none;
+	display: flex;
+}
+
+/* level indenting */
+.fluent-nav-group * .fluent-nav-menu .fluent-nav-item .content-region {
+	padding-inline-start: 24px;
+}
+
+.fluent-nav-group * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item .content-region {
+	padding-inline-start: 48px;
+}
+
+.fluent-nav-group * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item .content-region {
+	padding-inline-start: 72px;
+}
+
+.fluent-nav-group * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item .content-region {
+	padding-inline-start: 96px;
+}
+
+.fluent-nav-text {
+	margin-inline-start: calc(var(--design-unit) * 2px + 2px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: calc(100% - 70px);
+}
+
+/* collapsed */
+.collapsed .fluent-nav-text {
+	display: none;
+}
+
+.collapsed .expand-collapse-button {
+	display: none;
+}
+
+.collapsed .fluent-nav-group * .fluent-nav-menu > .fluent-nav-item {
+	display: none;
+}
+
+.collapsed .fluent-nav-group * .fluent-nav-menu > .fluent-nav-item * .fluent-nav-menu > .fluent-nav-item {
+	display: none;
+}
+
+.collapsed .fluent-nav-group * .fluent-nav-menu > .fluent-nav-item * .fluent-nav-menu > .fluent-nav-item * .fluent-nav-menu > .fluent-nav-item {
+	display: none;
+}
+
+@media (max-width: 600px) {
+	.collapsed .fluent-nav-text {
+		display: block;
+	}
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/NavMenuTree/FluentNavMenuTree.razor.rz.scp.css */
+/*
+    NavMenu
+*/
+.navmenu {
+	background-color: var(--neutral-layer-1);
+}
+
+/*
+    NavMenu expander
+*/
+.navmenu-expander::part(positioning-region) {
+	background-color: var(--neutral-fill-stealth-rest);
+}
+
+.navmenu-expander::part(content-region) {
+	margin-inline-start: calc(var(--design-unit) * 2px);
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.navmenu-expander::part(positioning-region):hover {
+	background-color: var(--neutral-fill-secondary-rest);
+}
+
+.navmenu-expander.selected::after {
+	display: none;
+}
+
+
+/*
+    Child Elements (Groups and Items)
+*/
+.navmenu-child-element::part(content-region) {
+	-webkit-user-select: none;
+	user-select: none;
+	margin-inline-start: calc(var(--design-unit) * 2px);
+	margin-inline-end: calc(var(--design-unit) * 2px);
+}
+
+.navmenu .treeitem-text, .navmenu fluent-tree-item.navmenu-child-element::part(start) {
+	pointer-events: none;
+}
+
+.navmenu.collapsed .treeitem-text, .navmenu.collapsed fluent-tree-item.navmenu-child-element::part(expand-collapse-button) {
+	display: none;
+}
+
+
+/*
+    Groups
+*/
+.navmenu-group::part(content-region) {
+	margin-inline-end: var(--expand-collapse-button-size);
+}
+
+
+/*
+    Group expander
+*/
+.navmenu .navmenu-group::part(expand-collapse-button) {
+	right: calc(var(--design-unit) * 2px);
+	left: unset;
+	margin-inline-end: calc(var(--expand-collapse-button-size) * -1);
+}
+
+[dir="rtl"] * .navmenu-group::part(expand-collapse-button) {
+	left: calc(var(--design-unit) * 2px);
+	right: unset;
+	margin-inline-start: calc(var(--expand-collapse-button-size) - (var(--design-unit) * 2px));
+}
+
+
+/*
+    Group items
+*/
+.navmenu-group .navmenu-child-element::part(content-region) {
+	padding-inline-start: calc(var(--design-unit) * 2px);
+}
+
+/* Hide any items inside groups of a collapsed nav menu*/
+.navmenu.collapsed > .navmenu-parent-element::part(items) {
+	display: none;
+}
+
+
+/*
+    Nav links
+*/
+.navmenu .navmenu-link::part(content-region) {
+	margin-inline-start: calc(var(--design-unit) * 2px);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Overflow/FluentOverflow.razor.rz.scp.css */
+.fluent-overflow[orientation="horizontal"] {
+	display: flex;
+	flex-direction: row;
+	overflow-x: hidden;
+	gap: 5px;
+}
+
+.fluent-overflow[orientation="vertical"] {
+	display: flex;
+	flex-direction: column;
+	overflow-y: hidden;
+}
+
+.fluent-overflow-more {
+	min-width: 32px;
+	max-width: 32px;
+}
+
+.fluent-overflow > *[overflow] {
+	display: none;
+}
+
+.fluent-overflow .fluent-overflow-item[fixed='ellipsis'] {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: fit-content;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Overlay/FluentOverlay.razor.rz.scp.css */
+.fluent-overlay {
+	inset: 0px;
+	display: flex;
+	pointer-events: auto;
+	width: 100%;
+	height: 100%;
+	overflow: hidden auto;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Pagination/FluentPaginator.razor.rz.scp.css */
+.paginator {
+	display: flex;
+	/*border-top: 1px solid var(--neutral-stroke-divider-rest);*/
+	margin-top: 0.5rem;
+	padding: 0.25rem 0;
+	align-items: center;
+}
+
+.pagination-text {
+	margin: 0 0.5rem;
+}
+
+.paginator-nav {
+	padding: 0;
+	display: flex;
+	margin-inline-start: auto;
+	margin-inline-end: 0;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+
+[dir="rtl"] * fluent-button > svg {
+	transform: rotate(180deg);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Popover/FluentPopover.razor.rz.scp.css */
+.fluent-popover-content {
+	font-family: var(--body-font);
+	-webkit-font-smoothing: antialiased;
+	line-height: 27px;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	hyphens: auto;
+	width: 100%;
+	padding: 1em;
+}
+
+.fluent-popover-content div[part="header"] {
+	font-size: 20px;
+	font-weight: 600;
+	width: inherit;
+	margin-bottom: 12px;
+}
+
+.fluent-popover-content div[part="body"] {
+	height: 100%;
+}
+
+.fluent-popover-content div[part="footer"] {
+	font-size: 14px;
+	font-weight: normal;
+	width: inherit;
+	margin-top: 12px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/PresenceBadge/FluentPresenceBadge.razor.rz.scp.css */
+.fluent-presence-badge {
+	position: relative;
+	display: inline-block;
+	--fluent-presence-badge-border-size: 2px;
+}
+
+.fluent-presence-badge *:first-child {
+	display: block;
+}
+
+.fluent-presence-badge > img {
+	border-radius: 999px;
+	aspect-ratio: 1 / 1;
+}
+
+.fluent-presence-badge .status {
+	display: block;
+	position: absolute;
+	background-color: var(--neutral-layer-1);
+	bottom: calc(-1 * var(--fluent-presence-badge-border-size));
+	right: calc(-1 * var(--fluent-presence-badge-border-size));
+	border-radius: 999px;
+	border: var(--fluent-presence-badge-border-size) solid var(--neutral-layer-1);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/ProfileMenu/FluentProfileMenu.razor.rz.scp.css */
+.fluent-profile-menu {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+	cursor: pointer;
+}
+
+.fluent-profile-menu:hover {
+	background-color: var(--fluent-profile-menu-hover);
+}
+
+.fluent-profile-menu > .fluent-persona > .name {
+	display: none;
+}
+
+.fluent-profile-menu[top-corner] + div + fluent-anchored-region {
+	transform: unset !important;
+	left: unset;
+	right: -4px;
+	top: 32px;
+}
+
+[dir="rtl"] .fluent-profile-menu[top-corner] + div + fluent-anchored-region {
+	transform: unset !important;
+	left: -4px;
+	right: unset;
+	top: 32px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/PullToRefresh/FluentPullToRefresh.razor.rz.scp.css */
+.fluent-pull-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	height: 100%;
+}
+
+.fluent-pull-container div[part="tip"] {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--neutral-layer-2);
+	color: var(--neutral-base-color);
+	padding: 0.5rem;
+	height: var(--fluent-pull-refresh-head-height, 50px);
+	width: 100%;
+}
+
+.fluent-pull-container div[part="tip"][direction="down"] {
+	position: relative;
+	top: 0px;
+}
+
+.fluent-pull-container div[part="tip"][direction="up"] {
+	position: relative;
+	bottom: 0px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Radio/FluentRadio.razor.rz.scp.css */
+fluent-radio {
+	margin: calc(var(--design-unit) * 1px) 0;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Rating/FluentRating.razor.rz.scp.css */
+.fluent-rating {
+	justify-content: start;
+	align-items: start;
+	column-gap: 0px;
+}
+
+.fluent-rating input[type='radio'] {
+	opacity: 0;
+	position: absolute;
+	width: 0px;
+	height: 0px;
+}
+
+.fluent-rating:focus-within svg[selected] {
+	outline-style: auto;
+	outline-color: var(--focus-stroke-outer);
+	outline-width: var(--focus-stroke-width);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Search/FluentSearch.razor.rz.scp.css */
+fluent-search[readonly]::part(clear-button),
+fluent-search[disabled]::part(clear-button) {
+	pointer-events: none;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/SortableList/FluentSortableList.razor.rz.scp.css */
+/*
+  you need the ::deep identifier if you are using scoped styles like this
+  because scoped styles are only applied to markup in the component, not
+  to the markup inside the render fragment.
+*/
+
+.fluent-sortable-list {
+	--fluent-sortable-list-background-color: var(--neutral-layer-2);
+	--fluent-sortable-list-item-height: calc(var(--design-unit) * 8px);
+	--fluent-sortable-list-filtered: var(--warning);
+	--fluent-sortable-list-border-width: calc(var(--stroke-width) * 1px);
+	--fluent-sortable-list-border-color: var(--neutral-stroke-input-active);
+	--fluent-sortable-list-padding: calc(var(--design-unit) * 1px);
+	--fluent-sortable-list-item-border-width: calc(var(--stroke-width) * 1px);
+	--fluent-sortable-list-item-border-color: var(--neutral-stroke-input-active);
+	--fluent-sortable-list-item-drop-border-color: var(--accent-fill-rest);
+	--fluent-sortable-list-item-drop-color: var(--neutral-layer-1);
+	--fluent-sortable-list-item-padding: 0 calc(var(--design-unit) * 2px);
+	border: var(--fluent-sortable-list-border-width) solid var(--fluent-sortable-list-border-color);
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	padding: var(--fluent-sortable-list-padding);
+	min-height: var(--fluent-sortable-list-item-height);
+}
+
+/*Not sure yet if this can be deleted. Need to test on iOS*/
+/*.fluent-sortable-list ::deep .sortable-fallback {
+		opacity: 1 !important
+}*/
+
+.fluent-sortable-list .sortable-grab {
+	cursor: grab;
+	background-color: var(--neutral-layer-1);
+	display: flex;
+	position: relative;
+	height: 100%;
+	left: calc(var(--design-unit) * -2px);
+	right: unset;
+	border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
+	width: 32px;
+	padding: 0 5px;
+}
+
+[dir='rtl'] .fluent-sortable-list .sortable-grab {
+	left: unset;
+	right: calc(var(--design-unit) * -2px);
+	border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
+}
+
+.fluent-sortable-list .sortable-item {
+	display: flex;
+	align-items: center;
+	height: var(--fluent-sortable-list-item-height) !important;
+	background-color: var(--fluent-sortable-list-background-color);
+	border: var(--fluent-sortable-list-item-border-width) solid var(--fluent-sortable-list-item-border-color);
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	padding: var(--fluent-sortable-list-item-padding);
+	margin-bottom: 2px;
+}
+
+.fluent-sortable-list .sortable-item:last-of-type {
+	margin-bottom: 0;
+}
+
+.fluent-sortable-list .sortable-ghost > .sortable-item-content {
+	background-color: var(--fluent-sortable-list-item-drop-color) !important;
+}
+
+.fluent-sortable-list .sortable-ghost {
+	background: var(--fluent-sortable-list-item-drop-color) !important;
+	border: calc(var(--stroke-width) * 1px) dotted var(--fluent-sortable-list-item-drop-border-color) !important;
+}
+
+.fluent-sortable-list > .sortable-item:is(.filtered) {
+	background: var(--fluent-sortable-list-filtered);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Splitter/FluentMultiSplitter.razor.rz.scp.css */
+.fluent-multi-splitter {
+	/* Resize Icon colors */
+	--fluent-multi-splitter-color: var(--neutral-stroke-strong-rest);
+	--fluent-multi-splitter-color-active: var(--neutral-stroke-strong-hover);
+
+	/* Bar colors */
+	--fluent-multi-splitter-background-color: var(--neutral-stroke-rest);
+	--fluent-multi-splitter-background-color-active: var(--neutral-stroke-hover);
+	--fluent-multi-splitter-hover-opacity: 0.8;
+
+	/* Bar size */
+	--fluent-multi-splitter-bar-size: 8px;
+
+	/* Styles */
+	display: flex;
+	flex-wrap: nowrap;
+	width: 100%;
+	height: 100%;
+}
+
+/* Resize bar */
+.fluent-multi-splitter > .fluent-multi-splitter-bar {
+	flex: 0 0 auto;
+	position: relative;
+	text-align: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--fluent-multi-splitter-color);
+	background-color: var(--fluent-multi-splitter-background-color);
+	opacity: 0.4;
+	user-select: none;
+	font-size: 8px;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="resize"] {
+	border: 1px solid var(--fluent-multi-splitter-color);
+	border-radius: 1px;
+}
+
+/* Collapse button */
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="collapse"] {
+	display: table;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="collapse"]:before {
+	line-height: normal;
+	display: table-cell;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="collapse"]:hover {
+	cursor: pointer;
+}
+
+/* Expand button */
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="expand"] {
+	display: table;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="expand"]:before {
+	line-height: normal;
+	display: table-cell;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar > span[part="expand"]:hover {
+	cursor: pointer;
+}
+
+/* Hover and Active */
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:hover {
+	background-color: var(--fluent-multi-splitter-background-color);
+	opacity: var(--fluent-multi-splitter-hover-opacity);
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:active {
+	background-color: var(--fluent-multi-splitter-background-color-active);
+	opacity: var(--fluent-multi-splitter-hover-opacity);
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:active > span[part="expand"],
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:active > span[part="resize"],
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:active > span[part="collapse"] {
+	color: var(--fluent-multi-splitter-color-active);
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:active > span[part="resize"] {
+	border: 1px solid var(--fluent-multi-splitter-color-active);
+}
+
+/* Disabled */
+.fluent-multi-splitter > .fluent-multi-splitter-bar[status="resizable"]:disabled {
+	opacity: 0.2;
+}
+
+/* Horizontal bar */
+.fluent-multi-splitter[orientation="horizontal"] {
+	flex-direction: row;
+}
+
+.fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar {
+	flex-direction: column;
+	width: var(--fluent-multi-splitter-bar-size);
+}
+
+.fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar > span[part="collapse"]:before {
+	content: '\025C0';
+}
+
+[dir="rtl"] .fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar > span[part="collapse"]:before {
+	content: '\025B6';
+}
+
+.fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar > span[part="resize"] {
+	height: 16px;
+	margin: 2px 0;
+}
+
+.fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar > span[part="expand"]:before {
+	content: '\025B6';
+}
+
+[dir="rtl"] .fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar > span[part="expand"]:before {
+	content: '\025C0';
+}
+
+.fluent-multi-splitter[orientation="horizontal"] > .fluent-multi-splitter-bar[status="resizable"]:hover {
+	cursor: ew-resize;
+}
+
+/* Vertical bar */
+.fluent-multi-splitter[orientation="vertical"] {
+	flex-direction: column;
+}
+
+.fluent-multi-splitter[orientation="vertical"] > .fluent-multi-splitter-bar {
+	flex-direction: row;
+	height: var(--fluent-multi-splitter-bar-size);
+}
+
+.fluent-multi-splitter[orientation="vertical"] > .fluent-multi-splitter-bar > span[part="collapse"]:before {
+	content: '\025B2';
+}
+
+.fluent-multi-splitter[orientation="vertical"] > .fluent-multi-splitter-bar > span[part="resize"] {
+	width: 16px;
+	margin: 0 2px;
+}
+
+.fluent-multi-splitter[orientation="vertical"] > .fluent-multi-splitter-bar > span[part="expand"]:before {
+	content: '\025BC';
+}
+
+.fluent-multi-splitter[orientation="vertical"] > .fluent-multi-splitter-bar[status="resizable"]:hover {
+	cursor: ns-resize;
+}
+
+/* Pane */
+.fluent-multi-splitter > .fluent-multi-splitter-pane {
+	overflow: hidden;
+	flex: 0 1 auto;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-pane[status="collapsed"] {
+	flex: 0 1 0% !important;
+	overflow: hidden !important;
+	display: block !important;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-pane[status="lastresizable"] {
+	flex: 1 1 auto;
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-pane[status="resizable"] {
+}
+
+.fluent-multi-splitter > .fluent-multi-splitter-pane[status="locked"] {
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Stack/FluentStack.razor.rz.scp.css */
+.stack-vertical {
+	display: flex;
+	flex-direction: column;
+}
+
+.stack-horizontal {
+	display: flex;
+	flex-direction: row;
+}
+
+.stack-vertical[reverse] {
+	display: flex;
+	flex-direction: column-reverse;
+}
+
+.stack-horizontal[reverse] {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Tabs/FluentTab.razor.rz.scp.css */
+fluent-tab {
+	-webkit-user-select: none;
+	user-select: none;
+	font-weight: 400;
+}
+
+fluent-tab[aria-selected="true"] {
+	font-weight: 600;
+	z-index: 1;
+}
+
+fluent-tab[overflow] {
+	display: none;
+}
+
+fluent-tab[disabled] {
+	cursor: not-allowed;
+	color: var(--neutral-foreground-hint)
+}
+
+.fluent-tab-icon {
+	fill: var(--neutral-fill-strong-active);
+	min-width: 18px;
+	max-width: 18px;
+}
+
+.fluent-tab-close {
+	fill: var(--neutral-fill-strong-active) !important;
+	cursor: pointer;
+	max-width: 12px;
+	max-height: 12px;
+	margin-left: 6px;
+}
+
+.fluent-tab-close:hover {
+	fill: var(--neutral-fill-strong-hover) !important;
+}
+
+fluent-tab[aria-selected="true"] {
+	font-variation-settings: normal;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Toast/FluentToast.razor.rz.scp.css */
+.fluent-toast {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	flex-grow: initial;
+	margin-bottom: 10px;
+	padding: 12px;
+	position: relative;
+	min-width: 292px;
+	max-width: 500px;
+	min-height: 44px;
+	font-family: var(--body-font);
+	background-color: var(--neutral-layer-floating);
+	box-shadow: var(--elevation-shadow-tooltip);
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	color: var(--neutral-foreground-rest);
+	overflow-wrap: break-word;
+	word-break: break-word;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+	-webkit-user-select: none;
+	user-select: none;
+	overflow: hidden;
+	pointer-events: auto;
+	animation-name: fadein-b-bzpjcy24fo;
+	animation-duration: 0.5s;
+	animation-delay: 0s;
+}
+
+
+.fluent-toast .fluent-toast-title {
+	flex-grow: 1;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.fluent-toast .fluent-toast-action {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+	width: 48px;
+	min-width: 48px;
+	height: 20px;
+	font-weight: 400;
+}
+
+.fluent-toast .fluent-toast-body {
+	display: flex;
+	flex-direction: column;
+	width: calc(100% - 12px);
+	justify-content: flex-start;
+	padding-inline-start: 24px;
+}
+
+.fluent-toast .fluent-toast-small {
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.fluent-toast .fluent-toast-action:has(.timestamp) {
+	cursor: initial;
+	width: auto;
+}
+
+.fluent-toast .fluent-toast-details {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.fluent-toast .fluent-toast-progressbar {
+	display: grid;
+	padding: 8px 0px 0px;
+	width: 100%;
+}
+
+.fluent-toast .fluent-toast-progressbar-percentage {
+	font-size: 12px;
+	line-height: 16px;
+	padding-top: 7px;
+}
+
+.fluent-toast .fluent-toast-actions {
+	display: flex;
+	align-items: flex-end;
+	gap: 16px;
+	height: 28px;
+	width: calc(100% - 12px);
+	justify-content: flex-start;
+	padding-inline-start: 24px;
+}
+
+@keyframes fadein-b-bzpjcy24fo {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Toast/FluentToastProvider.razor.rz.scp.css */
+.fluent-toast-provider {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	z-index: 999;
+}
+
+.position-topleft,
+.position-topright,
+.position-topcenter {
+	top: 0;
+}
+
+.position-bottomleft,
+.position-bottomright,
+.position-bottomcenter {
+	bottom: 0;
+}
+
+.position-topleft {
+	top: 24px;
+	left: 24px;
+}
+
+.position-topright {
+	top: 24px;
+	right: 24px;
+}
+
+.position-topcenter {
+	top: 24px;
+	left: 50%;
+	transform: translate(-50%, 0%);
+}
+
+.position-bottomleft {
+	bottom: 24px;
+	left: 24px;
+}
+
+.position-bottomright {
+	bottom: 24px;
+	right: 24px;
+}
+
+.position-bottomcenter {
+	bottom: 24px;
+	left: 50%;
+	transform: translate(-50%, 0%);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/TreeView/FluentTreeItem.razor.rz.scp.css */
+.treeitem-text {
+	pointer-events: none;
+}
+
+[dir='rtl'] fluent-tree-item[selected]::after {
+	right: calc(var(--focus-stroke-width) * 1px);
+}
+
+[dir='rtl'] fluent-tree-item.nested::part(expand-collapse-button) {
+	right: var(--expand-collapse-button-nested-width, calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * -1px));
+}
+
+[dir='rtl'] fluent-tree-item.nested:not(.expanded)::part(expand-collapse-button) {
+	transform: rotate(180deg);
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Wizard/FluentWizard.razor.rz.scp.css */
+.fluent-wizard {
+	display: grid;
+	height: 100%;
+	--fluent-wizard-circle-size: 24px;
+	--fluent-wizard-spacing: 4px;
+}
+
+.fluent-wizard[border-outside] {
+	border: 1px solid var(--neutral-stroke-hover);
+}
+
+.fluent-wizard > ol {
+	display: flex;
+	padding-inline-start: 0px;
+	margin-block-start: 0px;
+	margin-block-end: 0px;
+	padding: 10px;
+}
+
+.fluent-wizard .fluent-wizard-buttons {
+	display: flex;
+	justify-content: end;
+}
+
+.fluent-wizard .fluent-wizard-buttons[border-inside] {
+	border-top: 1px solid var(--neutral-stroke-hover);
+}
+
+/* Wizard with steps on Left */
+.fluent-wizard[position="left"] {
+	grid-template-columns: auto 1fr;
+	grid-template-rows: 1fr auto;
+}
+
+.fluent-wizard[position="left"] > ol {
+	flex-direction: column;
+	grid-column: 1;
+	grid-row: 1 / span 2;
+}
+
+.fluent-wizard[position="left"] > ol[border-inside] {
+	border-right: 1px solid var(--neutral-stroke-hover);
+}
+
+.fluent-wizard[position="left"] .fluent-wizard-content {
+	grid-column: 2;
+	grid-row: 1;
+	margin: 5px 10px 0px 15px;
+}
+
+.fluent-wizard[position="left"] .fluent-wizard-buttons {
+	grid-column: 2;
+	grid-row: 2;
+	text-align-last: end;
+	padding: 10px;
+}
+
+/* Wizard with steps on Top */
+.fluent-wizard[position="top"] {
+	grid-template-columns: auto;
+	grid-template-rows: auto 1fr auto;
+}
+
+.fluent-wizard[position="top"] > ol {
+	flex-direction: row;
+	justify-content: center;
+}
+
+.fluent-wizard[position="top"] > ol[border-inside] {
+	border-bottom: 1px solid var(--neutral-stroke-hover);
+}
+
+.fluent-wizard[position="top"] .fluent-wizard-content {
+	margin: 5px 10px 0px 10px;
+}
+
+.fluent-wizard[position="top"] .fluent-wizard-buttons {
+	padding: 10px;
+}
+
+/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Wizard/FluentWizardStep.razor.rz.scp.css */
+/* Wizard with steps */
+.fluent-wizard > ol > li {
+	position: relative;
+	display: flex;
+}
+
+/* Wizard with steps on Left */
+.fluent-wizard[position="left"] > ol > li {
+	gap: 10px;
+}
+
+.fluent-wizard[position="left"] > ol > li:before {
+	flex: 0 0 var(--fluent-wizard-circle-size);
+	height: var(--fluent-wizard-circle-size);
+}
+
+.fluent-wizard[position="left"] > ol > li:last-child {
+	height: auto;
+}
+
+.fluent-wizard[position="left"] > ol > li:not(:last-child):after {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: calc(var(--fluent-wizard-circle-size) + var(--fluent-wizard-spacing));
+	bottom: var(--fluent-wizard-spacing);
+	order: -1;
+	transform: translateX(calc(var(--fluent-wizard-circle-size) / 2));
+	width: 2px;
+	background-color: var(--neutral-stroke-hover);
+}
+
+[dir="rtl"] .fluent-wizard[position="left"] > ol > li:not(:last-child):after {
+	left: revert;
+	transform: translateX(calc(var(--fluent-wizard-circle-size) / -2));
+}
+
+/* Wizard with steps on Top */
+.fluent-wizard[position="top"] > ol > li {
+	flex-direction: column;
+	flex: 1;
+	text-align: center;
+}
+
+.fluent-wizard[position="top"] > ol > li:before {
+	width: var(--fluent-wizard-circle-size);
+	height: var(--fluent-wizard-circle-size);
+	margin-left: calc((100% - var(--fluent-wizard-circle-size)) / 2);
+}
+
+.fluent-wizard[position="top"] > ol > li:not(:last-child):after {
+	content: "";
+	position: absolute;
+	left: calc(50% + calc(var(--fluent-wizard-circle-size) / 2 + var(--fluent-wizard-spacing)));
+	right: unset;
+	top: calc(var(--fluent-wizard-circle-size) / 2);
+	width: calc(100% - var(--fluent-wizard-circle-size) - calc(var(--fluent-wizard-spacing) * 2));
+	height: 2px;
+	order: -1;
+	background-color: var(--neutral-stroke-hover);
+}
+
+
+[dir="rtl"] .fluent-wizard[position="top"] > ol > li:not(:last-child):after {
+	left: unset;
+	right: calc(50% + calc(var(--fluent-wizard-circle-size) / 2 + var(--fluent-wizard-spacing)));
+}
+
+/* Icon */
+.fluent-wizard > ol > li .fluent-wizard-icon {
+	min-width: calc(1.2 * var(--fluent-wizard-circle-size));
+	min-height: calc(1.2 * var(--fluent-wizard-circle-size));
+}
+
+/* Icon Number */
+.fluent-wizard > ol > li .fluent-wizard-icon-number {
+	margin-top: calc(var(--fluent-wizard-circle-size) * -1 - 5px);
+	font-size: small;
+	color: var(--accent-fill-rest);
+	text-align: center;
+	align-content: center;
+}
+
+.fluent-wizard[position="top"] > ol > li .fluent-wizard-icon-number {
+	height: var(--fluent-wizard-circle-size);
+}
+
+.fluent-wizard[position="left"] > ol > li .fluent-wizard-icon-number {
+	width: var(--fluent-wizard-circle-size);
+	height: var(--fluent-wizard-circle-size);
+}
+
+.fluent-wizard > ol > li .fluent-wizard-icon-number[disabled] {
+	opacity: var(--disabled-opacity);
+}
+
+.fluent-wizard > ol > li .fluent-wizard-icon-number[status='previous']:not([disabled]) {
+	color: var(--foreground-on-accent-rest);
+}
+
+.fluent-wizard > ol > li .fluent-wizard-icon-number[status='current']:not([disabled]) {
+	color: var(--foreground-on-accent-rest);
+}
+
+.fluent-wizard > ol > li .fluent-wizard-icon-number[status='next']:not([disabled]) {
+	color: var(--accent-fill-rest);
+}
+
+/* Title */
+.fluent-wizard > ol > li .fluent-wizard-title {
+	margin-block-start: 2px;
+	margin-block-end: 0px;
+	white-space: nowrap;
+}
+
+.fluent-wizard > ol > li[status='next'] .fluent-wizard-title {
+	color: var(--neutral-stroke-strong-rest);
+}
+
+.fluent-wizard > ol > li[status='current'] .fluent-wizard-title {
+	font-weight: bold;
+}
+
+/* Summary */
+.fluent-wizard > ol > li .fluent-wizard-summary {
+	margin-block-start: 4px;
+	margin-block-end: 0px;
+	font-size: smaller;
+}
+
+.fluent-wizard > ol > li[status='current'] .fluent-wizard-summary {
+	color: var(--accent-fill-rest);
+}
+
+.fluent-wizard > ol > li[status='next'] .fluent-wizard-summary {
+	color: var(--neutral-stroke-strong-rest);
+}
+
+/* Body */
+.fluent-wizard-body {
+	margin: 10px;
+}
+
+/* Hidden */
+@media (max-width: 599.98px) {
+	.fluent-wizard > ol > li > div[hidden-when~="xs"] {
+		display: none;
+	}
+}
+
+@media (min-width: 600px) and (max-width: 959.98px) {
+	.fluent-wizard > ol > li > div[hidden-when~="sm"] {
+		display: none;
+	}
+}
+
+@media (min-width: 960px) and (max-width: 1279.98px) {
+	.fluent-wizard > ol > li > div[hidden-when~="md"] {
+		display: none;
+	}
+}
+
+@media (min-width: 1280px) and (max-width: 1919.98px) {
+	.fluent-wizard > ol > li > div[hidden-when~="lg"] {
+		display: none;
+	}
+}
+
+@media (min-width: 1920px) and (max-width: 2559.98px) {
+	.fluent-wizard > ol > li > div[hidden-when~="xl"] {
+		display: none;
+	}
+}
+
+@media (min-width: 2560px) {
+	.fluent-wizard > ol > li > div[hidden-when~="xxl"] {
+		display: none;
+	}
+}

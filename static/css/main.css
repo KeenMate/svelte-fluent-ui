@@ -3,13 +3,13 @@ body {
 	color: #777;
 }
 
-a {
-	color: cornflowerblue;
-}
+/*a {*/
+/*	color: cornflowerblue;*/
+/*}*/
 
-a:hover {
-	text-decoration: underline;
-}
+/*a:hover {*/
+/*	text-decoration: underline;*/
+/*}*/
 
 h2 {
 	margin: 1.5rem 0 1.5rem 0;
