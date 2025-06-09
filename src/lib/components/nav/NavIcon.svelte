@@ -1,18 +1,15 @@
 <script lang="ts">
-
-	import type {SlotType} from "../types/index.js"
+	import type {SlotType} from "../../types/index.js"
 
 	type Props = {
-		title?: string
 		children?: SlotType
 	}
 
 	let {
-		title = undefined,
 		children = undefined
 	    }: Props = $props()
 </script>
 
-<div class="positioning-region" {title}>
+<span class="fluent-nav-icon" style="min-width: 20px">
 	{@render children?.()}
-</div>
+</span>

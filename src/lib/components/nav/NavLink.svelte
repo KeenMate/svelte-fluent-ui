@@ -2,6 +2,7 @@
 	import type {SlotType} from "../../types/index.js"
 	import PositioningRegion from "$lib/components/PositioningRegion.svelte"
 	import ContentRegion from "$lib/components/ContentRegion.svelte"
+	import NavIcon from "$lib/components/nav/NavIcon.svelte"
 
 	type Props = {
 		href?: string
@@ -39,7 +40,9 @@
 >
 	<PositioningRegion>
 		<ContentRegion>
-			{@render icon?.()}
+			<NavIcon>
+				{@render icon?.()}
+			</NavIcon>
 
 			<span class="fluent-nav-text">
 				{@render children?.()}

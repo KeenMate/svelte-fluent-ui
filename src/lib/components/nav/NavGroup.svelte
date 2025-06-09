@@ -6,6 +6,7 @@
 
 	type Props = {
 		expanded?: boolean
+		disabled?: boolean
 		linkIcon?: SlotType
 		linkText?: SlotType
 		children?: SlotType
@@ -14,6 +15,7 @@
 
 	let {
 		    expanded = $bindable(),
+		    disabled = undefined,
 		    linkIcon = undefined,
 		    linkText = undefined,
 		    children = undefined,
@@ -35,6 +37,7 @@
 
 <NavItem
 	group
+	{disabled}
 	{...restProps}
 	class={navItemClass}
 >

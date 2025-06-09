@@ -92,69 +92,55 @@
 	</div>
 
 	<h2 class="content-subhead">Examples</h2>
-	<p>
-		<NavMenu width="250px">
-			<NavLinkItem href="https://microsoft.com" rel="noreferer noorigin" target="_blank">
-				Microsoft
-			</NavLinkItem>
+	<div class="tw:flex tw:gap-4">
+		<div class="tw:flex-1">
+			<h5>Regular nav menu</h5>
 
-			<NavLinkItem href="/">
-				<!--{#snippet icon()}-->
-				<!--{/snippet}-->
-				Home
-			</NavLinkItem>
-			<NavLinkItem href="/NavMenu">Item 2</NavLinkItem>
-			<NavGroup onClick={onNavClick}>
-				<!--{#snippet icon()}-->
-				<!--{/snippet}-->
+			<NavMenu width="250px">
+				<NavLinkItem href="https://microsoft.com" rel="noreferer noorigin" target>
+					Microsoft
+				</NavLinkItem>
 
-				{#snippet linkText()}
-					<h3>Item 3</h3>
-				{/snippet}
-
-				<NavLinkItem onClick={onNavClick}>
+				<NavLinkItem href="/">
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
-					Item 3.1
+					Home
 				</NavLinkItem>
-				<NavLinkItem onClick={onNavClick}>
+				<NavLinkItem href="/NavMenu">Item 2</NavLinkItem>
+				<NavGroup onClick={onNavClick}>
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
-					Item 3.2
-				</NavLinkItem>
-			</NavGroup>
-			<NavLinkItem disabled href="https://microsoft.com">
-				<!--{#snippet icon()}-->
-				<!--{/snippet}-->
-				Item 4
-			</NavLinkItem>
-			<NavLinkItem disabled>
-				<!--{#snippet icon()}-->
-				<!--{/snippet}-->
-				Item 5
-			</NavLinkItem>
-			<NavGroup
-				expanded
-			>
-				{#snippet linkText()}
-					Item 6 Item 6 Item 6 Item 6 Item 6
-				{/snippet}
-				<!--{#snippet icon()}-->
-				<!--{/snippet}-->
 
-				<NavLinkItem>
-					<!--{#snippet icon()}-->
-					<!--{/snippet}-->
-					Item 6.1
-				</NavLinkItem>
-				<NavLinkItem>
-					<!--{#snippet icon()}-->
-					<!--{/snippet}-->
-					Item 6.2
-				</NavLinkItem>
-				<NavGroup expanded>
 					{#snippet linkText()}
-						Item 6.3
+						<h3>Item 3</h3>
+					{/snippet}
+
+					<NavLinkItem onClick={onNavClick}>
+						<!--{#snippet icon()}-->
+						<!--{/snippet}-->
+						Item 3.1
+					</NavLinkItem>
+					<NavLinkItem onClick={onNavClick}>
+						<!--{#snippet icon()}-->
+						<!--{/snippet}-->
+						Item 3.2
+					</NavLinkItem>
+				</NavGroup>
+				<NavLinkItem disabled href="https://microsoft.com">
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+					Item 4
+				</NavLinkItem>
+				<NavLinkItem disabled>
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+					Item 5
+				</NavLinkItem>
+				<NavGroup
+					expanded
+				>
+					{#snippet linkText()}
+						Item 6 Item 6 Item 6 Item 6 Item 6
 					{/snippet}
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
@@ -162,18 +148,16 @@
 					<NavLinkItem>
 						<!--{#snippet icon()}-->
 						<!--{/snippet}-->
-						Item 6.3.1 Item 6.3.1 Item 6.3.1
+						Item 6.1
 					</NavLinkItem>
 					<NavLinkItem>
 						<!--{#snippet icon()}-->
 						<!--{/snippet}-->
-						Item 6.3.2
+						Item 6.2
 					</NavLinkItem>
-					<NavGroup
-						expanded
-					>
+					<NavGroup expanded>
 						{#snippet linkText()}
-							Item 6.3.3 Item 6.3.3 Item 6.3.3
+							Item 6.3
 						{/snippet}
 						<!--{#snippet icon()}-->
 						<!--{/snippet}-->
@@ -181,19 +165,18 @@
 						<NavLinkItem>
 							<!--{#snippet icon()}-->
 							<!--{/snippet}-->
-							Item 6.3.3.1
+							Item 6.3.1 Item 6.3.1 Item 6.3.1
 						</NavLinkItem>
-						<NavLinkItem disabled>
+						<NavLinkItem>
 							<!--{#snippet icon()}-->
 							<!--{/snippet}-->
-							Item 6.3.3.2
+							Item 6.3.2
 						</NavLinkItem>
 						<NavGroup
-							disabled
 							expanded
 						>
 							{#snippet linkText()}
-								Item 6.3.3.3
+								Item 6.3.3 Item 6.3.3 Item 6.3.3
 							{/snippet}
 							<!--{#snippet icon()}-->
 							<!--{/snippet}-->
@@ -201,17 +184,93 @@
 							<NavLinkItem>
 								<!--{#snippet icon()}-->
 								<!--{/snippet}-->
-								Item 6.3.3.3.1
+								Item 6.3.3.1
 							</NavLinkItem>
-							<NavLinkItem>
+							<NavLinkItem disabled>
 								<!--{#snippet icon()}-->
 								<!--{/snippet}-->
-								Item 6.3.3.3.2
+								Item 6.3.3.2
 							</NavLinkItem>
+							<NavGroup
+								disabled
+								expanded
+							>
+								{#snippet linkText()}
+									Item 6.3.3.3
+								{/snippet}
+								<!--{#snippet icon()}-->
+								<!--{/snippet}-->
+
+								<NavLinkItem>
+									<!--{#snippet icon()}-->
+									<!--{/snippet}-->
+									Item 6.3.3.3.1
+								</NavLinkItem>
+								<NavLinkItem>
+									<!--{#snippet icon()}-->
+									<!--{/snippet}-->
+									Item 6.3.3.3.2
+								</NavLinkItem>
+							</NavGroup>
 						</NavGroup>
 					</NavGroup>
 				</NavGroup>
-			</NavGroup>
+			</NavMenu>
+		</div>
+		<NavMenu class="tw:flex-1">
+			<h5>Collapsible nav menu</h5>
+
+			<NavMenu collapsible><!--!--><!--!--><!--!-->
+				<NavLinkItem title="Item 1 tooltip">
+					Item 1
+				</NavLinkItem>
+				<NavLinkItem title="Item 2 tooltip" disabled>
+					Item 2
+				</NavLinkItem>
+				<NavGroup>
+					{#snippet linkText()}
+						Item 3
+					{/snippet}
+
+					<NavMenu>
+						<NavLinkItem title="Item 3.1 tooltip">
+							Item 3.1
+						</NavLinkItem>
+						<NavLinkItem title="Item 3.2 tooltip" disabled>
+							Item 3.2
+						</NavLinkItem>
+						<NavGroup>
+							{#snippet linkText()}
+								Item 3.3
+							{/snippet}
+
+							<NavMenu>
+								<NavLinkItem href="https://microsoft.com" title="Item 3.3.1 tooltip">
+									https://microsoft.com
+								</NavLinkItem>
+							</NavMenu>
+						</NavGroup>
+						<NavGroup title="Item 3.4 tooltip" disabled>
+							{#snippet linkText()}
+								Item 3.4
+							{/snippet}
+
+							<NavMenu>
+								<NavLinkItem
+									title="Item 3.4.1 tooltip"
+									href="https://microsoft.com"
+									rel=""
+								>
+									https://microsoft.com
+								</NavLinkItem>
+							</NavMenu>
+						</NavGroup>
+					</NavMenu>
+				</NavGroup>
+				<NavLinkItem title="Item 4 tooltip" disabled>
+					Item 4
+				</NavLinkItem>
+			</NavMenu>
 		</NavMenu>
-	</p>
+	</div>
 </div>

@@ -3,10 +3,13 @@
 	import NavItem from "./NavItem.svelte"
 	import PositioningRegion from "$lib/components/PositioningRegion.svelte"
 	import ContentRegion from "$lib/components/ContentRegion.svelte"
+	import NavIcon from "./NavIcon.svelte"
+	import NavLink from "$lib/components/nav/NavLink.svelte"
 
 	type Props = {
 		href?: string
 		rel?: string
+		title?: string
 		disabled?: boolean
 		group?: boolean
 		onClick?: (ev: MouseEvent) => void
@@ -19,6 +22,7 @@
 	let {
 		    href      = undefined,
 		    rel       = undefined,
+				title = undefined,
 		    disabled     = undefined,
 		    group     = undefined,
 		    icon      = undefined,
@@ -35,26 +39,15 @@
 	{...restProps}
 	{onClick}
 >
-	<a
+	<NavLink
 		{href}
 		{rel}
-		class="fluent-nav-link"
-		class:disabled
+		{title}
+		{disabled}
+		{icon}
+		{children}
+		{afterText}
 		{...restProps}
 	>
-		<PositioningRegion>
-			<ContentRegion>
-				{@render icon?.()}
-
-				<span
-					class="fluent-nav-text"
-					class:disabled
-				>
-					{@render children?.()}
-				</span>
-
-				{@render afterText?.()}
-			</ContentRegion>
-		</PositioningRegion>
-	</a>
+	</NavLink>
 </NavItem>
