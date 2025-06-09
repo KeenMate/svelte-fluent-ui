@@ -154,7 +154,7 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>Initial tests</td>
 				<td>
 					<a href="/components/navigation-layout/navigation">navigation</a>
 				</td>

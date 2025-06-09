@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
+	import NavItem from "./NavItem.svelte"
 	import PositioningRegion from "$lib/components/PositioningRegion.svelte"
 	import ContentRegion from "$lib/components/ContentRegion.svelte"
 
 	type Props = {
 		href?: string
 		rel?: string
+		disabled?: boolean
+		group?: boolean
 		onClick?: (ev: MouseEvent) => void
 		icon?: SlotType
 		afterText?: SlotType
@@ -16,36 +19,42 @@
 	let {
 		    href      = undefined,
 		    rel       = undefined,
+		    disabled     = undefined,
+		    group     = undefined,
 		    icon      = undefined,
-		    onClick   = undefined,
+		    onClick = undefined,
 		    afterText = undefined,
 		    children  = undefined,
 		    ...restProps
 	    }: Props = $props()
-
-	let renderElement = $derived(href
-		? "a"
-		: "div"
-	)
 </script>
 
-<svelte:element
-	this={renderElement}
-	{href}
-	{rel}
+<NavItem
+	{group}
+	{disabled}
 	{...restProps}
-	class="fluent-nav-link {restProps.class || ''}"
-	onclick={onClick}
+	{onClick}
 >
-	<PositioningRegion>
-		<ContentRegion>
-			{@render icon?.()}
+	<a
+		{href}
+		{rel}
+		class="fluent-nav-link"
+		class:disabled
+		{...restProps}
+	>
+		<PositioningRegion>
+			<ContentRegion>
+				{@render icon?.()}
 
-			<span class="fluent-nav-text">
-				{@render children?.()}
-			</span>
+				<span
+					class="fluent-nav-text"
+					class:disabled
+				>
+					{@render children?.()}
+				</span>
 
-			{@render afterText?.()}
-		</ContentRegion>
-	</PositioningRegion>
-</svelte:element>
+				{@render afterText?.()}
+			</ContentRegion>
+		</PositioningRegion>
+	</a>
+</NavItem>

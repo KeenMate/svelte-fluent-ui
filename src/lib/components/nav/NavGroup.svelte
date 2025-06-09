@@ -1,39 +1,62 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
 	import NavItem from "./NavItem.svelte"
-	import type {NavGroupSvelteContext} from "../../fluent-ui/types/nav-group.js"
-	import {setContext} from "svelte"
+	import NavLink from "$lib/components/nav/NavLink.svelte"
+	import ExpandIcon from "$lib/components/icons/ExpandIcon.svelte"
 
 	type Props = {
 		expanded?: boolean
+		linkIcon?: SlotType
 		linkText?: SlotType
 		children?: SlotType
 		[prop: string]: any
 	}
 
 	let {
-		expanded = $bindable(),
+		    expanded = $bindable(),
+		    linkIcon = undefined,
 		    linkText = undefined,
 		    children = undefined,
-		...restProps
+		    ...restProps
 	    }: Props = $props()
 
-	setContext<NavGroupSvelteContext>("nav-group", true)
+	const navItemClass = $derived([
+		expanded && "expanded",
+		restProps.class
+	].filter(x => x)
+		.join(" "))
 
 	// todo: ability to persist expanded state
+
+	function onNavLinkClicked(ev: MouseEvent) {
+		expanded = !expanded
+	}
 </script>
 
-<NavItem group {...restProps}>
-	<div class="fluent-nav-link notactive">
-		<div class="positioning-region" title="Item 6 Item 6 Item 6 Item 6 Item 6">
-			<div class="content-region"><!--!-->
-				<div class="fluent-nav-text">
-					{@render linkText?.()}
-				</div>
-				<div aria-hidden="true" class="rotate expand-collapse-button" tabindex="-1"></div>
+<NavItem
+	group
+	{...restProps}
+	class={navItemClass}
+>
+	<NavLink class="notactive" onClick={onNavLinkClicked}>
+		{#snippet icon()}
+			{@render linkIcon?.()}
+		{/snippet}
+
+		{@render linkText?.()}
+
+		{#snippet afterText()}
+			<div
+				aria-hidden="true"
+				class="expand-collapse-button"
+				class:rotate={expanded}
+				tabindex="-1"
+			>
+				<ExpandIcon />
 			</div>
-		</div>
-	</div>
+		{/snippet}
+	</NavLink>
+
 	<div role="group" class="fluent-collapsible-region-container items" style="height: auto;">
 		<div
 			class="fluent-nav-menu"

@@ -2388,7 +2388,7 @@ div[dragged-over="true"] {
 	transform: rotate(90deg);
 }
 
-:not(.expanded) .items {
+:not(.expanded) > .items {
 	display: none;
 }
 

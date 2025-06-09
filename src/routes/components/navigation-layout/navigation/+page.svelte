@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {NavMenu, NavGroup, NavLink} from "$lib/index.js"
+	import {NavMenu, NavGroup, NavLinkItem} from "$lib/index.js"
 
 	function onNavClick(ev: Event) {
 		console.log("Nav link/group clicked", ev)
@@ -8,12 +8,20 @@
 
 <div class="header">
 	<h1>Navigation</h1>
+	<p>
+		For components: <br>
+		<span class="tw:font-mono">NavMenu</span>,
+		<span class="tw:font-mono">NavItem</span>,
+		<span class="tw:font-mono">NavLink</span>,
+		<span class="tw:font-mono">NavLinkItem</span>
+	</p>
 </div>
 
 <div class="content">
 	<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
 			<h2>Members</h2>
+			<p>(of NavMenu)</p>
 			<table class="pure-table member-table">
 				<tbody>
 				<tr class="property">
@@ -43,6 +51,20 @@
 				</tr>
 				<tr class="slot">
 					<td></td>
+					<td>linkIcon</td>
+					<td>any</td>
+					<td>undefined</td>
+					<td></td>
+				</tr>
+				<tr class="slot">
+					<td></td>
+					<td>linkText</td>
+					<td>any</td>
+					<td>undefined</td>
+					<td></td>
+				</tr>
+				<tr class="slot">
+					<td></td>
 					<td>children</td>
 					<td>any</td>
 					<td>undefined</td>
@@ -50,7 +72,6 @@
 				</tr>
 				</tbody>
 			</table>
-
 		</div>
 		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
 			<h2 class="content-subhead">Actions</h2>
@@ -73,17 +94,17 @@
 	<h2 class="content-subhead">Examples</h2>
 	<p>
 		<NavMenu width="250px">
-			<NavLink href="https://microsoft.com" rel="noreferer noorigin" target="_blank">
+			<NavLinkItem href="https://microsoft.com" rel="noreferer noorigin" target="_blank">
 				Microsoft
-			</NavLink>
+			</NavLinkItem>
 
-			<NavLink href="/" match="NavLinkMatch.All">
+			<NavLinkItem href="/">
 				<!--{#snippet icon()}-->
 				<!--{/snippet}-->
 				Home
-			</NavLink>
-			<NavLink href="/NavMenu">Item 2</NavLink>
-			<NavGroup title="Item 3" onClick={onNavClick}>
+			</NavLinkItem>
+			<NavLinkItem href="/NavMenu">Item 2</NavLinkItem>
+			<NavGroup onClick={onNavClick}>
 				<!--{#snippet icon()}-->
 				<!--{/snippet}-->
 
@@ -91,93 +112,102 @@
 					<h3>Item 3</h3>
 				{/snippet}
 
-				<NavLink onClick={onNavClick}>
+				<NavLinkItem onClick={onNavClick}>
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
 					Item 3.1
-				</NavLink>
-				<NavLink onClick={onNavClick}>
+				</NavLinkItem>
+				<NavLinkItem onClick={onNavClick}>
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
 					Item 3.2
-				</NavLink>
+				</NavLinkItem>
 			</NavGroup>
-			<NavLink disabled href="https://microsoft.com">
+			<NavLinkItem disabled href="https://microsoft.com">
 				<!--{#snippet icon()}-->
 				<!--{/snippet}-->
 				Item 4
-			</NavLink>
-			<NavLink disabled>
+			</NavLinkItem>
+			<NavLinkItem disabled>
 				<!--{#snippet icon()}-->
 				<!--{/snippet}-->
 				Item 5
-			</NavLink>
+			</NavLinkItem>
 			<NavGroup
 				expanded
-				title="Item 6 Item 6 Item 6 Item 6 Item 6"
 			>
+				{#snippet linkText()}
+					Item 6 Item 6 Item 6 Item 6 Item 6
+				{/snippet}
 				<!--{#snippet icon()}-->
 				<!--{/snippet}-->
 
-				<NavLink>
+				<NavLinkItem>
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
 					Item 6.1
-				</NavLink>
-				<NavLink>
+				</NavLinkItem>
+				<NavLinkItem>
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
 					Item 6.2
-				</NavLink>
-				<NavGroup expanded title="Item 6.3">
+				</NavLinkItem>
+				<NavGroup expanded>
+					{#snippet linkText()}
+						Item 6.3
+					{/snippet}
 					<!--{#snippet icon()}-->
 					<!--{/snippet}-->
 
-					<NavLink>
+					<NavLinkItem>
 						<!--{#snippet icon()}-->
 						<!--{/snippet}-->
 						Item 6.3.1 Item 6.3.1 Item 6.3.1
-					</NavLink>
-					<NavLink>
+					</NavLinkItem>
+					<NavLinkItem>
 						<!--{#snippet icon()}-->
 						<!--{/snippet}-->
 						Item 6.3.2
-					</NavLink>
+					</NavLinkItem>
 					<NavGroup
 						expanded
-						title="Item 6.3.3 Item 6.3.3 Item 6.3.3"
 					>
+						{#snippet linkText()}
+							Item 6.3.3 Item 6.3.3 Item 6.3.3
+						{/snippet}
 						<!--{#snippet icon()}-->
 						<!--{/snippet}-->
 
-						<NavLink>
+						<NavLinkItem>
 							<!--{#snippet icon()}-->
 							<!--{/snippet}-->
 							Item 6.3.3.1
-						</NavLink>
-						<NavLink disabled>
+						</NavLinkItem>
+						<NavLinkItem disabled>
 							<!--{#snippet icon()}-->
 							<!--{/snippet}-->
 							Item 6.3.3.2
-						</NavLink>
+						</NavLinkItem>
 						<NavGroup
 							disabled
 							expanded
-							title="Item 6.3.3.3"
 						>
+							{#snippet linkText()}
+								Item 6.3.3.3
+							{/snippet}
 							<!--{#snippet icon()}-->
 							<!--{/snippet}-->
 
-							<NavLink>
+							<NavLinkItem>
 								<!--{#snippet icon()}-->
 								<!--{/snippet}-->
 								Item 6.3.3.3.1
-							</NavLink>
-							<NavLink>
+							</NavLinkItem>
+							<NavLinkItem>
 								<!--{#snippet icon()}-->
 								<!--{/snippet}-->
 								Item 6.3.3.3.2
-							</NavLink>
+							</NavLinkItem>
 						</NavGroup>
 					</NavGroup>
 				</NavGroup>
