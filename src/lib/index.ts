@@ -45,3 +45,5 @@ export {default as PositioningRegion} from "./components/PositioningRegion.svelt
 export {default as ContentRegion} from "./components/ContentRegion.svelte"
 export {default as ExpandIcon} from "./components/icons/ExpandIcon.svelte"
 export {default as HamburgerIcon} from "./components/icons/HamburgerIcon.svelte"
+export {default as Breadcrumb} from "./components/Breadcrumb.svelte"
+export {default as BreadcrumbItem} from "./components/BreadcrumbItem.svelte"
