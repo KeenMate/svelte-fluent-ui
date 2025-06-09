@@ -134,7 +134,7 @@
 				<tr class="callback">
 					<td></td>
 					<td>onClick</td>
-					<td>(ev: PointerEvent, previousValue: boolean | null) => void</td>
+					<td>(ev: PointerEvent) => void</td>
 					<td>undefined</td>
 					<td></td>
 				</tr>

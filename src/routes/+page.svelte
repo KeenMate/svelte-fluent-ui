@@ -37,7 +37,11 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>badge</td>
+				<td>
+					<a href="/components/badge">
+						badge
+					</a>
+				</td>
 				<td>
 					Now, only "accent" appearance works. <br>
 					Colors need CSS variables to be defined (<pre class="tw:inline">--badge-color-[color]</pre>)
