@@ -1,5 +1,6 @@
 <script>
-	import "../assets/styles/demo-pages.css"
+	import "../assets/styles/tailwind.css"
+	import "../assets/styles/demo-pages.scss"
 	import "$lib/main.scss"
 
 	let {children} = $props()
