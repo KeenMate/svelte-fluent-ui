@@ -54,12 +54,11 @@
 			</tr>
 			<tr>
 				<td></td>
-				<td>breadcrumb</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>breadcrumb-item</td>
+				<td>
+					<a href="/components/breadcrumbs">
+						breadcrumbs
+					</a>
+				</td>
 				<td></td>
 			</tr>
 			<tr>

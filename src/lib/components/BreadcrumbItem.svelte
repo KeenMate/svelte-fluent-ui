@@ -25,6 +25,11 @@
 	{...restProps}
 	{href}
 >
-	{@render separator?.()}
+	{#if separator}
+		<span slot="separator">
+			{@render separator?.()}
+		</span>
+	{/if}
+
 	{@render children?.()}
 </fluent-breadcrumb-item>
