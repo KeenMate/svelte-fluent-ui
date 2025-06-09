@@ -158,7 +158,7 @@
 				<td>
 					<a href="/components/navigation-layout/navigation">navigation</a>
 				</td>
-				<td></td>
+				<td>Collapsed nav' child tree's floating nodes not implemented at the moment</td>
 			</tr>
 			<tr>
 				<td>Initial tests</td>
