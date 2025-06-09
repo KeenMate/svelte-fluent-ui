@@ -1,6 +1,9 @@
 <script lang="ts">
-	import {NavMenu, NavItem, NavLink} from "$lib/index.js"
-	import NavGroup from "$lib/components/nav/NavGroup.svelte"
+	import {NavMenu, NavGroup, NavLink} from "$lib/index.js"
+
+	function onNavClick(ev: Event) {
+		console.log("Nav link/group clicked", ev)
+	}
 </script>
 
 <div class="header">
@@ -74,44 +77,107 @@
 				Microsoft
 			</NavLink>
 
-			<NavLink Icon="@(new Icons.Regular.Size20.Home())" Href="/" Match="NavLinkMatch.All">Home</NavLink>
-			<NavLink Href="/NavMenu">Item 2</NavLink>
-			<NavGroup OnClick="OnClick" Title="Item 3" Icon="@(new Icons.Regular.Size20.EarthLeaf())">
+			<NavLink href="/" match="NavLinkMatch.All">
+				<!--{#snippet icon()}-->
+				<!--{/snippet}-->
+				Home
+			</NavLink>
+			<NavLink href="/NavMenu">Item 2</NavLink>
+			<NavGroup title="Item 3" onClick={onNavClick}>
+				<!--{#snippet icon()}-->
+				<!--{/snippet}-->
+
 				{#snippet linkText()}
 					<h3>Item 3</h3>
 				{/snippet}
 
-				<NavLink OnClick="OnClick" Icon="@(new Icons.Regular.Size20.LeafOne())">Item 3.1</NavLink>
-				<NavLink OnClick="OnClick" Icon="@(new Icons.Regular.Size20.LeafTwo())">Item 3.2</NavLink>
+				<NavLink onClick={onNavClick}>
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+					Item 3.1
+				</NavLink>
+				<NavLink onClick={onNavClick}>
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+					Item 3.2
+				</NavLink>
 			</NavGroup>
-			<NavLink Icon="@(new Icons.Regular.Size20.CalendarAgenda())" Disabled="true" Href="https://microsoft.com">Item 4
+			<NavLink disabled href="https://microsoft.com">
+				<!--{#snippet icon()}-->
+				<!--{/snippet}-->
+				Item 4
 			</NavLink>
-			<NavLink Icon="@(new Icons.Regular.Size20.Home())" Disabled="true">Item 5</NavLink>
+			<NavLink disabled>
+				<!--{#snippet icon()}-->
+				<!--{/snippet}-->
+				Item 5
+			</NavLink>
 			<NavGroup
-				Expanded="true"
-				Title="Item 6 Item 6 Item 6 Item 6 Item 6"
-				Icon="@(new Icons.Regular.Size20.EarthLeaf())"
+				expanded
+				title="Item 6 Item 6 Item 6 Item 6 Item 6"
 			>
-				<NavLink Icon="@(new Icons.Regular.Size20.LeafOne())">Item 6.1</NavLink>
-				<NavLink Icon="@(new Icons.Regular.Size20.LeafTwo())">Item 6.2</NavLink>
-				<NavGroup Expanded="true" Title="Item 6.3" Icon="@(new Icons.Regular.Size20.EarthLeaf())">
-					<NavLink Icon="@(new Icons.Regular.Size20.LeafOne())">Item 6.3.1 Item 6.3.1 Item 6.3.1</NavLink>
-					<NavLink Icon="@(new Icons.Regular.Size20.LeafTwo())">Item 6.3.2</NavLink>
+				<!--{#snippet icon()}-->
+				<!--{/snippet}-->
+
+				<NavLink>
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+					Item 6.1
+				</NavLink>
+				<NavLink>
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+					Item 6.2
+				</NavLink>
+				<NavGroup expanded title="Item 6.3">
+					<!--{#snippet icon()}-->
+					<!--{/snippet}-->
+
+					<NavLink>
+						<!--{#snippet icon()}-->
+						<!--{/snippet}-->
+						Item 6.3.1 Item 6.3.1 Item 6.3.1
+					</NavLink>
+					<NavLink>
+						<!--{#snippet icon()}-->
+						<!--{/snippet}-->
+						Item 6.3.2
+					</NavLink>
 					<NavGroup
-						Expanded="true"
-						Title="Item 6.3.3 Item 6.3.3 Item 6.3.3"
-						Icon="@(new Icons.Regular.Size20.EarthLeaf())"
+						expanded
+						title="Item 6.3.3 Item 6.3.3 Item 6.3.3"
 					>
-						<NavLink Icon="@(new Icons.Regular.Size20.LeafOne())">Item 6.3.3.1</NavLink>
-						<NavLink Disabled="true" Icon="@(new Icons.Regular.Size20.LeafTwo())">Item 6.3.3.2</NavLink>
+						<!--{#snippet icon()}-->
+						<!--{/snippet}-->
+
+						<NavLink>
+							<!--{#snippet icon()}-->
+							<!--{/snippet}-->
+							Item 6.3.3.1
+						</NavLink>
+						<NavLink disabled>
+							<!--{#snippet icon()}-->
+							<!--{/snippet}-->
+							Item 6.3.3.2
+						</NavLink>
 						<NavGroup
-							Disabled="true"
-							Expanded="true"
-							Title="Item 6.3.3.3"
-							Icon="@(new Icons.Regular.Size20.EarthLeaf())"
+							disabled
+							expanded
+							title="Item 6.3.3.3"
 						>
-							<NavLink Icon="@(new Icons.Regular.Size20.LeafOne())">Item 6.3.3.3.1</NavLink>
-							<NavLink Icon="@(new Icons.Regular.Size20.LeafTwo())">Item 6.3.3.3.2</NavLink>
+							<!--{#snippet icon()}-->
+							<!--{/snippet}-->
+
+							<NavLink>
+								<!--{#snippet icon()}-->
+								<!--{/snippet}-->
+								Item 6.3.3.3.1
+							</NavLink>
+							<NavLink>
+								<!--{#snippet icon()}-->
+								<!--{/snippet}-->
+								Item 6.3.3.3.2
+							</NavLink>
 						</NavGroup>
 					</NavGroup>
 				</NavGroup>

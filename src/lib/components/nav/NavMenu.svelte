@@ -2,14 +2,14 @@
 	import type {SlotType} from "../../types/index.js"
 
 	type Props = {
-		children?: SlotType
 		width?: string
+		children?: SlotType
 		[prop: string]: any
 	}
 
 	let {
-		children = undefined,
 		width = undefined,
+		children = undefined,
 		...restProps
 	    }: Props = $props()
 </script>
