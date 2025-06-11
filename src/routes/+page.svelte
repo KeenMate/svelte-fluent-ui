@@ -233,8 +233,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>tabs</td>
+				<td>Initial tests</td>
+				<td><a href="/components/tabs/">tabs</a></td>
 				<td></td>
 			</tr>
 			<tr>
