@@ -242,8 +242,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>tabs</td>
+				<td>Initial tests</td>
+				<td><a href="/components/tabs/">tabs</a></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -254,6 +254,11 @@
 			<tr>
 				<td>Initial tests</td>
 				<td><a href="/components/text-field">text-field</a></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/toast">toast</a></td>
 				<td></td>
 			</tr>
 			<tr>
