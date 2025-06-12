@@ -38,6 +38,15 @@
 			<tr>
 				<td>Initial tests</td>
 				<td>
+					<a href="/components/navigation-layout/appbar">
+						appbar
+					</a>
+				</td>
+				<td>Icons (active and "rest") need to have "part" attr manually specified to work properly</td>
+			</tr>
+			<tr>
+				<td>Initial tests</td>
+				<td>
 					<a href="/components/badge">
 						badge
 					</a>

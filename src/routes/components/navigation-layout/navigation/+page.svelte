@@ -97,7 +97,7 @@
 			<h5>Regular nav menu</h5>
 
 			<NavMenu width="250px">
-				<NavLinkItem href="https://microsoft.com" rel="noreferer noorigin" target>
+				<NavLinkItem href="https://microsoft.com" rel="noreferer noorigin" target="_blank">
 					Microsoft
 				</NavLinkItem>
 

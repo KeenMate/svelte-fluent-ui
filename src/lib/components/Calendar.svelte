@@ -9,7 +9,7 @@
 	import type DayFormat from "../fluent-ui/calendar/day-format.js"
 	import {CalendarTitles} from "../fluent-ui/calendar/calendar-titles.js"
 	import {RangeOfDates} from "../fluent-ui/calendar/range-of-dates.js"
-	import {VerticalPosition} from "../fluent-ui/constants/vertical-position.js"
+	import {CalendarVerticalPosition} from "../fluent-ui/constants/calendar-vertical-position.js"
 	import {tick} from "svelte"
 	import {getLargest, getSmallest} from "../helpers/array.js"
 
@@ -58,8 +58,8 @@
 	let _rangeSelector                      = $state(new RangeOfDates())
 	let _rangeSelectorMouseOver             = $state(new RangeOfDates())
 	let _pickerView: Props["view"] | null   = $state(null)
-	let _selectedDatesMouseOver: Date[]     = $state([])
-	let _animationRunning: VerticalPosition = $state(VerticalPosition.Unset)
+	let _selectedDatesMouseOver: Date[]             = $state([])
+	let _animationRunning: CalendarVerticalPosition = $state(CalendarVerticalPosition.Unset)
 
 	const canBeAnimated             = $derived(animatePeriodChanges ?? (view !== "days" && view !== "years"))
 	const calendarExtended          = $derived((value, new CalendarExtended(culture, pickerMonth)))
@@ -113,9 +113,9 @@
 		}
 
 		switch (_animationRunning) {
-			case VerticalPosition.Top:
+			case CalendarVerticalPosition.Top:
 				return `${existingClass} animation-running-up`
-			case VerticalPosition.Bottom:
+			case CalendarVerticalPosition.Bottom:
 				return `${existingClass} animation-running-down`
 			default:
 				return `${existingClass} animation-none`
@@ -141,7 +141,7 @@
 	}
 
 	async function onPreviousButtonClicked(e: MouseEvent) {
-		await startNewAnimationAsync(VerticalPosition.Bottom)
+		await startNewAnimationAsync(CalendarVerticalPosition.Bottom)
 
 		switch (view) {
 			case "days":
@@ -160,7 +160,7 @@
 	}
 
 	async function onNextButtonHandlerAsync(e: MouseEvent) {
-		await startNewAnimationAsync(VerticalPosition.Top)
+		await startNewAnimationAsync(CalendarVerticalPosition.Top)
 
 		switch (view) {
 			case "days":
@@ -323,12 +323,12 @@
 		_pickerView = "days"
 	}
 
-	async function startNewAnimationAsync(position: VerticalPosition) {
+	async function startNewAnimationAsync(position: CalendarVerticalPosition) {
 		if (!canBeAnimated) {
 			return
 		}
 
-		_animationRunning = VerticalPosition.Unset
+		_animationRunning = CalendarVerticalPosition.Unset
 		await tick()
 		_animationRunning = position
 	}

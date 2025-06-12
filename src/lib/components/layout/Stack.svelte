@@ -1,17 +1,19 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
+	import {classList} from "../../helpers/html.js"
+	import {type StackHorizontalAlign, StackOrientation, StackVerticalAlign} from "../../fluent-ui/constants/stack.js"
 
 	type Props = {
 		children?: SlotType
-		orientation?: "Horizontal" | "Vertical" | string
-		horizontalAlign?: "Left" | "Start" | "Center" | "Right" | "End" | "Stretch" | "SpaceBetween" | string
-		verticalAlign?: "Top" | "Center" | "Bottom" | "Stretch" | "SpaceBetween" | string
+		orientation?: StackOrientation
+		horizontalAlign?: StackHorizontalAlign
+		verticalAlign?: StackVerticalAlign
 		verticalGap?: string | number
 		horizontalGap?: string | number
 		gap?: string | number
 		width?: string
+		height?: string
 		reversed?: boolean
-		vertical?: boolean
 		[prop: string]: any
 	}
 
@@ -24,19 +26,17 @@
 		    horizontalGap = undefined,
 		    gap = undefined,
 		    width = undefined,
+		    height = undefined,
 		    reversed = undefined,
 		    ...restProps
 	    }: Props = $props()
 
-	let classes = $derived([
+	let classes = $derived(classList(
 		`stack-${orientation?.toLowerCase() === "vertical" ? 'vertical' : 'horizontal'}`,
 		verticalAlign && `vertical-align-${verticalAlign.toLowerCase()}`,
 		horizontalAlign && `horizontal-align-${horizontalAlign.toLowerCase()}`,
 		restProps.class
-	]
-			.filter(x => x)
-			.join(" ")
-	)
+	))
 </script>
 
 <div
@@ -47,6 +47,7 @@
 	style:--horizontal-gap={horizontalGap || gap}
 	style:--gap={gap}
 	style:width={width}
+	style:height={height}
 >
 	{@render children?.()}
 </div>

@@ -3,6 +3,7 @@
 	import NavItem from "./NavItem.svelte"
 	import NavLink from "$lib/components/nav/NavLink.svelte"
 	import ExpandIcon from "$lib/components/icons/ExpandIcon.svelte"
+	import {classList} from "../../helpers/html.js"
 
 	type Props = {
 		expanded?: boolean
@@ -22,11 +23,10 @@
 		    ...restProps
 	    }: Props = $props()
 
-	const navItemClass = $derived([
+	const navItemClass = $derived(classList(
 		expanded && "expanded",
 		restProps.class
-	].filter(x => x)
-		.join(" "))
+	))
 
 	// todo: ability to persist expanded state
 

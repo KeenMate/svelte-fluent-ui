@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
 	import NavExpander from "$lib/components/nav/NavExpander.svelte"
+	import {styleList} from "../../helpers/html.js"
 
 	type Props = {
 		width?: string
@@ -18,11 +19,9 @@
 		    ...restProps
 	    }: Props = $props()
 
-	const computedStyle = $derived([
+	const computedStyle = $derived(styleList(
 			collapsed ? "width: 40px; min-width: 40px" : `width: ${width || "250px"}`
-		].filter(x => x)
-			.join("; ")
-	)
+	))
 </script>
 
 <div

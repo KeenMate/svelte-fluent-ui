@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {SlotType} from "../types/index.js"
 	import {fluentCard, provideFluentDesignSystem} from "@fluentui/web-components"
+	import {classList, styleList} from "../helpers/html.js"
 
 	provideFluentDesignSystem().register(
 		fluentCard()
@@ -28,32 +29,21 @@
 		    ...restProps
 	    }: Props = $props()
 
-	const styles = $derived(
-		[
-			styleParam,
-			width && `--card-width: ${width}${typeof width === "number" ? "px" : ""}`,
-			height && `--card-height: ${height}${typeof height === "number" ? "px" : ""}`
-		]
-			.filter(x => x)
-			.join("; ")
-	)
-	const classes = $derived(
-		[
+	const styles  = $derived(styleList(
+		styleParam,
+		width && `--card-width: ${width}${typeof width === "number" ? "px" : ""}`,
+		height && `--card-height: ${height}${typeof height === "number" ? "px" : ""}`
+	))
+	const classes = $derived(classList(
 			classParam,
 			minimalStyle && "fluent-card-minimal-style"
-		]
-			.filter(x => x)
-			.join(" ")
-	)
+		))
 
 	$inspect("class and style", {styles, classes})
 </script>
 
 <fluent-card
-	{...restProps}
-	class={classes}
-	class:area-restricted={areaRestricted}
-	style={styles}
+	{...restProps} class={classes} class:area-restricted={areaRestricted} style={styles}
 >
 	{@render children?.()}
 </fluent-card>

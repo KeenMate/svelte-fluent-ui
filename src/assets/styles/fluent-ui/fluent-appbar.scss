@@ -1,0 +1,20 @@
+nav.fluent-appbar {
+	background-color: var(--neutral-layer-2);
+
+	display: flex;
+	//gap: calc(var(--design-unit) * 0.5px);
+	//background-color: var(--neutral-layer-2);
+	//width: 58px;
+
+	&.horizontal {
+		flex-direction: row;
+	}
+
+	&.vertical {
+		flex-direction: column;
+	}
+
+	//.fluent-appbar-item {
+	//	min-height: calc(var(--appbar-item-size) * 1px - 20px);
+	//}
+}
