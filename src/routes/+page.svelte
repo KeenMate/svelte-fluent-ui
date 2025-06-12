@@ -248,6 +248,11 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/toast">toast</a></td>
+				<td></td>
+			</tr>
+			<tr>
 				<td></td>
 				<td>toolbar</td>
 				<td></td>
