@@ -9,9 +9,14 @@ export class CalendarExtended {
 	date: Date
 
 	constructor(culture: Intl.Locale, currentDate: Date) {
-		this.culture  = culture
-		this.weekInfo = (culture as any).getWeekInfo() // any, because WebStorm does not recognize getWeekInfo() method of Locale
-		this.date     = currentDate
+		this.culture = culture
+		/*this.weekInfo = (culture as any).getWeekInfo() // any, because WebStorm does not recognize getWeekInfo() method of Locale*/
+		const locale = culture as any
+		this.weekInfo = locale.weekInfo ?? {
+			firstDay: 1,
+			weekend: [6, 0]
+		}
+		this.date = currentDate
 	}
 
 	getDaysOfWeek(weekNumber: number, monthOffset = 0): Date[] {
@@ -23,11 +28,11 @@ export class CalendarExtended {
 		theDate.setHours(0, 0, 0, 0)
 
 		const monthFirst = this.addMonths(theDate, monthOffset)
-		const maxDate    = new Date(9999, 11, 31) // Max safe Date
-		const maxLimit   =
-			      monthFirst.getFullYear() === maxDate.getFullYear() &&
-			      monthFirst.getMonth() === maxDate.getMonth() &&
-			      weekNumber > 3
+		const maxDate = new Date(9999, 11, 31) // Max safe Date
+		const maxLimit =
+			monthFirst.getFullYear() === maxDate.getFullYear() &&
+			monthFirst.getMonth() === maxDate.getMonth() &&
+			weekNumber > 3
 		// console.log("Get days of week", {
 		// 	weekNumber,
 		// 	monthFirst,
@@ -38,7 +43,7 @@ export class CalendarExtended {
 		if (!maxLimit) {
 			const monthWeek = this.addDays(monthFirst, weekNumber * 7)
 			const weekFirst = this.startOfWeek(monthWeek)
-			const res       = Array.from({length: 7}, (_, i) => this.addDays(weekFirst, i))
+			const res = Array.from({ length: 7 }, (_, i) => this.addDays(weekFirst, i))
 			// console.log("Result days of week", {monthWeek, weekFirst, res})
 			return res
 		}
@@ -51,7 +56,7 @@ export class CalendarExtended {
 	}
 
 	getMonthNameFromDate(date: Date): string {
-		return this.toTitleCase(date.toLocaleString(this.culture.toString(), {month: "long"}))
+		return this.toTitleCase(date.toLocaleString(this.culture.toString(), { month: "long" }))
 	}
 
 	getMonthNames(): { index: number; abbreviated: string; name: string }[] {
@@ -59,9 +64,9 @@ export class CalendarExtended {
 		for (let i = 0; i < 12; i++) {
 			const dt = new Date(this.date.getFullYear(), i, 1)
 			names.push({
-				index:       i,
-				abbreviated: this.toTitleCase(dt.toLocaleString(this.culture.toString(), {month: "short"})),
-				name:        this.toTitleCase(dt.toLocaleString(this.culture.toString(), {month: "long"})),
+				index: i,
+				abbreviated: this.toTitleCase(dt.toLocaleString(this.culture.toString(), { month: "short" })),
+				name: this.toTitleCase(dt.toLocaleString(this.culture.toString(), { month: "long" })),
 			})
 		}
 		return names
@@ -69,11 +74,11 @@ export class CalendarExtended {
 
 	getYearsRange(): { index: number; year: number }[] {
 		const result: { index: number; year: number }[] = []
-		const currentYear                               = this.date.getFullYear()
-		const maxYear                                   = 9999 // Mimic .NET max year
-		const count                                     = Math.min(12, maxYear - currentYear + 1)
+		const currentYear = this.date.getFullYear()
+		const maxYear = 9999 // Mimic .NET max year
+		const count = Math.min(12, maxYear - currentYear + 1)
 		for (let i = 0; i < count; i++) {
-			result.push({index: i, year: currentYear + i})
+			result.push({ index: i, year: currentYear + i })
 		}
 		return result
 	}
@@ -97,21 +102,21 @@ export class CalendarExtended {
 	}
 
 	getDayNames(): { abbreviated: string; shorted: string; name: string }[] {
-		const df      = new Intl.DateTimeFormat(this.culture.toString(), {weekday: "long"})
-		const shortDf = new Intl.DateTimeFormat(this.culture.toString(), {weekday: "short"})
+		const df = new Intl.DateTimeFormat(this.culture.toString(), { weekday: "long" })
+		const shortDf = new Intl.DateTimeFormat(this.culture.toString(), { weekday: "short" })
 
 		const baseDate = new Date(Date.UTC(2021, 7, 1)) // arbitrary Sunday
-		const names    = Array.from({length: 7}, (_, i) => {
+		const names = Array.from({ length: 7 }, (_, i) => {
 			const date = new Date(baseDate)
 			date.setUTCDate(date.getUTCDate() + i)
 			return {
-				name:        this.toTitleCase(df.format(date)),
-				shorted:     shortDf.format(date).slice(0, 2),
+				name: this.toTitleCase(df.format(date)),
+				shorted: shortDf.format(date).slice(0, 2),
 				abbreviated: this.toTitleCase(shortDf.format(date)),
 			}
 		})
 
-		const firstDay      = new Intl.DateTimeFormat(this.culture.toString(), {
+		const firstDay = new Intl.DateTimeFormat(this.culture.toString(), {
 			weekday: "short",
 		}).resolvedOptions().weekday
 		const firstDayIndex = 0 // Can't reliably extract this, so default to Sunday
@@ -120,7 +125,7 @@ export class CalendarExtended {
 
 	isInCurrentMonth(date: Date): boolean {
 		const start = this.startOfMonth(this.date)
-		const end   = this.endOfMonth(this.date)
+		const end = this.endOfMonth(this.date)
 
 		if (date.getMonth() === 4 && date.getDate() === 31) {
 			console.log("isInCurrentMonth", {
@@ -189,8 +194,8 @@ export class CalendarExtended {
 		 */
 
 		const dayOfWeek = date.getDay()
-		const diff      = (this.weekInfo.firstDay % 7) - dayOfWeek
-		const d         = new Date(date)
+		const diff = (this.weekInfo.firstDay % 7) - dayOfWeek
+		const d = new Date(date)
 		d.setDate(d.getDate() + diff)
 		// console.log("start of week", {
 		// 	origDate: date,

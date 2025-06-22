@@ -107,7 +107,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td><a href="/components/combobox">combobox</a></td>
+				<td><a href="/components/forms/combobox">combobox</a></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -184,14 +184,14 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>radio</td>
+				<td><a href="/components/forms/radio">radio</a></td>
 				<td>
 					Wrapped radios have ugly missing spacing (cannot be added so far)
 				</td>
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>radio-group</td>
+				<td><a href="/components/forms/radio">radio-group</a></td>
 				<td>
 					Wrapped radios have ugly missing spacing (cannot be added so far)
 				</td>
@@ -253,7 +253,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td><a href="/components/text-field">text-field</a></td>
+				<td><a href="/components/forms/text-field">text-field</a></td>
 				<td></td>
 			</tr>
 			<tr>
