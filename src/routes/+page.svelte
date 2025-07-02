@@ -247,8 +247,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>text-area</td>
+				<td>Initial tests</td>
+				<td><a href="/components/forms/text-area">text-area</a></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -262,8 +262,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>toolbar</td>
+				<td>Initial tests</td>
+				<td><a href="/components/toolbar">toolbar</a></td>
 				<td></td>
 			</tr>
 			<tr>
