@@ -202,8 +202,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>select</td>
+				<td>Initial tests</td>
+				<td><a href="/components/forms/select">select</a></td>
 				<td></td>
 			</tr>
 			<tr>
