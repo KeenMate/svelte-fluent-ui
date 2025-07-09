@@ -197,8 +197,8 @@
 				</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>search</td>
+				<td>Initial tests</td>
+				<td><a href="/components/forms/search">search</a></td>
 				<td></td>
 			</tr>
 			<tr>
