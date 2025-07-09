@@ -147,7 +147,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td>listbox</td>
+				<td><a href="/components/listbox">listbox</a></td>
 				<td></td>
 			</tr>
 			<tr>
