@@ -26,7 +26,15 @@
 		children = undefined,
 		...restProps
 	}: Props = $props();
-i
+
+	let element: (HTMLElement & {
+		length: number;
+		value: any;
+		selectedIndex: number;
+		options: HTMLOptionElement[];
+		selectFirstOption: VoidFunction;
+	}) | undefined = $state();
+
 	const selectedOptions = createSelectedOptions(value, multi);
 	setContext<SelectedOptionSvelteContext>("selected-options", selectedOptions);
 
