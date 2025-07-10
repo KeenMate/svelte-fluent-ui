@@ -152,7 +152,7 @@
 			</tr>
 			<tr>
 				<td>Initial tests</td>
-				<td><a href="/components/listbox">listbox-option</a></td>
+				<td><a href="/components/option">listbox-option</a></td>
 				<td></td>
 			</tr>
 			<tr>
