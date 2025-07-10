@@ -1,7 +1,5 @@
 <script lang="ts">
-	import {Listbox} from "$lib/index.js"
-	import { fluentOption, provideFluentDesignSystem } from "@fluentui/web-components";
-	provideFluentDesignSystem().register(fluentOption());	
+	import {Listbox, Option} from "$lib/index.js"
 </script>
 
 <div class="header">
@@ -70,15 +68,15 @@
 
 	<h3>Basic listbox</h3>
 	<Listbox value="apple">
-		<fluent-option value="apple">Apple</fluent-option>
-		<fluent-option value="banana">Banana</fluent-option>
-		<fluent-option value="cherry">Cherry</fluent-option>
+		<Option value="apple">Apple</Option>
+		<Option value="banana">Banana</Option>
+		<Option value="cherry">Cherry</Option>
 	</Listbox>
 
 	<h3>Disabled listbox</h3>
 	<Listbox value="banana">
-		<fluent-option disabled value="apple">Apple</fluent-option>
-		<fluent-option disabled value="banana">Banana</fluent-option>
-		<fluent-option disabled value="cherry">Cherry</fluent-option>
+		<Option value="apple" disabled>Apple</Option>
+		<Option value="banana" disabled>Banana</Option>
+		<Option value="cherry" disabled>Cherry</Option>
 	</Listbox>
 </div>

@@ -26,19 +26,10 @@
 		children = undefined,
 		...restProps
 	}: Props = $props();
-
-	let element: (HTMLElement & {
-		length: number;
-		value: any;
-		selectedIndex: number;
-		options: HTMLOptionElement[];
-		selectFirstOption: VoidFunction;
-	}) | undefined = $state();
-
+i
 	const selectedOptions = createSelectedOptions(value, multi);
 	setContext<SelectedOptionSvelteContext>("selected-options", selectedOptions);
 
-	// Keep selectedOptions in sync with value (one-way: value → selectedOptions)
 	$effect(() => {
 		const current = untrack(() => selectedOptions.value);
 		if (JSON.stringify(value) !== JSON.stringify(current)) {
@@ -46,7 +37,6 @@
 		}
 	});
 
-	// Used for the selected-options attribute
 	let selectedOptionsAttr = $derived(() =>
 		typeof value === "string"
 			? value

@@ -151,8 +151,8 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>listbox-option</td>
+				<td>Initial tests</td>
+				<td><a href="/components/listbox">listbox-option</a></td>
 				<td></td>
 			</tr>
 			<tr>
