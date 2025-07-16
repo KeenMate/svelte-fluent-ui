@@ -6,9 +6,7 @@
 	let {children} = $props()
 </script>
 
-<!-- Menu toggle -->
 <a href="#menu" id="menuLink" class="menu-link">
-	<!-- Hamburger icon -->
 	<span></span>
 </a>
 
@@ -27,9 +25,6 @@
 			<li class="pure-menu-item">
 				<a href="/components/interactive" class="pure-menu-link">Interactive</a>
 			</li>
-			<!--<li class="pure-menu-item">-->
-			<!--	<a href="#about" class="pure-menu-link">About</a>-->
-			<!--</li>-->
 		</ul>
 	</div>
 </div>
