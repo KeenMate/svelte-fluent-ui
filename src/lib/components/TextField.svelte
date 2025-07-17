@@ -2,9 +2,7 @@
 	import {fluentTextField, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {SlotType} from "../types/index.js"
 
-	provideFluentDesignSystem().register(
-		fluentTextField()
-	)
+	provideFluentDesignSystem().register(fluentTextField())
 
 	type Props = {
 		value?: string
@@ -18,6 +16,7 @@
 		label?: string
 		autofocus?: boolean
 		children?: SlotType
+		style?: string
 
 		setSelectionRange?: (
 			start: number,
@@ -30,22 +29,22 @@
 	}
 
 	let {
-		    value       = $bindable(),
-		    placeholder = undefined,
-		    appearance  = undefined,
-		    disabled    = undefined,
-		    readonly    = undefined,
-		    required    = undefined,
-		    type        = undefined,
-		    name        = undefined,
-		    label       = undefined,
-		    autofocus   = undefined,
-		    children    = undefined,
+		value = $bindable(),
+		placeholder = undefined,
+		appearance = undefined,
+		disabled = undefined,
+		readonly = undefined,
+		required = undefined,
+		type = undefined,
+		name = undefined,
+		label = undefined,
+		autofocus = undefined,
+		children = undefined,
+		style = "",
 
-
-		    onInput     = undefined,
-		    onChange    = undefined,
-	    }: Props = $props()
+		onInput = undefined,
+		onChange = undefined
+	}: Props = $props()
 
 	let element: HTMLElement & {
 		value: string
@@ -89,7 +88,7 @@
 
 	function handleOnInput(event: InputEvent) {
 		const target = event.target as HTMLInputElement
-		value        = target.value
+		value = target.value
 		onInput?.(event)
 	}
 
@@ -109,6 +108,7 @@
 	{type}
 	{name}
 	{autofocus}
+	{style}
 	oninput={handleOnInput}
 	onchange={handleOnChange}
 >
