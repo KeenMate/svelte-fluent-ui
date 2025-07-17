@@ -1,12 +1,8 @@
 <script lang="ts">
 	import {fluentButton, provideFluentDesignSystem} from "@fluentui/web-components"
-	import type {
-		SlotType,
-	} from "../types/index.js"
+	import type {SlotType} from "../types/index.js"
 
-	provideFluentDesignSystem().register(
-		fluentButton()
-	)
+	provideFluentDesignSystem().register(fluentButton())
 
 	type Props = {
 		appearance?: string
@@ -29,24 +25,24 @@
 	}
 
 	let {
-		    appearance     = undefined,
-		    autofocus      = undefined,
-		    disabled       = undefined,
-		    form           = undefined,
-		    formaction     = undefined,
-		    formenctype    = undefined,
-		    formmethod     = undefined,
-		    formnovalidate = undefined,
-		    formtarget     = undefined,
-		    name           = undefined,
-		    type           = undefined,
-		    value          = undefined,
-		    start          = undefined,
-		    end            = undefined,
-		    children       = undefined,
-		    onClick       = undefined,
+		appearance = undefined,
+		autofocus = undefined,
+		disabled = undefined,
+		form = undefined,
+		formaction = undefined,
+		formenctype = undefined,
+		formmethod = undefined,
+		formnovalidate = undefined,
+		formtarget = undefined,
+		name = undefined,
+		type = undefined,
+		value = undefined,
+		start = undefined,
+		end = undefined,
+		children = undefined,
+		onClick = undefined,
 		...restProps
-	    }: Props = $props()
+	}: Props = $props()
 </script>
 
 <fluent-button
@@ -68,7 +64,9 @@
 		{@render start?.()}
 	</template>
 	{@render children?.()}
-	<template slot="end">
-		{@render end?.()}
-	</template>
+	{#if end}
+		<template slot="end">
+			{@render end()}
+		</template>
+	{/if}
 </fluent-button>
