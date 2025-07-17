@@ -16,7 +16,7 @@
 		rel?: string
 		target?: string
 		type?: string
-		appearance?: "neutral" | "accent" | "hypertext" | "stealth"
+		appearance?: "neutral" | "accent" | "hypertext" | "stealth" | "transparent"
 		iconStart?: SlotType
 		iconEnd?: SlotType
 		children?: SlotType
