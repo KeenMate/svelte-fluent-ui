@@ -20,6 +20,7 @@
 		start?: SlotType
 		end?: SlotType
 		children?: SlotType
+		style?: string
 		onClick?: (ev: MouseEvent) => void
 		[prop: string]: any
 	}
@@ -40,6 +41,7 @@
 		start = undefined,
 		end = undefined,
 		children = undefined,
+		style= "",
 		onClick = undefined,
 		...restProps
 	}: Props = $props()
@@ -57,6 +59,7 @@
 	{formnovalidate}
 	{formtarget}
 	{disabled}
+	{style}
 	{...restProps}
 	onclick={onClick}
 >
