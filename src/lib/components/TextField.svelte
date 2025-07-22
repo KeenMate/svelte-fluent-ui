@@ -5,18 +5,18 @@
 	provideFluentDesignSystem().register(fluentTextField())
 
 	type Props = {
-		value?: string
-		placeholder?: string
-		appearance?: string
-		disabled?: boolean
-		readonly?: boolean
-		required?: boolean
-		type?: string
-		name?: string
-		label?: string
-		autofocus?: boolean
-		children?: SlotType
-		style?: string
+		value?: string | null | undefined
+		placeholder?: string | null | undefined
+		appearance?: string | null | undefined
+		disabled?: boolean | null | undefined
+		readonly?: boolean | null | undefined
+		required?: boolean | null | undefined
+		type?: string | null | undefined
+		name?: string | null | undefined
+		label?: string | null | undefined
+		autofocus?: boolean | null | undefined
+		children?: SlotType | null | undefined
+		style?: string | null | undefined
 
 		setSelectionRange?: (
 			start: number,

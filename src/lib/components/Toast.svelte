@@ -67,7 +67,7 @@
 
 		<div class="fluent-toast-action">
 			{#if topCTAType === 'Dismiss'}
-				<button title="Close" on:click={handleDismiss} aria-label="Dismiss" style="background: none; border: none; cursor: pointer;">
+				<button title="Close" onclick={handleDismiss} aria-label="Dismiss" style="background: none; border: none; cursor: pointer;">
 					✕
 				</button>
 			{:else if topCTAType === 'Timestamp' && timestamp}
@@ -78,9 +78,9 @@
 					title={topAction}
 					style="font-size: 14px; font-weight: 400;"
 					appearance="hypertext"
-					on:focusin={() => {}}
-					on:focusout={() => {}}
-					on:click={handleTopActionClick}
+					onfocusin={() => {}}
+					onfocusout={() => {}}
+					onclick={handleTopActionClick}
 				>
 					{topAction}
 				</fluent-anchor>
@@ -100,9 +100,9 @@
 					title={primaryAction}
 					style="font-size: 14px; font-weight: 400; margin-right: 1rem;"
 					appearance="hypertext"
-					on:focusin={() => {}}
-					on:focusout={() => {}}
-					on:click={handlePrimaryActionClick}
+					onfocusin={() => {}}
+					onfocusout={() => {}}
+					onclick={handlePrimaryActionClick}
 				>
 					{primaryAction}
 				</fluent-anchor>
@@ -113,9 +113,9 @@
 					title={secondaryAction}
 					style="font-size: 14px; font-weight: 400;"
 					appearance="hypertext"
-					on:focusin={() => {}}
-					on:focusout={() => {}}
-					on:click={handleSecondaryActionClick}
+					onfocusin={() => {}}
+					onfocusout={() => {}}
+					onclick={handleSecondaryActionClick}
 				>
 					{secondaryAction}
 				</fluent-anchor>

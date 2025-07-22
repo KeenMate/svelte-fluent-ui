@@ -81,7 +81,7 @@
 				width="12px"
 				class="fluent-tab-close"
 				title="Close"
-				on:click={onCloseClick}
+				onclick={onCloseClick}
 			/>
 		{/if}
 	</fluent-tab>

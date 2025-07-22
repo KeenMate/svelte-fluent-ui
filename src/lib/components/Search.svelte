@@ -101,8 +101,8 @@
 	{required}
 	appearance={appearance}
 	aria-label={ariaLabel || label}
-	on:input={handleInput}
-	on:change={handleChange}
+	oninput={handleInput}
+	onchange={handleChange}
 	{...rest}
 >
 	{@render children?.()}

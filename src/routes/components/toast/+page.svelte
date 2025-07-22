@@ -116,7 +116,7 @@
 	<p>
 		<Toast title="Auto-saved" timestamp={new Date()} topCTAType="Timestamp" />
 	</p>
-	<button on:click={() => (showToast = true)} style="padding: 0.5rem 1rem; cursor:pointer;">
+	<button onclick={() => (showToast = true)} style="padding: 0.5rem 1rem; cursor:pointer;">
 		Show Toast
 	</button>
 
