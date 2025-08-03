@@ -8,6 +8,7 @@
 		value?: string;
 		placeholder?: string;
 		appearance?: string;
+		style?: string;
 		disabled?: boolean;
 		readonly?: boolean;
 		required?: boolean;
@@ -28,6 +29,7 @@
 		value = $bindable<string>(),
 		placeholder,
 		appearance,
+		style,
 		disabled,
 		readonly,
 		required,
@@ -92,6 +94,7 @@
 	bind:this={element}
 	{placeholder}
 	{appearance}
+	{style}
 	{disabled}
 	{readonly}
 	{required}
