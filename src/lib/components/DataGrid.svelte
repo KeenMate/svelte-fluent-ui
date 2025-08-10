@@ -1,58 +1,56 @@
-<!--<script lang="ts" generics="TItem">-->
-<!--	import {-->
-<!--		fluentDataGrid,-->
-<!--		fluentDataGridCell,-->
-<!--		fluentDataGridRow,-->
-<!--		provideFluentDesignSystem-->
-<!--	} from "@fluentui/web-components"-->
-<!--	import type {SlotType, SvelteFluentUISvelteContext} from "../types/index.js"-->
-<!--	import {getContext} from "svelte"-->
+<script lang="ts">
+	import { provideFluentDesignSystem, fluentDataGrid } from "@fluentui/web-components";
+	import type { SlotType } from "../types/index.js";
 
-<!--	provideFluentDesignSystem().register(-->
-<!--		fluentDataGrid(),-->
-<!--		fluentDataGridCell(),-->
-<!--		fluentDataGridRow(),-->
-<!--	)-->
+	provideFluentDesignSystem().register(fluentDataGrid());
 
-<!--	type Props = {-->
-<!--		noTabbing?: boolean-->
-<!--		generateHeader?: boolean-->
-<!--		rowsData?: any-->
-<!--		columnDefinitions?: any-->
-<!--		focusRowIndex?: number-->
-<!--		focusColumnIndex?: number-->
-<!--		items: TItem[] | null-->
-<!--		children?: SlotType-->
-<!--	}-->
+	type Props = {
+		class?: string;
+		style?: string;
+		id?: string;
+		ariaRowCount?: number;
+		generateHeader?: "none" | "default" | "sticky";
+		role?: string;
+		onCloseColumnOptions?: (e: Event) => void;
+		onCloseColumnResize?: (e: Event) => void;
+		children?: SlotType;
+		[prop: string]: any;
+	};
 
-<!--	let {-->
-<!--		    items,-->
-<!--		    noTabbing = undefined,-->
-<!--		    generateHeader = undefined,-->
-<!--		    rowsData = undefined,-->
-<!--		    columnDefinitions = undefined,-->
-<!--		    focusRowIndex = $bindable(undefined),-->
-<!--		    focusColumnIndex = $bindable(undefined),-->
-<!--		    children = undefined-->
-<!--	    }: Props = $props()-->
+	let {
+		class: className = "",
+		style = "",
+		id = undefined,
+		ariaRowCount = undefined,
+		generateHeader = undefined,
+		role = "grid",
+		onCloseColumnOptions = undefined,
+		onCloseColumnResize = undefined,
+		children = undefined,
+		...restProps
+	}: Props = $props();
 
-<!--	const ctx = getContext<SvelteFluentUISvelteContext>("svelte-fluent-ui")-->
+	function handleCloseColumnOptions(e: Event) {
+		onCloseColumnOptions?.(e);
+	}
 
-<!--	let element: (HTMLElement & { rowsData: TItem[] | null }) | undefined = $state(undefined)-->
+	function handleCloseColumnResize(e: Event) {
+		onCloseColumnResize?.(e);
+	}
+</script>
 
-<!--	$effect(() => {-->
-<!--		if (!element) {-->
-<!--			return-->
-<!--		}-->
-
-<!--		element.rowsData = items-->
-<!--	})-->
-<!--</script>-->
-
-<!--<fluent-data-grid-->
-<!--	bind:this={element}-->
-<!--&gt;-->
-<!--	{@render children?.()}-->
-<!--</fluent-data-grid>-->
-
-DATAGRID NOT PLANNED
+<fluent-data-grid
+	class={className}
+	{style}
+	{id}
+	aria-rowcount={ariaRowCount}
+	generate-header={generateHeader}
+	role={role}
+	on:closecolumnoptions={handleCloseColumnOptions}
+	on:closecolumnresize={handleCloseColumnResize}
+	{...restProps}
+>
+	{#if children}
+		{@render children?.()}
+	{/if}
+</fluent-data-grid>
