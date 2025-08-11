@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { fluentAnchor, provideFluentDesignSystem } from "@fluentui/web-components"
-	import type { SlotType } from "../types/index.js"
+	import {fluentAnchor, provideFluentDesignSystem} from "@fluentui/web-components"
+	import type {SlotType} from "../types/index.js"
+	import useActions from "$lib/actions/use-actions.js"
 
 	provideFluentDesignSystem().register(fluentAnchor())
 
@@ -21,9 +22,12 @@
 		iconEnd?: SlotType
 		children?: SlotType
 		preventDefault?: boolean
+		use?: ((node: HTMLElement) => any) | undefined
 		onClick?: (event: MouseEvent) => void
 		[prop: string]: any
 	}
+
+	let element: HTMLElement
 
 	let {
 		id = undefined,
@@ -42,9 +46,15 @@
 		iconEnd = undefined,
 		children = undefined,
 		preventDefault = false,
+		use = undefined,
 		onClick = undefined,
 		...restProps
 	}: Props = $props()
+
+	$effect(() => {
+		const a = element.shadowRoot?.querySelector("a")
+		if (a) use?.(a)
+	})
 
 	function handleClick(event: MouseEvent) {
 		if (preventDefault) {
@@ -57,19 +67,20 @@
 </script>
 
 <fluent-anchor
-	id={id}
+	bind:this={element}
+	{id}
 	class={className}
 	{style}
 	{download}
 	{href}
 	{hreflang}
 	{ping}
-	referrerpolicy={referrerpolicy}
+	{referrerpolicy}
 	{rel}
 	{target}
 	{type}
-	appearance={appearance}
-	on:click={handleClick}
+	{appearance}
+	onclick={handleClick}
 	{...restProps}
 >
 	{#if iconStart}
