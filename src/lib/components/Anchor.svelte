@@ -1,33 +1,29 @@
 <script lang="ts">
-	import {fluentAnchor, provideFluentDesignSystem} from "@fluentui/web-components"
-	import type {SlotType} from "../types/index.js"
-	import useActions from "$lib/actions/use-actions.js"
-
-	provideFluentDesignSystem().register(fluentAnchor())
+	import type { SlotType } from "../types/index.js";
 
 	type Props = {
-		id?: string
-		class?: string
-		style?: string
-		download?: string
-		href?: string
-		hreflang?: string
-		ping?: string
-		referrerpolicy?: string
-		rel?: string
-		target?: string
-		type?: string
-		appearance?: "neutral" | "accent" | "hypertext" | "stealth" | "transparent"
-		iconStart?: SlotType
-		iconEnd?: SlotType
-		children?: SlotType
-		preventDefault?: boolean
-		use?: ((node: HTMLElement) => any) | undefined
-		onClick?: (event: MouseEvent) => void
-		[prop: string]: any
-	}
+		id?: string;
+		class?: string;
+		style?: string;
+		download?: string;
+		href?: string;
+		hreflang?: string;
+		ping?: string;
+		referrerpolicy?: string;
+		rel?: string;
+		target?: string;
+		type?: string;
+		appearance?: "neutral" | "accent" | "hypertext" | "stealth" | "transparent";
+		iconStart?: SlotType;
+		iconEnd?: SlotType;
+		children?: SlotType;
+		preventDefault?: boolean;
+		use?: ((node: HTMLAnchorElement) => any) | undefined;
+		onClick?: (event: MouseEvent) => void;
+		[prop: string]: any;
+	};
 
-	let element: HTMLElement
+	let element: HTMLAnchorElement;
 
 	let {
 		id = undefined,
@@ -49,42 +45,39 @@
 		use = undefined,
 		onClick = undefined,
 		...restProps
-	}: Props = $props()
+	}: Props = $props();
 
 	$effect(() => {
-		const a = element.shadowRoot?.querySelector("a")
-		if (a) use?.(a)
-	})
+		if (element) {
+			use?.(element);
+		}
+	});
 
 	function handleClick(event: MouseEvent) {
 		if (preventDefault) {
-			event.preventDefault()
+			event.preventDefault();
 		}
-		if (onClick) {
-			onClick(event)
-		}
+		onClick?.(event);
 	}
 </script>
 
-<fluent-anchor
+<a
 	bind:this={element}
 	{id}
-	class={className}
+	class={`${className} ${appearance ? `appearance-${appearance}` : ""}`}
 	{style}
 	{download}
 	{href}
 	{hreflang}
 	{ping}
-	{referrerpolicy}
 	{rel}
 	{target}
 	{type}
-	{appearance}
 	onclick={handleClick}
 	{...restProps}
 >
 	{#if iconStart}
-		<span slot={children ? "start" : undefined}>
+		<span>
 			{@render iconStart?.()}
 		</span>
 	{/if}
@@ -94,8 +87,16 @@
 	{/if}
 
 	{#if iconEnd}
-		<span slot={children ? "end" : undefined}>
+		<span>
 			{@render iconEnd?.()}
 		</span>
 	{/if}
-</fluent-anchor>
+</a>
+
+<style>
+	.appearance-neutral {}
+	.appearance-accent {}
+	.appearance-hypertext {}
+	.appearance-stealth {}
+	.appearance-transparent {}
+</style>
