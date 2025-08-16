@@ -7,7 +7,7 @@
 	type Props = {
 		class?: string
 		style?: string
-		gridColumn?: number
+		gridColumn?: number | string
 		cellType?: "default" | "columnheader"
 		colIndex?: number
 		role?: string
