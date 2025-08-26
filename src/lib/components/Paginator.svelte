@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { fluentButton, provideFluentDesignSystem } from "@fluentui/web-components"
-	import type { SlotType } from "../types/index.js"
+	import {fluentButton, provideFluentDesignSystem} from "@fluentui/web-components"
+	import type {SlotType} from "../types/index.js"
 
 	provideFluentDesignSystem().register(fluentButton())
 
@@ -50,53 +50,53 @@
 				<strong>{totalItemCount}</strong> items
 			{/if}
 		</div>
-
-		<nav role="navigation" class="paginator-nav">
-			<fluent-button
-				on:click={() => onFirst?.()}
-				disabled={!canGoBack || disabled}
-				title="Go to first page"
-				aria-label="Go to first page"
-			>
-				<span>&laquo;</span>
-			</fluent-button>
-
-			<fluent-button
-				on:click={() => onPrevious?.()}
-				disabled={!canGoBack || disabled}
-				title="Go to previous page"
-				aria-label="Go to previous page"
-			>
-				<span>&lsaquo;</span>
-			</fluent-button>
-
-			<div class="pagination-text">
-				{#if paginationTextTemplate}
-					{@render paginationTextTemplate?.()}
-				{:else}
-					Page <strong>{currentPageIndex + 1}</strong> of <strong>{lastPageIndex + 1}</strong>
-				{/if}
-			</div>
-
-			<fluent-button
-				on:click={() => onNext?.()}
-				disabled={!canGoForwards || disabled}
-				title="Go to next page"
-				aria-label="Go to next page"
-			>
-				<span>&rsaquo;</span>
-			</fluent-button>
-
-			<fluent-button
-				on:click={() => onLast?.()}
-				disabled={!canGoForwards || disabled}
-				title="Go to last page"
-				aria-label="Go to last page"
-			>
-				<span>&raquo;</span>
-			</fluent-button>
-		</nav>
 	{/if}
+
+	<nav role="navigation" class="paginator-nav">
+		<fluent-button
+			on:click={() => onFirst?.()}
+			disabled={!canGoBack || disabled}
+			title="Go to first page"
+			aria-label="Go to first page"
+		>
+			<span>&laquo;</span>
+		</fluent-button>
+
+		<fluent-button
+			on:click={() => onPrevious?.()}
+			disabled={!canGoBack || disabled}
+			title="Go to previous page"
+			aria-label="Go to previous page"
+		>
+			<span>&lsaquo;</span>
+		</fluent-button>
+
+		<div class="pagination-text">
+			{#if paginationTextTemplate}
+				{@render paginationTextTemplate?.()}
+			{:else}
+				Page <strong>{currentPageIndex + 1}</strong> of <strong>{lastPageIndex + 1}</strong>
+			{/if}
+		</div>
+
+		<fluent-button
+			on:click={() => onNext?.()}
+			disabled={!canGoForwards || disabled}
+			title="Go to next page"
+			aria-label="Go to next page"
+		>
+			<span>&rsaquo;</span>
+		</fluent-button>
+
+		<fluent-button
+			on:click={() => onLast?.()}
+			disabled={!canGoForwards || disabled}
+			title="Go to last page"
+			aria-label="Go to last page"
+		>
+			<span>&raquo;</span>
+		</fluent-button>
+	</nav>
 </div>
 
 <style>
