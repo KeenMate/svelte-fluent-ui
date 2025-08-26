@@ -42,4 +42,5 @@ export {default as Toolbar} from "./Toolbar.svelte"
 export {default as Select} from "./Select.svelte"
 export {default as Search} from "./Search.svelte"
 export {default as Anchor} from "./Anchor.svelte"
+export {default as Paginator} from "./Paginator.svelte"
 
