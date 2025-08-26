@@ -1,29 +1,33 @@
 <script lang="ts">
-	import type { SlotType } from "../types/index.js";
+	import {fluentAnchor, provideFluentDesignSystem} from "@fluentui/web-components"
+	import type {SlotType} from "../types/index.js"
+	import useActions from "$lib/actions/use-actions.js"
+
+	provideFluentDesignSystem().register(fluentAnchor())
 
 	type Props = {
-		id?: string;
-		class?: string;
-		style?: string;
-		download?: string;
-		href?: string;
-		hreflang?: string;
-		ping?: string;
-		referrerpolicy?: string;
-		rel?: string;
-		target?: string;
-		type?: string;
-		appearance?: "neutral" | "accent" | "hypertext" | "stealth" | "transparent";
-		iconStart?: SlotType;
-		iconEnd?: SlotType;
-		children?: SlotType;
-		preventDefault?: boolean;
-		use?: ((node: HTMLAnchorElement) => any) | undefined;
-		onClick?: (event: MouseEvent) => void;
-		[prop: string]: any;
-	};
+		id?: string
+		class?: string
+		style?: string
+		download?: string
+		href?: string
+		hreflang?: string
+		ping?: string
+		referrerpolicy?: string
+		rel?: string
+		target?: string
+		type?: string
+		appearance?: "neutral" | "accent" | "hypertext" | "stealth" | "transparent"
+		iconStart?: SlotType
+		iconEnd?: SlotType
+		children?: SlotType
+		preventDefault?: boolean
+		use?: ((node: HTMLElement) => any) | undefined
+		onClick?: (event: MouseEvent) => void
+		[prop: string]: any
+	}
 
-	let element: HTMLAnchorElement;
+	let element: HTMLElement
 
 	let {
 		id = undefined,
@@ -45,39 +49,42 @@
 		use = undefined,
 		onClick = undefined,
 		...restProps
-	}: Props = $props();
+	}: Props = $props()
 
 	$effect(() => {
-		if (element) {
-			use?.(element);
-		}
-	});
+		const a = element.shadowRoot?.querySelector("a")
+		if (a) use?.(a)
+	})
 
 	function handleClick(event: MouseEvent) {
 		if (preventDefault) {
-			event.preventDefault();
+			event.preventDefault()
 		}
-		onClick?.(event);
+		if (onClick) {
+			onClick(event)
+		}
 	}
 </script>
 
-<a
+<fluent-anchor
 	bind:this={element}
 	{id}
-	class={`${className} ${appearance ? `appearance-${appearance}` : ""}`}
+	class={className}
 	{style}
 	{download}
 	{href}
 	{hreflang}
 	{ping}
+	{referrerpolicy}
 	{rel}
 	{target}
 	{type}
+	{appearance}
 	onclick={handleClick}
 	{...restProps}
 >
 	{#if iconStart}
-		<span>
+		<span slot={children ? "start" : undefined}>
 			{@render iconStart?.()}
 		</span>
 	{/if}
@@ -87,16 +94,8 @@
 	{/if}
 
 	{#if iconEnd}
-		<span>
+		<span slot={children ? "end" : undefined}>
 			{@render iconEnd?.()}
 		</span>
 	{/if}
-</a>
-
-<style>
-	.appearance-neutral {}
-	.appearance-accent {}
-	.appearance-hypertext {}
-	.appearance-stealth {}
-	.appearance-transparent {}
-</style>
+</fluent-anchor>
