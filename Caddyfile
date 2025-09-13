@@ -1,4 +1,4 @@
-svelte-fluent-ui.demo.keenmate.com:80
+svelte-fluentui.demo.keenmate.com:80
 {
     root * /srv
     encode

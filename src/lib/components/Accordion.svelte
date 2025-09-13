@@ -3,9 +3,7 @@
 	import type {FluentAccordionSvelteContext, SlotType} from "../types/index.js"
 	import {setContext} from "svelte"
 
-	provideFluentDesignSystem().register(
-		fluentAccordion()
-	)
+	provideFluentDesignSystem().register(fluentAccordion())
 
 	type ValueType = string | string[] | null | undefined
 
@@ -16,12 +14,7 @@
 		[prop: string]: any
 	}
 
-	let {
-		value = $bindable(),
-		multi = undefined,
-		children = undefined,
-		...restProps
-	    }: Props = $props()
+	let {value = $bindable(), multi = undefined, children = undefined, ...restProps}: Props = $props()
 
 	const ctx: FluentAccordionSvelteContext = $state({value: toContextValue(value)})
 	setContext("fluent-accordion", ctx)
@@ -36,7 +29,7 @@
 	// })
 
 	function handleAccordionChange(ev: CustomEvent) {
-		const accordionItemTarget = (ev.target as HTMLElement)
+		const accordionItemTarget = ev.target as HTMLElement
 
 		if ((ev.target as HTMLElement)?.nodeName !== "FLUENT-ACCORDION-ITEM") {
 			return
@@ -45,7 +38,8 @@
 		// to allow fluent-accordion-item to update HTML attributes that are to be relied upon
 		window.requestAnimationFrame(() => {
 			const accordionItemId = accordionItemTarget.dataset.customId!
-			const accordionItemIsExpanded = accordionItemTarget.attributes["expanded" as unknown as number]?.value === ""
+			const accordionItemIsExpanded =
+				accordionItemTarget.attributes["expanded" as unknown as number]?.value === ""
 			// console.log("Accordion change", {
 			// 	ev,
 			// 	accordionItemTarget,
@@ -59,21 +53,16 @@
 			}
 
 			if (multi) {
-				let tmp = typeof value === "string"
-					? [$state.snapshot(value)]
-					: (value?.slice() || [])
+				let tmp = typeof value === "string" ? [$state.snapshot(value)] : value?.slice() || []
 				if (accordionItemIsExpanded) {
 					tmp.push(accordionItemId)
 				} else {
-					tmp = tmp.filter(x => x !== accordionItemId)
+					tmp = tmp.filter((x) => x !== accordionItemId)
 				}
 
 				setExpanded(tmp)
 			} else {
-				setExpanded(accordionItemIsExpanded
-					? accordionItemId
-					: null
-				)
+				setExpanded(accordionItemIsExpanded ? accordionItemId : null)
 			}
 		})
 	}
@@ -89,22 +78,13 @@
 
 	function toContextValue(value: ValueType): string[] | null | undefined {
 		if (multi) {
-			return typeof value === "string"
-				? [$state.snapshot(value)]
-				: $state.snapshot(value)
+			return typeof value === "string" ? [$state.snapshot(value)] : $state.snapshot(value)
 		} else {
-			return typeof value === "string"
-				? [value]
-				: null
+			return typeof value === "string" ? [value] : null
 		}
 	}
 </script>
 
-<fluent-accordion
-	expand-mode={multi}
-	{...restProps}
-	onchange={handleAccordionChange}
->
+<fluent-accordion expand-mode={multi} {...restProps} onchange={handleAccordionChange}>
 	{@render children?.()}
 </fluent-accordion>
-

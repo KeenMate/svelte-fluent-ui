@@ -8,8 +8,8 @@ jobs:
     uses: KeenMate/gha-shared/.github/workflows/deploy-docker-image.yml@master
     secrets: inherit
     with:
-      image-name: svelte-fluent-ui
+      image-name: svelte-fluentui
       image-tag: production
       deployment-host: web-03.km8.vm
-      deployment-dir: svelte-fluent-ui
+      deployment-dir: svelte-fluentui
       npm-script: build
