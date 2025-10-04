@@ -1,19 +1,27 @@
 <script lang="ts">
-	import {Radio, RadioGroup} from "$lib/index.js"
+	import {Radio, RadioGroup, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let radioValue: string | null = $state("option_1")
 </script>
 
-<div class="header">
-	<h1>Combobox</h1>
-</div>
+<Stack orientation="vertical" gap="1rem">
+	<h1>Radio</h1>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-radio--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Radio" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property">
 						<td colspan="5">RadioGroup Members</td>
@@ -90,10 +98,12 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 					<tr class="action">
 						<td colspan="4">Actions</td>
@@ -106,17 +116,19 @@
 					<!--</tr>-->
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<div class="tw:mb-2">
+	<Card>
+		<h2>Examples</h2>
+		<div class="example-group">
 		<div>
 			<RadioGroup
 				bind:value={radioValue}
 				name="second-radio"
 				orientation="vertical"
-				class="tw:flex tw:flex-wrap tw:gap-1"
+				class="radio-group-wrapper"
 			>
 				<Radio value="option_1">Option 1</Radio>
 				<Radio value="option_2">Option 2</Radio>
@@ -126,12 +138,12 @@
 		</div>
 		Value is: {radioValue}
 	</div>
-	<div class="tw:mb-2">
+	<div class="example-group">
 		<div>
 			<RadioGroup
 				bind:value={radioValue}
 				name="second-radio"
-				class="tw:flex tw:flex-wrap tw:gap-1"
+				class="radio-group-wrapper"
 				disabled
 			>
 				<Radio value="option_1">Option 1</Radio>
@@ -141,4 +153,17 @@
 			</RadioGroup>
 		</div>
 	</div>
-</div>
+	</Card>
+</Stack>
+
+<style>
+	.example-group {
+		margin-bottom: 0.5rem;
+	}
+
+	.radio-group-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+</style>

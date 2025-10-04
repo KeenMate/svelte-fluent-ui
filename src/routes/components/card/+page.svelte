@@ -1,17 +1,25 @@
 <script lang="ts">
-	import {Card} from "$lib/index.js"
+	import {Card, Stack, Grid, GridItem} from "$lib/index.js"
 
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Card</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Custom component">Card (Custom)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Card" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -83,11 +91,12 @@
 				</tr>
 				</tbody>
 			</table>
-
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -133,12 +142,14 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<div class="tw:flex tw:gap-4">
-		<Card class="tw:flex-1">
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
+		<div class="examples-container">
+		<Card class="flex-card">
 			<p>
 				Some card content
 			</p>
@@ -146,10 +157,22 @@
 		<Card width="200px" height="200px">
 			<p>200x200 content</p>
 		</Card>
-		<Card class="tw:flex-1">
+		<Card class="flex-card">
 			<p>
 				Some card content
 			</p>
 		</Card>
-	</div>
-</div>
+		</div>
+	</Card>
+</Stack>
+
+<style>
+	.examples-container {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.flex-card {
+		flex: 1;
+	}
+</style>

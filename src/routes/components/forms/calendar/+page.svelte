@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Calendar} from "$lib/index.js"
+	import {Calendar, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	const now                     = new Date()
 	const disabledDates: string[] = [
@@ -36,16 +36,24 @@
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Calendar</h1>
-</div>
 
-<div class="content">
-	<div class="tw:flex tw:flex-wrap tw:gap-2">
-		<div class="tw:flex-1">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Calendar" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -161,10 +169,12 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-		<div class="tw:flex-1">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -183,13 +193,15 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2>Examples</h2>
 
-	<div class="tw:flex tw:flex-wrap tw:gap-1">
-		<div class="tw:flex-1">
+	<div class="calendar-examples">
+		<div class="calendar-item">
 			<h3>Plain calendar</h3>
 			<p>
 				Selected {value.toLocaleDateString()}
@@ -201,7 +213,7 @@
 				{onDateSelected}
 			/>
 		</div>
-		<div class="tw:flex-1">
+		<div class="calendar-item">
 			<h3>Months calendar</h3>
 			<p>
 				Selected {value.toLocaleDateString()}
@@ -214,7 +226,7 @@
 				{onDateSelected}
 			/>
 		</div>
-		<div class="tw:flex-1">
+		<div class="calendar-item">
 			<h3>Years calendar</h3>
 			<p>
 				Selected {value.toLocaleDateString()}
@@ -229,8 +241,8 @@
 		</div>
 	</div>
 
-	<div class="tw:flex tw:flex-wrap tw:gap-1">
-		<div class="tw:flex-1">
+	<div class="calendar-examples">
+		<div class="calendar-item">
 			<h3>Range calendar</h3>
 			<Calendar
 				bind:pickerMonth
@@ -246,7 +258,7 @@
 				{/each}
 			</ul>
 		</div>
-		<div class="tw:flex-1">
+		<div class="calendar-item">
 			<h3>Multiple selection calendar</h3>
 			<Calendar
 				bind:pickerMonth
@@ -262,7 +274,7 @@
 				{/each}
 			</ul>
 		</div>
-		<div class="tw:flex-1">
+		<div class="calendar-item">
 			<!--<h3>Years calendar</h3>-->
 			<!--<p>-->
 			<!--	Selected {value.toLocaleDateString()}-->
@@ -276,4 +288,17 @@
 			<!--/>-->
 		</div>
 	</div>
-</div>
+	</Card>
+</Stack>
+
+<style>
+	.calendar-examples {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	.calendar-item {
+		flex: 1;
+	}
+</style>

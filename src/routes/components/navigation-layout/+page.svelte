@@ -20,8 +20,8 @@
 					Accordion
 				</a>
 			</div>
-			<div class="tw:flex tw:gap-2">
-				<div class="tw:flex-1 mb-2">
+			<div class="accordion-examples">
+				<div class="mb-2 accordion-column">
 					<div>
 						<span>Selected: {expandedAccordionItem}</span> <br>
 
@@ -39,7 +39,7 @@
 					</div>
 				</div>
 
-				<div class="tw:flex-1 mb-2">
+				<div class="mb-2 accordion-column">
 					<div>
 						<span>Multi selected:</span>
 						<br>
@@ -88,6 +88,22 @@
 				</a>
 			</div>
 		</div>
+		<div class="component-section">
+			<div class="component-title">
+				<a href="/components/navigation-layout/grid">
+					Grid
+				</a>
+			</div>
+			<p>Responsive 12-column grid system</p>
+		</div>
+		<div class="component-section">
+			<div class="component-title">
+				<a href="/components/navigation-layout/multisplitter">
+					MultiSplitter
+				</a>
+			</div>
+			<p>Resizable multi-panel splitter</p>
+		</div>
 	</div>
 </div>
 
@@ -99,5 +115,14 @@
 				max-width: 50vw;
 			}
 		}
+	}
+
+	.accordion-examples {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.accordion-column {
+		flex: 1;
 	}
 </style>

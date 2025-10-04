@@ -1,131 +1,125 @@
 <script lang="ts">
-	import {
-		Badge,
-		Button,
-		Dialog,
-		Divider,
-		Menu,
-		ProgressBar, TextField,
-		Tooltip,
-	} from "$lib/index.js"
-	import {ButtonAppearance} from "$lib/fluent-ui/constants/button.js"
+	import {Grid, GridItem, Card} from "$lib/index.js"
 
-	let dialogElement: any = $state()
-	let counter: number = $state(0)
-	let expandedAccordionItem: string | null = $state(null)
+	const categories = [
+		{
+			title: "Forms & Inputs",
+			description: "Text fields, checkboxes, selects, and other form controls",
+			href: "/components/forms/text-field",
+			components: ["TextField", "Checkbox", "Radio", "Select", "Combobox", "Calendar"]
+		},
+		{
+			title: "Buttons & Actions",
+			description: "Buttons and clickable elements",
+			href: "/components/button",
+			components: ["Button", "Anchor"]
+		},
+		{
+			title: "Layout",
+			description: "Layout primitives for organizing content",
+			href: "/components/navigation-layout/grid",
+			components: ["Grid", "Stack", "Layout", "Spacer", "MultiSplitter"]
+		},
+		{
+			title: "Navigation",
+			description: "Navigation menus, breadcrumbs, and tabs",
+			href: "/components/navigation-layout/navigation",
+			components: ["NavMenu", "AppBar", "Breadcrumbs", "Tabs", "Accordion"]
+		},
+		{
+			title: "Display",
+			description: "Cards, badges, and other display components",
+			href: "/components/card",
+			components: ["Card", "Badge"]
+		},
+		{
+			title: "Feedback",
+			description: "Dialogs, toasts, and tooltips for user feedback",
+			href: "/components/dialog",
+			components: ["Dialog", "Toast", "Tooltip"]
+		},
+		{
+			title: "Data Display",
+			description: "Tables, grids, and data visualization",
+			href: "/components/datagrid",
+			components: ["DataGrid", "Paginator", "Toolbar"]
+		}
+	]
 </script>
 
 <div>
-	<h1>Fluent UI Svelte – Full Component Demo</h1>
+	<h1>Components</h1>
+	<p class="page-description">
+		Browse all available components organized by category. Use the sidebar to navigate.
+	</p>
 
-	<!-- Example Section -->
-	<div class="components">
-		<div class="component-section">
-			<div class="component-title">
-				<a href="/components/forms">Forms</a>
-			</div>
-			<div class="grid">
-				<TextField placeholder="Enter text" />
-			</div>
-		</div>
-
-		<div class="component-section">
-			<div class="component-title">
-				<a href="/components/button">
-					Buttons
-				</a>
-			</div>
-			<div class="grid">
-				<Button
-					appearance={ButtonAppearance.accent}
-					onClick={() => counter++}
-				>
-					Button ({counter})
-				</Button>
-				<Button
-					appearance={ButtonAppearance.stealth}
-					onClick={() => counter = 0}
-				>
-					Reset
-				</Button>
-			</div>
-		</div>
-
-		<div class="component-section">
-			<div class="component-title">
-				<a href="/components/navigation-layout">
-					Navigation / Layout
-				</a>
-			</div>
-
-			<p>
-				Accordion, Stack, Page&nbsp;layout and the rest&mldr;
-			</p>
-			<!-- note: takes too much space for just a simple tile navigation item -->
-			<!--<div>-->
-			<!--	<span>Selected: {expandedAccordionItem}</span> <br>-->
-
-			<!--	<Button onClick={() => expandedAccordionItem = null}>-->
-			<!--		Reset-->
-			<!--	</Button>-->
-			<!--</div>-->
-
-			<!--<div>-->
-			<!--	<Accordion bind:value={expandedAccordionItem}>-->
-			<!--		<AccordionItem id="my-accordion-1" header="Item 1">Content 1</AccordionItem>-->
-			<!--		<AccordionItem id="my-accordion-2" header="Item 2">Content 2</AccordionItem>-->
-			<!--		<AccordionItem id="my-accordion-3" header="Item 3">Content 3</AccordionItem>-->
-			<!--	</Accordion>-->
-			<!--</div>-->
-		</div>
-
-		<div class="component-section">
-			<div class="component-title">Menus & Dialogs</div>
-			<div class="grid">
-				<Menu>
-					<!-- <MenuButton>Open Menu</MenuButton> -->
-					<!-- <MenuList slot="menu">
-						<MenuItem>Item A</MenuItem>
-						<MenuItem>Item B</MenuItem>
-					</MenuList> -->
-				</Menu>
-				<Button appearance={ButtonAppearance.lightweight} onClick={dialogElement?.show}>
-					Show dialog
-				</Button>
-				<Dialog
-					bind:this={dialogElement}
-					modal
-					trapFocus
-				>
-					This is a dialog
-				</Dialog>
-				<!-- <Drawer>
-					<DrawerBody>This is a drawer</DrawerBody>
-				</Drawer> -->
-			</div>
-		</div>
-
-		<div class="component-section">
-			<div class="component-title">Text, Media, Misc</div>
-			<div class="grid">
-				<Badge appearance="filled" color="danger">Badge 2</Badge>
-				<Badge appearance="accent">New</Badge>
-				<!-- <CounterBadge count="5" /> -->
-				<ProgressBar value="75" />
-				<!-- <Spinner /> -->
-				<Button id="hover-button">Hover me</Button>
-				<Tooltip anchor="hover-button">
-					Helpful info
-				</Tooltip>
-			</div>
-		</div>
-
-		<div class="component-section">
-			<div class="component-title">Decorative & Structural</div>
-			<div class="grid">
-				<Divider />
-				<!-- <ToggleButton>Toggle Me</ToggleButton> -->
-			</div>
-		</div>
-	</div>
+	<Grid spacing={4}>
+		{#each categories as category}
+			<GridItem xs={12} md={6} lg={4}>
+				<Card class="category-card">
+					<h2 class="category-title">
+						<a href={category.href} class="category-link">
+							{category.title}
+						</a>
+					</h2>
+					<p class="category-description">
+						{category.description}
+					</p>
+					<div class="component-tags">
+						{#each category.components as component}
+							<span class="component-tag">
+								{component}
+							</span>
+						{/each}
+					</div>
+				</Card>
+			</GridItem>
+		{/each}
+	</Grid>
 </div>
+
+<style>
+	.page-description {
+		margin-bottom: 2rem;
+		color: var(--neutral-foreground-rest, #605e5c);
+	}
+
+	.category-card {
+		padding: 1.5rem;
+		height: 100%;
+	}
+
+	.category-title {
+		margin: 0 0 0.5rem 0;
+		font-size: 1.25rem;
+	}
+
+	.category-link {
+		text-decoration: none;
+		color: var(--accent-foreground-rest, #0078d4);
+	}
+
+	.category-description {
+		margin: 0 0 1rem 0;
+		color: var(--neutral-foreground-rest, #605e5c);
+		font-size: 0.875rem;
+	}
+
+	.component-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.component-tag {
+		padding: 0.25rem 0.5rem;
+		background: var(--neutral-layer-3, #f3f2f1);
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-family: monospace;
+	}
+
+	[data-theme="dark"] .component-tag {
+		background: var(--neutral-layer-3, #323130);
+	}
+</style>

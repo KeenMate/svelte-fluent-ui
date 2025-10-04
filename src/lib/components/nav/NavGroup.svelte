@@ -60,10 +60,9 @@
 		{/snippet}
 	</NavLink>
 
-	<div role="group" class="fluent-collapsible-region-container items" style="height: auto;">
+	<div role="group" class="fluent-collapsible-region-container items">
 		<div
 			class="fluent-nav-menu"
-			style="width: 100%;"
 			role="menu"
 			aria-expanded=""
 		>
@@ -71,6 +70,16 @@
 		</div>
 	</div>
 </NavItem>
+
+<style>
+	.fluent-collapsible-region-container {
+		height: auto;
+	}
+
+	.fluent-nav-menu {
+		width: 100%;
+	}
+</style>
 
 
 <!--<div id="f57d0b841" class="fluent-nav-item expanded fluent-nav-group" role="menuitem">-->

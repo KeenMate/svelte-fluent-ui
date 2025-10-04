@@ -1,18 +1,26 @@
 <script lang="ts">
-	import {Search} from "$lib/index.js"
+	import {Search, Stack, Grid, GridItem, Card} from "$lib/index.js"
 	let query = ""
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Search</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Search" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr
@@ -64,12 +72,14 @@
 					<tr><td></td><td>value</td><td>string</td><td>""</td><td>Input value</td></tr>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
 
-			<table class="pure-table member-table">
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr>
@@ -86,12 +96,14 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Slots</h2>
+	<Card>
+		<h2>Slots</h2>
 
-	<table class="pure-table member-table">
+		<table class="member-table">
 		<tbody>
 			<tr class="slot"><td colspan="5">Slots</td></tr>
 			<tr
@@ -107,15 +119,16 @@
 		</tbody>
 	</table>
 
-	<h2 class="content-subhead">Examples</h2>
-	
-	<h3>Basic Search</h3>
-	<Search label="Search term" placeholder="Type here..." />
+		<h2>Examples</h2>
 
-	<h3>Disabled Search</h3>
-	<Search label="Disabled input" disabled={true} value="Static text" />
+		<h3>Basic Search</h3>
+		<Search label="Search term" placeholder="Type here..." />
 
-	<h3>Controlled Search</h3>
-	<Search label="Controlled" bind:value={query} placeholder="Search..." />
-	<p>Query: {query}</p>
-</div>
+		<h3>Disabled Search</h3>
+		<Search label="Disabled input" disabled={true} value="Static text" />
+
+		<h3>Controlled Search</h3>
+		<Search label="Controlled" bind:value={query} placeholder="Search..." />
+		<p>Query: {query}</p>
+	</Card>
+</Stack>

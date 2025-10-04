@@ -1,16 +1,24 @@
 <script lang="ts">
-	import {Spacer} from "$lib/index.js"
+	import {Spacer, Stack, Grid, GridItem, Card} from "$lib/index.js"
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Spacer</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Custom component">Spacer (Custom)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Spacer" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -47,10 +55,12 @@
 				</tbody>
 			</table>
 
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -63,14 +73,16 @@
 				<!--</tr>-->
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<h5>
-		Auto width:
-	</h5>
-	<div class="example tw:flex tw:gap-1">
+	<Card>
+		<h2>Examples</h2>
+		<h5>
+			Auto width:
+		</h5>
+		<div class="example example-row">
 		<div class="element-block">1</div>
 		<Spacer />
 		<div class="element-block">2</div>
@@ -82,7 +94,7 @@
 	<h5>
 		Specific width:
 	</h5>
-	<div class="example tw:flex tw:justify-items-start tw:gap-1">
+	<div class="example example-row-start">
 		<div class="element-block">
 			<span>100px after</span>
 		</div>
@@ -97,7 +109,8 @@
 		<Spacer width="300" />
 		<div class="element-block">4</div>
 	</div>
-</div>
+	</Card>
+</Stack>
 
 <style lang="scss">
 	.example {
@@ -114,5 +127,16 @@
 				font-family: monospace;
 			}
 		}
+	}
+
+	.example-row {
+		display: flex;
+		gap: 0.25rem;
+	}
+
+	.example-row-start {
+		display: flex;
+		justify-items: start;
+		gap: 0.25rem;
 	}
 </style>

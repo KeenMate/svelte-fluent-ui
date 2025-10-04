@@ -77,10 +77,16 @@
 	{/if}
 
 	{#if checkedMessage}
-		<span slot="checked-message" style="margin-left: 0.5rem;">{checkedMessage}</span>
+		<span slot="checked-message" class="switch-message">{checkedMessage}</span>
 	{/if}
 
 	{#if uncheckedMessage}
-		<span slot="unchecked-message" style="margin-left: 0.5rem;">{uncheckedMessage}</span>
+		<span slot="unchecked-message" class="switch-message">{uncheckedMessage}</span>
 	{/if}
 </fluent-switch>
+
+<style>
+	.switch-message {
+		margin-left: 0.5rem;
+	}
+</style>

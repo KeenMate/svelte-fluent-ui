@@ -92,22 +92,22 @@
 	{ariaLabelledby}
 	{ariaLabel}
 >
-	<div class="tw:flex tw:flex-col tw:h-full">
+	<div class="dialog-container">
 		{#if !preventClose}
-			<div class="close-button-parent tw:self-end tw:flex-none tw:mt-1 tw:mr-1">
+			<div class="close-button-wrapper">
 				<!-- todo: proper close button -->
 				X
 			</div>
 		{/if}
 
-		<div class="tw:flex-1">
+		<div class="dialog-content">
 			{@render children?.()}
 		</div>
 
 		{#if dismissable || actions}
-			<div class="tw:flex-none tw:flex tw:justify-between tw:flex-wrap gaptw:-2">
+			<div class="dialog-footer">
 				{#if dismissable}
-					<div class="close-button-parent tw:flex tw:justify-end tw:flex-none">
+					<div class="dismiss-button-wrapper">
 						<Button onClick={hide}>
 							{#if dismissButtonText}
 								{@render dismissButtonText()}
@@ -118,7 +118,7 @@
 					</div>
 				{/if}
 				{#if actions}
-					<div class="actions tw:flex-1 tw:flex tw:items-baseline tw:gap-1">
+					<div class="dialog-actions">
 						{@render actions()}
 					</div>
 				{/if}
@@ -127,7 +127,43 @@
 	</div>
 </fluent-dialog>
 
-<style lang="postcss">
-	@reference "tailwindcss";
+<style>
+	.dialog-container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	.close-button-wrapper {
+		align-self: flex-end;
+		flex: none;
+		margin-top: 0.25rem;
+		margin-right: 0.25rem;
+	}
+
+	.dialog-content {
+		flex: 1;
+	}
+
+	.dialog-footer {
+		flex: none;
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.dismiss-button-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		flex: none;
+	}
+
+	.dialog-actions {
+		flex: 1;
+		display: flex;
+		align-items: baseline;
+		gap: 0.25rem;
+	}
 </style>
 

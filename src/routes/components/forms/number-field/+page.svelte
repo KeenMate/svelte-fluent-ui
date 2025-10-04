@@ -1,19 +1,27 @@
 <script lang="ts">
-	import { NumberField } from "$lib/index.js"
+	import { NumberField, Stack, Grid, GridItem, Card } from "$lib/index.js"
 
 	let testValue="10";
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>NumberField</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/NumberField" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Properties</td></tr>
 
@@ -35,11 +43,13 @@
 					<tr class="slot"><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Label or slotted content</td></tr>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr><td></td><td>select()</td><td>void</td><td>Selects input contents</td></tr>
@@ -49,18 +59,21 @@
 					<tr><td></td><td>setSelectionRange(start, end, direction?)</td><td>void</td><td>Programmatically set selection</td></tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2>Examples</h2>
 
-	<h3>Age number field</h3>
-	<NumberField label="Age" placeholder="Enter age" />
+		<h3>Age number field</h3>
+		<NumberField label="Age" placeholder="Enter age" />
 
-	<h3>With min=1, max=20, and step=5</h3>
-	<NumberField label="Step 5" min={1} max={20} step={5} value={testValue} />
+		<h3>With min=1, max=20, and step=5</h3>
+		<NumberField label="Step 5" min={1} max={20} step={5} value={testValue} />
 
-	<h3>Read-only and disabled</h3>
-	<NumberField label="Read-only" value={"10"} readonly />
-	<NumberField label="Disabled" value={"11"} disabled />
-</div>
+		<h3>Read-only and disabled</h3>
+		<NumberField label="Read-only" value={"10"} readonly />
+		<NumberField label="Disabled" value={"11"} disabled />
+	</Card>
+</Stack>

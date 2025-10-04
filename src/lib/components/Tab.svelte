@@ -47,8 +47,8 @@
 
 {#if visible}
 	<fluent-tab
-		class={className}
-		style={`margin-right: 0.5rem; ${style}`}
+		class="tab-wrapper {className}"
+		style={style}
 		{id}
 		{disabled}
 		aria-label={ariaLabel || label}
@@ -67,7 +67,7 @@
 				autocapitalize="off"
 				spellcheck="false"
 				title="Click to edit this tab name"
-				style="padding: 3px 5px;"
+				class="editable-label"
 			>
 				{label}
 			</span>
@@ -91,4 +91,14 @@
 		{@render childContent?.()}
 	</fluent-tab-panel>
 {/if}
+
+<style>
+	.tab-wrapper {
+		margin-right: 0.5rem;
+	}
+
+	.editable-label {
+		padding: 3px 5px;
+	}
+</style>
 

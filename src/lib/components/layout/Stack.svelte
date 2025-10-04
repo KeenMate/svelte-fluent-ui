@@ -1,54 +1,56 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
-	import {classList} from "../../helpers/html.js"
-	import {type StackHorizontalAlign, StackOrientation, StackVerticalAlign} from "../../fluent-ui/constants/stack.js"
 
 	type Props = {
 		children?: SlotType
-		orientation?: StackOrientation
-		horizontalAlign?: StackHorizontalAlign
-		verticalAlign?: StackVerticalAlign
-		verticalGap?: string | number
-		horizontalGap?: string | number
-		gap?: string | number
-		width?: string
-		height?: string
+		orientation?: "vertical" | "horizontal"
+		gap?: string
 		reversed?: boolean
+		class?: string
+		style?: string
 		[prop: string]: any
 	}
 
 	let {
-		    children = undefined,
-		    orientation = undefined,
-		    horizontalAlign = undefined,
-		    verticalAlign = undefined,
-		    verticalGap = undefined,
-		    horizontalGap = undefined,
-		    gap = undefined,
-		    width = undefined,
-		    height = undefined,
-		    reversed = undefined,
-		    ...restProps
-	    }: Props = $props()
+		children = undefined,
+		orientation = "vertical",
+		gap = undefined,
+		reversed = false,
+		class: className = "",
+		style = "",
+		...restProps
+	}: Props = $props()
 
-	let classes = $derived(classList(
-		`stack-${orientation?.toLowerCase() === "vertical" ? 'vertical' : 'horizontal'}`,
-		verticalAlign && `vertical-align-${verticalAlign.toLowerCase()}`,
-		horizontalAlign && `horizontal-align-${horizontalAlign.toLowerCase()}`,
-		restProps.class
-	))
+	const computedClass = $derived(`stack-${orientation} ${className}`.trim())
 </script>
 
 <div
 	{...restProps}
-	class={classes}
-	class:reversed
-	style:--vertical-gap={verticalGap || gap}
-	style:--horizontal-gap={horizontalGap || gap}
-	style:--gap={gap}
-	style:width={width}
-	style:height={height}
+	class={computedClass}
+	reverse={reversed ? "true" : undefined}
+	style:gap={gap}
+	style={style}
 >
 	{@render children?.()}
 </div>
 
+<style>
+	/* Microsoft FluentUI Blazor Stack styles */
+	.stack-vertical {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.stack-horizontal {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.stack-vertical[reverse="true"] {
+		flex-direction: column-reverse;
+	}
+
+	.stack-horizontal[reverse="true"] {
+		flex-direction: row-reverse;
+	}
+</style>

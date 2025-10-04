@@ -1,16 +1,24 @@
 <script lang="ts">
-	import {Badge} from "$lib/index.js"
+	import {Badge, Stack, Grid, GridItem, Card} from "$lib/index.js"
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Badge</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-badge-badge--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Badge" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -65,15 +73,14 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<p>
-		<Badge style="cursor: pointer;" appearance="lightweight" class="lightweight">
-			<span
-				style="width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;"
-			><!--!-->
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
+		<Badge class="lightweight clickable-badge" appearance="lightweight">
+			<span class="badge-content"><!--!-->
 				Lightweight
 			</span>
 		</Badge>
@@ -81,7 +88,7 @@
 		<Badge
 			appearance="accent" class="accent"
 		>
-			<span style="width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+			<span class="badge-content">
 				<!--!-->
 				Accent
 			</span>
@@ -90,7 +97,7 @@
 		<Badge
 			appearance="neutral" class="neutral"
 		>
-			<span style="width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+			<span class="badge-content">
 				<!--!-->
 				Neutral
 			</span>
@@ -103,7 +110,7 @@
 			color="somevalue"
 			class="neutral"
 		>
-			<span style="width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+			<span class="badge-content">
 				Red
 				and White
 			</span>
@@ -115,7 +122,7 @@
 			color="highlight"
 			class="neutral"
 		>
-			<span style="width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+			<span class="badge-content">
 				Highlight
 			</span>
 		</Badge>
@@ -126,16 +133,34 @@
 			color="lowlight"
 			class="neutral"
 		>
-			<span style="width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+			<span class="badge-content">
 				Lowlight
 			</span>
 		</Badge>
 		<Badge style="width: 250px;" appearance="neutral" class="neutral">
-			<span style="height: 250px; width: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">
+			<span class="badge-content large-badge-content">
 				Bigger
 				<!--!-->
 			</span>
 
 		</Badge>
-	</p>
-</div>
+	</Card>
+</Stack>
+
+<style>
+	.clickable-badge {
+		cursor: pointer;
+	}
+
+	.badge-content {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		white-space: nowrap;
+	}
+
+	.large-badge-content {
+		height: 250px;
+	}
+</style>

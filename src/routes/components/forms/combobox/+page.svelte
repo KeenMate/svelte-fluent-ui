@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Combobox, Option } from "$lib/index.js";
+	import { Combobox, Option, Stack, Grid, GridItem, Card } from "$lib/index.js";
 
 	const stOptions = [
 		{ value: "ds9", label: "Deep Space 9" },
@@ -17,16 +17,24 @@
 	let comboboxSelectedValue: string | null = $state(null)
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Combobox</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-combobox--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Combobox" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property">
 						<td colspan="5">Members</td>
@@ -135,10 +143,12 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
+				<table class="member-table">
 				<tbody>
 					<tr class="action">
 						<td colspan="4">Actions</td>
@@ -184,13 +194,14 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<h3>Plain combobox with static options</h3>
-	<p>
+		<h3>Plain combobox with static options</h3>
 		<Combobox
 			bind:this={combobox1}
 			bind:value
@@ -201,22 +212,16 @@
 			<Option value="what?">What?</Option>
 		</Combobox>
 		Selected value: {value}
-	</p>
 
-	<h3>Plain combobox with array options</h3>
-	<p>
+		<h3>Plain combobox with array options</h3>
 		<Combobox
 			bind:value={value1}
 			placeholder="Best StarTrek series?"
 			options={stOptions}
 		></Combobox>
 		Selected value: {value1}
-	</p>
 
-
-
-	<h3>With autocomplete</h3>
-	<p>
+		<h3>With autocomplete</h3>
 		<Combobox id="combo-2" bind:value={gpuSelectedValue} autocomplete="both" placeholder="Select a graphics card">
 			<Option value="1">GTX 1060</Option>
 			<Option value="2">GTX 1070</Option>
@@ -224,15 +229,13 @@
 			<Option value="4">GTX 1090</Option>
 		</Combobox>
 		Selected value: {gpuSelectedValue}
-	</p>
 
-	<h3>Disabled</h3>
-	<p>
+		<h3>Disabled</h3>
 		<Combobox id="combo-disabled" bind:value={comboboxSelectedValue} disabled placeholder="Select an option">
 			<Option value="1">Option 1</Option>
 			<Option value="2">Option 2</Option>
 			<Option value="3">Option 3</Option>
 		</Combobox>
 		Selected value: {comboboxSelectedValue}
-	</p>
-</div>
+	</Card>
+</Stack>

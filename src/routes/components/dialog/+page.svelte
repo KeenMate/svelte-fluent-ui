@@ -1,18 +1,26 @@
 <script lang="ts">
-	import {Button, Dialog} from "$lib/index.js"
+	import {Button, Dialog, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let dialog: Dialog
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Dialog</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-dialog-dialog--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Dialog" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -112,11 +120,12 @@
 				</tr>
 				</tbody>
 			</table>
-
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -129,18 +138,21 @@
 				<!--</tr>-->
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<Button onClick={() => dialog.show()}>
-		Open dialog
-	</Button>
+		<Button onClick={() => dialog.show()}>
+			Open dialog
+		</Button>
 
-	<Dialog bind:this={dialog}>
-		<p>
-			Some dialog content
-		</p>
-	</Dialog>
-</div>
+		<Dialog bind:this={dialog}>
+			<p>
+				Some dialog content
+			</p>
+		</Dialog>
+	</Card>
+</Stack>

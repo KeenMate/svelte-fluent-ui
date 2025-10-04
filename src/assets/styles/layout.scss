@@ -10,3 +10,35 @@
 	left: calc(1 * var(--width));
 	margin-left: calc(-1 * var(--width));
 }
+
+// Layout components
+.layout {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+
+	&[data-orientation="horizontal"] {
+		flex-direction: row;
+	}
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid var(--app-border, #e1dfdd);
+
+	.header-gutters {
+		width: 100%;
+		padding: 0 1rem;
+		display: flex;
+		align-items: center;
+	}
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	border-top: 1px solid var(--app-border, #e1dfdd);
+	padding: 0 1rem;
+}

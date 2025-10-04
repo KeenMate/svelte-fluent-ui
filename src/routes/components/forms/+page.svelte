@@ -53,7 +53,7 @@
 
 			<div class="grid">
 				<div>
-					<div class="tw:mb-2">
+					<div class="checkbox-group">
 						<div>
 							<Checkbox bind:checked={checkboxValue}>
 								Check me
@@ -93,12 +93,12 @@
 
 			<div class="grid">
 				<div>
-					<div class="tw:mb-2">
+					<div class="radio-group">
 						<div>
 							<RadioGroup
 								bind:value={radioValue}
 								name="first-radio"
-								class="tw:flex tw:flex-wrap tw:gap-1"
+								class="radio-group-wrapper"
 							>
 								<Radio value="option_1">Option 1</Radio>
 								<Radio value="option_2">Option 2</Radio>
@@ -150,3 +150,19 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.checkbox-group {
+		margin-bottom: 0.5rem;
+	}
+
+	.radio-group {
+		margin-bottom: 0.5rem;
+	}
+
+	.radio-group-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+</style>

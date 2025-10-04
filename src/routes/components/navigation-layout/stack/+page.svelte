@@ -1,16 +1,24 @@
 <script lang="ts">
-	import {Stack} from "$lib/index.js"
+	import {Stack, Grid, GridItem, Card} from "$lib/index.js"
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Stack</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-stack--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Stack" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -47,10 +55,12 @@
 				</tbody>
 			</table>
 
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -63,12 +73,14 @@
 				<!--</tr>-->
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<div class="tw:flex tw:gap-1">
-		<div class="tw:flex-1">
+	<Card>
+		<h2>Examples</h2>
+		<div class="examples-container">
+		<div class="examples-column">
 			<div class="examples">
 				<div class="example">
 					<Stack>
@@ -114,7 +126,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="tw:flex-1">
+		<div class="examples-column">
 			<div class="examples">
 				<div class="example">
 					<Stack>
@@ -150,9 +162,19 @@
 			</div>
 		</div>
 	</div>
-</div>
+	</Card>
+</Stack>
 
 <style lang="scss">
+	.examples-container {
+		display: flex;
+		gap: 0.25rem;
+	}
+
+	.examples-column {
+		flex: 1;
+	}
+
 	.examples {
 		display: flex;
 		flex-direction: column;

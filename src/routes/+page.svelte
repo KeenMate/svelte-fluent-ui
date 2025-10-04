@@ -1,13 +1,14 @@
 <script lang="ts">
 	import "$lib/fluent-ui/setup.js"
+	import {Grid, GridItem, Card} from "$lib/index.js"
 </script>
 
+<h1>List of components and their state</h1>
 
-<div class="pure-g">
-	<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-		<h1>List of components and their state</h1>
-
-		<table class="pure-table pure-table-striped">
+<Grid spacing={4}>
+	<GridItem xs={12} lg={10} xl={8}>
+		<Card class="component-table-card">
+			<table class="pure-table pure-table-striped component-table">
 			<thead>
 			<tr>
 				<th>State</th>
@@ -53,7 +54,7 @@
 				</td>
 				<td>
 					Now, only "accent" appearance works. <br>
-					Colors need CSS variables to be defined (<pre class="tw:inline">--badge-color-[color]</pre>)
+					Colors need CSS variables to be defined (<pre class="inline-code">--badge-color-[color]</pre>)
 				</td>
 			</tr>
 			<tr>
@@ -136,6 +137,11 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/navigation-layout/grid">grid</a></td>
+				<td>Responsive 12-column grid system with breakpoints</td>
+			</tr>
+			<tr>
 				<td></td>
 				<td>horizontal-scroll</td>
 				<td></td>
@@ -164,6 +170,11 @@
 				<td></td>
 				<td>menu-item</td>
 				<td></td>
+			</tr>
+			<tr>
+				<td>Initial tests</td>
+				<td><a href="/components/navigation-layout/multisplitter">multi-splitter</a></td>
+				<td>Resizable multi-panel splitter component</td>
 			</tr>
 			<tr>
 				<td>Initial tests</td>
@@ -283,13 +294,47 @@
 			</tr>
 			</tbody>
 		</table>
-	</div>
-</div>
+	</Card>
+	</GridItem>
 
+	<GridItem xs={12} lg={2} xl={4}>
+		<Card class="quick-links-card">
+			<h3>Quick Links</h3>
+			<div class="quick-links-container">
+				<a href="/components/navigation-layout/grid">Grid Demo</a>
+				<a href="/components/navigation-layout/multisplitter">MultiSplitter Demo</a>
+			</div>
+		</Card>
+	</GridItem>
+</Grid>
 
-	<!--<style lang="scss">-->
-	<!--	@import ;-->
-	<!--</style>-->
+<style>
+	.component-table-card {
+		padding: 2rem;
+		background: var(--app-layer-2);
+	}
+
+	.component-table {
+		width: 100%;
+	}
+
+	.inline-code {
+		display: inline;
+	}
+
+	.quick-links-card {
+		padding: 2rem;
+		background: var(--app-layer-3);
+		text-align: center;
+	}
+
+	.quick-links-container {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+</style>
 
 
 

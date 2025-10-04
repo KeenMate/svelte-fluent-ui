@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Toast} from "$lib/index.js"
+	import {Toast, Stack, Grid, GridItem, Card} from "$lib/index.js"
 	let showToast = false
 	let toastId = "demo-toast"
 
@@ -17,15 +17,23 @@
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Toast</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-messagebar-messagebar--docs" target="_blank" rel="noopener noreferrer">MessageBar</a>
+			|
+			<a href="https://www.fluentui-blazor.net/MessageBar" target="_blank" rel="noopener noreferrer">FluentUI Blazor MessageBar</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Unique toast ID</td></tr>
@@ -60,12 +68,14 @@
 					>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
 
-			<table class="pure-table member-table">
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr>
@@ -94,51 +104,59 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Slots</h2>
+	<Card>
+		<h2 class="content-subhead">Slots</h2>
 
-	<table class="pure-table member-table">
-		<tbody>
-			<tr class="slot"><td colspan="5">Slots</td></tr>
-			<tr
-				><td></td><td>children</td><td>SlotType</td><td>undefined</td><td
-					>Additional message or markup content</td
-				></tr
-			>
-		</tbody>
-	</table>
+		<table class="member-table">
+			<tbody>
+				<tr class="slot"><td colspan="5">Slots</td></tr>
+				<tr
+					><td></td><td>children</td><td>SlotType</td><td>undefined</td><td
+						>Additional message or markup content</td
+					></tr
+				>
+			</tbody>
+		</table>
+	</Card>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<h3>Toast with timestamp</h3>
-	<p>
+		<h3>Toast with timestamp</h3>
 		<Toast title="Auto-saved" timestamp={new Date()} topCTAType="Timestamp" />
-	</p>
-	<button onclick={() => (showToast = true)} style="padding: 0.5rem 1rem; cursor:pointer;">
-		Show Toast
-	</button>
+		<button onclick={() => (showToast = true)} class="show-toast-button">
+			Show Toast
+		</button>
 
-	{#if showToast}
-		<div class="toast-container">
-			<Toast
-				id={toastId}
-				title="Saved Successfully"
-				timestamp={new Date()}
-				topCTAType="Action"
-				topAction="Undo"
-				primaryAction="View Details"
-				secondaryAction="Dismiss"
-				onTopActionClick={handleTopAction}
-				onPrimaryActionClick={handlePrimaryAction}
-				onSecondaryActionClick={handleSecondaryAction}
-			></Toast>
-		</div>
-	{/if}
-</div>
+		{#if showToast}
+			<div class="toast-container">
+				<Toast
+					id={toastId}
+					title="Saved Successfully"
+					timestamp={new Date()}
+					topCTAType="Action"
+					topAction="Undo"
+					primaryAction="View Details"
+					secondaryAction="Dismiss"
+					onTopActionClick={handleTopAction}
+					onPrimaryActionClick={handlePrimaryAction}
+					onSecondaryActionClick={handleSecondaryAction}
+				></Toast>
+			</div>
+		{/if}
+	</Card>
+</Stack>
 
 <style>
+	.show-toast-button {
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+	}
+
 	.toast-container {
 		position: fixed;
 		bottom: 1rem;

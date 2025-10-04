@@ -1,19 +1,27 @@
 <script lang="ts">
-	import {Listbox, Option} from "$lib/index.js"
+	import {Listbox, Option, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let selectedValue: string = "banana";
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Option</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-dropdown-option--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Option" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr><td></td><td>value</td><td>string</td><td>required</td><td>Option value</td></tr>
@@ -24,23 +32,26 @@
 					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Custom inline styles</td></tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<h3>Basic option in listbox</h3>
+		<h3>Basic option in listbox</h3>
 		<Listbox bind:value={selectedValue}>
 			<Option value="apple">Apple</Option>
 			<Option value="banana">Banana</Option>
 			<Option value="cherry">Cherry</Option>
 		</Listbox>
-	<p>Selected: {selectedValue}</p>
+		<p>Selected: {selectedValue}</p>
 
-	<h3>Disabled option</h3>
+		<h3>Disabled option</h3>
 		<Listbox value="banana">
 			<Option value="apple">Apple</Option>
 			<Option value="banana" disabled={true}>Banana (disabled)</Option>
 			<Option value="cherry">Cherry</Option>
 		</Listbox>
-</div>
+	</Card>
+</Stack>

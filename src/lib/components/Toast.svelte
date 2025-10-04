@@ -59,6 +59,25 @@
 		gap: 0.5rem;
 		width: 100%;
 	}
+
+	.dismiss-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+	}
+
+	.toast-action-link {
+		font-size: 14px;
+		font-weight: 400;
+	}
+
+	.fluent-toast-actions {
+		margin-top: 0.5rem;
+	}
+
+	.primary-action {
+		margin-right: 1rem;
+	}
 </style>
 
 <div class="fluent-toast" id={id} tabindex="0">
@@ -67,7 +86,7 @@
 
 		<div class="fluent-toast-action">
 			{#if topCTAType === 'Dismiss'}
-				<button title="Close" onclick={handleDismiss} aria-label="Dismiss" style="background: none; border: none; cursor: pointer;">
+				<button title="Close" onclick={handleDismiss} aria-label="Dismiss" class="dismiss-button">
 					✕
 				</button>
 			{:else if topCTAType === 'Timestamp' && timestamp}
@@ -76,7 +95,7 @@
 				<fluent-anchor
 					href="#"
 					title={topAction}
-					style="font-size: 14px; font-weight: 400;"
+					class="toast-action-link"
 					appearance="hypertext"
 					onfocusin={() => {}}
 					onfocusout={() => {}}
@@ -93,12 +112,12 @@
 	{/if}
 
 	{#if primaryAction || secondaryAction}
-		<div class="fluent-toast-actions" style="margin-top: 0.5rem;">
+		<div class="fluent-toast-actions">
 			{#if primaryAction}
 				<fluent-anchor
 					href="#"
 					title={primaryAction}
-					style="font-size: 14px; font-weight: 400; margin-right: 1rem;"
+					class="toast-action-link primary-action"
 					appearance="hypertext"
 					onfocusin={() => {}}
 					onfocusout={() => {}}
@@ -111,7 +130,7 @@
 				<fluent-anchor
 					href="#"
 					title={secondaryAction}
-					style="font-size: 14px; font-weight: 400;"
+					class="toast-action-link"
 					appearance="hypertext"
 					onfocusin={() => {}}
 					onfocusout={() => {}}

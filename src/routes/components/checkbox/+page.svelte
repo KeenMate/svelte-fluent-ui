@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Checkbox from "$lib/components/Checkbox.svelte";
+	import {Stack, Grid, GridItem, Card} from "$lib/index.js";
 
 	let value:boolean = $state();
 	let checkboxField: HTMLElement;
@@ -9,15 +10,23 @@
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Checkbox</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-checkbox--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Checkbox" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
   <tbody>
     <tr class="property">
       <td colspan="5">Members</td>
@@ -116,11 +125,12 @@
     </tr>
   </tbody>
 </table>
-
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
+				<table class="member-table">
 				<tbody>
 					<tr class="action">
 						<td colspan="4">Actions</td>
@@ -166,16 +176,17 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<p>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 		<Checkbox
 			bind:this={checkboxField}
 			bind:checked = {value}
 			onClick={onClicked}
 		>Are you going to Mars?</Checkbox>
 		Value: {value}
-	</p>
-</div>
+	</Card>
+</Stack>

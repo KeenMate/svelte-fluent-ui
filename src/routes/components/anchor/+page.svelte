@@ -1,21 +1,29 @@
 <script lang="ts">
-	import { Anchor } from "$lib/index.js";
+	import { Anchor, Stack, Grid, GridItem, Card } from "$lib/index.js";
 
 	function handleAnchorClick(event: MouseEvent) {
 		alert("Anchor clicked!");
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Anchor</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-button-anchor--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Anchor" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Element ID</td></tr>
@@ -34,12 +42,14 @@
 					<tr><td></td><td>use</td><td>(node: HTMLAnchorElement) =&gt; any</td><td>undefined</td><td>Svelte action applied to the anchor element</td></tr>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
 
-			<table class="pure-table member-table">
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr>
@@ -50,24 +60,27 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Slots</h2>
+	<Card>
+		<h2 class="content-subhead">Slots</h2>
 
-	<table class="pure-table member-table">
-		<tbody>
-			<tr class="slot"><td colspan="5">Slots</td></tr>
-			<tr><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Content inside the anchor</td></tr>
-			<tr><td></td><td>iconStart</td><td>SlotType</td><td>undefined</td><td>Element displayed before children</td></tr>
-			<tr><td></td><td>iconEnd</td><td>SlotType</td><td>undefined</td><td>Element displayed after children</td></tr>
-		</tbody>
-	</table>
+		<table class="member-table">
+			<tbody>
+				<tr class="slot"><td colspan="5">Slots</td></tr>
+				<tr><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Content inside the anchor</td></tr>
+				<tr><td></td><td>iconStart</td><td>SlotType</td><td>undefined</td><td>Element displayed before children</td></tr>
+				<tr><td></td><td>iconEnd</td><td>SlotType</td><td>undefined</td><td>Element displayed after children</td></tr>
+			</tbody>
+		</table>
+	</Card>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<h3>Basic Anchor</h3>
-	<p>
+		<h3>Basic Anchor</h3>
 		<Anchor href="#">example</Anchor>
-	</p>
-</div>
+	</Card>
+</Stack>

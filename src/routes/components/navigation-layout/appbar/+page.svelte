@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {AppBar, AppBarItem, ResourcesIcon, Stack} from "$lib/index.js"
+	import {AppBar, AppBarItem, ResourcesIcon, Stack, Grid, GridItem, Card} from "$lib/index.js"
 	import {AppBarOrientation} from "$lib/fluent-ui/constants/app-bar.js"
 
 	function onAppBarItemClicked(ev: Event) {
@@ -12,21 +12,30 @@
 	<ResourcesIcon aria-hidden="true" part="icon-active" active />
 {/snippet}
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>AppBar</h1>
+
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Custom component">AppBar (Custom)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/AppBar" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
 	<p>
 		For components: <br>
-		<span class="tw:font-mono">AppBar</span>,
-		<span class="tw:font-mono">AppBarItem</span>
+		<span class="component-name">AppBar</span>,
+		<span class="component-name">AppBarItem</span>
 	</p>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<p>(of AppBar)</p>
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<p>(of AppBar)</p>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -76,10 +85,12 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -92,12 +103,14 @@
 				<!--</tr>-->
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<div class="tw:flex tw:gap-4">
-		<div class="tw:flex-1">
+	<Card>
+		<h2>Examples</h2>
+		<div class="examples-container">
+		<div class="example-item">
 			<h5>Regular AppBar</h5>
 
 			<Stack varticalAlign="start" horizontalAlign="start" vertical>
@@ -127,7 +140,7 @@
 				</AppBar>
 			</Stack>
 		</div>
-		<div class="tw:flex-1">
+		<div class="example-item">
 			<h5>Horizontal AppBar menu</h5>
 
 			<Stack varticalAlign="start" horizontalAlign="start" vertical>
@@ -145,4 +158,20 @@
 			</Stack>
 		</div>
 	</div>
-</div>
+	</Card>
+</Stack>
+
+<style>
+	.component-name {
+		font-family: monospace;
+	}
+
+	.examples-container {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.example-item {
+		flex: 1;
+	}
+</style>

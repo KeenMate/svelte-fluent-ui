@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Breadcrumb, BreadcrumbItem, ChevronDoubleRight} from "$lib/index.js"
+	import {Breadcrumb, BreadcrumbItem, ChevronDoubleRight, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	function onBreadcrumbClicked(ev: MouseEvent) {
 		console.log("🚀 ~ onClicked ~ ev:", ev.target.checked)
@@ -7,15 +7,23 @@
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Breadcrumb</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Breadcrumb" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="property">
 					<td colspan="5">Members</td>
@@ -51,10 +59,12 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -67,12 +77,14 @@
 				<!--</tr>-->
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<div class="tw:flex tw:gap-4">
-		<div class="tw:flex-1">
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
+		<div class="examples-container">
+		<div class="example-item">
 			<Breadcrumb>
 				<BreadcrumbItem>
 					Item 1
@@ -85,7 +97,7 @@
 				</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-		<div class="tw:flex-1">
+		<div class="example-item">
 			<Breadcrumb>
 				<BreadcrumbItem>
 					{#snippet separator()}
@@ -104,5 +116,17 @@
 				</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-	</div>
-</div>
+		</div>
+	</Card>
+</Stack>
+
+<style>
+	.examples-container {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.example-item {
+		flex: 1;
+	}
+</style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Paginator} from "$lib/index.js"
+	import {Paginator, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let currentPage = 0
 	let lastPage = 9
@@ -22,16 +22,24 @@
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Paginator</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Custom component">Paginator (Custom)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Paginator" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr><td></td><td>class</td><td>string</td><td>""</td><td>Custom CSS classes</td></tr>
@@ -65,12 +73,14 @@
 					>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
 
-			<table class="pure-table member-table">
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr
@@ -85,31 +95,34 @@
 					<tr><td></td><td>onLast</td><td>function</td><td>Fires when "go last" is clicked</td></tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Slots</h2>
+	<Card>
+		<h2 class="content-subhead">Slots</h2>
 
-	<table class="pure-table member-table">
-		<tbody>
-			<tr class="slot"><td colspan="5">Slots</td></tr>
-			<tr
-				><td></td><td>summaryTemplate</td><td>SlotType</td><td>undefined</td><td
-					>Custom summary markup</td
-				></tr
-			>
-			<tr
-				><td></td><td>paginationTextTemplate</td><td>SlotType</td><td>undefined</td><td
-					>Custom page info markup</td
-				></tr
-			>
-		</tbody>
-	</table>
+		<table class="member-table">
+			<tbody>
+				<tr class="slot"><td colspan="5">Slots</td></tr>
+				<tr
+					><td></td><td>summaryTemplate</td><td>SlotType</td><td>undefined</td><td
+						>Custom summary markup</td
+					></tr
+				>
+				<tr
+					><td></td><td>paginationTextTemplate</td><td>SlotType</td><td>undefined</td><td
+						>Custom page info markup</td
+					></tr
+				>
+			</tbody>
+		</table>
+	</Card>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<h3>Basic paginator</h3>
-	<p>
+		<h3>Basic paginator</h3>
 		<Paginator
 			totalItemCount={totalItems}
 			currentPageIndex={currentPage}
@@ -121,15 +134,13 @@
 			onNext={goNext}
 			onLast={goLast}
 		/>
-	</p>
 
-	<h3>Disabled paginator</h3>
-	<p>
+		<h3>Disabled paginator</h3>
 		<Paginator
 			totalItemCount={totalItems}
 			currentPageIndex={currentPage}
 			lastPageIndex={lastPage}
 			disabled={true}
 		/>
-	</p>
-</div>
+	</Card>
+</Stack>

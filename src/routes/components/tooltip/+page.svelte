@@ -1,17 +1,25 @@
 <script lang="ts">
-	import {Tooltip} from "$lib/index.js"
+	import {Tooltip, Stack, Grid, GridItem, Card} from "$lib/index.js"
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Tooltip</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-tooltip--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Tooltip" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property">
 						<td colspan="5">Members</td>
@@ -51,11 +59,13 @@
 					>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2 class="content-subhead">Actions</h2>
+				<table class="member-table">
 				<tbody>
 					<tr class="action">
 						<td colspan="4">Actions</td>
@@ -63,20 +73,22 @@
 					<tr><td></td><td>None</td><td></td><td>Tooltip has no imperative API</td></tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2 class="content-subhead">Examples</h2>
 
-	<h3>Tooltip on hover</h3>
-	<p>
+		<h3>Tooltip on hover</h3>
+		<p>
 		<span
 			id="hover-target">
 			Top tooltip
 		</span>
 
 		<Tooltip anchor="hover-target" autoUpdateMode="auto"
-			>Testovaci text</Tooltip
+			>Test text</Tooltip
 		>
 	</p>
 	<p>
@@ -86,7 +98,7 @@
 		</span>
 
 		<Tooltip anchor="hover-target2" autoUpdateMode="auto" position="end"
-			>Testovaci text</Tooltip
+			>Test text</Tooltip
 		>
 	</p>
 	<p>
@@ -96,7 +108,8 @@
 		</span>
 
 		<Tooltip anchor="hover-target3" autoUpdateMode="anchor" position="end" visible={true}
-			><bold> Tenhle text je jinaci a bold nejde</bold></Tooltip
+			><bold> This text is different and bold doesn't work</bold></Tooltip
 		>
-	</p>
-</div>
+</p>
+	</Card>
+</Stack>

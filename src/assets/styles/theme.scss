@@ -1,0 +1,41 @@
+// Theme styles - minimal interference with FluentUI
+// Only set what's needed for layout components
+:root {
+	color-scheme: light;
+}
+
+[data-theme="light"] {
+	color-scheme: light;
+	--app-bg: #ffffff;
+	--app-text: #323130;
+	--app-layer-2: #faf9f8;
+	--app-layer-3: #f3f2f1;
+	--app-border: #e1dfdd;
+	--app-accent: #0078d4;
+}
+
+[data-theme="dark"] {
+	color-scheme: dark;
+	--app-bg: #1b1a19;
+	--app-text: #f3f2f1;
+	--app-layer-2: #252423;
+	--app-layer-3: #323130;
+	--app-border: #3b3a39;
+	--app-accent: #0086f0;
+}
+
+// Apply only to body to avoid interfering with FluentUI components
+body {
+	background-color: var(--app-bg, #ffffff);
+	color: var(--app-text, #323130);
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+// Target only our custom layout components
+.header,
+.footer,
+.layout {
+	background-color: var(--app-bg);
+	color: var(--app-text);
+	border-color: var(--app-border);
+}

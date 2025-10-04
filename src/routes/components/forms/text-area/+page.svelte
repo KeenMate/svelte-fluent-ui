@@ -1,17 +1,25 @@
 <script lang="ts">
-	import { Textarea } from "$lib/index.js";
+	import { Textarea, Stack, Grid, GridItem, Card } from "$lib/index.js";
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>TextArea</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-textarea--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/TextArea" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr><td></td><td>appearance</td><td>"outline" | "filled"</td><td>undefined</td><td>Visual style</td></tr>
@@ -37,12 +45,14 @@
 					<tr><td></td><td>value</td><td>string</td><td>""</td><td>Text value</td></tr>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
 
-			<table class="pure-table member-table">
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr>
@@ -59,33 +69,32 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Slots</h2>
+	<Card>
+		<h2>Slots</h2>
 
-	<table class="pure-table member-table">
-		<tbody>
-			<tr class="slot"><td colspan="5">Slots</td></tr>
-			<tr><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Additional content</td></tr>
-			<tr><td></td><td>labelTemplate</td><td>SlotType</td><td>undefined</td><td>Custom label markup</td></tr>
-		</tbody>
-	</table>
+		<table class="member-table">
+			<tbody>
+				<tr class="slot"><td colspan="5">Slots</td></tr>
+				<tr><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Additional content</td></tr>
+				<tr><td></td><td>labelTemplate</td><td>SlotType</td><td>undefined</td><td>Custom label markup</td></tr>
+			</tbody>
+		</table>
+	</Card>
 
-	<h2 class="content-subhead">Examples</h2>
+	<Card>
+		<h2>Examples</h2>
 
-	<h3>Basic Textarea</h3>
-	<p>
+		<h3>Basic Textarea</h3>
 		<Textarea placeholder="Type here..." resize="both" />
-	</p>
 
-	<h3>Textarea with max length</h3>
-	<p>
+		<h3>Textarea with max length</h3>
 		<Textarea maxlength={10} placeholder="Max 10 chars" />
-	</p>
 
-	<h3>Disabled Textarea with label</h3>
-	<p>
+		<h3>Disabled Textarea with label</h3>
 		<Textarea label="Not editable" disabled={true} value="Read-only content" />
-	</p>
-</div>
+	</Card>
+</Stack>

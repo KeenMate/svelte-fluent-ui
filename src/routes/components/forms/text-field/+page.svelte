@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {onMount} from "svelte"
-	import {TextField} from "$lib/index.js"
+	import {TextField, Grid, GridItem, Card, Stack} from "$lib/index.js"
 
 	let textValue = $state("")
 	let textField: HTMLElement & {select: Function}
@@ -19,15 +19,23 @@
 	}
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Text field</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
-			<table class="pure-table member-table">
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-textinput--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/TextField" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+				<table class="member-table">
   <tbody>
     <tr class="property">
       <td colspan="5">Members</td>
@@ -133,10 +141,13 @@
     </tr>
   </tbody>
 </table>
-		</div>
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
-			<table class="pure-table member-table">
+			</Card>
+		</GridItem>
+
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
+				<table class="member-table">
 				<tbody>
 				<tr class="action">
 					<td colspan="4">Actions</td>
@@ -183,16 +194,17 @@
 				</tr>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Examples</h2>
-	<p>
+	<Card>
+		<h2>Examples</h2>
 		<TextField
 			bind:this={textField}
 			bind:value={textValue}
 			placeholder="Enter text"
 			onInput={onTextInputChanged}
 		/>
-	</p>
-</div>
+	</Card>
+</Stack>

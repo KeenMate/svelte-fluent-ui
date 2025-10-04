@@ -1,18 +1,26 @@
 <script lang="ts">
-	import {Accordion, AccordionItem} from "$lib/index.js"
+	import {Accordion, AccordionItem, Stack, Grid, GridItem, Card} from "$lib/index.js"
 	let accordionValue: string | string[] | null = null
 </script>
 
-<div class="header">
+<Stack orientation="vertical" gap="1rem">
 	<h1>Accordion</h1>
-</div>
 
-<div class="content">
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2>Members</h2>
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-accordion-accordion--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Accordion" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
-			<table class="pure-table member-table">
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Members</h2>
+
+				<table class="member-table">
 				<tbody>
 					<tr class="property"><td colspan="5">Members</td></tr>
 					<tr
@@ -31,12 +39,14 @@
 					>
 				</tbody>
 			</table>
-		</div>
+			</Card>
+		</GridItem>
 
-		<div class="pure-u-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h2 class="content-subhead">Actions</h2>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Actions</h2>
 
-			<table class="pure-table member-table">
+				<table class="member-table">
 				<tbody>
 					<tr class="action"><td colspan="4">Actions</td></tr>
 					<tr
@@ -45,12 +55,14 @@
 					>
 				</tbody>
 			</table>
-		</div>
-	</div>
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<h2 class="content-subhead">Slots</h2>
+	<Card>
+		<h2>Slots</h2>
 
-	<table class="pure-table member-table">
+		<table class="member-table">
 		<tbody>
 			<tr class="slot"><td colspan="5">Slots</td></tr>
 			<tr
@@ -70,10 +82,10 @@
 		</tbody>
 	</table>
 
-	<h2 class="content-subhead">Examples</h2>
+		<h2>Examples</h2>
 
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-m-1 pure-u-l-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
+		<Grid spacing={3}>
+			<GridItem xs={12} xl={6} xxl={4}>
 			<h3>Basic accordion</h3>
 			<Accordion>
 				{#snippet children()}
@@ -85,12 +97,10 @@
 					</AccordionItem>
 				{/snippet}
 			</Accordion>
-		</div>
-	</div>
+			</GridItem>
 
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-m-1 pure-u-l-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h3>Accordion with multiple expand allowed</h3>
+			<GridItem xs={12} xl={6} xxl={4}>
+				<h3>Accordion with multiple expand allowed</h3>
 			<Accordion multi={true}>
 				{#snippet children()}
 					<AccordionItem id="multi-1" header="First">
@@ -101,12 +111,10 @@
 					</AccordionItem>
 				{/snippet}
 			</Accordion>
-		</div>
-	</div>
+			</GridItem>
 
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-m-1 pure-u-l-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h3>Controlled accordion</h3>
+			<GridItem xs={12} xl={6} xxl={4}>
+				<h3>Controlled accordion</h3>
 			<Accordion bind:value={accordionValue}>
 				{#snippet children()}
 					<AccordionItem id="controlled-1" header="Controlled One">
@@ -118,22 +126,27 @@
 				{/snippet}
 			</Accordion>
 			<p>Current value: {JSON.stringify(accordionValue)}</p>
-		</div>
-	</div>
+			</GridItem>
 
-	<div class="pure-g">
-		<div class="pure-u-1 pure-u-m-1 pure-u-l-1 pure-u-xl-1-2 pure-u-xxl-1-3 pure-u-xxxl-1-4">
-			<h3>Accordion with custom heading</h3>
+			<GridItem xs={12} xl={6} xxl={4}>
+				<h3>Accordion with custom heading</h3>
 			<Accordion>
 				{#snippet children()}
 					<AccordionItem id="custom-head">
 						{#snippet heading()}
-							<strong style="color: red;">⚠ Important Section</strong>
+							<strong class="warning-heading">⚠ Important Section</strong>
 						{/snippet}
 						<p>Custom heading content goes here.</p>
 					</AccordionItem>
 				{/snippet}
 			</Accordion>
-		</div>
-	</div>
-</div>
+			</GridItem>
+		</Grid>
+	</Card>
+</Stack>
+
+<style>
+	.warning-heading {
+		color: red;
+	}
+</style>
