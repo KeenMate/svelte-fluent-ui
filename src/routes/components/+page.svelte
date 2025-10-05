@@ -42,7 +42,7 @@
 			title: "Data Display",
 			description: "Tables, grids, and data visualization",
 			href: "/components/datagrid",
-			components: ["DataGrid", "Paginator", "Toolbar"]
+			components: ["DataGrid", "QuickGrid", "Paginator", "Toolbar"]
 		}
 	]
 </script>
@@ -84,11 +84,6 @@
 		color: var(--neutral-foreground-rest, #605e5c);
 	}
 
-	.category-card {
-		padding: 1.5rem;
-		height: 100%;
-	}
-
 	.category-title {
 		margin: 0 0 0.5rem 0;
 		font-size: 1.25rem;
@@ -117,9 +112,5 @@
 		border-radius: 4px;
 		font-size: 0.75rem;
 		font-family: monospace;
-	}
-
-	[data-theme="dark"] .component-tag {
-		background: var(--neutral-layer-3, #323130);
 	}
 </style>

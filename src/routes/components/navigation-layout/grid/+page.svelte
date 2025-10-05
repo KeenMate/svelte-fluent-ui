@@ -1,11 +1,39 @@
 <script lang="ts">
-	import {Grid, GridItem, Stack, Card, Button, Badge} from "$lib/index.js"
+	import {Grid, GridItem, QuickGrid, Stack, Card, Button, Badge} from "$lib/index.js"
 
 	let currentBreakpoint = $state<string>("unknown")
 
 	function handleBreakpointChange(size: string) {
 		currentBreakpoint = size
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const gridProperties: Property[] = [
+		{name: "spacing", type: "number (1-10)", default: "3", description: "Spacing between grid items"},
+		{name: "justify", type: "JustifyContent", default: "flex-start", description: "Horizontal alignment of items"},
+		{name: "adaptiveRendering", type: "boolean", default: "false", description: "Only render items for current breakpoint"},
+		{name: "onBreakpointEnter", type: "function", default: "undefined", description: "Callback when breakpoint changes"}
+	]
+
+	const gridItemProperties: Property[] = [
+		{name: "xs, sm, md, lg, xl, xxl", type: "number (0-12)", default: "undefined", description: "Number of columns to span at each breakpoint"},
+		{name: "justify", type: "JustifyContent", default: "undefined", description: "Override grid justify for this item"},
+		{name: "gap", type: "string", default: "undefined", description: "Gap between child elements"},
+		{name: "hiddenWhen", type: "GridItemHidden", default: "undefined", description: "Hide item at specific breakpoints"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -174,115 +202,19 @@
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>Grid Component</h2>
-				<table class="member-table">
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>spacing</td>
-				<td>number (1-10)</td>
-				<td>3</td>
-				<td>Spacing between grid items</td>
-			</tr>
-			<tr>
-				<td>justify</td>
-				<td>JustifyContent</td>
-				<td>"flex-start"</td>
-				<td>Horizontal alignment of items</td>
-			</tr>
-			<tr>
-				<td>adaptiveRendering</td>
-				<td>boolean</td>
-				<td>false</td>
-				<td>Only render items for current breakpoint</td>
-			</tr>
-			<tr>
-				<td>onBreakpointEnter</td>
-				<td>function</td>
-				<td>undefined</td>
-				<td>Callback when breakpoint changes</td>
-			</tr>
-		</tbody>
-	</table>
+				<QuickGrid items={gridProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>GridItem Component</h2>
-				<table class="member-table">
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>xs, sm, md, lg, xl, xxl</td>
-				<td>number (0-12)</td>
-				<td>undefined</td>
-				<td>Number of columns to span at each breakpoint</td>
-			</tr>
-			<tr>
-				<td>justify</td>
-				<td>JustifyContent</td>
-				<td>undefined</td>
-				<td>Override grid justify for this item</td>
-			</tr>
-			<tr>
-				<td>gap</td>
-				<td>string</td>
-				<td>undefined</td>
-				<td>Gap between child elements</td>
-			</tr>
-			<tr>
-				<td>hiddenWhen</td>
-				<td>GridItemHidden</td>
-				<td>undefined</td>
-				<td>Hide item at specific breakpoints</td>
-			</tr>
-		</tbody>
-	</table>
+				<QuickGrid items={gridItemProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
 </Stack>
 
 <style>
-	.grid-card-layer2 {
-		padding: 1rem;
-		background: var(--app-layer-2);
-	}
-
-	.grid-card-layer3 {
-		padding: 1rem;
-		background: var(--app-layer-3);
-	}
-
-	.grid-card-centered {
-		padding: 1rem;
-		text-align: center;
-		background: var(--app-layer-2);
-	}
-
-	.grid-header-card {
-		padding: 1rem;
-		background: var(--app-accent, #0078d4);
-		color: white;
-	}
-
-	.grid-card-min-height {
-		min-height: 200px;
-	}
-
 	.breakpoint-list {
 		margin: 0.5rem 0;
 	}

@@ -1,10 +1,42 @@
 <script lang="ts">
-	import {DataGrid, DataGridRow, DataGridCell, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {DataGrid, DataGridRow, DataGridCell, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	const sampleData = [
 		{name: "Adam", age: 1},
 		{name: "Bob", age: 2},
 		{name: "Cecilie", age: 30000}
+	]
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "ariaRowCount", type: "number", default: "undefined", description: "Total number of rows (for accessibility)"},
+		{name: "class", type: "string", default: '""', description: "Custom CSS classes"},
+		{name: "generateHeader", type: "string", default: "undefined", description: 'Header option: "none", "default", "sticky"'},
+		{name: "id", type: "string", default: "undefined", description: "Element ID"},
+		{name: "role", type: "string", default: '"grid"', description: "ARIA role"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onCloseColumnOptions", type: "function", default: "undefined", description: "Fires when column options close"},
+		{name: "onCloseColumnResize", type: "function", default: "undefined", description: "Fires when column resize ends"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "DataGridRow / DataGridCell structure"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
 	]
 </script>
 
@@ -23,69 +55,25 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr
-						><td></td><td>ariaRowCount</td><td>number</td><td>undefined</td><td
-							>Total number of rows (for accessibility)</td
-						></tr
-					>
-					<tr><td></td><td>class</td><td>string</td><td>""</td><td>Custom CSS classes</td></tr>
-					<tr
-						><td></td><td>generateHeader</td><td>string</td><td>undefined</td><td
-							>Header option: "none", "default", "sticky"</td
-						></tr
-					>
-					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Element ID</td></tr>
-					<tr><td></td><td>role</td><td>string</td><td>"grid"</td><td>ARIA role</td></tr>
-					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Inline styles</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-						<td></td>
-						<td>onCloseColumnOptions</td>
-						<td>function</td>
-						<td>Fires when column options close</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>onCloseColumnResize</td>
-						<td>function</td>
-						<td>Fires when column resize ends</td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Slots</h2>
-
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr
-					><td></td><td>children</td><td>SlotType</td><td>undefined</td><td
-						>DataGridRow / DataGridCell structure</td
-					></tr
-				>
-			</tbody>
-		</table>
-	</Card>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>

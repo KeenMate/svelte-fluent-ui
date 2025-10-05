@@ -1,9 +1,33 @@
 <script lang="ts">
-	import {NavMenu, NavGroup, NavLinkItem} from "$lib/index.js"
+	import {NavMenu, NavGroup, NavLinkItem, BodyContent, Grid, GridItem} from "$lib/index.js"
 
 	let {children} = $props()
 
 	const navigation = [
+		{
+			title: "Home",
+			icon: "🏠",
+			items: [
+				{label: "List of Components", href: "/"}
+			]
+		},
+		{
+			title: "Documentation",
+			icon: "📚",
+			items: [
+				{label: "Getting Started", href: "#getting-started"},
+				{label: "Installation", href: "#installation"},
+				{label: "Usage", href: "#usage"}
+			]
+		},
+		{
+			title: "Resources",
+			icon: "🔗",
+			items: [
+				{label: "GitHub", href: "https://github.com/KeenMate/svelte-fluentui"},
+				{label: "FluentUI Docs", href: "https://docs.microsoft.com/en-us/fluent-ui/web-components/"}
+			]
+		},
 		{
 			title: "Forms & Inputs",
 			icon: "📝",
@@ -74,6 +98,7 @@
 			icon: "📊",
 			items: [
 				{label: "DataGrid", href: "/components/datagrid"},
+				{label: "QuickGrid", href: "/components/quickgrid"},
 				{label: "Paginator", href: "/components/paginator"},
 				{label: "Toolbar", href: "/components/toolbar"}
 			]
@@ -81,51 +106,49 @@
 	]
 </script>
 
-<div class="layout-container">
-	<!-- Sidebar -->
-	<aside class="sidebar">
-		<NavMenu>
-			{#each navigation as group}
-				<NavGroup>
-					{#snippet linkIcon()}
-						<span class="nav-icon">{group.icon}</span>
-					{/snippet}
-					{#snippet linkText()}
-						{group.title}
-					{/snippet}
+<BodyContent>
+	<Grid spacing={0}>
+		<!-- Sidebar -->
+		<GridItem xs={12} md={3} lg={2}>
+			<div class="sidebar">
+				<NavMenu>
+					{#each navigation as group}
+						<NavGroup>
+							{#snippet linkIcon()}
+								<span class="nav-icon">{group.icon}</span>
+							{/snippet}
+							{#snippet linkText()}
+								{group.title}
+							{/snippet}
 
-					{#each group.items as item}
-						<NavLinkItem href={item.href}>{item.label}</NavLinkItem>
+							{#each group.items as item}
+								<NavLinkItem href={item.href}>{item.label}</NavLinkItem>
+							{/each}
+						</NavGroup>
 					{/each}
-				</NavGroup>
-			{/each}
-		</NavMenu>
-	</aside>
+				</NavMenu>
+			</div>
+		</GridItem>
 
-	<!-- Main content -->
-	<main class="content">
-		{@render children()}
-	</main>
-</div>
+		<!-- Main content -->
+		<GridItem xs={12} md={9} lg={10}>
+			<div class="content">
+				{@render children()}
+			</div>
+		</GridItem>
+	</Grid>
+</BodyContent>
 
 <style>
-	.layout-container {
-		display: flex;
-		height: 100%;
-		min-height: calc(100vh - 80px);
-	}
-
 	.sidebar {
-		width: 250px;
-		flex-shrink: 0;
 		border-right: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-		overflow-y: auto;
 		background: var(--neutral-layer-2, #faf9f8);
+		min-height: 100vh;
+		position: sticky;
+		top: 0;
 	}
 
 	.content {
-		flex: 1;
-		overflow-y: auto;
 		padding: 2rem;
 	}
 
@@ -133,8 +156,13 @@
 		font-size: 16px;
 	}
 
-	[data-theme="dark"] .sidebar {
-		background: var(--neutral-layer-2, #252423);
-		border-color: var(--neutral-stroke-layer-rest, #3b3a39);
+	@media (max-width: 768px) {
+		.sidebar {
+			display: none;
+		}
+
+		.content {
+			padding: 1rem;
+		}
 	}
 </style>

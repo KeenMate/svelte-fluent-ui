@@ -61,9 +61,9 @@
 	tabindex={tabIndex}
 	{title}
 	aria-label={ariaLabel}
-	on:keydown={handleKeyDown}
-	on:click={handleClick}
-	on:focus={handleFocus}
+	onkeydown={handleKeyDown}
+	onclick={handleClick}
+	onfocus={handleFocus}
 	{...restProps}
 >
 	{#if children}

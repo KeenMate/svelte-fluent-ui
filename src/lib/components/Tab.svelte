@@ -15,7 +15,6 @@
 		header?: SlotType;
 		content?: SlotType;
 		childContent?: SlotType;
-		loadingContent?: SlotType;
 		labelEditable?: boolean;
 		showClose?: boolean;
 		overflow?: string;
@@ -35,7 +34,6 @@
 		header = undefined,
 		content = undefined,
 		childContent = undefined,
-		loadingContent = undefined,
 		labelEditable = false,
 		showClose = false,
 		overflow = undefined,

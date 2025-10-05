@@ -1,5 +1,34 @@
 <script lang="ts">
-	import {Toolbar, Button, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Toolbar, Button, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "id", type: "string", default: "undefined", description: "Unique identifier"},
+		{name: "class", type: "string", default: '""', description: "CSS class for styling"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"},
+		{name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Toolbar layout direction"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = []
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Elements to include in the toolbar (e.g., buttons, icons)"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -17,54 +46,17 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Unique identifier</td></tr>
-					<tr><td></td><td>class</td><td>string</td><td>""</td><td>CSS class for styling</td></tr>
-					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Inline styles</td></tr>
-					<tr
-						><td></td><td>orientation</td><td>"horizontal" | "vertical"</td><td>"horizontal"</td><td
-							>Toolbar layout direction</td
-						></tr
-					>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-						<td colspan="4">None</td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Slots</h2>
-
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr
-					><td></td><td>children</td><td>SlotType</td><td>undefined</td><td
-						>Elements to include in the toolbar (e.g., buttons, icons)</td
-					></tr
-				>
-			</tbody>
-		</table>
-	</Card>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>

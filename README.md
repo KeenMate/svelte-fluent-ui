@@ -47,11 +47,13 @@ npm install svelte-fluentui
 
 ### Data Display
 - `DataGrid` / `DataGridRow` / `DataGridCell` - Data table components
+- `QuickGrid` - Advanced data grid with sorting, filtering, and pagination
 - `Card` - Content container
 - `Badge` - Status indicators
 - `ProgressBar` - Progress indication
 - `Tooltip` - Contextual information
 - `Calendar` - Date picker and calendar
+- `Paginator` - Pagination control
 
 ### Navigation
 - `Tabs` / `Tab` / `TabPanel` - Tab navigation
@@ -77,7 +79,6 @@ npm install svelte-fluentui
 - `Listbox` / `Option` - List selection
 - `Tree` / `TreeItem` - Hierarchical data
 - `Toolbar` - Action toolbars
-- `Paginator` - Pagination control
 
 ## Usage Examples
 
@@ -127,6 +128,42 @@ npm install svelte-fluentui
     </DataGridRow>
   {/each}
 </DataGrid>
+```
+
+### QuickGrid with Sorting & Filtering
+```svelte
+<script lang="ts">
+  import { QuickGrid } from 'svelte-fluentui'
+
+  type User = {
+    id: number
+    name: string
+    email: string
+    role: string
+  }
+
+  const users: User[] = [
+    { id: 1, name: 'Alice', email: 'alice@example.com', role: 'Admin' },
+    { id: 2, name: 'Bob', email: 'bob@example.com', role: 'User' },
+    { id: 3, name: 'Carol', email: 'carol@example.com', role: 'User' }
+  ]
+
+  const columns = [
+    { field: 'id', title: 'ID', width: '80px', sortable: true },
+    { field: 'name', title: 'Name', sortable: true, filterable: true },
+    { field: 'email', title: 'Email', filterable: true },
+    { field: 'role', title: 'Role', sortable: true }
+  ]
+</script>
+
+<QuickGrid
+  items={users}
+  {columns}
+  sortable
+  filterable
+  pageable
+  pageSize={10}
+/>
 ```
 
 ### Navigation Layout

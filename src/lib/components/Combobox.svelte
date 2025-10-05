@@ -135,6 +135,7 @@
 
 <fluent-combobox
 	bind:this={element}
+	{id}
 	{autocomplete}
 	{open}
 	{currentValue}

@@ -8,7 +8,7 @@
 		id?: string
 		title?: string
 		timestamp?: Date
-		topCTAType?: 'Dismiss' | 'Timestamp' | 'Action'
+		topCTAType?: 'dismiss' | 'timestamp' | 'action'
 		topAction?: string
 		primaryAction?: string
 		secondaryAction?: string
@@ -85,13 +85,13 @@
 		<div class="fluent-toast-title">{title}</div>
 
 		<div class="fluent-toast-action">
-			{#if topCTAType === 'Dismiss'}
+			{#if topCTAType === 'dismiss'}
 				<button title="Close" onclick={handleDismiss} aria-label="Dismiss" class="dismiss-button">
 					✕
 				</button>
-			{:else if topCTAType === 'Timestamp' && timestamp}
+			{:else if topCTAType === 'timestamp' && timestamp}
 				<span class="fluent-toast-small timestamp">{timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-			{:else if topCTAType === 'Action' && topAction}
+			{:else if topCTAType === 'action' && topAction}
 				<fluent-anchor
 					href="#"
 					title={topAction}

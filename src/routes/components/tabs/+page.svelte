@@ -1,5 +1,48 @@
 <script lang="ts">
-	import {Tab, Tabs, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
+		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot for additional child content"},
+		{name: "class", type: "string", default: '""', description: "Custom class for styling"},
+		{name: "content", type: "SlotType", default: "undefined", description: "Slot for tab panel content"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the tab"},
+		{name: "header", type: "SlotType", default: "undefined", description: "Custom header slot"},
+		{name: "icon", type: "SlotType", default: "undefined", description: "Optional icon slot"},
+		{name: "id", type: "string", default: "undefined", description: "Unique ID"},
+		{name: "label", type: "string", default: "undefined", description: "Tab label text"},
+		{name: "labelEditable", type: "boolean", default: "false", description: "Allows inline editing of label"},
+		{name: "overflow", type: "string", default: "undefined", description: "Overflow behavior of the tab"},
+		{name: "showClose", type: "boolean", default: "false", description: "Shows close button on tab"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS styles"},
+		{name: "visible", type: "boolean", default: "true", description: "Controls whether tab is rendered"}
+	]
+
+	const actions: Property[] = [
+		{name: "onCloseClick", type: "function", default: "undefined", description: "Fires when close button is clicked"}
+	]
+
+	const slots: Property[] = [
+		{name: "childContent", type: "SlotType", default: "undefined", description: "Tab items and panels"},
+		{name: "icon", type: "SlotType", default: "conditional", description: "Slot for icon inside tab header"},
+		{name: "header", type: "SlotType", default: "conditional", description: "Custom tab header content"},
+		{name: "content", type: "SlotType", default: "conditional", description: "Main content inside tab panel"},
+		{name: "end", type: "fluent-badge", default: "conditional", description: "Overflow badge"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -17,64 +60,25 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-      					<tr><td></td><td>ariaLabel</td><td>string</td><td>undefined</td><td>Accessibility label</td></tr>
-      					<tr><td></td><td>childContent</td><td>SlotType</td><td>undefined</td><td>Slot for additional child content</td></tr>
-      					<tr><td></td><td>class</td><td>string</td><td>""</td><td>Custom class for styling</td></tr>
-      					<tr><td></td><td>content</td><td>SlotType</td><td>undefined</td><td>Slot for tab panel content</td></tr>
-      					<tr><td></td><td>disabled</td><td>boolean</td><td>undefined</td><td>Disables the tab</td></tr>
-      					<tr><td></td><td>header</td><td>SlotType</td><td>undefined</td><td>Custom header slot</td></tr>
-      					<tr><td></td><td>icon</td><td>SlotType</td><td>undefined</td><td>Optional icon slot</td></tr>
-      					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Unique ID</td></tr>
-      					<tr><td></td><td>label</td><td>string</td><td>undefined</td><td>Tab label text</td></tr>
-      					<tr><td></td><td>labelEditable</td><td>boolean</td><td>false</td><td>Allows inline editing of label</td></tr>
-      					<tr><td></td><td>loadingContent</td><td>SlotType</td><td>undefined</td><td>Displays while content is loading</td></tr>
-      					<tr><td></td><td>overflow</td><td>string</td><td>undefined</td><td>Overflow behavior of the tab</td></tr>
-      					<tr><td></td><td>showClose</td><td>boolean</td><td>false</td><td>Shows close button on tab</td></tr>
-      					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Inline CSS styles</td></tr>
-      					<tr><td></td><td>visible</td><td>boolean</td><td>true</td><td>Controls whether tab is rendered</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Actions</h2>
+					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-        				<td></td>
-        				<td>onCloseClick</td>
-        				<td>function</td>
-        				<td>Fires when close button is clicked</td>
-      				</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Slots</h2>
-
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr><td></td><td>childContent</td><td>SlotType</td><td>undefined</td><td>Tab items and panels</td></tr>
-				<tr><td></td><td>icon</td><td>SlotType</td><td>conditional</td><td>Slot for icon inside tab header</td></tr>
-				<tr><td></td><td>header</td><td>SlotType</td><td>conditional</td><td>Custom tab header content</td></tr>
-				<tr><td></td><td>content</td><td>SlotType</td><td>conditional</td><td>Main content inside tab panel</td></tr>
-				<tr><td></td><td>loadingContent</td><td>SlotType</td><td>conditional</td><td>Shown when content is loading</td></tr>
-				<tr><td></td><td>end</td><td>fluent-badge</td><td>conditional</td><td>Overflow badge</td></tr>
-			</tbody>
-		</table>
-	</Card>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>

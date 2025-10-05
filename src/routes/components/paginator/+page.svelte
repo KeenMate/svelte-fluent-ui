@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Paginator, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Paginator, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let currentPage = 0
 	let lastPage = 9
@@ -20,6 +20,43 @@
 	function goLast() {
 		currentPage = lastPage
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "class", type: "string", default: '""', description: "Custom CSS classes"},
+		{name: "style", type: "string", default: '""', description: "Custom inline styles"},
+		{name: "disabled", type: "boolean", default: "false", description: "Disables the paginator"},
+		{name: "totalItemCount", type: "number", default: "undefined", description: "Total items"},
+		{name: "currentPageIndex", type: "number", default: "0", description: "Current page (0-based)"},
+		{name: "lastPageIndex", type: "number", default: "0", description: "Last page (0-based)"},
+		{name: "canGoBack", type: "boolean", default: "true", description: "Allow navigating backwards"},
+		{name: "canGoForwards", type: "boolean", default: "true", description: "Allow navigating forwards"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onFirst", type: "function", default: "undefined", description: 'Fires when "go first" is clicked'},
+		{name: "onPrevious", type: "function", default: "undefined", description: 'Fires when "go previous" is clicked'},
+		{name: "onNext", type: "function", default: "undefined", description: 'Fires when "go next" is clicked'},
+		{name: "onLast", type: "function", default: "undefined", description: 'Fires when "go last" is clicked'}
+	]
+
+	const slots: Property[] = [
+		{name: "summaryTemplate", type: "SlotType", default: "undefined", description: "Custom summary markup"},
+		{name: "paginationTextTemplate", type: "SlotType", default: "undefined", description: "Custom page info markup"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -37,87 +74,25 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr><td></td><td>class</td><td>string</td><td>""</td><td>Custom CSS classes</td></tr>
-					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Custom inline styles</td></tr>
-					<tr
-						><td></td><td>disabled</td><td>boolean</td><td>false</td><td>Disables the paginator</td
-						></tr
-					>
-					<tr
-						><td></td><td>totalItemCount</td><td>number</td><td>undefined</td><td>Total items</td
-						></tr
-					>
-					<tr
-						><td></td><td>currentPageIndex</td><td>number</td><td>0</td><td
-							>Current page (0-based)</td
-						></tr
-					>
-					<tr
-						><td></td><td>lastPageIndex</td><td>number</td><td>0</td><td>Last page (0-based)</td
-						></tr
-					>
-					<tr
-						><td></td><td>canGoBack</td><td>boolean</td><td>true</td><td
-							>Allow navigating backwards</td
-						></tr
-					>
-					<tr
-						><td></td><td>canGoForwards</td><td>boolean</td><td>true</td><td
-							>Allow navigating forwards</td
-						></tr
-					>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr
-						><td></td><td>onFirst</td><td>function</td><td>Fires when "go first" is clicked</td></tr
-					>
-					<tr
-						><td></td><td>onPrevious</td><td>function</td><td
-							>Fires when "go previous" is clicked</td
-						></tr
-					>
-					<tr><td></td><td>onNext</td><td>function</td><td>Fires when "go next" is clicked</td></tr>
-					<tr><td></td><td>onLast</td><td>function</td><td>Fires when "go last" is clicked</td></tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Slots</h2>
-
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr
-					><td></td><td>summaryTemplate</td><td>SlotType</td><td>undefined</td><td
-						>Custom summary markup</td
-					></tr
-				>
-				<tr
-					><td></td><td>paginationTextTemplate</td><td>SlotType</td><td>undefined</td><td
-						>Custom page info markup</td
-					></tr
-				>
-			</tbody>
-		</table>
-	</Card>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Calendar, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Calendar, Stack, Grid, GridItem, Card, QuickGrid} from "$lib/index.js"
 
 	const now                     = new Date()
 	const disabledDates: string[] = [
@@ -34,6 +34,48 @@
 	function onDatesSelected(dates: Date[]) {
 		values = dates
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "Date | null", default: "undefined", description: "Selected date value (bindable)"},
+		{name: "selectedDates", type: "Date[]", default: "undefined", description: "Selected dates for multi/range mode (bindable)"},
+		{name: "pickerMonth", type: "Date", default: "new Date()", description: "Currently displayed month (bindable)"},
+		{name: "culture", type: "Intl.Locale", default: "navigator.language", description: "Locale for formatting"},
+		{name: "view", type: '"days" | "months" | "years"', default: '"days"', description: "Calendar view mode"},
+		{name: "selectMode", type: '"single" | "multiple" | "range"', default: '"single"', description: "Selection mode"},
+		{name: "checkIfSelectedValueHasChanged", type: "boolean", default: "false", description: "Verify value changes before updating"},
+		{name: "disabledDateFunc", type: "(date: Date) => boolean", default: "undefined", description: "Function to disable specific dates"},
+		{name: "disabledCheckAllDaysOfMonthYear", type: "boolean", default: "false", description: "Check all days when disabling"},
+		{name: "animatePeriodChanges", type: "boolean", default: "false", description: "Animate month/year transitions"},
+		{name: "disabledSelectable", type: "boolean", default: "false", description: "Allow selecting disabled dates"},
+		{name: "dayFormat", type: "string", default: "undefined", description: "Custom day number format"},
+		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
+		{name: "selectDatesHover", type: "(date: Date) => Date[]", default: "undefined", description: "Highlight dates on hover"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = [
+		{name: "onSelectedDatesChanged", type: "(values: Date[]) => void", default: "undefined", description: "Fires when selected dates change (multi/range)"},
+		{name: "onDateSelected", type: "(value: Date) => void", default: "undefined", description: "Fires when a date is selected (single)"}
+	]
+
+	const slots: Property[] = [
+		{name: "day", type: "SlotType", default: "undefined", description: ""}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -51,148 +93,22 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>value</td>
-					<td>Date | null | undefined</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>selectedDates</td>
-					<td>Date[] | undefined</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>pickerMonth</td>
-					<td>number | Date</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>culture</td>
-					<td>Intl.Locale</td>
-					<td>new Intl.Locale(window.navigator.language)</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>view</td>
-					<td>CalendarView = "days" | "months" | "years"</td>
-					<td>"days"</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>selectMode</td>
-					<td>CalendarSelectMode = "single" | "multiple" | "range"</td>
-					<td>"single"</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>checkIfSelectedValueHasChanged</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>disabledDateFunc</td>
-					<td>(date: Date) => boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>disabledCheckAllDaysOfMonthYear</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>animatePeriodChanges</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>disabledSelectable</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>dayFormat</td>
-					<td>string</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>readonly</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>selectDatesHover</td>
-					<td>(date: Date) => Date[]</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>day</td>
-					<td>SlotType</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>onSelectedDatesChanged</td>
-					<td>(values: Date[]) => void;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>onDateSelected</td>
-					<td>(value: Date) => void;</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

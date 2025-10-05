@@ -1,7 +1,45 @@
 <script lang="ts">
-	import {Radio, RadioGroup, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Radio, RadioGroup, Stack, Grid, GridItem, Card, QuickGrid} from "$lib/index.js"
 
 	let radioValue: string | null = $state("option_1")
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const radioGroupProperties: Property[] = [
+		{name: "value", type: "string", default: "undefined", description: "Selected radio value (bindable)"},
+		{name: "name", type: "string", default: "undefined", description: "Form name for the radio group"},
+		{name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Layout direction"},
+		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only state"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disabled state for entire group"}
+	]
+
+	const radioProperties: Property[] = [
+		{name: "value", type: "string", default: "undefined", description: "Value for this radio button"},
+		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only state"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disabled state"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = [
+		{name: "onChange", type: "(value: string) => void", default: "undefined", description: "Fires when selected value changes"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Radio button options"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -18,104 +56,29 @@
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property">
-						<td colspan="5">RadioGroup Members</td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>value</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>name</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>orientation</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>readonly</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>disabled</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td colspan="5">Radio Members</td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>value</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>readonly</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>disabled</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-
-					<tr class="slot">
-						<td colspan="5">Slots</td>
-					</tr>
-					<tr class="slot">
-						<td></td>
-						<td>children</td>
-						<td>SlotType</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-			</Card>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>RadioGroup Properties</h2>
+					<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
+				</Card>
+				<Card>
+					<h2>Radio Properties</h2>
+					<QuickGrid items={radioProperties} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="action">
-						<td colspan="4">Actions</td>
-					</tr>
-					<!--<tr class="action">-->
-					<!--	<td></td>-->
-					<!--	<td>select</td>-->
-					<!--	<td>() => void;</td>-->
-					<!--	<td></td>-->
-					<!--</tr>-->
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -159,11 +122,5 @@
 <style>
 	.example-group {
 		margin-bottom: 0.5rem;
-	}
-
-	.radio-group-wrapper {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem;
 	}
 </style>

@@ -70,15 +70,4 @@
 	.card.area-restricted {
 		overflow: auto;
 	}
-
-	/* Dark mode support */
-	[data-theme="dark"] .card {
-		background: var(--neutral-layer-1, #2b2b2b);
-		border-color: var(--neutral-stroke-layer-rest, #454545);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
-
-	[data-theme="dark"] .card:hover {
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-	}
 </style>

@@ -1,7 +1,39 @@
 <script lang="ts">
-	import {Listbox, Option, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Listbox, Option, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let selectedValue: string = "banana";
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "string", default: "required", description: "Option value"},
+		{name: "label", type: "string", default: "undefined", description: "Optional display label"},
+		{name: "disabled", type: "boolean", default: "false", description: "Disable the option"},
+		{name: "selected", type: "boolean", default: "undefined", description: "Force selection"},
+		{name: "style", type: "string", default: '""', description: "Custom inline styles"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = [
+		{name: "onClick", type: "(event: MouseEvent) => void", default: "undefined", description: "Optional click handler"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "any", default: "undefined", description: "Option label content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -19,19 +51,22 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr><td></td><td>value</td><td>string</td><td>required</td><td>Option value</td></tr>
-					<tr><td></td><td>label</td><td>string</td><td>undefined</td><td>Optional display label</td></tr>
-					<tr><td></td><td>disabled</td><td>boolean</td><td>false</td><td>Disable the option</td></tr>
-					<tr><td></td><td>selected</td><td>boolean</td><td>undefined</td><td>Force selection</td></tr>
-					<tr><td></td><td>onClick</td><td>Function</td><td>undefined</td><td>Optional click handler</td></tr>
-					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Custom inline styles</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

@@ -1,7 +1,41 @@
 <script lang="ts">
-	import {Select, Stack, Grid, GridItem, Card} from "$lib/index.js";
+	import {Select, Stack, Grid, GridItem, Card, QuickGrid} from "$lib/index.js";
 
 	let selectedFruit = "apple";
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "label", type: "string", default: "undefined", description: "Visible label"},
+		{name: "id", type: "string", default: "undefined", description: ""},
+		{name: "name", type: "string", default: "undefined", description: "Form name"},
+		{name: "value", type: "string", default: "undefined", description: "Selected value"},
+		{name: "required", type: "boolean", default: "undefined", description: "Form required"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the control"},
+		{name: "appearance", type: "string", default: "\"outline\"", description: "Visual style"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = [
+		{name: "onChange", type: "(value: string) => void", default: "undefined", description: "Triggered when selection changes"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Selectable options"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -19,48 +53,27 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr><td></td><td>label</td><td>string</td><td>undefined</td><td>Visible label</td></tr>
-					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td></td></tr>
-					<tr><td></td><td>name</td><td>string</td><td>undefined</td><td>Form name</td></tr>
-					<tr><td></td><td>value</td><td>string</td><td>undefined</td><td>Selected value</td></tr>
-					<tr><td></td><td>required</td><td>boolean</td><td>undefined</td><td>Form required</td></tr>
-					<tr><td></td><td>disabled</td><td>boolean</td><td>undefined</td><td>Disables the control</td></tr>
-					<tr><td></td><td>appearance</td><td>string</td><td>"outline"</td><td>Visual style</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-						<td></td>
-						<td>onChange</td>
-						<td>function</td>
-						<td>Triggered when selection changes</td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
 
 	<Card>
-		<h2>Slots</h2>
-		<table class="member-table">
-		<tbody>
-			<tr class="slot"><td colspan="5">Slots</td></tr>
-			<tr><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Selectable options</td></tr>
-		</tbody>
-	</table>
 
 		<h2>Examples</h2>
 

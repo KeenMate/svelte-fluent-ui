@@ -159,10 +159,4 @@
 	.radio-group {
 		margin-bottom: 0.5rem;
 	}
-
-	.radio-group-wrapper {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem;
-	}
 </style>

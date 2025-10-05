@@ -1,9 +1,50 @@
 <script lang="ts">
-	import { Anchor, Stack, Grid, GridItem, Card } from "$lib/index.js";
+	import { Anchor, QuickGrid, Stack, Grid, GridItem, Card } from "$lib/index.js";
 
 	function handleAnchorClick(event: MouseEvent) {
 		alert("Anchor clicked!");
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "id", type: "string", default: "undefined", description: "Element ID"},
+		{name: "class", type: "string", default: '""', description: "Custom CSS classes"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"},
+		{name: "download", type: "string", default: "undefined", description: "Download attribute for files"},
+		{name: "href", type: "string", default: "undefined", description: "URL the link points to"},
+		{name: "hreflang", type: "string", default: "undefined", description: "Language of the linked resource"},
+		{name: "ping", type: "string", default: "undefined", description: "URLs to notify on follow"},
+		{name: "referrerpolicy", type: "string", default: "undefined", description: "Referrer policy for the link"},
+		{name: "rel", type: "string", default: "undefined", description: "Relationship between the document and the target"},
+		{name: "target", type: "string", default: "undefined", description: "Where to open the linked document"},
+		{name: "type", type: "string", default: "undefined", description: "Hint of the linked resource's MIME type"},
+		{name: "appearance", type: '"neutral" | "accent" | "hypertext" | "stealth" | "transparent"', default: "undefined", description: "Visual style variant"},
+		{name: "preventDefault", type: "boolean", default: "false", description: "Prevent default navigation behavior"},
+		{name: "use", type: "(node: HTMLAnchorElement) => any", default: "undefined", description: "Svelte action applied to the anchor element"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onClick", type: "(event: MouseEvent) => void", default: "undefined", description: "Fires when the anchor is clicked"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Content inside the anchor"},
+		{name: "iconStart", type: "SlotType", default: "undefined", description: "Element displayed before children"},
+		{name: "iconEnd", type: "SlotType", default: "undefined", description: "Element displayed after children"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -21,61 +62,25 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Element ID</td></tr>
-					<tr><td></td><td>class</td><td>string</td><td>""</td><td>Custom CSS classes</td></tr>
-					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Inline styles</td></tr>
-					<tr><td></td><td>download</td><td>string</td><td>undefined</td><td>Download attribute for files</td></tr>
-					<tr><td></td><td>href</td><td>string</td><td>undefined</td><td>URL the link points to</td></tr>
-					<tr><td></td><td>hreflang</td><td>string</td><td>undefined</td><td>Language of the linked resource</td></tr>
-					<tr><td></td><td>ping</td><td>string</td><td>undefined</td><td>URLs to notify on follow</td></tr>
-					<tr><td></td><td>referrerpolicy</td><td>string</td><td>undefined</td><td>Referrer policy for the link</td></tr>
-					<tr><td></td><td>rel</td><td>string</td><td>undefined</td><td>Relationship between the document and the target</td></tr>
-					<tr><td></td><td>target</td><td>string</td><td>undefined</td><td>Where to open the linked document</td></tr>
-					<tr><td></td><td>type</td><td>string</td><td>undefined</td><td>Hint of the linked resource’s MIME type</td></tr>
-					<tr><td></td><td>appearance</td><td>"neutral" | "accent" | "hypertext" | "stealth" | "transparent"</td><td>undefined</td><td>Visual style variant</td></tr>
-					<tr><td></td><td>preventDefault</td><td>boolean</td><td>false</td><td>Prevent default navigation behavior</td></tr>
-					<tr><td></td><td>use</td><td>(node: HTMLAnchorElement) =&gt; any</td><td>undefined</td><td>Svelte action applied to the anchor element</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-						<td></td>
-						<td>onClick</td>
-						<td>(event: MouseEvent) =&gt; void</td>
-						<td>Fires when the anchor is clicked</td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Slots</h2>
-
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Content inside the anchor</td></tr>
-				<tr><td></td><td>iconStart</td><td>SlotType</td><td>undefined</td><td>Element displayed before children</td></tr>
-				<tr><td></td><td>iconEnd</td><td>SlotType</td><td>undefined</td><td>Element displayed after children</td></tr>
-			</tbody>
-		</table>
-	</Card>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>

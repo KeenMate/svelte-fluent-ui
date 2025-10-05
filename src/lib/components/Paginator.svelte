@@ -54,7 +54,7 @@
 
 	<nav role="navigation" class="paginator-nav">
 		<fluent-button
-			on:click={() => onFirst?.()}
+			onclick={() => onFirst?.()}
 			disabled={!canGoBack || disabled}
 			title="Go to first page"
 			aria-label="Go to first page"
@@ -63,7 +63,7 @@
 		</fluent-button>
 
 		<fluent-button
-			on:click={() => onPrevious?.()}
+			onclick={() => onPrevious?.()}
 			disabled={!canGoBack || disabled}
 			title="Go to previous page"
 			aria-label="Go to previous page"
@@ -80,7 +80,7 @@
 		</div>
 
 		<fluent-button
-			on:click={() => onNext?.()}
+			onclick={() => onNext?.()}
 			disabled={!canGoForwards || disabled}
 			title="Go to next page"
 			aria-label="Go to next page"
@@ -89,7 +89,7 @@
 		</fluent-button>
 
 		<fluent-button
-			on:click={() => onLast?.()}
+			onclick={() => onLast?.()}
 			disabled={!canGoForwards || disabled}
 			title="Go to last page"
 			aria-label="Go to last page"

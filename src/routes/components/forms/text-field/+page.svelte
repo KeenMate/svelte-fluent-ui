@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {onMount} from "svelte"
-	import {TextField, Grid, GridItem, Card, Stack} from "$lib/index.js"
+	import {TextField, Grid, GridItem, Card, Stack, QuickGrid} from "$lib/index.js"
 
 	let textValue = $state("")
 	let textField: HTMLElement & {select: Function}
@@ -17,6 +17,51 @@
 	function onTextInputChanged(ev: InputEvent) {
 		console.log("🚀 ~ onTextInputChanged ~ ev:", ev.target.value)
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "string", default: "undefined", description: "Input value (bindable)"},
+		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
+		{name: "appearance", type: '"outline" | "filled"', default: "undefined", description: "Visual style"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disable input"},
+		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only mode"},
+		{name: "required", type: "boolean", default: "undefined", description: "Required field"},
+		{name: "type", type: "string", default: '"text"', description: "Input type (text, password, email, etc.)"},
+		{name: "name", type: "string", default: "undefined", description: "Form name"},
+		{name: "label", type: "string", default: "undefined", description: "Visible label"},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onInput", type: "(ev: InputEvent) => void", default: "undefined", description: "Fires as value is typed"},
+		{name: "onChange", type: "(ev: Event) => void", default: "undefined", description: "Fires when value changes on blur"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Additional content"}
+	]
+
+	const actions: Property[] = [
+		{name: "select", type: "() => void", default: "-", description: "Select all text"},
+		{name: "checkValidity", type: "() => boolean", default: "-", description: "Check form validity"},
+		{name: "reportValidity", type: "() => boolean", default: "-", description: "Report form validity"},
+		{name: "setCustomValidity", type: "(message: string) => any", default: "-", description: "Set custom validity message"},
+		{name: "setValidity", type: "(flags: any, message: any, anchor: any) => void", default: "-", description: "Set validity state"},
+		{name: "setSelectionRange", type: "(start: number, end: number, direction?: \"forward\" | \"backward\" | \"none\") => void", default: "-", description: "Set text selection range"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -34,166 +79,26 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-  <tbody>
-    <tr class="property">
-      <td colspan="5">Members</td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>value</td>
-      <td>string</td>
-      <td>undefined</td>
-      <td>bindable</td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>placeholder</td>
-      <td>string</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>appearance</td>
-      <td>string</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>disabled</td>
-      <td>boolean</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>readonly</td>
-      <td>boolean</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>required</td>
-      <td>boolean</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>type</td>
-      <td>string</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>name</td>
-      <td>string</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>label</td>
-      <td>string</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="property">
-      <td></td>
-      <td>autofocus</td>
-      <td>boolean</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-
-    <tr class="callback">
-      <td colspan="5">Callbacks</td>
-    </tr>
-    <tr class="callback">
-      <td></td>
-      <td>onInput</td>
-      <td>(ev: InputEvent) => void</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-    <tr class="callback">
-      <td></td>
-      <td>onChange</td>
-      <td>(ev: Event) => void</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-
-    <tr class="slot">
-      <td colspan="5">Slots</td>
-    </tr>
-    <tr class="slot">
-      <td></td>
-      <td>children</td>
-      <td>SlotType</td>
-      <td>undefined</td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Actions</h2>
+					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+				</Card>
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>select</td>
-					<td>() => void;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>checkValidity</td>
-					<td>() => boolean;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>reportValidity</td>
-					<td>() => boolean;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>setCustomValidity</td>
-					<td>(message: string) => any;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>setValidity</td>
-					<td>(flags: any, message: any, anchor: any) => void;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>setSelectionRange</td>
-					<td
-					>(start: number, end: number, direction?: "forward" | "backward" |
-						"none") => void;
-					</td
-					>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

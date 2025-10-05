@@ -102,8 +102,8 @@
 	{required}
 	appearance={appearance}
 	value={value}
-	on:input={handleInput}
-	on:change={handleChange}
+	oninput={handleInput}
+	onchange={handleChange}
 	aria-label={ariaLabel || label}
 	{...restProps}
 >

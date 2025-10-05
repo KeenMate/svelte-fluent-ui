@@ -1,5 +1,36 @@
 <script lang="ts">
-	import {Listbox, Option, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Listbox, Option, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "string | string[]", default: "undefined", description: "Selected value(s)"},
+		{name: "multi", type: "boolean", default: "false", description: "Enable multiple selection"},
+		{name: "readonly", type: "boolean", default: "false", description: "Disables user changes"},
+		{name: "disabled", type: "boolean", default: "false", description: "Disables the component"},
+		{name: "class", type: "string", default: '""', description: "Custom classes"},
+		{name: "style", type: "string", default: '""', description: "Custom inline styles"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onchange", type: "function", default: "undefined", description: "Fired when selection changes"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Listbox option elements"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -17,65 +48,25 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr
-						><td></td><td>value</td><td>string | string[]</td><td>undefined</td><td
-							>Selected value(s)</td
-						></tr
-					>
-					<tr
-						><td></td><td>multi</td><td>boolean</td><td>false</td><td>Enable multiple selection</td
-						></tr
-					>
-					<tr
-						><td></td><td>readonly</td><td>boolean</td><td>false</td><td>Disables user changes</td
-						></tr
-					>
-					<tr
-						><td></td><td>disabled</td><td>boolean</td><td>false</td><td>Disables the component</td
-						></tr
-					>
-					<tr><td></td><td>class</td><td>string</td><td>""</td><td>Custom classes</td></tr>
-					<tr><td></td><td>style</td><td>string</td><td>""</td><td>Custom inline styles</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-						<td></td>
-						<td>onchange</td>
-						<td>function</td>
-						<td>Fired when selection changes</td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Slots</h2>
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr
-					><td></td><td>children</td><td>SlotType</td><td>undefined</td><td
-						>Listbox option elements</td
-					></tr
-				>
-			</tbody>
-		</table>
-	</Card>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>

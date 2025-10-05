@@ -1,7 +1,54 @@
 <script lang="ts">
-	import { NumberField, Stack, Grid, GridItem, Card } from "$lib/index.js"
+	import { NumberField, Stack, Grid, GridItem, Card, QuickGrid } from "$lib/index.js"
 
 	let testValue="10";
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "string", default: "undefined", description: "Value of the input"},
+		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
+		{name: "appearance", type: "string", default: "undefined", description: "Visual style"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disable input"},
+		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only input"},
+		{name: "required", type: "boolean", default: "undefined", description: "Marks the field as required"},
+		{name: "name", type: "string", default: "undefined", description: "Name attribute"},
+		{name: "label", type: "string", default: "undefined", description: "Label or slot content"},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Autofocus on mount"},
+		{name: "step", type: "number", default: "undefined", description: "Increment/decrement step"},
+		{name: "min", type: "number|string", default: "undefined", description: "Minimum value"},
+		{name: "max", type: "number|string", default: "undefined", description: "Maximum value"},
+		{name: "hideStep", type: "boolean", default: "undefined", description: "Hides the stepper buttons"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onInput", type: "(ev: InputEvent) => void", default: "undefined", description: "Fires as value is typed"},
+		{name: "onChange", type: "(ev: Event) => void", default: "undefined", description: "Fires when value changes on blur"}
+	]
+
+	const actions: Property[] = [
+		{name: "select", type: "() => void", default: "-", description: "Selects input contents"},
+		{name: "checkValidity", type: "() => boolean", default: "-", description: "Returns whether input is valid"},
+		{name: "reportValidity", type: "() => boolean", default: "-", description: "Triggers validation UI"},
+		{name: "setCustomValidity", type: "(message: string) => void", default: "-", description: "Sets custom validity message"},
+		{name: "setSelectionRange", type: "(start: number, end: number, direction?: string) => void", default: "-", description: "Programmatically set selection"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Label or slotted content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -19,46 +66,26 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Properties</td></tr>
-
-					<tr class="property"><td></td><td>value</td><td>string</td><td>undefined</td><td>Value of the input</td></tr>
-					<tr class="property"><td></td><td>placeholder</td><td>string</td><td>undefined</td><td>Placeholder text</td></tr>
-					<tr class="property"><td></td><td>appearance</td><td>string</td><td>undefined</td><td>Visual style</td></tr>
-					<tr class="property"><td></td><td>disabled</td><td>boolean</td><td>undefined</td><td>Disable input</td></tr>
-					<tr class="property"><td></td><td>readonly</td><td>boolean</td><td>undefined</td><td>Read-only input</td></tr>
-					<tr class="property"><td></td><td>required</td><td>boolean</td><td>undefined</td><td>Marks the field as required</td></tr>
-					<tr class="property"><td></td><td>name</td><td>string</td><td>undefined</td><td>Name attribute</td></tr>
-					<tr class="property"><td></td><td>label</td><td>string</td><td>undefined</td><td>Label or slot content</td></tr>
-					<tr class="property"><td></td><td>autofocus</td><td>boolean</td><td>undefined</td><td>Autofocus on mount</td></tr>
-					<tr class="property"><td></td><td>step</td><td>number</td><td>undefined</td><td>Increment/decrement step</td></tr>
-					<tr class="property"><td></td><td>min</td><td>number|string</td><td>undefined</td><td>Minimum value</td></tr>
-					<tr class="property"><td></td><td>max</td><td>number|string</td><td>undefined</td><td>Maximum value</td></tr>
-					<tr class="property"><td></td><td>hideStep</td><td>boolean</td><td>undefined</td><td>Hides the stepper buttons</td></tr>
-
-					<tr class="slot"><td colspan="5">Slots</td></tr>
-					<tr class="slot"><td></td><td>children</td><td>SlotType</td><td>undefined</td><td>Label or slotted content</td></tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Actions</h2>
+					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+				</Card>
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr><td></td><td>select()</td><td>void</td><td>Selects input contents</td></tr>
-					<tr><td></td><td>checkValidity()</td><td>boolean</td><td>Returns whether input is valid</td></tr>
-					<tr><td></td><td>reportValidity()</td><td>boolean</td><td>Triggers validation UI</td></tr>
-					<tr><td></td><td>setCustomValidity(message)</td><td>void</td><td>Sets custom validity message</td></tr>
-					<tr><td></td><td>setSelectionRange(start, end, direction?)</td><td>void</td><td>Programmatically set selection</td></tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

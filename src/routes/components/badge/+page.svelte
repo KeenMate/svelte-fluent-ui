@@ -1,5 +1,35 @@
 <script lang="ts">
-	import {Badge, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Badge, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "color", type: "string", default: "undefined", description: "Badge color"},
+		{name: "appearance", type: "string", default: "undefined", description: "Visual appearance"},
+		{name: "circular", type: "boolean", default: "undefined", description: "Circular shape"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onClick", type: "(ev: PointerEvent) => void", default: "undefined", description: "Click event handler"}
+	]
+
+	const actions: Property[] = []
+
+	const slots: Property[] = [
+		{name: "children", type: "any", default: "undefined", description: "Default slot content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -17,62 +47,22 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>color</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>appearance</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>circular</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<tr class="callback">
-					<td></td>
-					<td>checkValidity</td>
-					<td>() => boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="callback">
-					<td></td>
-					<td>onClick</td>
-					<td>(ev: PointerEvent) => void</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -148,10 +138,6 @@
 </Stack>
 
 <style>
-	.clickable-badge {
-		cursor: pointer;
-	}
-
 	.badge-content {
 		width: 100%;
 		display: flex;

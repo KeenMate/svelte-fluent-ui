@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Combobox, Option, Stack, Grid, GridItem, Card } from "$lib/index.js";
+	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid } from "$lib/index.js";
 
 	const stOptions = [
 		{ value: "ds9", label: "Deep Space 9" },
@@ -15,6 +15,53 @@
 	let value1: string | null = $state(null);
 	let gpuSelectedValue: string | null = $state(null)
 	let comboboxSelectedValue: string | null = $state(null)
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "appearance", type: '"outline" | "filled"', default: "undefined", description: "Visual style"},
+		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"},
+		{name: "currentValue", type: "string", default: "undefined", description: "Current input text"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disable the combobox"},
+		{name: "name", type: "string", default: "undefined", description: "Form name"},
+		{name: "open", type: "boolean", default: "undefined", description: "Dropdown open state"},
+		{name: "options", type: "OptionItem[]", default: "undefined", description: "Array of option items"},
+		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
+		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
+		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only mode"},
+		{name: "required", type: "boolean", default: "undefined", description: "Required field"},
+		{name: "value", type: "string | null", default: "undefined", description: "Selected value (bindable)"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onChange", type: "(value: string | null) => void", default: "undefined", description: "Fires when selection changes"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: ""}
+	]
+
+	const actions: Property[] = [
+		{name: "select", type: "() => void;", default: "-", description: ""},
+		{name: "checkValidity", type: "() => boolean;", default: "-", description: ""},
+		{name: "reportValidity", type: "() => boolean;", default: "-", description: ""},
+		{name: "setCustomValidity", type: "(message: string) => any;", default: "-", description: ""},
+		{name: "setValidity", type: "(flags: any, message: any, anchor: any) => void;", default: "-", description: ""},
+		{name: "setSelectionRange", type: "(start: number, end: number, direction?: \"forward\" | \"backward\" | \"none\") => void;", default: "-", description: ""}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -32,168 +79,26 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="property">
-						<td colspan="5">Members</td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>appearance</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>autocomplete</td>
-						<td>any</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>autofocus</td>
-						<td>any</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>currentValue</td>
-						<td>any</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>disabled</td>
-						<td>boolean</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>name</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>open</td>
-						<td>boolean</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>options</td>
-						<td>OptionItem[]</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>placeholder</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>position</td>
-						<td>string</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>readonly</td>
-						<td>boolean</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>required</td>
-						<td>boolean</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-					<tr class="property">
-						<td></td>
-						<td>value</td>
-						<td>SelectedValue</td>
-						<td>bindable</td>
-						<td>bindable</td>
-					</tr>
-
-					<tr class="slot">
-						<td colspan="5">Slots</td>
-					</tr>
-					<tr class="slot">
-						<td></td>
-						<td>children</td>
-						<td>SlotType</td>
-						<td>undefined</td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Actions</h2>
+					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+				</Card>
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="action">
-						<td colspan="4">Actions</td>
-					</tr>
-					<tr class="action">
-						<td></td>
-						<td>select</td>
-						<td>() => void;</td>
-						<td></td>
-					</tr>
-					<tr class="action">
-						<td></td>
-						<td>checkValidity</td>
-						<td>() => boolean;</td>
-						<td></td>
-					</tr>
-					<tr class="action">
-						<td></td>
-						<td>reportValidity</td>
-						<td>() => boolean;</td>
-						<td></td>
-					</tr>
-					<tr class="action">
-						<td></td>
-						<td>setCustomValidity</td>
-						<td>(message: string) => any;</td>
-						<td></td>
-					</tr>
-					<tr class="action">
-						<td></td>
-						<td>setValidity</td>
-						<td>(flags: any, message: any, anchor: any) => void;</td>
-						<td></td>
-					</tr>
-					<tr class="action">
-						<td></td>
-						<td>setSelectionRange</td>
-						<td
-							>(start: number, end: number, direction?: "forward" | "backward" |
-							"none") => void;
-						</td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

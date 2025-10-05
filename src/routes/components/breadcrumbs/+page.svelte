@@ -1,10 +1,38 @@
 <script lang="ts">
-	import {Breadcrumb, BreadcrumbItem, ChevronDoubleRight, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Breadcrumb, BreadcrumbItem, ChevronDoubleRight, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
+
+	let count = $state(0)
 
 	function onBreadcrumbClicked(ev: MouseEvent) {
-		console.log("🚀 ~ onClicked ~ ev:", ev.target.checked)
+		console.log("🚀 ~ onClicked ~ ev:", ev.target)
 		count += 1
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "appearance", type: "string", default: "undefined", description: "Visual appearance"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onClick", type: "(ev: MouseEvent) => void", default: "undefined", description: "Click event handler"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "any", default: "undefined", description: "Default slot content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -22,61 +50,22 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>appearance</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<tr class="callback">
-					<td></td>
-					<td>onClick</td>
-					<td>(ev: MouseEvent) => void</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<!--<tr class="action">-->
-				<!--	<td></td>-->
-				<!--	<td>select</td>-->
-				<!--	<td>() => void;</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

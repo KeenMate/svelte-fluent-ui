@@ -46,8 +46,8 @@
 	aria-rowcount={ariaRowCount}
 	generate-header={generateHeader}
 	role={role}
-	on:closecolumnoptions={handleCloseColumnOptions}
-	on:closecolumnresize={handleCloseColumnResize}
+	onclosecolumnoptions={handleCloseColumnOptions}
+	onclosecolumnresize={handleCloseColumnResize}
 	{...restProps}
 >
 	{#if children}

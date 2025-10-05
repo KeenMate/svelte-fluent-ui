@@ -1,331 +1,240 @@
 <script lang="ts">
 	import "$lib/fluent-ui/setup.js"
-	import {Grid, GridItem, Card} from "$lib/index.js"
+	import {Grid, GridItem, Card, NavMenu, NavGroup, NavLinkItem, QuickGrid, BodyContent} from "$lib/index.js"
+
+	type Component = {
+		name: string
+		state: string
+		comment: string
+		href: string
+	}
+
+	const components: Component[] = [
+		{name: "accordion", state: "Initial tests", comment: "", href: "/components/navigation-layout/accordion"},
+		{name: "anchor", state: "", comment: "", href: "/components/anchor"},
+		{name: "anchored-region", state: "", comment: "", href: ""},
+		{name: "appbar", state: "Initial tests", comment: "Icons (active and \"rest\") need to have \"part\" attr manually specified to work properly", href: "/components/navigation-layout/appbar"},
+		{name: "badge", state: "Initial tests", comment: "Now, only \"accent\" appearance works. Colors need CSS variables to be defined (--badge-color-[color])", href: "/components/badge"},
+		{name: "body-content", state: "Initial tests", comment: "", href: "/components/navigation-layout/body-content"},
+		{name: "breadcrumbs", state: "Initial tests", comment: "", href: "/components/breadcrumbs"},
+		{name: "button", state: "Initial tests", comment: "", href: "/components/button"},
+		{name: "calendar", state: "Initial tests", comment: "", href: "/components/forms/calendar"},
+		{name: "card", state: "Initial tests", comment: "", href: "/components/card"},
+		{name: "checkbox", state: "Initial tests", comment: "Intermediate state does not work", href: "/components/checkbox"},
+		{name: "color", state: "", comment: "", href: ""},
+		{name: "combobox", state: "Initial tests", comment: "", href: "/components/forms/combobox"},
+		{name: "data-grid", state: "Not planned", comment: "Does not seem to be much flexible", href: ""},
+		{name: "design-system-provider", state: "", comment: "", href: ""},
+		{name: "dialog", state: "", comment: "", href: "/components/dialog"},
+		{name: "divider", state: "", comment: "", href: ""},
+		{name: "flipper", state: "", comment: "", href: ""},
+		{name: "grid", state: "Initial tests", comment: "Responsive 12-column grid system with breakpoints", href: "/components/navigation-layout/grid"},
+		{name: "horizontal-scroll", state: "", comment: "", href: ""},
+		{name: "layout", state: "Initial tests", comment: "", href: "/components/navigation-layout/layout"},
+		{name: "listbox", state: "Initial tests", comment: "", href: "/components/listbox"},
+		{name: "listbox-option", state: "Initial tests", comment: "", href: "/components/option"},
+		{name: "menu", state: "", comment: "", href: ""},
+		{name: "menu-item", state: "", comment: "", href: ""},
+		{name: "multi-splitter", state: "Initial tests", comment: "Resizable multi-panel splitter component", href: "/components/navigation-layout/multisplitter"},
+		{name: "navigation", state: "Initial tests", comment: "Collapsed nav' child tree's floating nodes not implemented at the moment", href: "/components/navigation-layout/navigation"},
+		{name: "number-field", state: "Initial tests", comment: "", href: "/components/forms/number-field"},
+		{name: "progress", state: "", comment: "", href: ""},
+		{name: "radio", state: "Initial tests", comment: "Wrapped radios have ugly missing spacing (cannot be added so far)", href: "/components/forms/radio"},
+		{name: "radio-group", state: "Initial tests", comment: "Wrapped radios have ugly missing spacing (cannot be added so far)", href: "/components/forms/radio"},
+		{name: "search", state: "Initial tests", comment: "", href: "/components/forms/search"},
+		{name: "select", state: "Initial tests", comment: "", href: "/components/forms/select"},
+		{name: "skeleton", state: "", comment: "", href: ""},
+		{name: "slider", state: "", comment: "", href: ""},
+		{name: "slider-label", state: "", comment: "", href: ""},
+		{name: "spacer", state: "Initial tests", comment: "", href: "/components/navigation-layout/spacer"},
+		{name: "stack", state: "Initial tests", comment: "", href: "/components/navigation-layout/stack"},
+		{name: "styles", state: "", comment: "", href: ""},
+		{name: "switch", state: "Initial tests", comment: "", href: "/components/forms/switch"},
+		{name: "tabs", state: "Initial tests", comment: "", href: "/components/tabs/"},
+		{name: "text-area", state: "Initial tests", comment: "", href: "/components/forms/text-area"},
+		{name: "text-field", state: "Initial tests", comment: "", href: "/components/forms/text-field"},
+		{name: "toast", state: "Initial tests", comment: "", href: "/components/toast"},
+		{name: "toolbar", state: "Initial tests", comment: "", href: "/components/toolbar"},
+		{name: "tooltip", state: "Initial tests", comment: "", href: "/components/tooltip"},
+		{name: "tree-item", state: "", comment: "", href: ""},
+		{name: "tree-view", state: "", comment: "", href: ""}
+	]
+
+	const componentColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "state", title: "State", sortable: true, filterable: true},
+		{field: "comment", title: "Comment", filterable: true}
+	]
+
+	const navigation = [
+		{
+			title: "Home",
+			icon: "🏠",
+			items: [
+				{label: "List of Components", href: "/"}
+			]
+		},
+		{
+			title: "Documentation",
+			icon: "📚",
+			items: [
+				{label: "Getting Started", href: "#getting-started"},
+				{label: "Installation", href: "#installation"},
+				{label: "Usage", href: "#usage"}
+			]
+		},
+		{
+			title: "Resources",
+			icon: "🔗",
+			items: [
+				{label: "GitHub", href: "https://github.com/KeenMate/svelte-fluentui"},
+				{label: "FluentUI Docs", href: "https://docs.microsoft.com/en-us/fluent-ui/web-components/"}
+			]
+		},
+		{
+			title: "Forms & Inputs",
+			icon: "📝",
+			items: [
+				{label: "TextField", href: "/components/forms/text-field"},
+				{label: "TextArea", href: "/components/forms/text-area"},
+				{label: "NumberField", href: "/components/forms/number-field"},
+				{label: "Checkbox", href: "/components/checkbox"},
+				{label: "Radio", href: "/components/forms/radio"},
+				{label: "Switch", href: "/components/forms/switch"},
+				{label: "Select", href: "/components/forms/select"},
+				{label: "Combobox", href: "/components/forms/combobox"},
+				{label: "Listbox", href: "/components/listbox"},
+				{label: "Search", href: "/components/forms/search"},
+				{label: "Calendar", href: "/components/forms/calendar"}
+			]
+		},
+		{
+			title: "Buttons & Actions",
+			icon: "🔘",
+			items: [
+				{label: "Button", href: "/components/button"},
+				{label: "Anchor", href: "/components/anchor"}
+			]
+		},
+		{
+			title: "Layout",
+			icon: "📐",
+			items: [
+				{label: "Layout", href: "/components/navigation-layout/layout"},
+				{label: "Grid", href: "/components/navigation-layout/grid"},
+				{label: "Stack", href: "/components/navigation-layout/stack"},
+				{label: "Spacer", href: "/components/navigation-layout/spacer"},
+				{label: "MultiSplitter", href: "/components/navigation-layout/multisplitter"},
+				{label: "BodyContent", href: "/components/navigation-layout/body-content"}
+			]
+		},
+		{
+			title: "Navigation",
+			icon: "🧭",
+			items: [
+				{label: "NavMenu", href: "/components/navigation-layout/navigation"},
+				{label: "AppBar", href: "/components/navigation-layout/appbar"},
+				{label: "Breadcrumbs", href: "/components/breadcrumbs"},
+				{label: "Tabs", href: "/components/tabs"},
+				{label: "Accordion", href: "/components/navigation-layout/accordion"}
+			]
+		},
+		{
+			title: "Display",
+			icon: "🎨",
+			items: [
+				{label: "Card", href: "/components/card"},
+				{label: "Badge", href: "/components/badge"}
+			]
+		},
+		{
+			title: "Feedback",
+			icon: "💬",
+			items: [
+				{label: "Dialog", href: "/components/dialog"},
+				{label: "Toast", href: "/components/toast"},
+				{label: "Tooltip", href: "/components/tooltip"}
+			]
+		},
+		{
+			title: "Data Display",
+			icon: "📊",
+			items: [
+				{label: "DataGrid", href: "/components/datagrid"},
+				{label: "QuickGrid", href: "/components/quickgrid"},
+				{label: "Paginator", href: "/components/paginator"},
+				{label: "Toolbar", href: "/components/toolbar"}
+			]
+		}
+	]
 </script>
 
-<h1>List of components and their state</h1>
+<BodyContent>
+	<Grid spacing={0}>
+		<!-- Sidebar -->
+		<GridItem xs={12} md={3} lg={2}>
+			<div class="sidebar">
+				<NavMenu>
+					{#each navigation as group}
+						<NavGroup>
+							{#snippet linkIcon()}
+								<span class="nav-icon">{group.icon}</span>
+							{/snippet}
+							{#snippet linkText()}
+								{group.title}
+							{/snippet}
 
-<Grid spacing={4}>
-	<GridItem xs={12} lg={10} xl={8}>
-		<Card class="component-table-card">
-			<table class="pure-table pure-table-striped component-table">
-			<thead>
-			<tr>
-				<th>State</th>
-				<th>Name</th>
-				<th>Comment</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/navigation-layout/accordion">
-						accordion
-					</a>
-				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>anchor</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>anchored-region</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/navigation-layout/appbar">
-						appbar
-					</a>
-				</td>
-				<td>Icons (active and "rest") need to have "part" attr manually specified to work properly</td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/badge">
-						badge
-					</a>
-				</td>
-				<td>
-					Now, only "accent" appearance works. <br>
-					Colors need CSS variables to be defined (<pre class="inline-code">--badge-color-[color]</pre>)
-				</td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/navigation-layout/body-content">body-content</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/breadcrumbs">
-						breadcrumbs
-					</a>
-				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/button">button</a>
-				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/forms/calendar">
-						calendar
-					</a>
-				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/card">
-						card
-					</a>
-				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/checkbox">checkbox</a></td>
-				<td>Intermediate state does not work</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>color</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/combobox">combobox</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Not planned</td>
-				<td>data-grid</td>
-				<td>Does not seem to be much flexible</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>design-system-provider</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>dialog</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>divider</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>flipper</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/navigation-layout/grid">grid</a></td>
-				<td>Responsive 12-column grid system with breakpoints</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>horizontal-scroll</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/navigation-layout/layout">layout</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/listbox">listbox</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/option">listbox-option</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>menu</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>menu-item</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/navigation-layout/multisplitter">multi-splitter</a></td>
-				<td>Resizable multi-panel splitter component</td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td>
-					<a href="/components/navigation-layout/navigation">navigation</a>
-				</td>
-				<td>Collapsed nav' child tree's floating nodes not implemented at the moment</td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/number-field">number-field</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>progress</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/radio">radio</a></td>
-				<td>
-					Wrapped radios have ugly missing spacing (cannot be added so far)
-				</td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/radio">radio-group</a></td>
-				<td>
-					Wrapped radios have ugly missing spacing (cannot be added so far)
-				</td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/search">search</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/select">select</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>skeleton</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>slider</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>slider-label</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/navigation-layout/spacer">spacer</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/navigation-layout/stack">stack</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>styles</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial Tests</td>
-				<td><a href="/components/forms/switch">switch</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/tabs/">tabs</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/text-area">text-area</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/forms/text-field">text-field</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/toast">toast</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/toolbar">toolbar</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Initial tests</td>
-				<td><a href="/components/tooltip">tooltip</a></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>tree-item</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>tree-view</td>
-				<td></td>
-			</tr>
-			</tbody>
-		</table>
-	</Card>
-	</GridItem>
-
-	<GridItem xs={12} lg={2} xl={4}>
-		<Card class="quick-links-card">
-			<h3>Quick Links</h3>
-			<div class="quick-links-container">
-				<a href="/components/navigation-layout/grid">Grid Demo</a>
-				<a href="/components/navigation-layout/multisplitter">MultiSplitter Demo</a>
+							{#each group.items as item}
+								<NavLinkItem href={item.href}>{item.label}</NavLinkItem>
+							{/each}
+						</NavGroup>
+					{/each}
+				</NavMenu>
 			</div>
-		</Card>
-	</GridItem>
-</Grid>
+		</GridItem>
+
+		<!-- Main content -->
+		<GridItem xs={12} md={9} lg={10}>
+			<div class="content">
+				<h1>List of components</h1>
+
+				<Grid spacing={4}>
+					<GridItem xs={12} lg={10} xl={8}>
+						<Card>
+							<QuickGrid items={components} columns={componentColumns} sortable filterable striped />
+						</Card>
+					</GridItem>
+
+					<GridItem xs={12} lg={2} xl={4}>
+						<Card>
+							<h3>Quick Links</h3>
+							<div class="quick-links-container">
+								<a href="/components/navigation-layout/grid">Grid Demo</a>
+								<a href="/components/navigation-layout/multisplitter">MultiSplitter Demo</a>
+							</div>
+						</Card>
+					</GridItem>
+				</Grid>
+			</div>
+		</GridItem>
+	</Grid>
+</BodyContent>
 
 <style>
-	.component-table-card {
+	.sidebar {
+		border-right: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
+		background: var(--neutral-layer-2, #faf9f8);
+		min-height: 100vh;
+		position: sticky;
+		top: 0;
+	}
+
+	.content {
 		padding: 2rem;
-		background: var(--app-layer-2);
 	}
 
-	.component-table {
-		width: 100%;
-	}
-
-	.inline-code {
-		display: inline;
-	}
-
-	.quick-links-card {
-		padding: 2rem;
-		background: var(--app-layer-3);
-		text-align: center;
+	.nav-icon {
+		font-size: 16px;
 	}
 
 	.quick-links-container {
@@ -333,6 +242,16 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		margin-top: 1rem;
+	}
+
+	@media (max-width: 768px) {
+		.sidebar {
+			display: none;
+		}
+
+		.content {
+			padding: 1rem;
+		}
 	}
 </style>
 

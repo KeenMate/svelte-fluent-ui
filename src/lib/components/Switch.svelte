@@ -60,7 +60,7 @@
 	aria-label={ariaLabel || label}
 	{required}
 	current-checked={checked}
-	on:change={handleChange}
+	onchange={handleChange}
 	role="switch"
 	{...restProps}
 >

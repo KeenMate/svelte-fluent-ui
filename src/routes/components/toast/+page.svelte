@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Toast, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Toast, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
 	let showToast = false
 	let toastId = "demo-toast"
 
@@ -15,6 +15,41 @@
 		showToast = false
 		console.log("Secondary action clicked")
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "id", type: "string", default: "undefined", description: "Unique toast ID"},
+		{name: "title", type: "string", default: "undefined", description: "Main message or heading"},
+		{name: "timestamp", type: "Date", default: "undefined", description: 'Displayed if topCTAType is "Timestamp"'},
+		{name: "topCTAType", type: '"Dismiss" | "Timestamp" | "Action"', default: "undefined", description: "What to show on the top right"},
+		{name: "topAction", type: "string", default: "undefined", description: "Top right action text (if Action type)"},
+		{name: "primaryAction", type: "string", default: "undefined", description: "Primary button at bottom"},
+		{name: "secondaryAction", type: "string", default: "undefined", description: "Secondary button at bottom"}
+	]
+
+	const actions: Property[] = [
+		{name: "onDismiss", type: "() => void", default: "undefined", description: "Fired when dismiss button is clicked"},
+		{name: "onTopActionClick", type: "() => void", default: "undefined", description: "Fired when top right action is clicked"},
+		{name: "onPrimaryActionClick", type: "() => void", default: "undefined", description: "Fired when primary action is clicked"},
+		{name: "onSecondaryActionClick", type: "() => void", default: "undefined", description: "Fired when secondary action is clicked"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Additional message or markup content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -32,102 +67,31 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-					<tr class="property"><td colspan="5">Members</td></tr>
-					<tr><td></td><td>id</td><td>string</td><td>undefined</td><td>Unique toast ID</td></tr>
-					<tr
-						><td></td><td>title</td><td>string</td><td>undefined</td><td>Main message or heading</td
-						></tr
-					>
-					<tr
-						><td></td><td>timestamp</td><td>Date</td><td>undefined</td><td
-							>Displayed if topCTAType is "Timestamp"</td
-						></tr
-					>
-					<tr
-						><td></td><td>topCTAType</td><td>"Dismiss" | "Timestamp" | "Action"</td><td
-							>undefined</td
-						><td>What to show on the top right</td></tr
-					>
-					<tr
-						><td></td><td>topAction</td><td>string</td><td>undefined</td><td
-							>Top right action text (if Action type)</td
-						></tr
-					>
-					<tr
-						><td></td><td>primaryAction</td><td>string</td><td>undefined</td><td
-							>Primary button at bottom</td
-						></tr
-					>
-					<tr
-						><td></td><td>secondaryAction</td><td>string</td><td>undefined</td><td
-							>Secondary button at bottom</td
-						></tr
-					>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Actions</h2>
+					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-
-				<table class="member-table">
-				<tbody>
-					<tr class="action"><td colspan="4">Actions</td></tr>
-					<tr>
-						<td></td>
-						<td>onDismiss</td>
-						<td>() => void</td>
-						<td>Fired when dismiss button is clicked</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>onTopActionClick</td>
-						<td>() => void</td>
-						<td>Fired when top right action is clicked</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>onPrimaryActionClick</td>
-						<td>() => void</td>
-						<td>Fired when primary action is clicked</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>onSecondaryActionClick</td>
-						<td>() => void</td>
-						<td>Fired when secondary action is clicked</td>
-					</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
 
 	<Card>
-		<h2 class="content-subhead">Slots</h2>
-
-		<table class="member-table">
-			<tbody>
-				<tr class="slot"><td colspan="5">Slots</td></tr>
-				<tr
-					><td></td><td>children</td><td>SlotType</td><td>undefined</td><td
-						>Additional message or markup content</td
-					></tr
-				>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
 		<h2 class="content-subhead">Examples</h2>
 
 		<h3>Toast with timestamp</h3>
-		<Toast title="Auto-saved" timestamp={new Date()} topCTAType="Timestamp" />
+		<Toast title="Auto-saved" timestamp={new Date()} topCTAType="timestamp" />
 		<button onclick={() => (showToast = true)} class="show-toast-button">
 			Show Toast
 		</button>
@@ -138,7 +102,7 @@
 					id={toastId}
 					title="Saved Successfully"
 					timestamp={new Date()}
-					topCTAType="Action"
+					topCTAType="action"
 					topAction="Undo"
 					primaryAction="View Details"
 					secondaryAction="Dismiss"

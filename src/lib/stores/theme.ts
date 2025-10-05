@@ -1,12 +1,12 @@
 import {writable} from "svelte/store"
-import {browser} from "$app/environment"
+import {BROWSER} from "esm-env"
 import {baseLayerLuminance, StandardLuminance} from "@fluentui/web-components"
 
 export type Theme = "light" | "dark"
 
 function createThemeStore() {
 	const getInitialTheme = (): Theme => {
-		if (!browser) return "light"
+		if (!BROWSER) return "light"
 		const stored = localStorage.getItem("theme")
 		return (stored === "light" || stored === "dark") ? stored : "light"
 	}
@@ -15,7 +15,7 @@ function createThemeStore() {
 	const {subscribe, set, update} = writable<Theme>(initialTheme)
 
 	function updateFluentUITheme(theme: Theme) {
-		if (!browser) return
+		if (!BROWSER) return
 		baseLayerLuminance.setValueFor(
 			document.body,
 			theme === "dark" ? StandardLuminance.DarkMode : StandardLuminance.LightMode
@@ -27,7 +27,7 @@ function createThemeStore() {
 		toggle: () =>
 			update((current) => {
 				const newTheme = current === "light" ? "dark" : "light"
-				if (browser) {
+				if (BROWSER) {
 					localStorage.setItem("theme", newTheme)
 					document.documentElement.setAttribute("data-theme", newTheme)
 					updateFluentUITheme(newTheme)
@@ -35,7 +35,7 @@ function createThemeStore() {
 				return newTheme
 			}),
 		set: (theme: Theme) => {
-			if (browser) {
+			if (BROWSER) {
 				localStorage.setItem("theme", theme)
 				document.documentElement.setAttribute("data-theme", theme)
 				updateFluentUITheme(theme)
@@ -43,7 +43,7 @@ function createThemeStore() {
 			set(theme)
 		},
 		init: () => {
-			if (browser) {
+			if (BROWSER) {
 				document.documentElement.setAttribute("data-theme", initialTheme)
 				updateFluentUITheme(initialTheme)
 			}

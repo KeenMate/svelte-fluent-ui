@@ -20,7 +20,7 @@
 	    }: Props = $props()
 
 	const computedStyle = $derived(styleList(
-			collapsed ? "width: 40px; min-width: 40px" : `width: ${width || "250px"}`
+			collapsed ? "width: 40px; min-width: 40px" : width ? `width: ${width}` : "width: 100%"
 	))
 </script>
 

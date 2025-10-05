@@ -1,9 +1,36 @@
 <script lang="ts">
-	import {NavMenu, NavGroup, NavLinkItem, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {NavMenu, NavGroup, NavLinkItem, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	function onNavClick(ev: Event) {
 		console.log("Nav link/group clicked", ev)
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "collapsible", type: "boolean", default: "false", description: "Enable collapsible mode"},
+		{name: "width", type: "string", default: "undefined", description: "NavMenu width"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = []
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "NavLinkItem / NavGroup components"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -29,76 +56,16 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
+				<h2>Properties</h2>
 				<p>(of NavMenu)</p>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<!--<tr class="property">-->
-				<!--	<td></td>-->
-				<!--	<td>appearance</td>-->
-				<!--	<td>boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<!--<tr class="callback">-->
-				<!--	<td></td>-->
-				<!--	<td>checkValidity</td>-->
-				<!--	<td>() => boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>linkIcon</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>linkText</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<!--<tr class="action">-->
-				<!--	<td></td>-->
-				<!--	<td>select</td>-->
-				<!--	<td>() => void;</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<p>(of NavMenu)</p>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

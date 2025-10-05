@@ -53,10 +53,10 @@
 	data-row-index={rowIndex}
 	row-type={rowType}
 	role="row"
-	on:keydown={handleKeyDown}
-	on:click={handleClick}
-	on:dblclick={handleDblClick}
-	on:focus={handleFocus}
+	onkeydown={handleKeyDown}
+	onclick={handleClick}
+	ondblclick={handleDblClick}
+	onfocus={handleFocus}
 	{...restProps}
 >
 	{#if children}

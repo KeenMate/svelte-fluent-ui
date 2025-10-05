@@ -1,5 +1,35 @@
 <script lang="ts">
-	import {Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Stack, QuickGrid, Grid, GridItem, Card} from "$lib/index.js"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "orientation", type: '"horizontal" | "vertical"', default: '"vertical"', description: "Stack direction"},
+		{name: "gap", type: "string", default: "undefined", description: "Gap between items"},
+		{name: "horizontalAlign", type: "string", default: "undefined", description: "Horizontal alignment"},
+		{name: "verticalAlign", type: "string", default: "undefined", description: "Vertical alignment"},
+		{name: "wrap", type: "boolean", default: "false", description: "Allow wrapping"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = []
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Stack content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -17,62 +47,14 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<!--<tr class="property">-->
-				<!--	<td></td>-->
-				<!--	<td>appearance</td>-->
-				<!--	<td>boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<!--<tr class="callback">-->
-				<!--	<td></td>-->
-				<!--	<td>checkValidity</td>-->
-				<!--	<td>() => boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
-
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<!--<tr class="action">-->
-				<!--	<td></td>-->
-				<!--	<td>select</td>-->
-				<!--	<td>() => void;</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -91,7 +73,7 @@
 				</div>
 				<hr>
 				<div class="example">
-					<Stack orientation="Vertical">
+					<Stack orientation="vertical">
 						<p>Inner content 1 of vertical stack</p>
 						<p>Inner content 2 of vertical stack</p>
 						<p>Inner content 3 of vertical stack</p>
@@ -99,29 +81,23 @@
 				</div>
 				<hr>
 				<div class="example">
-					<Stack
-						orientation="Vertical"
-						horizontalAlign="Center"
-					>
-						<p>Inner content 1 of vertical (horizontalAlign="Center") stack</p>
-						<p>Inner content 2 of vertical (horizontalAlign="Center") stack</p>
-						<p>Inner content 3 of vertical (horizontalAlign="Center") stack</p>
+					<Stack orientation="vertical">
+						<p>Inner content 1 of vertical stack</p>
+						<p>Inner content 2 of vertical stack</p>
+						<p>Inner content 3 of vertical stack</p>
 					</Stack>
 				</div>
 				<hr>
 				<div class="example">
-					<Stack
-						orientation="Horizontal"
-						verticalAlign="Center"
-					>
-						<p>Inner content 1 of horizontal (verticalAlign="Center") stack</p>
+					<Stack orientation="horizontal">
+						<p>Inner content 1 of horizontal stack</p>
 						<p>
-							Inner content 2 of horizontal (verticalAlign="Center") stack. <br>
+							Inner content 2 of horizontal stack. <br>
 							Very long text here <br>
 							Very long text here <br>
 							Very long text here <br>
 						</p>
-						<p>Inner content 3 of horizontal (verticalAlign="Center") stack</p>
+						<p>Inner content 3 of horizontal stack</p>
 					</Stack>
 				</div>
 			</div>
@@ -137,26 +113,23 @@
 				</div>
 				<hr>
 				<div class="example">
-					<Stack orientation="Vertical" horizontalAlign="Right">
-						<p>Inner content 1 of vertical (horizontalAlign="Right") stack</p>
-						<p>Inner content 2 of vertical (horizontalAlign="Right") stack</p>
-						<p>Inner content 3 of vertical (horizontalAlign="Right") stack</p>
+					<Stack orientation="vertical">
+						<p>Inner content 1 of vertical stack</p>
+						<p>Inner content 2 of vertical stack</p>
+						<p>Inner content 3 of vertical stack</p>
 					</Stack>
 				</div>
 				<hr>
 				<div class="example">
-					<Stack
-						orientation="Horizontal"
-						verticalAlign="Bottom"
-					>
-						<p>Inner content 1 of horizontal (verticalAlign="Bottom") stack</p>
+					<Stack orientation="horizontal">
+						<p>Inner content 1 of horizontal stack</p>
 						<p>
-							Inner content 2 of horizontal (verticalAlign="Bottom") stack. <br>
+							Inner content 2 of horizontal stack. <br>
 							Very long text here <br>
 							Very long text here <br>
 							Very long text here <br>
 						</p>
-						<p>Inner content 3 of horizontal (verticalAlign="Bottom") stack</p>
+						<p>Inner content 3 of horizontal stack</p>
 					</Stack>
 				</div>
 			</div>

@@ -1,10 +1,9 @@
 <script lang="ts">
 	import "../assets/styles/demo-pages.scss"
 	import "$lib/main.scss"
-	import {Layout, Header, Footer, Grid, GridItem} from "$lib/index.js"
+	import {Layout, Footer, TopNav, Button} from "$lib/index.js"
 	import {theme} from "$lib/stores/theme.js"
 	import {onMount, tick} from "svelte"
-	import {Button} from "$lib/index.js"
 	import {baseLayerLuminance, StandardLuminance} from "@fluentui/web-components"
 
 	let {children} = $props()
@@ -29,26 +28,123 @@
 	function toggleTheme() {
 		theme.toggle()
 	}
+
+	const navItems = [
+		{label: "Home", href: "/", icon: "🏠"},
+		{label: "Components", href: "/components", icon: "📦"},
+		{label: "Forms", href: "/components/forms", icon: "📝"},
+		{label: "Layout", href: "/components/navigation-layout", icon: "📐"}
+	]
+
+	const navigation = [
+		{
+			title: "Home",
+			icon: "🏠",
+			items: [
+				{label: "List of Components", href: "/"}
+			]
+		},
+		{
+			title: "Documentation",
+			icon: "📚",
+			items: [
+				{label: "Getting Started", href: "#getting-started"},
+				{label: "Installation", href: "#installation"},
+				{label: "Usage", href: "#usage"}
+			]
+		},
+		{
+			title: "Resources",
+			icon: "🔗",
+			items: [
+				{label: "GitHub", href: "https://github.com/KeenMate/svelte-fluentui"},
+				{label: "FluentUI Docs", href: "https://docs.microsoft.com/en-us/fluent-ui/web-components/"}
+			]
+		},
+		{
+			title: "Forms & Inputs",
+			icon: "📝",
+			items: [
+				{label: "TextField", href: "/components/forms/text-field"},
+				{label: "TextArea", href: "/components/forms/text-area"},
+				{label: "NumberField", href: "/components/forms/number-field"},
+				{label: "Checkbox", href: "/components/checkbox"},
+				{label: "Radio", href: "/components/forms/radio"},
+				{label: "Switch", href: "/components/forms/switch"},
+				{label: "Select", href: "/components/forms/select"},
+				{label: "Combobox", href: "/components/forms/combobox"},
+				{label: "Listbox", href: "/components/listbox"},
+				{label: "Search", href: "/components/forms/search"},
+				{label: "Calendar", href: "/components/forms/calendar"}
+			]
+		},
+		{
+			title: "Buttons & Actions",
+			icon: "🔘",
+			items: [
+				{label: "Button", href: "/components/button"},
+				{label: "Anchor", href: "/components/anchor"}
+			]
+		},
+		{
+			title: "Layout",
+			icon: "📐",
+			items: [
+				{label: "Layout", href: "/components/navigation-layout/layout"},
+				{label: "Grid", href: "/components/navigation-layout/grid"},
+				{label: "Stack", href: "/components/navigation-layout/stack"},
+				{label: "Spacer", href: "/components/navigation-layout/spacer"},
+				{label: "MultiSplitter", href: "/components/navigation-layout/multisplitter"},
+				{label: "BodyContent", href: "/components/navigation-layout/body-content"}
+			]
+		},
+		{
+			title: "Navigation",
+			icon: "🧭",
+			items: [
+				{label: "NavMenu", href: "/components/navigation-layout/navigation"},
+				{label: "AppBar", href: "/components/navigation-layout/appbar"},
+				{label: "Breadcrumbs", href: "/components/breadcrumbs"},
+				{label: "Tabs", href: "/components/tabs"},
+				{label: "Accordion", href: "/components/navigation-layout/accordion"}
+			]
+		},
+		{
+			title: "Display",
+			icon: "🎨",
+			items: [
+				{label: "Card", href: "/components/card"},
+				{label: "Badge", href: "/components/badge"}
+			]
+		},
+		{
+			title: "Feedback",
+			icon: "💬",
+			items: [
+				{label: "Dialog", href: "/components/dialog"},
+				{label: "Toast", href: "/components/toast"},
+				{label: "Tooltip", href: "/components/tooltip"}
+			]
+		},
+		{
+			title: "Data Display",
+			icon: "📊",
+			items: [
+				{label: "DataGrid", href: "/components/datagrid"},
+				{label: "QuickGrid", href: "/components/quickgrid"},
+				{label: "Paginator", href: "/components/paginator"},
+				{label: "Toolbar", href: "/components/toolbar"}
+			]
+		}
+	]
 </script>
 
 <Layout orientation="vertical" style="min-height: 100vh;">
-	<Header height={60}>
-		<div class="header-container">
-			<a href="/" class="header-title">
-				Svelte FluentUI
-			</a>
-			<nav class="header-nav">
-				<a href="/components" class="nav-link">Components</a>
-				<a href="/components/forms" class="nav-link">Forms</a>
-				<a href="/components/navigation-layout" class="nav-link">
-					Layout
-				</a>
-				<Button appearance="stealth" onClick={toggleTheme}>
-					{$theme === "light" ? "🌙" : "☀️"}
-				</Button>
-			</nav>
-		</div>
-	</Header>
+	<TopNav brand="Svelte FluentUI" brandHref="/" items={navItems} navigationGroups={navigation}>
+		<Button appearance="stealth" onClick={toggleTheme}>
+			{$theme === "light" ? "🌙" : "☀️"}
+		</Button>
+	</TopNav>
 
 	<div class="main-content">
 		{@render children()}
@@ -60,40 +156,11 @@
 </Layout>
 
 <style>
-	.header-container {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
-	}
-
-	.header-title {
-		text-decoration: none;
-		color: inherit;
-		font-size: 1.25rem;
-		font-weight: 600;
-	}
-
-	.header-nav {
-		display: flex;
-		gap: 1.5rem;
-		align-items: center;
-	}
-
-	.nav-link {
-		text-decoration: none;
-		color: inherit;
+	.nav-icon {
+		font-size: 16px;
 	}
 
 	.main-content {
 		flex: 1;
-		overflow: auto;
-		padding: 2rem;
-	}
-
-	.footer {
-		padding: 1rem;
-		text-align: center;
-		font-size: 0.875rem;
 	}
 </style>

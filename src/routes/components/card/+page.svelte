@@ -1,6 +1,36 @@
 <script lang="ts">
-	import {Card, Stack, Grid, GridItem} from "$lib/index.js"
+	import {Card, QuickGrid, Stack, Grid, GridItem} from "$lib/index.js"
 
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "width", type: "string | number", default: "undefined", description: "Card width"},
+		{name: "height", type: "string | number", default: "undefined", description: "Card height"},
+		{name: "areaRestricted", type: "boolean", default: "undefined", description: "Restrict area"},
+		{name: "class", type: "string", default: "undefined", description: "Custom CSS classes"},
+		{name: "style", type: "string", default: "undefined", description: "Inline styles"},
+		{name: "minimalStyle", type: "boolean", default: "undefined", description: "Use minimal styling"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "any", default: "undefined", description: "Default slot content"}
+	]
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = []
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -18,130 +48,14 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>width</td>
-					<td>string | number</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>height</td>
-					<td>string | number</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>areaRestricted</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>class</td>
-					<td>string</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>style</td>
-					<td>string</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>minimalStyle</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-
-
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<!--<tr class="callback">-->
-				<!--	<td></td>-->
-				<!--	<td>checkValidity</td>-->
-				<!--	<td>() => boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>select</td>
-					<td>() => void;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>checkValidity</td>
-					<td>() => boolean;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>reportValidity</td>
-					<td>() => boolean;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>setCustomValidity</td>
-					<td>(message: string) => any;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>setValidity</td>
-					<td>(flags: any, message: any, anchor: any) => void;</td>
-					<td></td>
-				</tr>
-				<tr class="action">
-					<td></td>
-					<td>setSelectionRange</td>
-					<td
-					>(start: number, end: number, direction?: "forward" | "backward" |
-						"none") => void;
-					</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -170,9 +84,5 @@
 	.examples-container {
 		display: flex;
 		gap: 1rem;
-	}
-
-	.flex-card {
-		flex: 1;
 	}
 </style>

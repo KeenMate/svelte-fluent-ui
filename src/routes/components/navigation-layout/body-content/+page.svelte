@@ -1,5 +1,29 @@
 <script lang="ts">
-	import {BodyContent, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {BodyContent, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = []
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = []
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Body content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -17,62 +41,8 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<!--<tr class="property">-->
-				<!--	<td></td>-->
-				<!--	<td>width</td>-->
-				<!--	<td>string | number</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<!--<tr class="callback">-->
-				<!--	<td></td>-->
-				<!--	<td>checkValidity</td>-->
-				<!--	<td>() => boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
-
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<!--<tr class="action">-->
-				<!--	<td></td>-->
-				<!--	<td>select</td>-->
-				<!--	<td>() => void;</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -86,19 +56,4 @@
 </Stack>
 
 <style lang="scss">
-	.example {
-		:global {
-			.element-block {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 5rem;
-				height: 5rem;
-				background-color: #d7d7d7;
-				border-radius: .15em;
-				line-height: 1;
-				font-family: monospace;
-			}
-		}
-	}
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {MultiSplitter, MultiSplitterPane, Stack, Grid, GridItem, Card, Button} from "$lib/index.js"
+	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button} from "$lib/index.js"
 	import type {MultiSplitterEventArgs, MultiSplitterResizeEventArgs} from "$lib/components/layout/MultiSplitter.svelte"
 
 	let lastEvent = $state<string>("None")
@@ -19,6 +19,38 @@
 		lastEvent = `Resized pane ${args.index} to ${Math.round(args.size)}px`
 		console.log("Resized:", args)
 	}
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const multiSplitterProperties: Property[] = [
+		{name: "orientation", type: '"horizontal" | "vertical"', default: "horizontal", description: "Direction of the splitter"},
+		{name: "barSize", type: "string", default: "6px", description: "Size of the resize bar"},
+		{name: "width", type: "string", default: "undefined", description: "Width of the splitter container"},
+		{name: "height", type: "string", default: "undefined", description: "Height of the splitter container"},
+		{name: "onCollapse", type: "function", default: "undefined", description: "Callback when a pane is collapsed"},
+		{name: "onExpand", type: "function", default: "undefined", description: "Callback when a pane is expanded"},
+		{name: "onResize", type: "function", default: "undefined", description: "Callback when a pane is resized"}
+	]
+
+	const multiSplitterPaneProperties: Property[] = [
+		{name: "size", type: "string", default: "undefined", description: "Initial size (width/height based on orientation)"},
+		{name: "minSize", type: "string", default: "undefined", description: "Minimum size constraint"},
+		{name: "maxSize", type: "string", default: "undefined", description: "Maximum size constraint"},
+		{name: "resizable", type: "boolean", default: "true", description: "Whether the pane can be resized"},
+		{name: "collapsible", type: "boolean", default: "false", description: "Whether the pane can be collapsed"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -159,107 +191,13 @@ function hello() {
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>MultiSplitter Component</h2>
-				<table class="member-table">
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>orientation</td>
-				<td>"horizontal" | "vertical"</td>
-				<td>"horizontal"</td>
-				<td>Direction of the splitter</td>
-			</tr>
-			<tr>
-				<td>barSize</td>
-				<td>string</td>
-				<td>"6px"</td>
-				<td>Size of the resize bar</td>
-			</tr>
-			<tr>
-				<td>width</td>
-				<td>string</td>
-				<td>undefined</td>
-				<td>Width of the splitter container</td>
-			</tr>
-			<tr>
-				<td>height</td>
-				<td>string</td>
-				<td>undefined</td>
-				<td>Height of the splitter container</td>
-			</tr>
-			<tr>
-				<td>onCollapse</td>
-				<td>function</td>
-				<td>undefined</td>
-				<td>Callback when a pane is collapsed</td>
-			</tr>
-			<tr>
-				<td>onExpand</td>
-				<td>function</td>
-				<td>undefined</td>
-				<td>Callback when a pane is expanded</td>
-			</tr>
-			<tr>
-				<td>onResize</td>
-				<td>function</td>
-				<td>undefined</td>
-				<td>Callback when a pane is resized</td>
-			</tr>
-		</tbody>
-	</table>
+				<QuickGrid items={multiSplitterProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>MultiSplitterPane Component</h2>
-				<table class="member-table">
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>size</td>
-				<td>string</td>
-				<td>undefined</td>
-				<td>Initial size (width/height based on orientation)</td>
-			</tr>
-			<tr>
-				<td>minSize</td>
-				<td>string</td>
-				<td>undefined</td>
-				<td>Minimum size constraint</td>
-			</tr>
-			<tr>
-				<td>maxSize</td>
-				<td>string</td>
-				<td>undefined</td>
-				<td>Maximum size constraint</td>
-			</tr>
-			<tr>
-				<td>resizable</td>
-				<td>boolean</td>
-				<td>true</td>
-				<td>Whether the pane can be resized</td>
-			</tr>
-			<tr>
-				<td>collapsible</td>
-				<td>boolean</td>
-				<td>false</td>
-				<td>Whether the pane can be collapsed</td>
-			</tr>
-		</tbody>
-	</table>
+				<QuickGrid items={multiSplitterPaneProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -282,18 +220,6 @@ function hello() {
 		height: 600px;
 		border: 1px solid var(--app-border);
 		margin: 1rem 0;
-	}
-
-	.pane-card-layer2 {
-		padding: 1rem;
-		height: 100%;
-		background: var(--app-layer-2);
-	}
-
-	.pane-card-layer3 {
-		padding: 1rem;
-		height: 100%;
-		background: var(--app-layer-3);
 	}
 
 	.file-tree {

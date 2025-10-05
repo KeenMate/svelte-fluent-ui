@@ -1,7 +1,47 @@
 <script lang="ts">
-	import {Button, Dialog, Stack, Grid, GridItem, Card} from "$lib/index.js"
+	import {Button, Dialog, QuickGrid, Stack, Grid, GridItem, Card} from "$lib/index.js"
 
 	let dialog: Dialog
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "modal", type: "boolean", default: "undefined", description: "Modal behavior"},
+		{name: "visible", type: "boolean", default: "undefined", description: "Visibility state"},
+		{name: "preventClose", type: "boolean", default: "undefined", description: "Prevent closing"},
+		{name: "dismissable", type: "boolean", default: "undefined", description: "Can be dismissed"},
+		{name: "trapFocus", type: "boolean", default: "undefined", description: "Trap focus"},
+		{name: "ariaDescribedby", type: "string", default: "undefined", description: "Accessibility: described by"},
+		{name: "ariaLabelledby", type: "string", default: "undefined", description: "Accessibility: labelled by"},
+		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"}
+	]
+
+	const actions: Property[] = [
+		{name: "show", type: "() => void", default: "-", description: "Show the dialog"},
+		{name: "hide", type: "() => void", default: "-", description: "Hide the dialog"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onDismiss", type: "(ev: Event) => void", default: "undefined", description: "Fires when dialog is dismissed"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "any", default: "undefined", description: "Dialog content"},
+		{name: "actions", type: "any", default: "undefined", description: "Action buttons"},
+		{name: "dismissButtonText", type: "any", default: "undefined", description: "Dismiss button text"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -19,125 +59,26 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Members</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="property">
-					<td colspan="5">Members</td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>modal</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>visible</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>preventClose</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>dismissable</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>trapFocus</td>
-					<td>boolean</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>ariaDescribedby</td>
-					<td>string</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>ariaLabelledby</td>
-					<td>string</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="property">
-					<td></td>
-					<td>ariaLabel</td>
-					<td>string</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-
-
-				<tr class="callback">
-					<td colspan="5">Callbacks</td>
-				</tr>
-				<!--<tr class="callback">-->
-				<!--	<td></td>-->
-				<!--	<td>checkValidity</td>-->
-				<!--	<td>() => boolean</td>-->
-				<!--	<td>undefined</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-
-				<tr class="slot">
-					<td colspan="5">Slots</td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>children</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>actions</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				<tr class="slot">
-					<td></td>
-					<td>dismissButtonText</td>
-					<td>any</td>
-					<td>undefined</td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Actions</h2>
+					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+				</Card>
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2 class="content-subhead">Actions</h2>
-				<table class="member-table">
-				<tbody>
-				<tr class="action">
-					<td colspan="4">Actions</td>
-				</tr>
-				<!--<tr class="action">-->
-				<!--	<td></td>-->
-				<!--	<td>select</td>-->
-				<!--	<td>() => void;</td>-->
-				<!--	<td></td>-->
-				<!--</tr>-->
-				</tbody>
-			</table>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
