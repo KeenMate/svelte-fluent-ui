@@ -1,41 +1,139 @@
-// Theme styles - minimal interference with FluentUI
-// Only set what's needed for layout components
-:root {
-	color-scheme: light;
-}
+/**
+ * Theme System
+ * Converts SCSS variables to CSS custom properties for runtime theme switching
+ * Assumes variables are already imported by main.scss
+ */
 
-[data-theme="light"] {
+// Generate CSS custom properties from SCSS variables
+:root, [data-theme="light"] {
 	color-scheme: light;
-	--app-bg: #ffffff;
-	--app-text: #323130;
-	--app-layer-2: #faf9f8;
-	--app-layer-3: #f3f2f1;
-	--app-border: #e1dfdd;
-	--app-accent: #0078d4;
+
+	// Background colors
+	--fluent-bg-primary: #{$bg-primary-light};
+	--fluent-bg-secondary: #{$bg-secondary-light};
+	--fluent-bg-tertiary: #{$bg-tertiary-light};
+
+	// Text colors
+	--fluent-text-primary: #{$text-primary-light};
+	--fluent-text-secondary: #{$text-secondary-light};
+	--fluent-text-tertiary: #{$text-tertiary-light};
+	--fluent-text-inverse: #{$text-inverse-light};
+
+	// Border colors
+	--fluent-border-primary: #{$border-primary-light};
+	--fluent-border-secondary: #{$border-secondary-light};
+
+	// Accent colors
+	--fluent-accent-primary: #{$accent-primary-light};
+	--fluent-accent-hover: #{$accent-hover-light};
+	--fluent-accent-active: #{$accent-active-light};
+
+	// Navbar
+	--fluent-navbar-bg: #{$navbar-bg-light};
+	--fluent-navbar-text: #{$navbar-text-light};
+	--fluent-navbar-border: #{$navbar-border-light};
+
+	// Sidebar
+	--fluent-sidebar-bg: #{$sidebar-bg-light};
+	--fluent-sidebar-text: #{$sidebar-text-light};
+	--fluent-sidebar-border: #{$sidebar-border-light};
+	--fluent-sidebar-hover: #{$sidebar-hover-light};
+	--fluent-sidebar-active: #{$sidebar-active-light};
+
+	// Header
+	--fluent-header-bg: #{$header-bg-light};
+	--fluent-header-text: #{$header-text-light};
+	--fluent-header-border: #{$header-border-light};
+
+	// Footer
+	--fluent-footer-bg: #{$footer-bg-light};
+	--fluent-footer-text: #{$footer-text-light};
+	--fluent-footer-border: #{$footer-border-light};
+
+	// Component spacing
+	--fluent-component-padding: #{$component-padding};
+	--fluent-component-margin: #{$component-margin};
+	--fluent-component-gap: #{$component-gap};
+
+	// Sidebar
+	--fluent-sidebar-link-padding: #{$sidebar-link-padding};
+	--fluent-sidebar-padding: #{$sidebar-padding};
+	--fluent-sidebar-icon-gap: #{$sidebar-icon-gap};
+
+	// Typography
+	--fluent-body-font-size: #{$body-font-size};
+	--fluent-body-font-weight: #{$body-font-weight};
+	--fluent-heading-font-weight: #{$heading-font-weight};
+
+	// Borders
+	--fluent-border-radius: #{$component-border-radius};
+	--fluent-border-width: #{$component-border-width};
+
+	// Transitions
+	--fluent-transition: #{$component-transition};
 }
 
 [data-theme="dark"] {
 	color-scheme: dark;
-	--app-bg: #1b1a19;
-	--app-text: #f3f2f1;
-	--app-layer-2: #252423;
-	--app-layer-3: #323130;
-	--app-border: #3b3a39;
-	--app-accent: #0086f0;
+
+	// Background colors
+	--fluent-bg-primary: #{$bg-primary-dark};
+	--fluent-bg-secondary: #{$bg-secondary-dark};
+	--fluent-bg-tertiary: #{$bg-tertiary-dark};
+
+	// Text colors
+	--fluent-text-primary: #{$text-primary-dark};
+	--fluent-text-secondary: #{$text-secondary-dark};
+	--fluent-text-tertiary: #{$text-tertiary-dark};
+	--fluent-text-inverse: #{$text-inverse-dark};
+
+	// Border colors
+	--fluent-border-primary: #{$border-primary-dark};
+	--fluent-border-secondary: #{$border-secondary-dark};
+
+	// Accent colors
+	--fluent-accent-primary: #{$accent-primary-dark};
+	--fluent-accent-hover: #{$accent-hover-dark};
+	--fluent-accent-active: #{$accent-active-dark};
+
+	// Navbar
+	--fluent-navbar-bg: #{$navbar-bg-dark};
+	--fluent-navbar-text: #{$navbar-text-dark};
+	--fluent-navbar-border: #{$navbar-border-dark};
+
+	// Sidebar
+	--fluent-sidebar-bg: #{$sidebar-bg-dark};
+	--fluent-sidebar-text: #{$sidebar-text-dark};
+	--fluent-sidebar-border: #{$sidebar-border-dark};
+	--fluent-sidebar-hover: #{$sidebar-hover-dark};
+	--fluent-sidebar-active: #{$sidebar-active-dark};
+
+	// Header
+	--fluent-header-bg: #{$header-bg-dark};
+	--fluent-header-text: #{$header-text-dark};
+	--fluent-header-border: #{$header-border-dark};
+
+	// Footer
+	--fluent-footer-bg: #{$footer-bg-dark};
+	--fluent-footer-text: #{$footer-text-dark};
+	--fluent-footer-border: #{$footer-border-dark};
 }
 
-// Apply only to body to avoid interfering with FluentUI components
+[data-theme="dhl"] {
+	color-scheme: light;
+
+	// Override sidebar link padding to match Microsoft FluentUI exactly (no padding)
+	--fluent-sidebar-link-padding: 0;
+
+	// You can add other DHL-specific theme overrides here
+	// Example:
+	// --fluent-accent-primary: #ffcc00; // DHL yellow
+	// --fluent-accent-hover: #e6b800;
+}
+
+// Apply FluentUI design tokens to body for smooth transitions
 body {
-	background-color: var(--app-bg, #ffffff);
-	color: var(--app-text, #323130);
-	transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-// Target only our custom layout components
-.header,
-.footer,
-.layout {
-	background-color: var(--app-bg);
-	color: var(--app-text);
-	border-color: var(--app-border);
+	background-color: var(--neutral-layer-1);
+	color: var(--neutral-foreground-rest);
+	transition: background-color 0.3s ease, color 0.3s ease;
 }

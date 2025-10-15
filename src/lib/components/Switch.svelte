@@ -15,8 +15,8 @@
 		label?: string
 		checked?: boolean
 		required?: boolean
-		checkedMessage?: string
-		uncheckedMessage?: string
+		checkedMessage?: string | SlotType
+		uncheckedMessage?: string | SlotType
 		onChange?: (checked: boolean) => void
 		children?: SlotType
 		labelTemplate?: SlotType
@@ -41,6 +41,10 @@
 		labelTemplate = undefined,
 		...restProps
 	}: Props = $props()
+
+	// Check if messages are snippets or strings
+	let isCheckedMessageSnippet = $derived(typeof checkedMessage === 'function')
+	let isUncheckedMessageSnippet = $derived(typeof uncheckedMessage === 'function')
 
 	function handleChange(e: Event) {
 		const target = e.target as any
@@ -77,11 +81,23 @@
 	{/if}
 
 	{#if checkedMessage}
-		<span slot="checked-message" class="switch-message">{checkedMessage}</span>
+		<span slot="checked-message" class="switch-message">
+			{#if isCheckedMessageSnippet}
+				{@render (checkedMessage as SlotType)?.()}
+			{:else}
+				{checkedMessage}
+			{/if}
+		</span>
 	{/if}
 
 	{#if uncheckedMessage}
-		<span slot="unchecked-message" class="switch-message">{uncheckedMessage}</span>
+		<span slot="unchecked-message" class="switch-message">
+			{#if isUncheckedMessageSnippet}
+				{@render (uncheckedMessage as SlotType)?.()}
+			{:else}
+				{uncheckedMessage}
+			{/if}
+		</span>
 	{/if}
 </fluent-switch>
 

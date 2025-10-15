@@ -63,13 +63,26 @@
 	{...restProps}
 	onclick={onClick}
 >
-	<template slot="start">
-		{@render start?.()}
-	</template>
+	{#if start}
+		<span slot="start" class="button-icon-slot">
+			{@render start()}
+		</span>
+	{/if}
 	{@render children?.()}
 	{#if end}
-		<template slot="end">
+		<span slot="end" class="button-icon-slot">
 			{@render end()}
-		</template>
+		</span>
 	{/if}
 </fluent-button>
+
+<style>
+	.button-icon-slot {
+		display: flex;
+		align-items: center;
+	}
+
+	.button-icon-slot :global(svg) {
+		display: block;
+	}
+</style>

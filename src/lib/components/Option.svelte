@@ -28,18 +28,21 @@
 				...restProps
 			}: Props = $props()
 
-		const selectedValue = getContext<SelectedOptionSvelteContext>("selected-options")
+		const selectedValue = getContext<SelectedOptionSvelteContext | undefined>("selected-options")
 
 		function handleOnClick(ev: MouseEvent) {
 			if (disabled) {
 				return
 			}
 
-			console.log("Option on click", {
-				ev,
-				selectedValue: selectedValue.value
-			})
-			selectedValue.toggle(value)
+			// Only handle context-based selection if we're in a Combobox
+			if (selectedValue) {
+				console.log("Option on click", {
+					ev,
+					selectedValue: selectedValue.value
+				})
+				selectedValue.toggle(value)
+			}
 
 			onClick?.(ev)
 		}
@@ -47,7 +50,7 @@
 
 	<fluent-option
 		{value}
-		selected={selected !== undefined ? selected : selectedValue.value?.includes(value)}
+		selected={selected !== undefined ? selected : selectedValue?.value?.includes(value) ?? false}
 		data-option-label={label}
 		{disabled}
 		{...restProps}

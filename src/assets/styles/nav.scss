@@ -1,0 +1,67 @@
+/**
+ * Navigation Component Styles
+ * Uses FluentUI design tokens
+ */
+
+.fluent-nav-menu {
+	background-color: var(--neutral-layer-2);
+	color: var(--neutral-foreground-rest);
+	transition: background-color 0.3s ease, color 0.3s ease, width 0.3s ease;
+
+	// Only apply padding and border to root nav menu, not nested ones
+	&:not(.fluent-nav-group .fluent-nav-menu) {
+		padding: var(--fluent-component-padding, 1rem);
+		border-right: 1px solid var(--neutral-stroke-layer-rest);
+	}
+}
+
+.fluent-nav-item {
+	transition: background-color 0.3s ease;
+
+	// Override default FluentUI background and apply hover to positioning-region only
+	.positioning-region {
+		background: transparent !important;
+
+		&:hover:not(:has(.disabled)) {
+			cursor: pointer;
+			background: var(--neutral-fill-secondary-hover) !important;
+		}
+	}
+
+	&.active .positioning-region {
+		background: var(--neutral-fill-secondary-rest) !important;
+	}
+
+	&.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+.fluent-nav-link {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+	padding: var(--fluent-sidebar-link-padding, 0.5rem);
+	width: 100%;
+	transition: background-color 0.3s ease, color 0.3s ease;
+
+	&:hover {
+		background-color: var(--neutral-fill-secondary-hover);
+		color: inherit;
+	}
+
+	&.active {
+		background-color: var(--neutral-fill-secondary-rest);
+		font-weight: 600;
+		color: inherit;
+	}
+}
+
+// Remove custom .fluent-nav-text padding/margin
+// The Microsoft FluentUI styles handle this via margin-inline-start
+// Use inherit to let color cascade from parent
+.fluent-nav-text {
+	color: inherit;
+}

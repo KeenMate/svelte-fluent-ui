@@ -1,21 +1,30 @@
-// Removed old #layout and #menu styles - no longer needed
+/**
+ * Layout Component Styles
+ * Uses CSS custom properties from theme system
+ */
 
-// Layout components
+// Layout component
 .layout {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	min-height: 100vh;
+	background-color: var(--neutral-layer-1);
+	color: var(--neutral-foreground-rest);
 
 	&[data-orientation="horizontal"] {
 		flex-direction: row;
 	}
 }
 
+// Header component
 .header {
 	display: flex;
 	align-items: center;
-	border-bottom: 1px solid var(--app-border, #e1dfdd);
+	background-color: var(--neutral-layer-2);
+	color: var(--neutral-foreground-rest);
+	border-bottom: 1px solid var(--neutral-stroke-layer-rest);
+	transition: background-color 0.3s ease, color 0.3s ease;
 
 	.header-gutters {
 		width: 100%;
@@ -25,9 +34,13 @@
 	}
 }
 
+// Footer component
 .footer {
 	display: flex;
 	align-items: center;
-	border-top: 1px solid var(--app-border, #e1dfdd);
+	background-color: var(--neutral-layer-4);
+	color: var(--neutral-foreground-rest);
+	border-top: 1px solid var(--neutral-stroke-layer-rest);
 	padding: 0 1rem;
+	transition: background-color 0.3s ease, color 0.3s ease;
 }

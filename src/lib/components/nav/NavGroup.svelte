@@ -15,7 +15,7 @@
 	}
 
 	let {
-		    expanded = $bindable(),
+		    expanded = $bindable(false),
 		    disabled = undefined,
 		    linkIcon = undefined,
 		    linkText = undefined,
@@ -60,11 +60,11 @@
 		{/snippet}
 	</NavLink>
 
-	<div role="group" class="fluent-collapsible-region-container items">
+	<div role="group" class="fluent-collapsible-region-container items" style:display={expanded ? 'block' : 'none'}>
 		<div
 			class="fluent-nav-menu"
 			role="menu"
-			aria-expanded=""
+			aria-expanded={expanded}
 		>
 			{@render children?.()}
 		</div>

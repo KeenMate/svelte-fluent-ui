@@ -84,18 +84,18 @@
 	{...restProps}
 >
 	{#if iconStart}
-		<span slot={children ? "start" : undefined}>
-			{@render iconStart?.()}
+		<span slot="start">
+			{@render iconStart()}
 		</span>
 	{/if}
 
 	{#if children}
-		{@render children?.()}
+		{@render children()}
 	{/if}
 
 	{#if iconEnd}
-		<span slot={children ? "end" : undefined}>
-			{@render iconEnd?.()}
+		<span slot="end">
+			{@render iconEnd()}
 		</span>
 	{/if}
 </fluent-anchor>

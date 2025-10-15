@@ -27,6 +27,10 @@
 		children?: SlotType
 		actions?: SlotType
 		dismissButtonText?: SlotType
+		onClose?: () => void
+		size?: "small" | "medium" | "large" | "extra-large" | "full"
+		width?: string
+		height?: string
 		[prop: string]: any
 	}
 
@@ -42,8 +46,25 @@
 		    children = undefined,
 		    actions = undefined,
 		    dismissButtonText = undefined,
+		    onClose = undefined,
+		    size = "medium",
+		    width = undefined,
+		    height = undefined,
 		...restProps
 	    }: Props = $props()
+
+	// Size mappings
+	const sizeMap = {
+		"small": { width: "400px", height: "auto" },
+		"medium": { width: "600px", height: "auto" },
+		"large": { width: "800px", height: "auto" },
+		"extra-large": { width: "1000px", height: "auto" },
+		"full": { width: "90vw", height: "90vh" }
+	}
+
+	const dialogWidth = width || sizeMap[size].width
+	const dialogHeight = height || sizeMap[size].height
+	const dialogStyle = `--dialog-width: ${dialogWidth}; --dialog-height: ${dialogHeight};`
 
 	let element: HTMLElement & {
 		show: Function
@@ -66,6 +87,7 @@
 
 		visible = false
 		element.hide()
+		onClose?.()
 	}
 
 	export function toggle() {
@@ -78,7 +100,12 @@
 			element.show()
 		} else {
 			element.hide()
+			onClose?.()
 		}
+	}
+
+	function handleClose() {
+		hide()
 	}
 </script>
 
@@ -91,12 +118,16 @@
 	{ariaDescribedby}
 	{ariaLabelledby}
 	{ariaLabel}
+	style={dialogStyle + (restProps.style ? ` ${restProps.style}` : '')}
 >
 	<div class="dialog-container">
 		{#if !preventClose}
 			<div class="close-button-wrapper">
-				<!-- todo: proper close button -->
-				X
+				<Button appearance="stealth" onClick={handleClose} aria-label="Close dialog">
+					<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+						<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
+					</svg>
+				</Button>
 			</div>
 		{/if}
 

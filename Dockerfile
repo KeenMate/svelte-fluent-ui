@@ -1,60 +1,31 @@
-# 
-#  ███████╗███████╗████████╗██╗   ██╗██████╗ 
-#  ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
-#  ███████╗█████╗     ██║   ██║   ██║██████╔╝
-#  ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
-#  ███████║███████╗   ██║   ╚██████╔╝██║     
-#  ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
-#                                            
-# 
-
-ARG NPM_SCRIPT="build"
-ARG NODE_ENV="production"
-
-
-# 
-#  ██████╗ ██╗   ██╗██╗██╗     ██████╗ 
-#  ██╔══██╗██║   ██║██║██║     ██╔══██╗
-#  ██████╔╝██║   ██║██║██║     ██║  ██║
-#  ██╔══██╗██║   ██║██║██║     ██║  ██║
-#  ██████╔╝╚██████╔╝██║███████╗██████╔╝
-#  ╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ 
-#                                      
-# 
-
-# build components preview
-FROM node:lts AS build
-ARG NPM_SCRIPT
-ENV NODE_ENV=${NODE_ENV}
+# Build stage
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY ./package.json \
-  ./package-lock.json ./
+# Copy package files
+COPY package*.json ./
 
+# Install dependencies
 RUN npm ci
 
-COPY ./tsconfig.json \
-  ./svelte.config.js \
-  ./vite.config.ts ./
+# Copy source files
+COPY . .
 
-# COPY ./.svelte-kit ./.svelte-kit
-COPY ./static/ ./static
-COPY ./src/ ./src
+# Build the app (this creates static files in the build directory)
+RUN npm run build
 
-RUN npm run ${NPM_SCRIPT}
+# Production stage
+FROM nginx:alpine
 
-# 
-#  ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
-#  ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
-#  ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝
-#  ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗
-#  ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
-#  ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝
-#                                                   
-# 
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
 
-FROM caddy:2
+# Copy built files from builder stage
+COPY --from=builder /app/build /usr/share/nginx/html
 
-COPY Caddyfile /etc/caddy/Caddyfile
-COPY --from=build /app/build /srv
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

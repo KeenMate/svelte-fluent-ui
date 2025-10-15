@@ -89,7 +89,8 @@
 				justify-content: center;
 				width: 5rem;
 				height: 5rem;
-				background-color: #d7d7d7;
+				background-color: var(--neutral-layer-2, #f5f5f5);
+				color: var(--neutral-foreground-rest, #242424);
 				border-radius: .15em;
 				line-height: 1;
 				font-family: monospace;

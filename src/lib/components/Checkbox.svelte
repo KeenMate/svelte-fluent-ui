@@ -30,8 +30,6 @@
 		onClick = undefined
 	    }: Props = $props()
 
-	let intermediate = $state(false)
-
 	function handleOnClick(ev: PointerEvent) {
 		ev.preventDefault()
 		ev.stopImmediatePropagation()
@@ -41,28 +39,28 @@
 		}
 
 		const previousValue = $state.snapshot(checked)
-		// intermediate state not working
-		// const newChecked = (ev as any).target.checked
-		// if (withIntermediate) {
-		// 	if (previousValue && !intermediate) {
-		// 		console.log("setting intermediate")
-		// 		intermediate = true
-		// 	} else {
-		// 		console.log("regular update checked")
-		// 		checked = newChecked
-		// 		intermediate = false
-		// 	}
-		// } else {
-		// 	checked = newChecked
-		// }
-		checked = (ev as any).target.checked
+
+		if (withIntermediate) {
+			// Three-state cycle: true -> null (indeterminate) -> false -> true
+			if (previousValue === true) {
+				checked = null
+			} else if (previousValue === null) {
+				checked = false
+			} else {
+				checked = true
+			}
+		} else {
+			// Two-state toggle: true <-> false
+			checked = (ev as any).target.checked
+		}
 
 		onClick?.(ev, previousValue)
 	}
 </script>
 
 <fluent-checkbox
-	{checked}
+	checked={checked === true}
+	indeterminate={checked === null}
 	{readonly}
 	{disabled}
 	onclick={handleOnClick}

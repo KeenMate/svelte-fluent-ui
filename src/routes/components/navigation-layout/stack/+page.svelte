@@ -156,7 +156,8 @@
 		.example {
 			:global {
 				p {
-					background-color: #d7d7d7;
+					background-color: var(--neutral-layer-2, #f5f5f5);
+					color: var(--neutral-foreground-rest, #242424);
 					padding: .25rem;
 					border-radius: .15em;
 					line-height: 1;
