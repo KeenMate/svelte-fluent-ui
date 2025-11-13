@@ -1,4 +1,5 @@
 <script lang="ts" generics="T">
+	import type {Snippet} from "svelte"
 	import type {SlotType} from "../types/index.js"
 
 	type Column<T> = {
@@ -9,6 +10,8 @@
 		width?: string
 		align?: "left" | "center" | "right"
 		format?: (value: any, row: T) => string
+		template?: (row: T) => string
+		snippet?: Snippet<[T]>
 	}
 
 	type Props<T> = {
@@ -126,6 +129,9 @@
 	}
 
 	function getCellValue(item: T, column: Column<T>): string {
+		if (column.template) {
+			return column.template(item)
+		}
 		const value = item[column.field as keyof T]
 		if (column.format) {
 			return column.format(value, item)
@@ -133,10 +139,18 @@
 		return String(value ?? "")
 	}
 
+	function hasTemplate(column: Column<T>): boolean {
+		return !!column.template
+	}
+
+	function hasSnippet(column: Column<T>): boolean {
+		return !!column.snippet
+	}
+
 	let computedClass = $derived(`quickgrid ${striped ? "striped" : ""} ${hoverable ? "hoverable" : ""} ${className}`.trim())
 </script>
 
-<div class="quickgrid-container" {style} {...restProps}>
+<div class="quickgrid-container" {style} >
 	<table class={computedClass}>
 		<thead>
 			{#if filterable}
@@ -193,7 +207,13 @@
 					<tr>
 						{#each columns as column}
 							<td style={`text-align: ${column.align || "left"}`}>
-								{getCellValue(item, column)}
+								{#if hasSnippet(column)}
+									{@render column.snippet?.(item)}
+								{:else if hasTemplate(column)}
+									{@html getCellValue(item, column)}
+								{:else}
+									{getCellValue(item, column)}
+								{/if}
 							</td>
 						{/each}
 					</tr>

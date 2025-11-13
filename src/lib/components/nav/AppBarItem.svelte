@@ -26,7 +26,6 @@
 </script>
 
 <div
-	{...restProps}
 	class="fluent-appbar-item {restProps.class || ''}"
 >
 	<div class="fluentui-counterbadge-container">

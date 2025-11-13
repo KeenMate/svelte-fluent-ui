@@ -3,32 +3,29 @@
  * This file imports all component styles and theme system
  *
  * Usage in themes:
- * Use @import to override variables before including this file:
+ * Use @use to override variables before including this file:
  *
- * // 1. Import tokens
- * @import 'svelte-fluentui/assets/styles/tokens';
+ * // 1. Use tokens
+ * @use 'svelte-fluentui/assets/styles/tokens';
  *
- * // 2. Override variables
- * $navbar-bg-light: #FFCC00;
- * $sidebar-bg-light: #000000;
- *
- * // 3. Import everything
- * @import 'svelte-fluentui/main';
+ * // 2. Override variables with @use ... with ()
+ * @use 'svelte-fluentui/main' with (
+ *   $navbar-bg-light: #FFCC00,
+ *   $sidebar-bg-light: #000000
+ * );
  */
 
-// Import FluentUI web components styles
-@import "../assets/styles/fluent-ui/main";
+// Use FluentUI web components styles
+@use "../assets/styles/fluent-ui/main";
 
-// Import variables (with !default flags, can be overridden by themes)
-@import "../assets/styles/variables.scss";
+// Use theme system (converts variables to CSS custom properties)
+// Note: theme.scss internally loads variables.scss
+@use "../assets/styles/theme.scss";
 
-// Import theme system (converts variables to CSS custom properties)
-@import "../assets/styles/theme.scss";
+// Use component styles
+@use "../assets/styles/layout.scss";
+@use "../assets/styles/nav.scss";
+@use "../assets/styles/components.scss";
 
-// Import component styles
-@import "../assets/styles/layout.scss";
-@import "../assets/styles/nav.scss";
-@import "../assets/styles/components.scss";
-
-// Import FluentUI Blazor compatibility styles
-@import "../assets/styles/fluent-blazor-compat.scss";
+// Use FluentUI Blazor compatibility styles
+@use "../assets/styles/fluent-blazor-compat.scss";

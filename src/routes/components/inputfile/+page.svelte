@@ -36,6 +36,14 @@
 	validation, and progress tracking. Inspired by the FluentUI Blazor InputFile component.
 </p>
 
+<Card>
+	<h3>Reference</h3>
+	<p>
+		<strong>FluentUI Web Components:</strong> N/A (custom implementation)<br/>
+		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/InputFile" target="_blank" rel="noopener noreferrer">FluentInputFile</a>
+	</p>
+</Card>
+
 <h2>Examples</h2>
 
 <!-- Basic InputFile with automatic upload -->

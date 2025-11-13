@@ -10,6 +10,20 @@ A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2
 - 🎯 **Svelte 5 Compatible** - Works with the latest Svelte features
 - 🎨 **SCSS & Tailwind CSS** - Flexible styling options
 - 📦 **Tree-shakeable** - Import only what you need
+- ✨ **FluentUI Blazor Inspired** - Advanced components like DatePicker, TimePicker, InputFile, and Autocomplete
+- 💾 **Navigation Persistence** - Sidebar menu state persists across page reloads with localStorage
+- 🎯 **Active Route Highlighting** - Current page automatically highlighted in navigation
+
+## Highlights
+
+- **Navigation Persistence** - Sidebar menu state automatically saved to localStorage and restored on page reload
+- **Active Route Highlighting** - Current page is automatically highlighted in the navigation menu
+- **DatePicker & TimePicker** - Full-featured date and time selection with calendar popup and time picker
+- **InputFile** - Drag-and-drop file upload with validation and progress tracking
+- **Autocomplete** - Multiple selection with tag/chip display and async search support
+- **QuickGrid** - Advanced data grid with sorting, filtering, and pagination
+- **Three-State Checkbox** - Checkbox with indeterminate state support
+- **Responsive Layout** - Complete layout system with Grid, Stack, and responsive components
 
 ## Installation
 
@@ -37,13 +51,17 @@ npm install svelte-fluentui
 - `TextField` - Text input with validation
 - `NumberField` - Numeric input control
 - `Textarea` - Multi-line text input
-- `Checkbox` - Checkbox input
+- `Checkbox` - Checkbox input with three-state support
 - `Radio` / `RadioGroup` - Radio button controls
 - `Switch` - Toggle switch
 - `Select` - Dropdown selection
 - `Combobox` - Searchable dropdown
+- `Autocomplete` - Multiple selection with tags/chips (inspired by FluentUI Blazor)
 - `Slider` - Range slider control
 - `Search` - Search input field
+- `DatePicker` - Date selection with calendar popup (inspired by FluentUI Blazor)
+- `TimePicker` - Time selection with hour/minute/second picker (inspired by FluentUI Blazor)
+- `InputFile` - File upload with drag-drop and progress tracking (inspired by FluentUI Blazor)
 
 ### Data Display
 - `DataGrid` / `DataGridRow` / `DataGridCell` - Data table components
@@ -166,10 +184,19 @@ npm install svelte-fluentui
 />
 ```
 
-### Navigation Layout
+### Navigation Layout with Persistence
 ```svelte
 <script>
-  import { Layout, Header, NavMenu, NavItem, BodyContent } from 'svelte-fluentui'
+  import { Layout, Header, NavMenu, NavGroup, NavLinkItem, BodyContent } from 'svelte-fluentui'
+  import { page } from '$app/stores'
+
+  // Check if a link is active based on current route
+  function isActive(href: string): boolean {
+    if (!href) return false
+    if (href === "/" && $page.url.pathname === "/") return true
+    if (href !== "/" && $page.url.pathname.startsWith(href)) return true
+    return false
+  }
 </script>
 
 <Layout>
@@ -178,15 +205,104 @@ npm install svelte-fluentui
   </Header>
 
   <NavMenu slot="navigation">
-    <NavItem href="/">Home</NavItem>
-    <NavItem href="/about">About</NavItem>
-    <NavItem href="/contact">Contact</NavItem>
+    <NavGroup title="Main Menu">
+      {#snippet linkText()}
+        Main Menu
+      {/snippet}
+
+      <NavLinkItem href="/" class={isActive("/") ? "active" : ""}>
+        Home
+      </NavLinkItem>
+      <NavLinkItem href="/about" class={isActive("/about") ? "active" : ""}>
+        About
+      </NavLinkItem>
+      <NavLinkItem href="/contact" class={isActive("/contact") ? "active" : ""}>
+        Contact
+      </NavLinkItem>
+    </NavGroup>
   </NavMenu>
 
   <BodyContent>
     <!-- Main content here -->
   </BodyContent>
 </Layout>
+```
+
+### Date and Time Pickers
+```svelte
+<script>
+  import { DatePicker, TimePicker } from 'svelte-fluentui'
+
+  let selectedDate = $state<Date | null>(new Date())
+  let selectedTime = $state<string | null>("14:30")
+</script>
+
+<DatePicker
+  bind:value={selectedDate}
+  label="Select date"
+  placeholder="Choose a date"
+/>
+
+<TimePicker
+  bind:value={selectedTime}
+  label="Select time"
+  use24Hours={true}
+  showSeconds={false}
+/>
+```
+
+### Autocomplete with Multiple Selection
+```svelte
+<script lang="ts">
+  import { Autocomplete } from 'svelte-fluentui'
+
+  const options = [
+    { value: "1", text: "Option 1" },
+    { value: "2", text: "Option 2" },
+    { value: "3", text: "Option 3" }
+  ]
+
+  let selected = $state<string[]>([])
+</script>
+
+<Autocomplete
+  bind:selectedOptions={selected}
+  options={options}
+  label="Select multiple"
+  placeholder="Type to search..."
+  maxSelectedOptions={5}
+/>
+```
+
+### File Upload with Progress
+```svelte
+<script lang="ts">
+  import { InputFile } from 'svelte-fluentui'
+  import type { FileUploadHandler } from 'svelte-fluentui'
+
+  const uploadFile: FileUploadHandler = async (file, onProgress) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    // Your upload logic here
+    // Call onProgress(percent) to update progress bar
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) throw new Error('Upload failed')
+  }
+</script>
+
+<InputFile
+  multiple={true}
+  accept="image/*"
+  maxFileSize={5 * 1024 * 1024}
+  uploadFileCallback={uploadFile}
+  onFileUploaded={(file) => console.log('Uploaded:', file.name)}
+/>
 ```
 
 ## Development

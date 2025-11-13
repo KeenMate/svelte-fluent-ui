@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {fluentCheckbox, provideFluentDesignSystem} from "@fluentui/web-components"
 
-	provideFluentDesignSystem().register(
-		fluentCheckbox()
-	)
+	if (!customElements.get('fluent-checkbox')) {
+		provideFluentDesignSystem().register(fluentCheckbox())
+	}
 
 	type Props = {
 		checked: boolean | null;

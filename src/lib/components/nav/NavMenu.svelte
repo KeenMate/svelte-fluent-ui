@@ -25,7 +25,6 @@
 </script>
 
 <div
-	{...restProps}
 	role="menu"
 	class="fluent-nav-menu {restProps.class || ''}"
 	class:collapsed

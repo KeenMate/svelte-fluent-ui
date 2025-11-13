@@ -133,7 +133,6 @@
 			{appearance}
 			oninput={handleInputChange}
 			style="width: 100%; cursor: pointer;"
-			{...restProps}
 		>
 			{#snippet end()}
 				<!-- Calendar icon -->

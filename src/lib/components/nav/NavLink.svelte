@@ -34,7 +34,6 @@
 	this={renderElement}
 	{href}
 	{rel}
-	{...restProps}
 	class="fluent-nav-link {restProps.class || ''}"
 	onclick={onClick}
 >

@@ -111,14 +111,13 @@
 
 <fluent-dialog
 	bind:this={element}
-	{...restProps}
 	{modal}
 	hidden={!visible}
 	{trapFocus}
 	{ariaDescribedby}
 	{ariaLabelledby}
 	{ariaLabel}
-	style={dialogStyle + (restProps.style ? ` ${restProps.style}` : '')}
+	style={dialogStyle + (restProps?.style ? ` ${restProps.style}` : '')}
 >
 	<div class="dialog-container">
 		{#if !preventClose}

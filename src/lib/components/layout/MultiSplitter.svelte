@@ -162,7 +162,6 @@
 
 <div
 	bind:this={element}
-	{...restProps}
 	class="fluent-multi-splitter {className}"
 	style={computedStyle}
 	data-orientation={orientation}

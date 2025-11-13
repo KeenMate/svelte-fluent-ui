@@ -201,7 +201,6 @@
 			{required}
 			{appearance}
 			style="width: 100%;"
-			{...restProps}
 		>
 			{#snippet end()}
 				<!-- Clock icon -->

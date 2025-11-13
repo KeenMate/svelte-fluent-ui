@@ -238,7 +238,6 @@
 		{disabled}
 		onchange={handleInputChange}
 		style="display: none;"
-		{...restProps}
 	/>
 
 	<!-- Drag and drop zone -->

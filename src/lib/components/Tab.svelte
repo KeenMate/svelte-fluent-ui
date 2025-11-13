@@ -51,7 +51,6 @@
 		{disabled}
 		aria-label={ariaLabel || label}
 		{overflow}
-		{...restProps}
 	>
 		{#if icon}
 			{@render icon?.()}

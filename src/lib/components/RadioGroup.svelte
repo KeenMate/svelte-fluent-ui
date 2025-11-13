@@ -47,7 +47,6 @@
 	{name}
 	{readonly}
 	{disabled}
-	{...restProps}
 >
 	{@render children?.()}
 </fluent-radio-group>

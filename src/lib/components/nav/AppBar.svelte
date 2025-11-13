@@ -26,7 +26,6 @@
 
 <nav
 	orientation={orientation || AppBarOrientation.Vertical}
-	{...restProps}
 	class={computedClasses}
 >
 	{@render children?.()}

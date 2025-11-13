@@ -5,6 +5,142 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Navigation Persistence** - Sidebar navigation state persists across page reloads
+  - LocalStorage integration for NavGroup expanded/collapsed state
+  - New `navigationStore` for managing navigation state
+  - NavGroup accepts optional `title` prop for unique identification
+  - Automatic restore of navigation state on page load
+
+- **Active Navigation Highlighting** - Current page is highlighted in navigation menu
+  - Route-based active state detection using SvelteKit's `$page` store
+  - Automatic "active" class application to current NavLinkItem
+  - Exact match for home page, startsWith match for other routes
+
+- **DatePicker Component** - Date selection with calendar popup (inspired by FluentUI Blazor)
+  - Calendar popup with date selection
+  - Min/max date validation
+  - Custom date formatting options
+  - Clear button functionality
+  - Different appearances (filled, outline)
+  - Disabled, readonly, and required states
+  - Demo page at `/components/datepicker`
+
+- **TimePicker Component** - Time selection with hour/minute/second picker (inspired by FluentUI Blazor)
+  - 12-hour and 24-hour format support
+  - Optional seconds display
+  - Custom hour and minute step intervals
+  - AM/PM selector for 12-hour format
+  - Time validation and formatting
+  - Clear button functionality
+  - Different appearances (filled, outline)
+  - Demo page at `/components/timepicker`
+
+- **InputFile Component** - File upload with drag-drop, validation, and progress tracking (inspired by FluentUI Blazor)
+  - Drag and drop zone with visual feedback
+  - File type filtering via accept prop
+  - File size and count validation
+  - Multiple file selection support
+  - Progress tracking with visual progress bars
+  - Generic upload callback for custom upload logic
+  - Individual file removal and clear all
+  - File states: pending, uploading, completed, error
+  - Events: onFileSelected, onFileUploaded, onFileError, onCompleted
+  - Demo page at `/components/inputfile`
+
+- **Autocomplete Component** - Multiple selection with tag/chip display (inspired by FluentUI Blazor)
+  - Multiple selection with badge/chip display
+  - Custom filtering with "contains" logic (case insensitive)
+  - Async search support via onOptionsSearch callback
+  - Keyboard navigation (Arrow Up/Down, Enter, Escape, Tab)
+  - Maximum selections limit
+  - Keep open after selection option
+  - Loading indicator for async searches
+  - Click outside to close
+  - Configurable max results display
+  - People picker use case support
+  - Demo page at `/components/autocomplete`
+
+### Changed
+- **TextField Component** - Enhanced event handling support
+  - Added onKeyDown, onKeyUp, onFocus, onBlur event props
+  - Now properly forwards keyboard and focus events from underlying fluent-text-field
+  - Matches native web component event handling capabilities
+
+### Fixed
+- **Component Props Handling** - Removed unsafe restProps spreading across all components (breaking fix for Svelte 5 compatibility)
+  - Completely removed all `{...restProps}`, `{...(restProps || {})}`, and `{...rest}` template spreads
+  - Prevents "Cannot convert undefined or null to object" errors caused by Svelte 5's strict proxy handling
+  - Affected 49 components: Icon, Stack, Header, Layout, Footer, Grid, GridItem, Accordion, AccordionItem, Anchor, Autocomplete, Badge, Breadcrumb, BreadcrumbItem, Button, Card, Combobox, DataGrid, DataGridCell, DataGridRow, DatePicker, Dialog, InputFile, Listbox, MultiSplitter, MultiSplitterPane, TopNav, AppBar, AppBarItem, NavExpander, NavGroup, NavItem, NavLink, NavLinkItem, NavMenu, Option, Paginator, PositioningRegion, QuickGrid, Radio, RadioGroup, Search, Select, Switch, Tab, TabPanel, Tabs, Textarea, TimePicker, Toolbar, Tooltip, ResourcesIcon, Calendar
+  - Removed 18 conditional spreads from Textarea component
+  - **Note**: Components no longer forward arbitrary HTML attributes to underlying elements. Use explicit props instead.
+  - Fixed Dialog.svelte restProps.style access with optional chaining
+
+- **Checkbox Component** - Fixed duplicate custom element registration errors
+  - Added check for existing 'fluent-checkbox' element before registration
+  - Prevents "Cannot read properties of null (reading 'prototype')" errors
+
+- **PositioningRegion Component** - Complete rewrite for proper dropdown positioning
+  - Changed from `position: absolute` to `position: fixed` for viewport-relative positioning
+  - Removed incorrect scroll offset calculations (window.scrollY/scrollX)
+  - Added dual-mode support:
+    - Positioned overlay mode (with anchor): for dropdowns, tooltips, popovers
+    - Static wrapper mode (without anchor): for NavLink and other components
+  - Fixed sidebar navigation items rendering empty after initial positioning fix
+  - Dropdowns now appear directly below anchor elements instead of at page bottom
+
+- **Autocomplete Component** - Improved single-select mode UX
+  - Single-select now displays selected value inline in TextField (like Material-UI/Ant Design)
+  - Added clear button (X) in TextField end slot for single-select mode
+  - Hidden badge container and yellow background for single-select
+  - Badge container only appears for multi-select mode (maxSelectedOptions > 1)
+  - Hidden "Maximum 1 selection reached" message in single-select mode
+  - Auto-clears selection when user starts typing in single-select mode
+
+- **Autocomplete Component** - Fixed input disabling deadlock
+  - Removed `isMaxReached` from TextField disabled condition
+  - Input now stays enabled when max selections reached
+  - Users can always remove selections via X buttons
+  - Selection prevention already handled by selectOption function
+  - Warning message still shows when max reached
+  - Prevents UX deadlock where users couldn't fix their mistakes
+
+- **Button Component** - Fixed icon-only class incorrectly applied to buttons with text
+  - Changed icon slots from `<template>` to `<span>` with conditional rendering
+  - Fixed icons not displaying at end of buttons
+  - Added flexbox styles for proper icon vertical alignment
+
+- **Dialog Component** - Fixed close button not being clickable
+  - Replaced text "X" with proper Button component
+  - Added onClose callback prop
+  - Updated hide() and toggle() to call onClose callback
+
+- **Checkbox Component** - Fixed three-state checkbox only toggling true/false
+  - Implemented proper three-state cycle: true → null (indeterminate) → false → true
+  - Set indeterminate attribute on fluent-checkbox element
+  - Fixed "All" checkbox to show indeterminate state when some items unchecked
+  - Made allChecked a derived value based on child checkboxes
+
+- **TimePicker Component** - Fixed fields appearing locked/disabled
+  - Moved click handler from icon button to entire wrapper div
+  - Added cursor: pointer style to wrapper
+  - Fixed popup closing immediately after selecting time values
+  - Added event.stopPropagation() to prevent click bubbling
+
+### Changed
+- **Dialog Component** - Added size control options
+  - Added size prop with predefined sizes: small (400px), medium (600px), large (800px), extra-large (1000px), full (90vw x 90vh)
+  - Added width and height props for custom sizes
+  - Created demo page showing all size options
+
+- **Checkbox Demo Page** - Enhanced with comprehensive examples
+  - Added horizontal and vertical layout examples
+  - Three-state checkbox examples
+  - Parent-child relationship with indeterminate state
+  - Matches FluentUI Blazor documentation style
+
 ## [1.0.0-rc02] - 2025-10-05
 
 ### Added

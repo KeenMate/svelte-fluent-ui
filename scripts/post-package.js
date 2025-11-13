@@ -27,20 +27,38 @@ const srcAssets = path.join(rootDir, 'src', 'assets');
 const distAssets = path.join(rootDir, 'dist', 'assets');
 copyDir(srcAssets, distAssets);
 
-// Generate main.scss with @import (required for theme override pattern)
-const mainScssContent = `// Import FluentUI web components styles
-@import "assets/styles/fluent-ui/main";
+// Generate main.scss with @use (no @import, following Dart Sass 3.0 requirements)
+const mainScssContent = `/**
+ * Main SCSS Entry Point
+ * This file imports all component styles and theme system
+ *
+ * Usage in themes:
+ * Since Sass module system doesn't support dynamic variable overrides,
+ * themes should create their own variables file and load components individually:
+ *
+ * // custom-theme.scss
+ * @use 'my-variables' as variables;
+ * @use 'svelte-fluentui/assets/styles/fluent-ui/main';
+ * @use 'svelte-fluentui/assets/styles/theme' with ($navbar-bg-light: #FFCC00);
+ * @use 'svelte-fluentui/assets/styles/layout';
+ * @use 'svelte-fluentui/assets/styles/nav';
+ * @use 'svelte-fluentui/assets/styles/components';
+ */
 
-// Import variables (with !default flags, can be overridden by themes)
-@import "assets/styles/variables.scss";
+// Use FluentUI web components styles
+@use "assets/styles/fluent-ui/main";
 
-// Import theme system (converts variables to CSS custom properties)
-@import "assets/styles/theme.scss";
+// Use theme system (converts variables to CSS custom properties)
+// Note: theme.scss internally loads variables.scss
+@use "assets/styles/theme.scss";
 
-// Import component styles
-@import "assets/styles/layout.scss";
-@import "assets/styles/nav.scss";
-@import "assets/styles/components.scss";
+// Use component styles
+@use "assets/styles/layout.scss";
+@use "assets/styles/nav.scss";
+@use "assets/styles/components.scss";
+
+// Use FluentUI Blazor compatibility styles
+@use "assets/styles/fluent-blazor-compat.scss";
 `;
 fs.writeFileSync(path.join(rootDir, 'dist', 'main.scss'), mainScssContent);
 

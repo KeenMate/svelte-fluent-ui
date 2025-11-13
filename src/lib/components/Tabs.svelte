@@ -48,7 +48,6 @@
 	activeid={activeId}
 	activeindicator={showActiveIndicator.toString()}
 	ontabchange={handleTabChange}
-	{...restProps}
 >
 	{@render childContent?.()}
 

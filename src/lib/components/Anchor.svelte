@@ -81,7 +81,6 @@
 	{type}
 	{appearance}
 	onclick={handleClick}
-	{...restProps}
 >
 	{#if iconStart}
 		<span slot="start">

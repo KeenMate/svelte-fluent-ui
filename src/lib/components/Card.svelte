@@ -38,7 +38,7 @@
 	})
 </script>
 
-<div class={computedClass} style={computedStyle} {...restProps}>
+<div class={computedClass} style={computedStyle} >
 	{@render children?.()}
 </div>
 
@@ -49,7 +49,7 @@
 		border-radius: var(--control-corner-radius, 4px);
 		border: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-		overflow: hidden;
+		overflow: visible;
 		transition: box-shadow 0.2s ease;
 	}
 

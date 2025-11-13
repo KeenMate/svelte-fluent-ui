@@ -56,7 +56,6 @@
 </script>
 
 <nav
-	{...restProps}
 	class="topnav {className}"
 	style="height: {height}px; {style}"
 >

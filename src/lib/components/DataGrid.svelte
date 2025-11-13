@@ -48,7 +48,6 @@
 	role={role}
 	onclosecolumnoptions={handleCloseColumnOptions}
 	onclosecolumnresize={handleCloseColumnResize}
-	{...restProps}
 >
 	{#if children}
 		{@render children?.()}

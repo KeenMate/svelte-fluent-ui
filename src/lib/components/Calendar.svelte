@@ -358,7 +358,7 @@
 {/snippet}
 
 <div
-	{...restProps}
+	
 	class="{restProps.class || ''}"
 	class:fluent-calendar={view === "days"}
 	class:fluent-month={view === "months"}

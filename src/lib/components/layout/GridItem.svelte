@@ -119,7 +119,6 @@
 		data-xl={xl}
 		data-xxl={xxl}
 		data-hidden-when={hiddenWhen}
-		{...restProps}
 	>
 		{@render children?.()}
 	</div>

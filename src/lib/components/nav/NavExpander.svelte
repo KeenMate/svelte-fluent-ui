@@ -16,7 +16,6 @@
 </script>
 
 <NavItem
-	{...restProps}
 	class="expander {restProps.class || ''}"
 	{onClick}
 >

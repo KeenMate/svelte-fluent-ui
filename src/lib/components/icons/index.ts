@@ -1,3 +1,4 @@
+export {default as Icon} from "../Icon.svelte"
 export {default as ExpandIcon} from "./ExpandIcon.svelte"
 export {default as ChevronDoubleRight} from "./ChevronDoubleRight.svelte"
 export {default as HamburgerIcon} from "./HamburgerIcon.svelte"

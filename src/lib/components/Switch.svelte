@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {fluentSwitch, provideFluentDesignSystem} from "@fluentui/web-components"
+	import { untrack } from 'svelte'
 	import type {SlotType} from "../types/index.js"
 
 	provideFluentDesignSystem().register(fluentSwitch())
@@ -48,8 +49,16 @@
 
 	function handleChange(e: Event) {
 		const target = e.target as any
+		const newChecked = target.checked ?? false
+
+		// Update the bindable value without creating reactive tracking
+		untrack(() => {
+			checked = newChecked
+		})
+
+		// Call onChange callback if provided
 		if (onChange) {
-			onChange(target.checked ?? false)
+			onChange(newChecked)
 		}
 	}
 </script>
@@ -66,7 +75,6 @@
 	current-checked={checked}
 	onchange={handleChange}
 	role="switch"
-	{...restProps}
 >
 	{#if label}
 		{label}

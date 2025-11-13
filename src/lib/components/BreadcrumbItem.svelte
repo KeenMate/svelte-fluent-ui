@@ -22,7 +22,6 @@
 </script>
 
 <fluent-breadcrumb-item
-	{...restProps}
 	{href}
 >
 	{#if separator}

@@ -6,8 +6,19 @@
 	import {settings, accentColors} from "$lib/stores/settings.js"
 	import {onMount, tick} from "svelte"
 	import {baseLayerLuminance, StandardLuminance, accentBaseColor, neutralBaseColor, SwatchRGB} from "@fluentui/web-components"
+	import {page} from "$app/stores"
 
 	let {children} = $props()
+
+	// Check if a link is active based on current route
+	function isActive(href: string): boolean {
+		if (!href) return false
+		// Exact match for home page
+		if (href === "/" && $page.url.pathname === "/") return true
+		// For other pages, check if current path starts with href (but not for home)
+		if (href !== "/" && $page.url.pathname.startsWith(href)) return true
+		return false
+	}
 
 	let settingsOpen = $state(false)
 
@@ -326,7 +337,7 @@
 				<div class="sidebar">
 					<NavMenu>
 						{#each navigation as group}
-							<NavGroup>
+							<NavGroup title={group.title}>
 								{#snippet linkIcon()}
 									<span class="nav-icon">{group.icon}</span>
 								{/snippet}
@@ -335,7 +346,14 @@
 								{/snippet}
 
 								{#each group.items as item}
-									<NavLinkItem href={item.href} target={item.target} rel={item.rel}>{item.label}</NavLinkItem>
+									<NavLinkItem
+										href={item.href}
+										target={item.target}
+										rel={item.rel}
+										class={isActive(item.href) ? "active" : ""}
+									>
+										{item.label}
+									</NavLinkItem>
 								{/each}
 							</NavGroup>
 						{/each}

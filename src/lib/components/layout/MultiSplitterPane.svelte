@@ -87,7 +87,6 @@
 
 <div
 	bind:this={element}
-	{...restProps}
 	class="fluent-multi-splitter-pane {className}"
 	style={computedStyle}
 	data-index={index}

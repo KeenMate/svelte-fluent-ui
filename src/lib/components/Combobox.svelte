@@ -147,7 +147,6 @@
 	{required}
 	{autofocus}
 	{name}
-	{...restProps}
 >
 	{#if children}
 		{@render children()}

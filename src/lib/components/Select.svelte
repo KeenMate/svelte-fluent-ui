@@ -76,7 +76,6 @@
 	current-value={value}
 	aria-label={ariaLabel || label}
 	onchange={handleChange}
-	{...restProps}
 >
 	{#if children}
 		{@render children?.()}

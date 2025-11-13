@@ -60,7 +60,6 @@
 	{formtarget}
 	{disabled}
 	{style}
-	{...restProps}
 	onclick={onClick}
 >
 	{#if start}

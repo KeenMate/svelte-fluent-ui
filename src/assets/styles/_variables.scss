@@ -1,10 +1,10 @@
 /**
  * Semantic Variables - Theme overridable
  * These variables map to design tokens and can be overridden by themes
- * All variables use so themes can override them before import
+ * All variables use !default so themes can override them before @use
  */
 
-@import 'tokens';
+@use 'tokens' as *;
 
 // ===== LIGHT THEME DEFAULTS =====
 

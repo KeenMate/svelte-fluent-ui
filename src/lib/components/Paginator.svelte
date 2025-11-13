@@ -41,7 +41,7 @@
 	}: Props = $props()
 </script>
 
-<div class="paginator {className}" {style} {...restProps}>
+<div class="paginator {className}" {style} >
 	{#if totalItemCount !== undefined}
 		<div class="summary">
 			{#if summaryTemplate}

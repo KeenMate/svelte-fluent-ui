@@ -53,7 +53,6 @@
 		selected={selected !== undefined ? selected : selectedValue?.value?.includes(value) ?? false}
 		data-option-label={label}
 		{disabled}
-		{...restProps}
 		onclick={handleOnClick}
 	>
 		{@render children()}

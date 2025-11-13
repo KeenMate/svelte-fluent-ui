@@ -64,7 +64,6 @@
 	onkeydown={handleKeyDown}
 	onclick={handleClick}
 	onfocus={handleFocus}
-	{...restProps}
 >
 	{#if children}
 		{@render children?.()}

@@ -18,6 +18,6 @@
 	let element: HTMLElement | undefined = $state()
 </script>
 
-<footer bind:this={element} {...restProps} {style} class="footer {className}">
+<footer bind:this={element}  {style} class="footer {className}">
 	{@render children?.()}
 </footer>

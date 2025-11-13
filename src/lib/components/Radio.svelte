@@ -38,7 +38,6 @@
 <fluent-radio
 	{value}
 	checked={ctx.value === value}
-	{...restProps}
 	onclick={handleOnClick}
 >
 	{@render children?.()}

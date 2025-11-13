@@ -53,7 +53,6 @@
 	data-custom-id={id}
 	heading-level={headingLevel}
 	expanded={expanded === undefined && ctx.value !== undefined ? !!ctx.value?.includes(id) : expanded}
-	{...restProps}
 	onchange={handleOnChange}
 >
 	<div slot="heading">

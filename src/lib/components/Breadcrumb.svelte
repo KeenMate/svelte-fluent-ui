@@ -17,6 +17,6 @@
 	    }: Props = $props()
 </script>
 
-<fluent-breadcrumb {...restProps}>
+<fluent-breadcrumb >
 	{@render children?.()}
 </fluent-breadcrumb>

@@ -65,7 +65,6 @@
 	selected-options={selectedOptionsAttr}
 	{disabled}
 	multiple={multi}
-	{...restProps}
 	onchange={handleOnChange}
 >
 	{@render children?.()}

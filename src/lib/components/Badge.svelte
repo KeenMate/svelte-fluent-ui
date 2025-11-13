@@ -29,7 +29,6 @@
 </script>
 
 <fluent-badge
-	{...restProps}
 	{color}
 	{appearance}
 	{circular}

@@ -73,7 +73,7 @@
 	})
 </script>
 
-<div class="grid-container {className}" style="{style}" {...restProps}>
+<div class="grid-container {className}" style="{style}" >
 	<div
 		bind:this={gridElement}
 		class="fluent-grid"

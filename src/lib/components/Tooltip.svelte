@@ -46,7 +46,6 @@
 	{horizontalViewportLock}
 	{verticalViewportLock}
 	role="tooltip"
-	{...restProps}
 >
 	{#if children}
 		{#if maxWidth}

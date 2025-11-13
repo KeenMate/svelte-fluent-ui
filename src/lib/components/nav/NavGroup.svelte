@@ -4,8 +4,11 @@
 	import NavLink from "$lib/components/nav/NavLink.svelte"
 	import ExpandIcon from "$lib/components/icons/ExpandIcon.svelte"
 	import {classList} from "../../helpers/html.js"
+	import {navigationStore} from "$lib/stores/navigation.js"
+	import {onMount} from "svelte"
 
 	type Props = {
+		title?: string // Unique identifier for persistence
 		expanded?: boolean
 		disabled?: boolean
 		linkIcon?: SlotType
@@ -15,6 +18,7 @@
 	}
 
 	let {
+		    title = undefined,
 		    expanded = $bindable(false),
 		    disabled = undefined,
 		    linkIcon = undefined,
@@ -28,17 +32,31 @@
 		restProps.class
 	))
 
-	// todo: ability to persist expanded state
+	// Load expanded state from localStorage on mount
+	onMount(() => {
+		if (title) {
+			navigationStore.subscribe(state => {
+				const storedExpanded = state[title]
+				if (storedExpanded !== undefined) {
+					expanded = storedExpanded
+				}
+			})()
+		}
+	})
 
 	function onNavLinkClicked(ev: MouseEvent) {
 		expanded = !expanded
+
+		// Persist to localStorage
+		if (title) {
+			navigationStore.setGroupExpanded(title, expanded)
+		}
 	}
 </script>
 
 <NavItem
 	group
 	{disabled}
-	{...restProps}
 	class={navItemClass}
 >
 	<NavLink class="notactive" onClick={onNavLinkClicked}>

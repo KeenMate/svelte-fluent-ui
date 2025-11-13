@@ -26,6 +26,10 @@
 
 		onInput?: (ev: InputEvent) => void
 		onChange?: (ev: Event) => void
+		onKeyDown?: (ev: KeyboardEvent) => void
+		onKeyUp?: (ev: KeyboardEvent) => void
+		onFocus?: (ev: FocusEvent) => void
+		onBlur?: (ev: FocusEvent) => void
 	}
 
 	let {
@@ -43,7 +47,11 @@
 		style = "",
 
 		onInput = undefined,
-		onChange = undefined
+		onChange = undefined,
+		onKeyDown = undefined,
+		onKeyUp = undefined,
+		onFocus = undefined,
+		onBlur = undefined
 	}: Props = $props()
 
 	let element: HTMLElement & {
@@ -95,6 +103,22 @@
 	function handleOnChange(event: Event) {
 		onChange?.(event)
 	}
+
+	function handleOnKeyDown(event: KeyboardEvent) {
+		onKeyDown?.(event)
+	}
+
+	function handleOnKeyUp(event: KeyboardEvent) {
+		onKeyUp?.(event)
+	}
+
+	function handleOnFocus(event: FocusEvent) {
+		onFocus?.(event)
+	}
+
+	function handleOnBlur(event: FocusEvent) {
+		onBlur?.(event)
+	}
 </script>
 
 <fluent-text-field
@@ -111,6 +135,10 @@
 	{style}
 	oninput={handleOnInput}
 	onchange={handleOnChange}
+	onkeydown={handleOnKeyDown}
+	onkeyup={handleOnKeyUp}
+	onfocus={handleOnFocus}
+	onblur={handleOnBlur}
 >
 	{#if children}
 		{@render children()}

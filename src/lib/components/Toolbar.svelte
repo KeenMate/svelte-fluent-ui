@@ -28,7 +28,6 @@
 	class={className}
 	style={style}
 	orientation={orientation}
-	{...restProps}
 >
 	{#if children}
 		{@render children?.()}

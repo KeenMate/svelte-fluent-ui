@@ -35,7 +35,6 @@
 <NavItem
 	{group}
 	{disabled}
-	{...restProps}
 	{onClick}
 >
 	<NavLink
@@ -47,6 +46,5 @@
 		{icon}
 		{children}
 		{afterText}
-		{...restProps}
 	/>
 </NavItem>

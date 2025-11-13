@@ -1,8 +1,9 @@
 /**
  * Theme System
  * Converts SCSS variables to CSS custom properties for runtime theme switching
- * Assumes variables are already imported by main.scss
  */
+
+@use 'variables' as *;
 
 // Generate CSS custom properties from SCSS variables
 :root, [data-theme="light"] {

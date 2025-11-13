@@ -23,7 +23,6 @@
 <div
 	role="menuitem"
 	{disabled}
-	{...restProps}
 	class="fluent-nav-item {restProps.class || ''}"
 	class:fluent-nav-group={group}
 	class:disabled

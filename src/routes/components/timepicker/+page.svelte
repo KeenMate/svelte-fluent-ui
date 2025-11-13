@@ -10,6 +10,19 @@
 
 <h1>TimePicker</h1>
 
+<p>
+	A time selection component with hour/minute/second picker, 12/24-hour format support, and custom step intervals.
+	Inspired by the FluentUI Blazor TimePicker component.
+</p>
+
+<Card>
+	<h3>Reference</h3>
+	<p>
+		<strong>FluentUI Web Components:</strong> N/A (custom implementation)<br/>
+		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/TimePicker" target="_blank" rel="noopener noreferrer">FluentTimePicker</a>
+	</p>
+</Card>
+
 <h2>Examples</h2>
 
 <!-- Basic TimePicker (24-hour) -->

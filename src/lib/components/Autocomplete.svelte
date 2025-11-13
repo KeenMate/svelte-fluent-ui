@@ -63,12 +63,14 @@
 	let isOpen = $state(false)
 	let filteredOptions = $state<OptionItem[]>([])
 	let highlightedIndex = $state(-1)
-	let textFieldElement: HTMLElement | undefined
+	let textFieldElement = $state<HTMLElement | undefined>(undefined)
 	let isSearching = $state(false)
 
 	// Filter options based on search text
 	async function filterOptions(text: string) {
-		if (!text.trim()) {
+		console.log("3. filterOptions called with text:", text)
+		if (!text || !text.trim()) {
+			console.log("4. Text is empty, returning early")
 			filteredOptions = []
 			if (!showOverlayOnEmptyResults) {
 				isOpen = false
@@ -76,24 +78,33 @@
 			return
 		}
 
+		console.log("5. Starting search, isSearching = true")
 		isSearching = true
 
 		try {
 			if (onOptionsSearch) {
+				console.log("6. Using custom onOptionsSearch")
 				const results = await onOptionsSearch(text)
+				console.log("7. Custom search results:", results)
 				filteredOptions = results.slice(0, maxOptionsSearch)
 			} else {
+				console.log("8. Using default filtering with options:", options)
 				// Default filtering: contains (case insensitive)
+				// Filter out already selected options to avoid duplicates
 				const filtered = options.filter(opt =>
-					!isSelected(opt.value) &&
-					opt.text.toLowerCase().includes(text.toLowerCase())
+					opt.text.toLowerCase().includes(text.toLowerCase()) &&
+					!isSelected(opt.value)
 				)
+				console.log("9. Filtered results:", filtered)
 				filteredOptions = filtered.slice(0, maxOptionsSearch)
 			}
 
+			console.log("10. filteredOptions:", filteredOptions)
+			console.log("11. Setting isOpen to:", filteredOptions.length > 0 || showOverlayOnEmptyResults)
 			isOpen = filteredOptions.length > 0 || showOverlayOnEmptyResults
 		} finally {
 			isSearching = false
+			console.log("12. isSearching = false, isOpen =", isOpen)
 		}
 	}
 
@@ -207,6 +218,39 @@
 
 	// Check if max selections reached
 	let isMaxReached = $derived(maxSelectedOptions !== undefined && selectedOptions.length >= maxSelectedOptions)
+
+	// Single-select mode detection
+	let isSingleSelect = $derived(maxSelectedOptions === 1)
+	let hasSingleSelection = $derived(isSingleSelect && selectedOptions.length === 1)
+
+	// Computed display value for TextField
+	let displayValue = $derived(hasSingleSelection ? getOptionText(selectedOptions[0]) : searchText)
+
+	// Handle input change
+	function handleInput(event: Event) {
+		console.log("1. handleInput called")
+		const target = event.target as HTMLInputElement
+
+		// In single-select mode, clear selection when user starts typing
+		if (hasSingleSelection) {
+			selectedOptions = []
+			onSelectedOptionsChange?.(selectedOptions)
+		}
+
+		searchText = target.value
+		console.log("2. searchText set to:", searchText)
+		highlightedIndex = -1
+		filterOptions(searchText)
+	}
+
+	// Clear selection for single-select mode
+	function clearSingleSelection() {
+		if (!disabled && !readonly) {
+			selectedOptions = []
+			searchText = ""
+			onSelectedOptionsChange?.(selectedOptions)
+		}
+	}
 </script>
 
 <div class="fluent-autocomplete {className}" style="{style} {width ? `width: ${width};` : ''}">
@@ -218,24 +262,31 @@
 	{/if}
 
 	<div class="autocomplete-container">
-		<!-- Selected options (chips/tags) -->
-		{#if selectedOptions.length > 0}
+		<!-- Selected options (chips/tags) - Hide for single-select mode, show inline instead -->
+		{#if selectedOptions.length > 0 && !hasSingleSelection}
 			<div class="selected-options">
 				{#each selectedOptions as value}
 					<Badge appearance="neutral" class="selected-chip">
-						<span>{getOptionText(value)}</span>
-						{#if !disabled && !readonly}
-							<button
-								type="button"
-								class="remove-chip"
-								onclick={() => removeOption(value)}
-								aria-label="Remove {getOptionText(value)}"
-							>
-								<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-									<path d="M2.09 2.22a.75.75 0 011.06-.13L6 4.94l2.85-2.85a.75.75 0 111.06 1.06L7.06 6l2.85 2.85a.75.75 0 11-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 01-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 01-.13-1.06z"/>
+						<span class="chip-content">
+							{getOptionText(value)}
+							{#if !disabled && !readonly}
+								<svg
+									class="remove-icon"
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="var(--accent-fill-rest)"
+									role="button"
+									tabindex="0"
+									onclick={() => removeOption(value)}
+									onkeydown={(e) => e.key === 'Enter' && removeOption(value)}
+									aria-label="Remove {getOptionText(value)}"
+								>
+									<title>Remove {getOptionText(value)}</title>
+									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
 								</svg>
-							</button>
-						{/if}
+							{/if}
+						</span>
 					</Badge>
 				{/each}
 			</div>
@@ -244,20 +295,32 @@
 		<!-- Search input -->
 		<div class="search-input-wrapper" bind:this={textFieldElement}>
 			<TextField
-				value={searchText}
+				value={displayValue}
 				{placeholder}
-				{disabled}
-				readonly={readonly || isMaxReached}
+				disabled={disabled || undefined}
+				readonly={readonly || undefined}
 				{required}
 				{appearance}
-				oninput={handleSearchChange}
-				onfocus={handleFocus}
-				onkeydown={handleKeyDown}
+				onInput={handleInput}
+				onKeyDown={handleKeyDown}
+				onFocus={handleFocus}
 				style="width: 100%;"
-				{...restProps}
 			>
 				{#snippet end()}
-					{#if isSearching}
+					{#if hasSingleSelection && !disabled && !readonly}
+						<!-- Clear button for single-select mode -->
+						<button
+							type="button"
+							class="clear-button"
+							onclick={clearSingleSelection}
+							aria-label="Clear selection"
+							title="Clear selection"
+						>
+							<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+								<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
+							</svg>
+						</button>
+					{:else if isSearching}
 						<div class="loading-indicator">
 							<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="spinner">
 								<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" fill="none" opacity="0.25"/>
@@ -297,8 +360,8 @@
 			{/if}
 		</div>
 
-		<!-- Max selections message -->
-		{#if isMaxReached}
+		<!-- Max selections message - Don't show for single-select (shown inline) -->
+		{#if isMaxReached && !isSingleSelect}
 			<div class="max-message">
 				Maximum {maxSelectedOptions} selection{maxSelectedOptions !== 1 ? 's' : ''} reached
 			</div>
@@ -343,33 +406,52 @@
 	}
 
 	.selected-options :global(.selected-chip) {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
 		padding: 0.25rem 0.5rem;
-		white-space: nowrap;
 	}
 
-	.remove-chip {
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		padding: 0;
+	.chip-content {
+		width: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: currentColor;
-		opacity: 0.7;
-		border-radius: 2px;
+		white-space: nowrap;
 	}
 
-	.remove-chip:hover {
-		opacity: 1;
-		background: rgba(0, 0, 0, 0.1);
+	.remove-icon {
+		cursor: pointer;
+		margin: 2px 0 0 2px;
+	}
+
+	.remove-icon:focus {
+		outline: 1px solid var(--accent-fill-rest);
+		outline-offset: 2px;
 	}
 
 	.search-input-wrapper {
 		position: relative;
+	}
+
+	.clear-button {
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--neutral-foreground-hint);
+		border-radius: 2px;
+		transition: background 0.1s ease;
+	}
+
+	.clear-button:hover {
+		background: var(--neutral-fill-secondary-hover);
+		color: var(--neutral-foreground-rest);
+	}
+
+	.clear-button:focus {
+		outline: 1px solid var(--accent-fill-rest);
+		outline-offset: 2px;
 	}
 
 	.loading-indicator {

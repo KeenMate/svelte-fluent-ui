@@ -90,6 +90,14 @@
 	Inspired by the FluentUI Blazor Autocomplete component.
 </p>
 
+<Card>
+	<h3>Reference</h3>
+	<p>
+		<strong>FluentUI Web Components:</strong> N/A (custom implementation)<br/>
+		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/Autocomplete" target="_blank" rel="noopener noreferrer">FluentAutocomplete</a>
+	</p>
+</Card>
+
 <h2>Examples</h2>
 
 <!-- Basic Autocomplete -->
@@ -406,26 +414,26 @@
 />`}</code></pre>
 
 	<h3>With Async Search</h3>
-	<pre><code>{`<script lang="ts">
-  async function searchItems(searchText: string) {
-    const response = await fetch(\`/api/search?q=\${searchText}\`)
+	<pre><code>&lt;script lang="ts"&gt;
+  async function searchItems(searchText: string) &#123;
+    const response = await fetch(`/api/search?q=$&#123;searchText&#125;`)
     const data = await response.json()
-    return data.map(item => ({
+    return data.map(item => (&#123;
       value: item.id,
       text: item.name
-    }))
-  }
+    &#125;))
+  &#125;
 
-  let selected = $state<string[]>([])
-</script>
+  let selected = $state&lt;string[]&gt;([])
+&lt;/script&gt;
 
-<Autocomplete
-  bind:selectedOptions={selected}
-  onOptionsSearch={searchItems}
+&lt;Autocomplete
+  bind:selectedOptions=&#123;selected&#125;
+  onOptionsSearch=&#123;searchItems&#125;
   label="Search items"
   placeholder="Type to search..."
-  maxOptionsSearch={10}
-/>`}</code></pre>
+  maxOptionsSearch=&#123;10&#125;
+/&gt;</code></pre>
 
 	<h3>People Picker</h3>
 	<pre><code>{`<Autocomplete

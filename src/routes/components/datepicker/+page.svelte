@@ -16,6 +16,19 @@
 
 <h1>DatePicker</h1>
 
+<p>
+	A date selection component with calendar popup, date validation, and custom formatting options.
+	Inspired by the FluentUI Blazor DatePicker component.
+</p>
+
+<Card>
+	<h3>Reference</h3>
+	<p>
+		<strong>FluentUI Web Components:</strong> N/A (custom implementation)<br/>
+		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/DatePicker" target="_blank" rel="noopener noreferrer">FluentDatePicker</a>
+	</p>
+</Card>
+
 <h2>Examples</h2>
 
 <!-- Basic DatePicker -->

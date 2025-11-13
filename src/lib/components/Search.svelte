@@ -103,7 +103,6 @@
 	aria-label={ariaLabel || label}
 	oninput={handleInput}
 	onchange={handleChange}
-	{...rest}
 >
 	{@render children?.()}
 </fluent-search>

@@ -9,6 +9,14 @@
 		[prop: string]: any
 	}
 
+	// Filter out null/undefined values from object to prevent Svelte 5 spreading errors
+	function filterNullProps(obj: Record<string, any> | undefined): Record<string, any> {
+		if (!obj) return {}
+		return Object.fromEntries(
+			Object.entries(obj).filter(([_, value]) => value != null)
+		)
+	}
+
 	let {
 		children = undefined,
 		height = 50,
@@ -26,7 +34,6 @@
 
 <header
 	bind:this={element}
-	{...restProps}
 	style={computedStyle}
 	class="header {className}"
 >

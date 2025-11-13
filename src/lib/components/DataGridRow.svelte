@@ -57,7 +57,6 @@
 	onclick={handleClick}
 	ondblclick={handleDblClick}
 	onfocus={handleFocus}
-	{...restProps}
 >
 	{#if children}
 		{@render children?.()}

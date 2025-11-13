@@ -85,27 +85,8 @@
 <fluent-text-area
 	class={className}
 	{style}
-	{readonly}
-	resize={resize}
-	{autofocus}
-	{form}
-	list={list}
-	{maxlength}
-	{minlength}
-	{placeholder}
-	{cols}
-	{rows}
-	{spellcheck}
-	{id}
-	{name}
-	{disabled}
-	{required}
-	appearance={appearance}
-	value={value}
 	oninput={handleInput}
 	onchange={handleChange}
-	aria-label={ariaLabel || label}
-	{...restProps}
 >
 	{#if children}
 		{@render children?.()}
