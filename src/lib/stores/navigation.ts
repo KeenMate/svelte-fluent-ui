@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store'
-import { browser } from '$app/environment'
+
+// Browser detection for non-SvelteKit environments
+const browser = typeof window !== 'undefined'
 
 const STORAGE_KEY = 'svelte-fluentui-nav-state'
 

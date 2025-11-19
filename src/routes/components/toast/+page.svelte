@@ -53,9 +53,14 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
-	<h1>Toast</h1>
+	<h1>Toast (Declarative Component)</h1>
 
 	<Card>
+		<p>
+			<strong>ℹ️ Note:</strong> This is the declarative <code>&lt;Toast&gt;</code> component for manual state management.
+			For programmatic toasts (call <code>toast.success()</code> from anywhere), see the
+			<a href="/components/toast-service"><strong>Toast Service</strong></a> instead.
+		</p>
 		<p>
 			<strong>References:</strong>
 			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-messagebar-messagebar--docs" target="_blank" rel="noopener noreferrer">MessageBar</a>

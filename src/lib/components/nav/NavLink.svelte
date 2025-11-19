@@ -11,6 +11,7 @@
 		icon?: SlotType
 		afterText?: SlotType
 		children?: SlotType
+		linkAction?: (node: HTMLElement) => void
 		[prop: string]: any
 	}
 
@@ -21,6 +22,7 @@
 		    onClick   = undefined,
 		    afterText = undefined,
 		    children  = undefined,
+		    linkAction = undefined,
 		    ...restProps
 	    }: Props = $props()
 
@@ -36,6 +38,7 @@
 	{rel}
 	class="fluent-nav-link {restProps.class || ''}"
 	onclick={onClick}
+	use:linkAction
 >
 	<PositioningRegion>
 		<ContentRegion>

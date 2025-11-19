@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../assets/styles/demo-pages.scss"
 	import "$lib/main.scss"
-	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem} from "$lib/index.js"
+	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer} from "$lib/index.js"
 	import SiteSettings from "$lib/components/SiteSettings.svelte"
 	import {settings, accentColors} from "$lib/stores/settings.js"
 	import {onMount, tick} from "svelte"
@@ -296,6 +296,7 @@
 			items: [
 				{label: "Dialog", href: "/components/dialog"},
 				{label: "Toast", href: "/components/toast"},
+				{label: "Toast Service", href: "/components/toast-service"},
 				{label: "Tooltip", href: "/components/tooltip"}
 			]
 		},
@@ -328,6 +329,9 @@
 
 	<!-- Site Settings Dialog -->
 	<SiteSettings open={settingsOpen} onClose={closeSettings} />
+
+	<!-- Toast Container for programmatic toasts -->
+	<ToastContainer />
 
 	<!-- Main Content Area with Sidebar -->
 	<BodyContent>

@@ -14,6 +14,7 @@
 		icon?: SlotType
 		afterText?: SlotType
 		children?: SlotType
+		linkAction?: (node: HTMLElement) => void
 		[prop: string]: any
 	}
 
@@ -28,6 +29,7 @@
 		    onClick   = undefined,
 		    afterText = undefined,
 		    children  = undefined,
+		    linkAction = undefined,
 		    ...restProps
 	    }: Props = $props()
 </script>
@@ -46,5 +48,6 @@
 		{icon}
 		{children}
 		{afterText}
+		{linkAction}
 	/>
 </NavItem>
