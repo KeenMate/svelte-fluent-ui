@@ -11,6 +11,7 @@
 	const properties: Property[] = [
 		{name: "appearance", type: "\"outline\" | \"filled\"", default: "undefined", description: "Visual style"},
 		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
+		{name: "autocomplete", type: "string", default: "undefined", description: "Browser autocomplete behavior (e.g., \"off\", \"on\")"},
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Focus on mount"},
 		{name: "class", type: "string", default: "\"\"", description: "CSS class"},
 		{name: "cols", type: "number", default: "undefined", description: "Number of columns"},

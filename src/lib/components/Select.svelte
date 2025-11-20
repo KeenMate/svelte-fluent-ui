@@ -15,6 +15,7 @@
 		appearance?: "outline" | "filled";
 		required?: boolean;
 		name?: string;
+		autocomplete?: string;
 		value?: string;
 		label?: string;
 		ariaLabel?: string;
@@ -34,6 +35,7 @@
 		appearance = undefined,
 		required = undefined,
 		name = undefined,
+		autocomplete = undefined,
 		value = $bindable(),
 		label = undefined,
 		ariaLabel = undefined,
@@ -71,6 +73,7 @@
 	appearance={appearance}
 	required={required}
 	{name}
+	{autocomplete}
 	current-value={value}
 	aria-label={ariaLabel || label}
 	onchange={handleChange}

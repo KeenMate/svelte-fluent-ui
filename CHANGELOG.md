@@ -20,6 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - SCSS variable customization guide with `@use ... with ()` syntax
   - Complete setup example with FluentUI theme configuration
   - Constants and TypeScript usage examples
+- **Component Library Page** - Restructured home page with categorized component list
+  - Components grouped by category (Forms & Inputs, Layout, Navigation, Display, Feedback, Data Display)
+  - Clickable component names linking directly to documentation
+  - Improved Quick Links section
+  - Sortable and filterable by group, name, and description
+- **Autocomplete Property** - Added autocomplete prop to all input components
+  - TextField, Textarea, NumberField, Search, and Select now support autocomplete attribute
+  - Allows disabling browser autocomplete with `autocomplete="off"`
+  - Textarea component also fixed to properly pass all props to underlying fluent-text-area element
 
 ### Changed
 - **SCSS by Default** - Styles now default to SCSS for variable override capability
@@ -31,9 +40,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Docker Build** - Consolidated Dockerfile to root with VERSION parameter support
   - Removed redundant `docs/Dockerfile` and `docs/nginx.conf`
-  - Default VERSION changed to `latest` (pulls from npm) instead of `file:..` (local source)
+  - Default VERSION set to `1.0.0-rc04` for CI/CD compatibility
   - Simplified build process with proper SCSS file copying
+  - Supports `VERSION=file:..` for local builds
 - **GitIgnore** - Updated `.svelte-kit` to ignore in all directories (root and docs)
+- **Component Exports** - Removed unsafe `...restProps` destructuring from 53+ components for Svelte 5 compatibility
 
 ## [1.0.0-rc03] - 2025-11-20
 

@@ -18,6 +18,7 @@
 		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only input"},
 		{name: "required", type: "boolean", default: "undefined", description: "Marks the field as required"},
 		{name: "name", type: "string", default: "undefined", description: "Name attribute"},
+		{name: "autocomplete", type: "string", default: "undefined", description: "Browser autocomplete behavior (e.g., \"off\", \"on\")"},
 		{name: "label", type: "string", default: "undefined", description: "Label or slot content"},
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Autofocus on mount"},
 		{name: "step", type: "number", default: "undefined", description: "Increment/decrement step"},

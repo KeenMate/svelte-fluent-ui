@@ -20,6 +20,7 @@
 		spellcheck?: boolean
 		id?: string
 		name?: string
+		autocomplete?: string
 		disabled?: boolean
 		required?: boolean
 		appearance?: "outline" | "filled"
@@ -48,6 +49,7 @@
 		spellcheck = undefined,
 		id = undefined,
 		name = undefined,
+		autocomplete = undefined,
 		disabled = undefined,
 		required = undefined,
 		appearance = undefined,
@@ -83,6 +85,25 @@
 <fluent-text-area
 	class={className}
 	{style}
+	{readonly}
+	{resize}
+	{autofocus}
+	{form}
+	{list}
+	{maxlength}
+	{minlength}
+	{placeholder}
+	{cols}
+	{rows}
+	{spellcheck}
+	{id}
+	{name}
+	{autocomplete}
+	{disabled}
+	{required}
+	{appearance}
+	{value}
+	aria-label={ariaLabel}
 	oninput={handleInput}
 	onchange={handleChange}
 >

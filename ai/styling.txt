@@ -1,0 +1,403 @@
+STYLING AND THEMING
+===================
+
+CRITICAL: Use SCSS for variable overrides, CSS for simple usage
+
+SCSS VS CSS
+-----------
+SCSS (recommended):
+import "svelte-fluentui/styles.scss"
+
+Benefits:
+- Override variables with @use...with()
+- Customize theme at compile time
+- Full control over design tokens
+- No runtime CSS variable overhead
+
+CSS (simple):
+import "svelte-fluentui/styles"
+
+Benefits:
+- No SCSS processor required
+- Faster if no customization needed
+- Good for prototyping
+
+VARIABLE OVERRIDE
+-----------------
+Use @use...with() to override SCSS variables:
+
+// custom-theme.scss
+@use 'svelte-fluentui/theme' with (
+    // Navbar
+    $navbar-bg-light: #FFCC00,
+    $navbar-bg-dark: #1a1a1a,
+    $navbar-text-light: #000,
+    $navbar-text-dark: #fff,
+
+    // Sidebar
+    $sidebar-bg: #333,
+    $sidebar-text: #fff,
+    $sidebar-padding: 1rem,
+    $sidebar-icon-gap: 0.5rem,
+
+    // Accent
+    $accent-color: #0078d4,
+
+    // Layout
+    $header-height: 60px,
+    $footer-height: 40px
+);
+
+@use 'svelte-fluentui/fluent-ui';
+@use 'svelte-fluentui/layout';
+@use 'svelte-fluentui/nav';
+@use 'svelte-fluentui/components';
+
+// +layout.svelte
+import "./custom-theme.scss"
+
+AVAILABLE SCSS VARIABLES
+-------------------------
+Theme colors:
+$navbar-bg-light: #ffffff
+$navbar-bg-dark: #1f1f1f
+$navbar-text-light: #000000
+$navbar-text-dark: #ffffff
+$sidebar-bg: #faf9f8
+$sidebar-text: inherit
+$accent-color: #0078d4
+$neutral-color: #979593
+
+Layout:
+$header-height: 60px
+$footer-height: 50px
+$sidebar-padding: 1rem
+$sidebar-icon-gap: 0.75rem
+
+Spacing:
+$fluent-component-gap: 1rem
+$fluent-body-line-height: 1.6
+
+FLUENTUI DESIGN TOKENS
+----------------------
+FluentUI uses CSS custom properties (design tokens):
+
+// Set theme mode
+import { baseLayerLuminance, StandardLuminance } from "@fluentui/web-components"
+
+// Light mode
+baseLayerLuminance.setValueFor(
+    document.documentElement,
+    StandardLuminance.LightMode
+)
+
+// Dark mode
+baseLayerLuminance.setValueFor(
+    document.documentElement,
+    StandardLuminance.DarkMode
+)
+
+ACCENT COLOR
+------------
+Change accent color at runtime:
+
+import { accentBaseColor, SwatchRGB } from "@fluentui/web-components"
+
+function hexToSwatchRGB(hex: string): SwatchRGB {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    if (!result) throw new Error(`Invalid hex: ${hex}`)
+
+    return SwatchRGB.create(
+        parseInt(result[1], 16) / 255,
+        parseInt(result[2], 16) / 255,
+        parseInt(result[3], 16) / 255
+    )
+}
+
+const blueSwatch = hexToSwatchRGB("#0078d4")
+accentBaseColor.setValueFor(document.documentElement, blueSwatch)
+
+NEUTRAL BASE COLOR
+------------------
+Change neutral palette:
+
+import { neutralBaseColor, SwatchRGB } from "@fluentui/web-components"
+
+const graySwatch = hexToSwatchRGB("#979593")
+neutralBaseColor.setValueFor(document.documentElement, graySwatch)
+
+THEME SWITCHING
+---------------
+Toggle between light and dark:
+
+<script>
+import { onMount } from "svelte"
+import { baseLayerLuminance, StandardLuminance } from "@fluentui/web-components"
+
+let theme = $state<"light" | "dark">("light")
+
+function toggleTheme() {
+    theme = theme === "light" ? "dark" : "light"
+    applyTheme()
+}
+
+function applyTheme() {
+    const luminance = theme === "light"
+        ? StandardLuminance.LightMode
+        : StandardLuminance.DarkMode
+
+    baseLayerLuminance.setValueFor(
+        document.documentElement,
+        luminance
+    )
+
+    document.documentElement.setAttribute("data-theme", theme)
+}
+
+onMount(() => {
+    applyTheme()
+})
+</script>
+
+<button onclick={toggleTheme}>
+    {theme === "light" ? "🌙" : "☀️"}
+</button>
+
+SYSTEM THEME DETECTION
+----------------------
+Respect user's system preference:
+
+<script>
+import { onMount } from "svelte"
+import { baseLayerLuminance, StandardLuminance } from "@fluentui/web-components"
+
+onMount(() => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const theme = prefersDark ? "dark" : "light"
+
+    baseLayerLuminance.setValueFor(
+        document.documentElement,
+        prefersDark ? StandardLuminance.DarkMode : StandardLuminance.LightMode
+    )
+
+    // Listen for changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    mediaQuery.addEventListener("change", (e) => {
+        const newTheme = e.matches ? "dark" : "light"
+        baseLayerLuminance.setValueFor(
+            document.documentElement,
+            e.matches ? StandardLuminance.DarkMode : StandardLuminance.LightMode
+        )
+    })
+})
+</script>
+
+CSS CUSTOM PROPERTIES
+---------------------
+FluentUI generates CSS variables automatically.
+Access them in your styles:
+
+<div style="background: var(--neutral-layer-1)">
+    Content
+</div>
+
+Common FluentUI CSS variables:
+--neutral-layer-1
+--neutral-layer-2
+--neutral-layer-3
+--neutral-stroke-layer-rest
+--accent-fill-rest
+--accent-fill-hover
+--accent-fill-active
+--foreground-on-accent-rest
+
+COMPONENT STYLING
+-----------------
+Style components with class or style props:
+
+<Button class="my-button" style="margin: 1rem">
+    Click me
+</Button>
+
+<style>
+.my-button {
+    width: 200px;
+}
+</style>
+
+Or use global styles:
+
+<style global>
+:global(fluent-button.custom) {
+    --accent-fill-rest: #ff0000;
+}
+</style>
+
+<Button class="custom">Red Button</Button>
+
+COMPONENT CSS VARIABLES
+-----------------------
+Each component supports CSS variables:
+
+Navbar:
+--fluent-navbar-bg
+--fluent-navbar-text
+--fluent-navbar-border
+
+Sidebar:
+--fluent-sidebar-bg
+--fluent-sidebar-text
+--fluent-sidebar-padding
+--fluent-sidebar-icon-gap
+
+Override in your CSS:
+
+<style>
+:global(:root) {
+    --fluent-navbar-bg: #FFCC00;
+    --fluent-sidebar-bg: #333;
+}
+</style>
+
+RESPONSIVE STYLES
+-----------------
+Use Grid breakpoints for responsive layouts:
+
+<Grid spacing={3}>
+    <GridItem xs={12} md={6} lg={4}>
+        Mobile: 100%, Tablet: 50%, Desktop: 33%
+    </GridItem>
+</Grid>
+
+Breakpoints:
+xs: 0px+
+sm: 576px+
+md: 768px+
+lg: 992px+
+xl: 1200px+
+xxl: 1400px+
+
+AVOIDING FOUC
+-------------
+Flash of Unstyled Content prevention:
+
+<script>
+import { onMount } from "svelte"
+import { baseLayerLuminance, StandardLuminance } from "@fluentui/web-components"
+
+// Set theme immediately (before render)
+if (typeof window !== "undefined") {
+    baseLayerLuminance.setValueFor(
+        document.documentElement,
+        StandardLuminance.LightMode
+    )
+}
+
+onMount(() => {
+    // Re-apply after mount if needed
+    baseLayerLuminance.setValueFor(
+        document.documentElement,
+        StandardLuminance.LightMode
+    )
+})
+</script>
+
+CUSTOM THEME EXAMPLE
+--------------------
+Complete custom theme setup:
+
+// src/styles/theme.scss
+@use 'svelte-fluentui/theme' with (
+    $navbar-bg-light: #1e3a8a,
+    $navbar-text-light: #ffffff,
+    $sidebar-bg: #0f172a,
+    $sidebar-text: #e2e8f0,
+    $accent-color: #3b82f6,
+    $sidebar-padding: 1.5rem,
+    $sidebar-icon-gap: 1rem
+);
+
+@use 'svelte-fluentui/fluent-ui';
+@use 'svelte-fluentui/layout';
+@use 'svelte-fluentui/nav';
+@use 'svelte-fluentui/components';
+
+// src/routes/+layout.svelte
+<script>
+import "../styles/theme.scss"
+import { onMount } from "svelte"
+import { baseLayerLuminance, accentBaseColor, StandardLuminance, SwatchRGB } from "@fluentui/web-components"
+import { Layout, Header, BodyContent, Footer } from "svelte-fluentui"
+
+function hexToSwatchRGB(hex: string): SwatchRGB {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    if (!result) throw new Error(`Invalid hex: ${hex}`)
+    return SwatchRGB.create(
+        parseInt(result[1], 16) / 255,
+        parseInt(result[2], 16) / 255,
+        parseInt(result[3], 16) / 255
+    )
+}
+
+onMount(() => {
+    // Set light mode
+    baseLayerLuminance.setValueFor(
+        document.documentElement,
+        StandardLuminance.LightMode
+    )
+
+    // Set blue accent
+    const blueSwatch = hexToSwatchRGB("#3b82f6")
+    accentBaseColor.setValueFor(document.documentElement, blueSwatch)
+})
+</script>
+
+<Layout orientation="vertical">
+    <Header>My App</Header>
+    <BodyContent>
+        <slot />
+    </BodyContent>
+    <Footer>© 2025</Footer>
+</Layout>
+
+COMMON STYLING ERRORS
+----------------------
+Error: "Variables not overridden"
+Fix: Use @use...with(), not regular import
+
+❌ import "svelte-fluentui/styles.scss"
+   $navbar-bg-light: #FFCC00;  // Too late!
+
+✅ @use 'svelte-fluentui/theme' with ($navbar-bg-light: #FFCC00);
+
+Error: "Theme not applied"
+Fix: Set on document.documentElement, not body
+
+❌ baseLayerLuminance.setValueFor(document.body, ...)
+✅ baseLayerLuminance.setValueFor(document.documentElement, ...)
+
+Error: "FOUC on page load"
+Fix: Apply theme before mount
+
+✅ Apply in <script> before onMount
+✅ Use SSR-safe checks (typeof window !== "undefined")
+
+Error: "CSS variables not working"
+Fix: Import FluentUI styles
+
+❌ Use CSS variables without importing styles
+✅ Import "svelte-fluentui/styles.scss" first
+
+BEST PRACTICES
+--------------
+- Use SCSS for variable customization
+- Create separate theme.scss file
+- Apply theme in root layout onMount
+- Use hexToSwatchRGB helper for colors
+- Set theme on document.documentElement
+- Avoid FOUC with immediate theme application
+- Use CSS custom properties for runtime changes
+- Follow FluentUI design token naming
+- Test both light and dark modes
+- Respect system theme preference
+- Use Grid breakpoints for responsiveness

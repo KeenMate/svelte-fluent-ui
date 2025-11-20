@@ -14,6 +14,7 @@
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
 		{name: "id", type: "string", default: "undefined", description: ""},
 		{name: "name", type: "string", default: "undefined", description: "Form name"},
+		{name: "autocomplete", type: "string", default: "undefined", description: "Browser autocomplete behavior (e.g., \"off\", \"on\")"},
 		{name: "value", type: "string", default: "undefined", description: "Selected value"},
 		{name: "required", type: "boolean", default: "undefined", description: "Form required"},
 		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the control"},

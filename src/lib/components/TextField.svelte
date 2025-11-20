@@ -13,6 +13,7 @@
 		required?: boolean | null | undefined
 		type?: string | null | undefined
 		name?: string | null | undefined
+		autocomplete?: string | null | undefined
 		label?: string | null | undefined
 		autofocus?: boolean | null | undefined
 		children?: SlotType | null | undefined
@@ -41,6 +42,7 @@
 		required = undefined,
 		type = undefined,
 		name = undefined,
+		autocomplete = undefined,
 		label = undefined,
 		autofocus = undefined,
 		children = undefined,
@@ -131,6 +133,7 @@
 	{required}
 	{type}
 	{name}
+	{autocomplete}
 	{autofocus}
 	{style}
 	oninput={handleOnInput}

@@ -1,0 +1,345 @@
+IMPORT PATTERNS
+===============
+
+CRITICAL: Always import styles first, then components
+
+CORRECT MAIN IMPORTS
+--------------------
+✅ import "svelte-fluentui/styles.scss"  // SCSS (recommended)
+✅ import "svelte-fluentui/styles"       // CSS (no variables)
+✅ import { Button, TextField } from "svelte-fluentui"
+✅ import Router from "svelte-fluentui"  // Default export (none currently)
+
+❌ import "svelte-fluentui/styles.css"   // Wrong path
+❌ import Button from "svelte-fluentui/Button"  // No individual exports
+
+COMPONENT IMPORTS
+-----------------
+All components from main module:
+
+import {
+    // Layout
+    Layout,
+    Header,
+    Footer,
+    BodyContent,
+    Grid,
+    GridItem,
+    Stack,
+    Spacer,
+    MultiSplitter,
+    MultiSplitterPane,
+
+    // Navigation
+    NavMenu,
+    NavGroup,
+    NavLinkItem,
+    AppBar,
+    AppBarItem,
+    Breadcrumb,
+    BreadcrumbItem,
+    Accordion,
+    AccordionItem,
+
+    // Forms
+    TextField,
+    Textarea,
+    NumberField,
+    Checkbox,
+    Radio,
+    RadioGroup,
+    Select,
+    Switch,
+    Search,
+    Combobox,
+    Listbox,
+    Option,
+
+    // Custom Form Components
+    DatePicker,
+    TimePicker,
+    InputFile,
+    Autocomplete,
+    Calendar,
+
+    // Buttons
+    Button,
+    Anchor,
+
+    // Display
+    Card,
+    Badge,
+    Divider,
+
+    // Data
+    QuickGrid,
+    DataGrid,
+    DataGridRow,
+    DataGridCell,
+    Paginator,
+    Toolbar,
+
+    // Feedback
+    Dialog,
+    Toast,
+    ToastContainer,
+    Tooltip,
+    Progress,
+
+    // Tabs
+    Tabs,
+    Tab,
+    TabPanel,
+
+    // Tree
+    Tree,
+    TreeItem
+} from "svelte-fluentui"
+
+STYLE IMPORTS
+-------------
+Main styles (choose one):
+
+✅ import "svelte-fluentui/styles.scss"  // SCSS with variables
+✅ import "svelte-fluentui/styles"       // Pre-compiled CSS
+
+Short paths (SCSS only):
+
+✅ import "svelte-fluentui/fluent-ui"    // FluentUI base styles
+✅ import "svelte-fluentui/theme"        // Theme variables
+✅ import "svelte-fluentui/layout"       // Layout styles
+✅ import "svelte-fluentui/nav"          // Navigation styles
+✅ import "svelte-fluentui/components"   // Component styles
+
+Old verbose paths (still work):
+
+✅ import "svelte-fluentui/assets/styles/fluent-ui/main"
+✅ import "svelte-fluentui/assets/styles/theme"
+✅ import "svelte-fluentui/assets/styles/layout"
+✅ import "svelte-fluentui/assets/styles/nav"
+✅ import "svelte-fluentui/assets/styles/components"
+
+THEME CUSTOMIZATION
+-------------------
+Override variables with @use...with():
+
+// custom-theme.scss
+@use 'svelte-fluentui/theme' with (
+    $navbar-bg-light: #FFCC00,
+    $sidebar-bg: #333,
+    $accent-color: #0078d4
+);
+@use 'svelte-fluentui/fluent-ui';
+@use 'svelte-fluentui/layout';
+@use 'svelte-fluentui/nav';
+@use 'svelte-fluentui/components';
+
+Then import your custom file:
+import "./custom-theme.scss"
+
+FLUENT UI WEB COMPONENTS
+------------------------
+Import design tokens and utilities:
+
+✅ import {
+    baseLayerLuminance,
+    StandardLuminance,
+    accentBaseColor,
+    neutralBaseColor,
+    SwatchRGB
+} from "@fluentui/web-components"
+
+✅ import {
+    provideFluentDesignSystem,
+    fluentButton,
+    fluentTextField
+} from "@fluentui/web-components"
+
+STORES AND UTILITIES
+--------------------
+Settings store:
+
+✅ import { settings, accentColors } from "svelte-fluentui"
+
+const currentSettings = $derived($settings)
+settings.setThemeMode("dark")
+settings.setAccentColor("blue")
+
+Toast service:
+
+✅ import { toast } from "svelte-fluentui"
+
+toast.success("Success!")
+toast.error("Error!")
+toast.warning("Warning!")
+toast.info("Info!")
+
+CONSTANTS
+---------
+✅ import { FLUENT_COLORS } from "svelte-fluentui"
+
+Object with color mappings:
+{
+    blue: "#0078d4",
+    red: "#d13438",
+    green: "#107c10",
+    // ... etc
+}
+
+TYPESCRIPT TYPES
+----------------
+✅ import type { SlotType } from "svelte-fluentui"
+
+interface ComponentProps {
+    children?: SlotType
+    label?: string
+}
+
+FLUENTUI TYPES
+--------------
+✅ import type {
+    Button as FluentButton,
+    TextField as FluentTextField
+} from "@fluentui/web-components"
+
+ALL EXPORT PATHS
+----------------
+svelte-fluentui                    // Main (components, toast, settings)
+svelte-fluentui/styles.scss        // SCSS styles (recommended)
+svelte-fluentui/styles             // CSS styles
+svelte-fluentui/fluent-ui          // FluentUI base (SCSS)
+svelte-fluentui/theme              // Theme variables (SCSS)
+svelte-fluentui/layout             // Layout styles (SCSS)
+svelte-fluentui/nav                // Navigation styles (SCSS)
+svelte-fluentui/components         // Component styles (SCSS)
+svelte-fluentui/assets/*           // Old verbose paths (backward compat)
+
+COMMON IMPORT ERRORS
+--------------------
+Error: "Cannot find module 'svelte-fluentui/Button'"
+Fix: Import from main module
+
+❌ import Button from "svelte-fluentui/Button"
+✅ import { Button } from "svelte-fluentui"
+
+Error: "Cannot find module 'svelte-fluentui/styles.css'"
+Fix: Use correct style path
+
+❌ import "svelte-fluentui/styles.css"
+✅ import "svelte-fluentui/styles.scss"
+✅ import "svelte-fluentui/styles"
+
+Error: "Styles not applied"
+Fix: Import styles before components
+
+❌ Wrong order:
+import { Button } from "svelte-fluentui"
+import "svelte-fluentui/styles.scss"
+
+✅ Correct order:
+import "svelte-fluentui/styles.scss"
+import { Button } from "svelte-fluentui"
+
+Error: "Cannot override SCSS variables"
+Fix: Import individual SCSS modules with @use
+
+❌ import "svelte-fluentui/styles.scss" then try to override
+✅ Use @use with variables:
+@use 'svelte-fluentui/theme' with ($navbar-bg-light: #FFCC00);
+
+Error: "$settings is not defined"
+Fix: Use settings without $ (it's not a Svelte store)
+
+❌ const theme = $settings.themeMode
+✅ const theme = $settings.themeMode  // Actually this works if in reactive context
+✅ const currentSettings = $settings  // Get snapshot
+
+Actually, settings IS a store:
+const currentSettings = $derived($settings)
+
+Error: "toast is not a function"
+Fix: Use toast service methods
+
+❌ toast("Message")
+✅ toast.success("Message")
+✅ toast.error("Message")
+
+TYPICAL APP IMPORTS
+-------------------
+// +layout.svelte (root layout)
+<script>
+import "svelte-fluentui/styles.scss"
+import {
+    Layout,
+    Header,
+    BodyContent,
+    Footer,
+    Grid,
+    GridItem,
+    NavMenu,
+    NavGroup,
+    NavLinkItem,
+    ToastContainer
+} from "svelte-fluentui"
+import { onMount } from "svelte"
+import { baseLayerLuminance, StandardLuminance } from "@fluentui/web-components"
+
+onMount(() => {
+    baseLayerLuminance.setValueFor(
+        document.documentElement,
+        StandardLuminance.LightMode
+    )
+})
+</script>
+
+// Component file
+<script>
+import {
+    Card,
+    TextField,
+    Button,
+    Stack,
+    toast
+} from "svelte-fluentui"
+
+let value = $state("")
+
+function handleSubmit() {
+    toast.success("Submitted!")
+}
+</script>
+
+// Custom theme file
+// custom-theme.scss
+@use 'svelte-fluentui/theme' with (
+    $navbar-bg-light: #FFCC00,
+    $sidebar-bg: #333
+);
+@use 'svelte-fluentui/fluent-ui';
+@use 'svelte-fluentui/layout';
+@use 'svelte-fluentui/nav';
+@use 'svelte-fluentui/components';
+
+TREE SHAKING
+------------
+Package uses ES modules for tree shaking.
+Import only what you use:
+
+✅ import { Button, TextField } from "svelte-fluentui"
+   // Only Button and TextField bundled
+
+❌ import * as FluentUI from "svelte-fluentui"
+   // Entire library bundled
+
+BEST PRACTICES
+--------------
+- Import styles in root layout only (once)
+- Import components from main module
+- Use short SCSS paths for customization
+- Import only components you use
+- Use @use...with() for variable overrides
+- Import design tokens from @fluentui/web-components
+- Use TypeScript types for better DX
+- Don't import styles multiple times
+- Prefer SCSS over CSS for flexibility
+- Follow import order: styles → framework → components → utils
