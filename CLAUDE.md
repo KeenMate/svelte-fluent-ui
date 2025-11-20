@@ -78,7 +78,7 @@ These are built from scratch using Svelte, styled with FluentUI design tokens:
 - **DatePicker** - Date selection with calendar popup (inspired by FluentUI Blazor)
 - **TimePicker** - Time selection with hour/minute/second picker (inspired by FluentUI Blazor)
 - **InputFile** - File upload with drag-drop, validation, and progress tracking (inspired by FluentUI Blazor)
-- **Autocomplete** - Multiple selection with tag/chip display and custom filtering (inspired by FluentUI Blazor)
+- **Autocomplete** - Multiple selection with tag/chip display, custom filtering, and initial options support for showing popular items before async search (inspired by FluentUI Blazor)
 - **Paginator** - Pagination control with custom logic
 - **Tab/Tabs** - Tab navigation (wraps fluent-tab but adds significant custom logic)
 

@@ -29,6 +29,8 @@
 		maxSelectedOptions?: number
 		maxOptionsSearch?: number
 		showOverlayOnEmptyResults?: boolean
+		showInitialOptions?: boolean
+		initialOptionsCount?: number
 		keepOpen?: boolean
 		width?: string
 		class?: string
@@ -49,6 +51,8 @@
 		maxSelectedOptions = undefined,
 		maxOptionsSearch = 9,
 		showOverlayOnEmptyResults = true,
+		showInitialOptions = false,
+		initialOptionsCount = undefined,
 		keepOpen = false,
 		width = undefined,
 		class: className = "",
@@ -67,42 +71,55 @@
 	// Filter options based on search text
 	async function filterOptions(text: string) {
 		console.log("3. filterOptions called with text:", text)
+
+		// Handle empty search text
 		if (!text || !text.trim()) {
-			console.log("4. Text is empty, returning early")
-			filteredOptions = []
-			if (!showOverlayOnEmptyResults) {
-				isOpen = false
+			console.log("4. Text is empty")
+
+			// Show initial options if enabled
+			if (showInitialOptions && options.length > 0) {
+				console.log("5. Showing initial options")
+				const limit = initialOptionsCount ?? maxOptionsSearch
+				const filtered = options.filter(opt => !isSelected(opt.value))
+				filteredOptions = filtered.slice(0, limit)
+				isOpen = filteredOptions.length > 0
+			} else {
+				console.log("5. Clearing options, showInitialOptions =", showInitialOptions)
+				filteredOptions = []
+				if (!showOverlayOnEmptyResults) {
+					isOpen = false
+				}
 			}
 			return
 		}
 
-		console.log("5. Starting search, isSearching = true")
+		console.log("6. Starting search, isSearching = true")
 		isSearching = true
 
 		try {
 			if (onOptionsSearch) {
-				console.log("6. Using custom onOptionsSearch")
+				console.log("7. Using custom onOptionsSearch")
 				const results = await onOptionsSearch(text)
-				console.log("7. Custom search results:", results)
+				console.log("8. Custom search results:", results)
 				filteredOptions = results.slice(0, maxOptionsSearch)
 			} else {
-				console.log("8. Using default filtering with options:", options)
+				console.log("9. Using default filtering with options:", options)
 				// Default filtering: contains (case insensitive)
 				// Filter out already selected options to avoid duplicates
 				const filtered = options.filter(opt =>
 					opt.text.toLowerCase().includes(text.toLowerCase()) &&
 					!isSelected(opt.value)
 				)
-				console.log("9. Filtered results:", filtered)
+				console.log("10. Filtered results:", filtered)
 				filteredOptions = filtered.slice(0, maxOptionsSearch)
 			}
 
-			console.log("10. filteredOptions:", filteredOptions)
-			console.log("11. Setting isOpen to:", filteredOptions.length > 0 || showOverlayOnEmptyResults)
+			console.log("11. filteredOptions:", filteredOptions)
+			console.log("12. Setting isOpen to:", filteredOptions.length > 0 || showOverlayOnEmptyResults)
 			isOpen = filteredOptions.length > 0 || showOverlayOnEmptyResults
 		} finally {
 			isSearching = false
-			console.log("12. isSearching = false, isOpen =", isOpen)
+			console.log("13. isSearching = false, isOpen =", isOpen)
 		}
 	}
 
@@ -193,6 +210,9 @@
 		if (!disabled && !readonly) {
 			if (searchText.trim()) {
 				filterOptions(searchText)
+			} else if (showInitialOptions) {
+				// Show initial options on focus when search is empty
+				filterOptions("")
 			}
 		}
 	}

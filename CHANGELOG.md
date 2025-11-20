@@ -25,10 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clickable component names linking directly to documentation
   - Improved Quick Links section
   - Sortable and filterable by group, name, and description
-- **Autocomplete Property** - Added autocomplete prop to all input components
-  - TextField, Textarea, NumberField, Search, and Select now support autocomplete attribute
-  - Allows disabling browser autocomplete with `autocomplete="off"`
-  - Textarea component also fixed to properly pass all props to underlying fluent-text-area element
 
 ### Changed
 - **SCSS by Default** - Styles now default to SCSS for variable override capability

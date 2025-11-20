@@ -9,7 +9,6 @@
 		style?: string;
 		id?: string;
 		name?: string;
-		autocomplete?: string;
 		value?: string;
 		readonly?: boolean;
 		autofocus?: boolean;
@@ -36,7 +35,6 @@
 		style = "",
 		id,
 		name,
-		autocomplete,
 		value = $bindable(),
 		readonly,
 		autofocus,
@@ -87,7 +85,6 @@
 	{style}
 	{id}
 	{name}
-	{autocomplete}
 	{readonly}
 	{autofocus}
 	{placeholder}

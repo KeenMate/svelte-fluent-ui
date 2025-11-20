@@ -13,7 +13,6 @@
 		readonly?: boolean;
 		required?: boolean;
 		name?: string;
-		autocomplete?: string;
 		label?: string;
 		autofocus?: boolean;
 		step?: number;
@@ -35,7 +34,6 @@
 		readonly,
 		required,
 		name,
-		autocomplete,
 		label,
 		autofocus,
 		step,
@@ -106,7 +104,6 @@
 	{max}
 	{hideStep}
 	{name}
-	{autocomplete}
 	value={value}
 	oninput={handleOnInput}
 	onchange={handleOnChange}

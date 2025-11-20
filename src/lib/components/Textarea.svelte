@@ -20,7 +20,6 @@
 		spellcheck?: boolean
 		id?: string
 		name?: string
-		autocomplete?: string
 		disabled?: boolean
 		required?: boolean
 		appearance?: "outline" | "filled"
@@ -49,7 +48,6 @@
 		spellcheck = undefined,
 		id = undefined,
 		name = undefined,
-		autocomplete = undefined,
 		disabled = undefined,
 		required = undefined,
 		appearance = undefined,
@@ -98,7 +96,6 @@
 	{spellcheck}
 	{id}
 	{name}
-	{autocomplete}
 	{disabled}
 	{required}
 	{appearance}

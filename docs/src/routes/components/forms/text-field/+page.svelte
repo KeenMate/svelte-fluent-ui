@@ -31,7 +31,6 @@
 		{name: "required", type: "boolean", default: "undefined", description: "Required field"},
 		{name: "type", type: "string", default: '"text"', description: "Input type (text, password, email, etc.)"},
 		{name: "name", type: "string", default: "undefined", description: "Form name"},
-		{name: "autocomplete", type: "string", default: "undefined", description: "Browser autocomplete behavior (e.g., \"off\", \"on\", \"email\")"},
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"}
 	]

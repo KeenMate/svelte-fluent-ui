@@ -53,6 +53,7 @@
 	let selectedLanguages = $state<string[]>([])
 	let customSearchResults = $state<string[]>([])
 	let peopleResults = $state<string[]>([])
+	let initialOptionsResults = $state<string[]>([])
 
 	// Simulate async search
 	async function handleCustomSearch(searchText: string) {
@@ -79,6 +80,45 @@
 
 		return people.filter(p =>
 			p.text.toLowerCase().includes(searchText.toLowerCase())
+		)
+	}
+
+	// Popular/recommended items for initial display
+	const popularCountries = [
+		{ value: "us", text: "United States" },
+		{ value: "uk", text: "United Kingdom" },
+		{ value: "ca", text: "Canada" },
+		{ value: "de", text: "Germany" },
+		{ value: "fr", text: "France" }
+	]
+
+	// Simulate API search for all countries
+	async function handleCountrySearch(searchText: string) {
+		await new Promise(resolve => setTimeout(resolve, 300))
+
+		// Simulate searching a larger dataset from API
+		const allCountries = [
+			...countries,
+			{ value: "ar", text: "Argentina" },
+			{ value: "eg", text: "Egypt" },
+			{ value: "gr", text: "Greece" },
+			{ value: "id", text: "Indonesia" },
+			{ value: "ie", text: "Ireland" },
+			{ value: "il", text: "Israel" },
+			{ value: "kr", text: "South Korea" },
+			{ value: "nl", text: "Netherlands" },
+			{ value: "no", text: "Norway" },
+			{ value: "nz", text: "New Zealand" },
+			{ value: "pl", text: "Poland" },
+			{ value: "pt", text: "Portugal" },
+			{ value: "se", text: "Sweden" },
+			{ value: "sg", text: "Singapore" },
+			{ value: "th", text: "Thailand" },
+			{ value: "tr", text: "Turkey" }
+		]
+
+		return allCountries.filter(c =>
+			c.text.toLowerCase().includes(searchText.toLowerCase())
 		)
 	}
 </script>
@@ -166,6 +206,25 @@
 			maxOptionsSearch={5}
 		/>
 		<p style="margin: 0;">Selected: {customSearchResults.join(", ") || "None"}</p>
+	</Stack>
+</Card>
+
+<!-- Initial Options with Async Search -->
+<Card>
+	<h3>Initial Options with Async Search</h3>
+	<p>Shows popular countries initially. When you type, searches from full API dataset.</p>
+
+	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Autocomplete
+			bind:selectedOptions={initialOptionsResults}
+			options={popularCountries}
+			onOptionsSearch={handleCountrySearch}
+			showInitialOptions={true}
+			initialOptionsCount={5}
+			label="Select country"
+			placeholder="Select from popular or search all..."
+		/>
+		<p style="margin: 0;">Selected: {initialOptionsResults.join(", ") || "None"}</p>
 	</Stack>
 </Card>
 
@@ -348,6 +407,18 @@
 				<td>Show dropdown when no results found</td>
 			</tr>
 			<tr>
+				<td><code>showInitialOptions</code></td>
+				<td><code>boolean</code></td>
+				<td><code>false</code></td>
+				<td>Show options from options prop when search is empty</td>
+			</tr>
+			<tr>
+				<td><code>initialOptionsCount</code></td>
+				<td><code>number</code></td>
+				<td><code>maxOptionsSearch</code></td>
+				<td>Limit number of initial options shown</td>
+			</tr>
+			<tr>
 				<td><code>keepOpen</code></td>
 				<td><code>boolean</code></td>
 				<td><code>false</code></td>
@@ -442,6 +513,32 @@
   label="Add team members"
   placeholder="Search by name or email..."
   maxSelectedOptions={5}
+/>`}</code></pre>
+
+	<h3>Initial Options with Async Search</h3>
+	<pre><code>{`<script lang="ts">
+  const popularItems = [
+    { value: "1", text: "Popular Item 1" },
+    { value: "2", text: "Popular Item 2" },
+    { value: "3", text: "Popular Item 3" }
+  ]
+
+  async function searchAllItems(searchText: string) {
+    const response = await fetch('/api/search?q=' + searchText)
+    return await response.json()
+  }
+
+  let selected = $state<string[]>([])
+</script>
+
+<Autocomplete
+  bind:selectedOptions={selected}
+  options={popularItems}
+  onOptionsSearch={searchAllItems}
+  showInitialOptions={true}
+  initialOptionsCount={5}
+  label="Search items"
+  placeholder="Select from popular or search all..."
 />`}</code></pre>
 </Card>
 

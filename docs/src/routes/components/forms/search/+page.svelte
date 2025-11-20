@@ -12,7 +12,6 @@
 	const properties: Property[] = [
 		{name: "appearance", type: "string", default: "undefined", description: "Style variant"},
 		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
-		{name: "autocomplete", type: "string", default: "undefined", description: "Browser autocomplete behavior (e.g., \"off\", \"on\")"},
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus field"},
 		{name: "class", type: "string", default: "\"\"", description: "CSS class"},
 		{name: "disabled", type: "boolean", default: "undefined", description: "Disable field"},

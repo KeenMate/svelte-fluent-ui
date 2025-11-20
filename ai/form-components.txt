@@ -250,42 +250,80 @@ import { Autocomplete } from "svelte-fluentui"
 
 Multi-select with chips:
 <script>
-type Person = {
-    id: number
-    name: string
-}
-
-const people: Person[] = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" }
+const countries = [
+    { value: "us", text: "United States" },
+    { value: "uk", text: "United Kingdom" },
+    { value: "ca", text: "Canada" }
 ]
 
-let selected = $state<Person[]>([])
+let selected = $state<string[]>([])
 </script>
 
 <Autocomplete
     bind:selectedOptions={selected}
-    options={people}
-    optionLabel="name"
-    optionValue="id"
-    placeholder="Select people..."
+    options={countries}
+    label="Select countries"
+    placeholder="Type to search..."
     maxSelectedOptions={5}
 />
 
+Initial options with async search:
+<script>
+// Popular items shown initially
+const popularCountries = [
+    { value: "us", text: "United States" },
+    { value: "uk", text: "United Kingdom" },
+    { value: "ca", text: "Canada" }
+]
+
+let selected = $state<string[]>([])
+
+// Called when user types
+async function searchAllCountries(searchText: string) {
+    const response = await fetch('/api/countries?q=' + searchText)
+    return await response.json()
+}
+</script>
+
+<Autocomplete
+    bind:selectedOptions={selected}
+    options={popularCountries}
+    onOptionsSearch={searchAllCountries}
+    showInitialOptions={true}
+    initialOptionsCount={5}
+    label="Select country"
+    placeholder="Select from popular or search all..."
+/>
+
 Props:
-options: T[]                          // Available options
+options?: OptionItem[]                // Available options
 selectedOptions?: T[]                 // Selected options (bindable)
-optionLabel: keyof T | (item: T) => string
-optionValue: keyof T | (item: T) => any
 placeholder?: string
 disabled?: boolean
-maxSelectedOptions?: number           // Max selections (default: Infinity)
-maxDisplayResults?: number            // Max results shown (default: 10)
-keepOpenAfterSelection?: boolean      // Keep open after select
-appearance?: "outline" | "filled"
+readonly?: boolean
+required?: boolean
+label?: string
+appearance?: string
+maxSelectedOptions?: number           // Max selections allowed
+maxOptionsSearch?: number             // Max results shown (default: 9)
+showOverlayOnEmptyResults?: boolean   // Show dropdown when empty (default: true)
+showInitialOptions?: boolean          // Show options when empty (default: false)
+initialOptionsCount?: number          // Limit initial options (default: maxOptionsSearch)
+keepOpen?: boolean                    // Keep dropdown open after selection
+width?: string                        // Custom width
+class?: string
+style?: string
 
 Events:
-onOptionsSearch?: (query: string) => Promise<T[]>  // Async search
+onOptionsSearch?: (searchText: string) => Promise<OptionItem[]> | OptionItem[]
+onSelectedOptionsChange?: (selected: T[]) => void
+
+OptionItem type:
+{
+    value: T          // Unique identifier
+    text: string      // Display text
+    disabled?: boolean // Optional disabled state
+}
 
 CHECKBOX COMPONENTS
 -------------------
