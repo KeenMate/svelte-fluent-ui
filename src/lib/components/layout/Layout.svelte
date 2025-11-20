@@ -8,7 +8,6 @@
 		orientation?: Orientation
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	// Filter out null/undefined values from object to prevent Svelte 5 spreading errors
@@ -23,8 +22,7 @@
 		children = undefined,
 		orientation = "vertical",
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	let element: HTMLElement | undefined = $state()

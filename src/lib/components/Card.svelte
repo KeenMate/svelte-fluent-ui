@@ -9,7 +9,6 @@
 		style?: string
 		minimalStyle?: boolean
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -19,8 +18,7 @@
 		class: classParam = undefined,
 		style: styleParam = undefined,
 		minimalStyle = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props()
 
 	let computedStyle = $derived.by(() => {

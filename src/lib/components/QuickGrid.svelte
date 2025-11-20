@@ -26,7 +26,6 @@
 		class?: string
 		style?: string
 		cellTemplate?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -40,8 +39,7 @@
 		hoverable = true,
 		class: className = "",
 		style = "",
-		cellTemplate = undefined,
-		...restProps
+		cellTemplate = undefined
 	}: Props<T> = $props()
 
 	// Sorting state

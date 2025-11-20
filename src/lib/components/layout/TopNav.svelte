@@ -24,7 +24,6 @@
 		height?: number
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	let {
@@ -35,8 +34,7 @@
 		navigationGroups = [],
 		height = 60,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	let mobileMenuOpen = $state(false)

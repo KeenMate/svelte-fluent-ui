@@ -15,7 +15,6 @@
 		readonly?: boolean
 		disabled?: boolean
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -23,8 +22,7 @@
 		multi = undefined,
 		disabled = undefined,
 		readonly = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props()
 
 	let element:

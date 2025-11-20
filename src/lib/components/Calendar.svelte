@@ -31,7 +31,6 @@
 		onDatesSelected?: (values: Date[]) => void
 		onDateSelected?: (value: Date) => void
 		day?: SlotType
-		[prop: string]: any
 	}
 
 	let {

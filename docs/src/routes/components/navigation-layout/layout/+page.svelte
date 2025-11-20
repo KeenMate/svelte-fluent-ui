@@ -1,0 +1,60 @@
+<script lang="ts">
+	import {Layout, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = []
+
+	const actions: Property[] = []
+
+	const callbacks: Property[] = []
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Layout content"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+	<h1>Layout</h1>
+
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Custom component">Layout (Custom)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Layout" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Examples</h2>
+		<p>
+			<Layout>
+				<p>
+					Inner content of layout
+				</p>
+			</Layout>
+		</p>
+	</Card>
+</Stack>

@@ -1,0 +1,288 @@
+/* ========================================
+   Toast Notifications
+   Temporary notification messages that auto-dismiss
+   Programmatic toast service styled with FluentUI design tokens
+   ======================================== */
+
+@import "../tokens";
+
+// ===== TOAST CONTAINER =====
+
+// Fixed container for toast notifications
+.fluent-toast-container {
+	position: fixed;
+	z-index: $z-index-toast;
+	pointer-events: none;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+
+	// Position variations
+	&--top-right {
+		top: $spacing-lg;
+		right: $spacing-lg;
+	}
+
+	&--top-left {
+		top: $spacing-lg;
+		left: $spacing-lg;
+	}
+
+	&--bottom-right {
+		bottom: $spacing-lg;
+		right: $spacing-lg;
+	}
+
+	&--bottom-left {
+		bottom: $spacing-lg;
+		left: $spacing-lg;
+	}
+
+	&--top-center {
+		top: $spacing-lg;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	&--bottom-center {
+		bottom: $spacing-lg;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+// ===== TOAST ITEM =====
+
+.fluent-toast {
+	background-color: var(--neutral-layer-1);
+	border: 1px solid var(--neutral-stroke-1);
+	border-radius: $border-radius-md;
+	box-shadow: $shadow-lg;
+	min-width: 300px;
+	max-width: 400px;
+	padding: $spacing-md $spacing-lg;
+	pointer-events: auto;
+	display: flex;
+	align-items: flex-start;
+	gap: $spacing-md;
+	position: relative;
+	overflow: hidden;
+	cursor: pointer;
+
+	// Animation states
+	opacity: 0;
+	transform: translateX(100%);
+	transition:
+		opacity $transition-normal ease,
+		transform $transition-normal ease;
+
+	&.fluent-toast--show {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	&.fluent-toast--hide {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+
+	// Left position animations
+	.fluent-toast-container--top-left &,
+	.fluent-toast-container--bottom-left & {
+		transform: translateX(-100%);
+
+		&.fluent-toast--show {
+			transform: translateX(0);
+		}
+
+		&.fluent-toast--hide {
+			transform: translateX(-100%);
+		}
+	}
+
+	// Center position animations
+	.fluent-toast-container--top-center &,
+	.fluent-toast-container--bottom-center & {
+		transform: translateY(-100%);
+
+		&.fluent-toast--show {
+			transform: translateY(0);
+		}
+
+		&.fluent-toast--hide {
+			transform: translateY(-100%);
+		}
+	}
+}
+
+// Toast icon
+.fluent-toast__icon {
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: $font-size-lg;
+	border-radius: $border-radius-md;
+}
+
+// Toast content
+.fluent-toast__content {
+	flex: 1;
+	min-width: 0;
+	padding-right: $spacing-xl;
+}
+
+.fluent-toast__title {
+	font-weight: $font-weight-semibold;
+	margin: 0 0 $spacing-xs 0;
+	color: var(--neutral-foreground-rest);
+	font-size: $font-size-md;
+}
+
+.fluent-toast__message {
+	margin: 0;
+	color: var(--neutral-foreground-rest);
+	font-size: $font-size-sm;
+	line-height: 1.5;
+	word-wrap: break-word;
+}
+
+// Toast close button
+.fluent-toast__close {
+	position: absolute;
+	top: $spacing-md;
+	right: $spacing-md;
+	background: none;
+	border: none;
+	color: var(--neutral-foreground-rest);
+	cursor: pointer;
+	padding: 0;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: $border-radius-md;
+	font-size: $font-size-lg;
+	line-height: 1;
+	transition:
+		background-color $transition-fast ease,
+		color $transition-fast ease;
+
+	&:hover {
+		background-color: var(--neutral-fill-secondary-hover);
+		color: var(--neutral-foreground-rest);
+	}
+
+	&:focus {
+		outline: 2px solid var(--accent-fill-rest);
+		outline-offset: 2px;
+	}
+}
+
+// Toast progress bar
+.fluent-toast__progress {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 3px;
+	width: 100%;
+	background-color: currentColor;
+	opacity: 0.3;
+	animation: toast-progress linear forwards;
+}
+
+@keyframes toast-progress {
+	from {
+		width: 100%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+// ===== TOAST VARIANTS =====
+
+// Success toast
+.fluent-toast--success {
+	border-left: 4px solid $color-success;
+
+	.fluent-toast__icon {
+		background-color: rgba($color-success, 0.1);
+		color: $color-success;
+	}
+
+	.fluent-toast__progress {
+		color: $color-success;
+	}
+}
+
+// Error toast
+.fluent-toast--error {
+	border-left: 4px solid $color-error;
+
+	.fluent-toast__icon {
+		background-color: rgba($color-error, 0.1);
+		color: $color-error;
+	}
+
+	.fluent-toast__progress {
+		color: $color-error;
+	}
+}
+
+// Warning toast
+.fluent-toast--warning {
+	border-left: 4px solid $color-warning;
+
+	.fluent-toast__icon {
+		background-color: rgba($color-warning, 0.1);
+		color: $color-warning;
+	}
+
+	.fluent-toast__progress {
+		color: $color-warning;
+	}
+}
+
+// Info toast
+.fluent-toast--info {
+	border-left: 4px solid $color-info;
+
+	.fluent-toast__icon {
+		background-color: rgba($color-info, 0.1);
+		color: $color-info;
+	}
+
+	.fluent-toast__progress {
+		color: $color-info;
+	}
+}
+
+// ===== RESPONSIVE =====
+
+@media (max-width: 768px) {
+	.fluent-toast-container {
+		left: $spacing-md !important;
+		right: $spacing-md !important;
+		transform: none !important;
+
+		&--top-right,
+		&--top-left,
+		&--top-center {
+			top: $spacing-md;
+		}
+
+		&--bottom-right,
+		&--bottom-left,
+		&--bottom-center {
+			bottom: $spacing-md;
+		}
+	}
+
+	.fluent-toast {
+		max-width: 100%;
+	}
+}

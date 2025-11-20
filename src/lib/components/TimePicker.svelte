@@ -27,7 +27,6 @@
 		class?: string
 		style?: string
 		onValueChange?: (value: string | null) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -44,8 +43,7 @@
 		hourStep = 1,
 		class: className = "",
 		style = "",
-		onValueChange = undefined,
-		...restProps
+		onValueChange = undefined
 	}: Props = $props()
 
 	let isOpen = $state(false)

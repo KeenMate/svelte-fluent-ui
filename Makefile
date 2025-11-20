@@ -13,6 +13,7 @@ DOCKER_PORT = 8080
 
 .PHONY: install setup dev build package clean lint check format publish publish-dry help
 .PHONY: docker-build docker-run docker-stop docker-start docker-restart docker-logs docker-clean docker-deploy
+.PHONY: docker-build-docs docker-run-docs docker-stop-docs
 
 # Default target
 help:
@@ -34,7 +35,7 @@ help:
 	@echo "  publish      - Publish package to npm"
 	@echo "  publish-dry  - Dry run publish (show what would be published)"
 	@echo ""
-	@echo "Docker:"
+	@echo "Docker (Legacy Showcase):"
 	@echo "  docker-build   - Build Docker image"
 	@echo "  docker-run     - Run Docker container (creates new)"
 	@echo "  docker-start   - Start existing Docker container"
@@ -43,6 +44,11 @@ help:
 	@echo "  docker-logs    - Show Docker container logs"
 	@echo "  docker-clean   - Remove Docker container and image"
 	@echo "  docker-deploy  - Build and run Docker container"
+	@echo ""
+	@echo "Docker (Documentation Site):"
+	@echo "  docker-build-docs - Build docs Docker image (default: latest from npm, or VERSION=file:.. for local)"
+	@echo "  docker-run-docs   - Run docs container on port 8080"
+	@echo "  docker-stop-docs  - Stop docs container"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  clean        - Clean build artifacts"
@@ -54,7 +60,7 @@ setup: install
 	@echo "Setup complete!"
 
 dev:
-	npm run dev
+	cd docs && npm run dev
 
 build:
 	npm run build
@@ -114,3 +120,33 @@ docker-clean: docker-stop ## Remove Docker container and image
 	@echo "Cleanup complete"
 
 docker-deploy: docker-build docker-run ## Build and run Docker container
+
+# Documentation Docker commands
+docker-build-docs: ## Build documentation Docker image with --no-cache (use VERSION=1.0.0-rc02 or file:.. for local)
+	@echo "Building documentation Docker image with --no-cache..."
+ifdef VERSION
+	@echo "Using version: $(VERSION)"
+	@echo "Image tag: $(if $(filter file:..,$(VERSION)),local,$(VERSION))"
+else
+	@echo "Using version: latest (from npm)"
+	@echo "Image tag: latest"
+endif
+	docker build --no-cache \
+		$(if $(VERSION),--build-arg VERSION=$(VERSION),--build-arg VERSION=latest) \
+		-t svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),latest) \
+		.
+	@echo "Documentation Docker image built successfully!"
+
+docker-run-docs: ## Run documentation Docker container on port 8080
+	@echo "Starting documentation container on http://localhost:8080..."
+	docker run -d --name svelte-fluentui-docs \
+		-p 8080:80 \
+		svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),latest)
+	@echo "Documentation running at http://localhost:8080"
+	@echo "To stop: make docker-stop-docs"
+
+docker-stop-docs: ## Stop documentation Docker container
+	@echo "Stopping documentation container..."
+	-docker stop svelte-fluentui-docs
+	-docker rm svelte-fluentui-docs
+	@echo "Documentation container stopped and removed"

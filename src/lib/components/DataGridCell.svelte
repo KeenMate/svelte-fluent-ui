@@ -18,7 +18,6 @@
 		onClick?: (e: MouseEvent) => void
 		onFocus?: (e: FocusEvent) => void
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -34,8 +33,7 @@
 		onKeyDown = undefined,
 		onClick = undefined,
 		onFocus = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props()
 
 	function handleKeyDown(e: KeyboardEvent) {

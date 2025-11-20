@@ -6,17 +6,17 @@
 
 	type Props = {
 		onClick?: (ev: MouseEvent) => void
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
 		onClick = undefined,
-		...restProps
+		class: className = undefined
 	    }: Props = $props()
 </script>
 
 <NavItem
-	class="expander {restProps.class || ''}"
+	class="expander {className || ''}"
 	{onClick}
 >
 	<PositioningRegion>

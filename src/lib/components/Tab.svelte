@@ -20,7 +20,6 @@
 		overflow?: string;
 		visible?: boolean;
 		onCloseClick?: () => void;
-		[prop: string]: any;
 	};
 
 	let {
@@ -38,8 +37,7 @@
 		showClose = false,
 		overflow = undefined,
 		visible = true,
-		onCloseClick = undefined,
-		...restProps
+		onCloseClick = undefined
 	}: Props = $props();
 </script>
 

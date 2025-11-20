@@ -15,7 +15,6 @@
 		circular?: boolean
 		children?: SlotType
 		onClick?: (ev: MouseEvent) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -23,8 +22,7 @@
 		    appearance = undefined,
 		    circular   = undefined,
 		    children   = undefined,
-		    onClick    = undefined,
-		    ...restProps
+		    onClick    = undefined
 	    }: Props = $props()
 </script>
 

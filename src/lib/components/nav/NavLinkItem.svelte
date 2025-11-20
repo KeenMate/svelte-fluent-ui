@@ -15,7 +15,6 @@
 		afterText?: SlotType
 		children?: SlotType
 		linkAction?: (node: HTMLElement) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -29,8 +28,7 @@
 		    onClick   = undefined,
 		    afterText = undefined,
 		    children  = undefined,
-		    linkAction = undefined,
-		    ...restProps
+		    linkAction = undefined
 	    }: Props = $props()
 </script>
 

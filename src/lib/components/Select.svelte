@@ -21,7 +21,6 @@
 		labelTemplate?: SlotType;
 		children?: SlotType;
 		onChange?: (value: string) => void;
-		[prop: string]: any;
 	};
 
 	let {
@@ -40,8 +39,7 @@
 		ariaLabel = undefined,
 		labelTemplate = undefined,
 		children = undefined,
-		onChange = undefined,
-		...restProps
+		onChange = undefined
 	}: Props = $props();
 
 	function handleChange(e: Event) {

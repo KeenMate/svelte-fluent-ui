@@ -8,7 +8,6 @@
 		style?: string
 		title?: string
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -16,8 +15,7 @@
 		visible = false,
 		style = '',
 		title = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props()
 
 	let overlayElement: HTMLDivElement | undefined = undefined

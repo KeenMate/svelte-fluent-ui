@@ -31,7 +31,7 @@
 		size?: "small" | "medium" | "large" | "extra-large" | "full"
 		width?: string
 		height?: string
-		[prop: string]: any
+		style?: string
 	}
 
 	let {
@@ -50,7 +50,7 @@
 		    size = "medium",
 		    width = undefined,
 		    height = undefined,
-		...restProps
+		    style = undefined
 	    }: Props = $props()
 
 	// Size mappings
@@ -117,7 +117,7 @@
 	{ariaDescribedby}
 	{ariaLabelledby}
 	{ariaLabel}
-	style={dialogStyle + (restProps?.style ? ` ${restProps.style}` : '')}
+	style={dialogStyle + (style ? ` ${style}` : '')}
 >
 	<div class="dialog-container">
 		{#if !preventClose}

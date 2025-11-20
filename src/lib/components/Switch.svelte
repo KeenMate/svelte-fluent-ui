@@ -21,7 +21,6 @@
 		onChange?: (checked: boolean) => void
 		children?: SlotType
 		labelTemplate?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -39,8 +38,7 @@
 		uncheckedMessage = undefined,
 		onChange = undefined,
 		children = undefined,
-		labelTemplate = undefined,
-		...restProps
+		labelTemplate = undefined
 	}: Props = $props()
 
 	// Check if messages are snippets or strings

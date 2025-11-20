@@ -13,7 +13,6 @@
 		class?: string
 		style?: string
 		title?: string
-		[prop: string]: any
 	}
 	// Filter out null/undefined values from object to prevent Svelte 5 spreading errors
 	function filterNullProps(obj: Record<string, any> | undefined): Record<string, any> {
@@ -39,8 +38,7 @@
 		hoverEffect = false,
 		class: className = '',
 		style: styleParam = '',
-		title = undefined,
-		...restProps
+		title = undefined
 	}: Props = $props()
 
 	let svgContent = $state<string>('')

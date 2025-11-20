@@ -18,7 +18,6 @@
 		icon?: SlotType
 		children?: SlotType
 		onChange?: (ev: Event, isExpanded: boolean) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -31,8 +30,7 @@
 		    end          = undefined,
 		    icon         = undefined,
 		    children     = undefined,
-		    onChange     = undefined,
-		    ...restProps
+		    onChange     = undefined
 	    }: Props = $props()
 
 	const ctx = getContext<FluentAccordionSvelteContext>("fluent-accordion")

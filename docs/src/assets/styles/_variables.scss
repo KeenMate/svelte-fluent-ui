@@ -1,0 +1,119 @@
+/**
+ * Semantic Variables - Theme overridable
+ * These variables map to design tokens and can be overridden by themes
+ * All variables use !default so themes can override them before @use
+ */
+
+@use 'tokens' as *;
+
+// ===== LIGHT THEME DEFAULTS =====
+
+// Background colors
+$bg-primary-light: $neutral-white !default;
+$bg-secondary-light: $neutral-gray-10 !default;
+$bg-tertiary-light: $neutral-gray-20 !default;
+
+// Text colors
+$text-primary-light: $neutral-gray-110 !default;
+$text-secondary-light: $neutral-gray-90 !default;
+$text-tertiary-light: $neutral-gray-70 !default;
+$text-inverse-light: $neutral-white !default;
+
+// Border colors
+$border-primary-light: $neutral-gray-40 !default;
+$border-secondary-light: $neutral-gray-30 !default;
+
+// Accent colors
+$accent-primary-light: $accent-blue !default;
+$accent-hover-light: $accent-blue-hover !default;
+$accent-active-light: $accent-blue-active !default;
+
+// Navbar
+$navbar-bg-light: $neutral-white !default;
+$navbar-text-light: $neutral-gray-110 !default;
+$navbar-border-light: $neutral-gray-40 !default;
+
+// Sidebar
+$sidebar-bg-light: $neutral-gray-20 !default;
+$sidebar-text-light: $neutral-gray-110 !default;
+$sidebar-border-light: $neutral-gray-40 !default;
+$sidebar-hover-light: $neutral-gray-30 !default;
+$sidebar-active-light: $neutral-gray-40 !default;
+
+// Header
+$header-bg-light: $neutral-white !default;
+$header-text-light: $neutral-gray-110 !default;
+$header-border-light: $neutral-gray-40 !default;
+
+// Footer
+$footer-bg-light: $neutral-white !default;
+$footer-text-light: $neutral-gray-110 !default;
+$footer-border-light: $neutral-gray-40 !default;
+
+// ===== DARK THEME DEFAULTS =====
+
+// Background colors
+$bg-primary-dark: $neutral-gray-150 !default;
+$bg-secondary-dark: $neutral-gray-130 !default;
+$bg-tertiary-dark: $neutral-gray-110 !default;
+
+// Text colors
+$text-primary-dark: $neutral-gray-20 !default;
+$text-secondary-dark: $neutral-gray-50 !default;
+$text-tertiary-dark: $neutral-gray-70 !default;
+$text-inverse-dark: $neutral-gray-160 !default;
+
+// Border colors
+$border-primary-dark: $neutral-gray-100 !default;
+$border-secondary-dark: $neutral-gray-110 !default;
+
+// Accent colors
+$accent-primary-dark: $accent-blue-dark !default;
+$accent-hover-dark: $accent-blue !default;
+$accent-active-dark: $accent-blue-hover !default;
+
+// Navbar
+$navbar-bg-dark: $neutral-gray-150 !default;
+$navbar-text-dark: $neutral-gray-20 !default;
+$navbar-border-dark: $neutral-gray-100 !default;
+
+// Sidebar
+$sidebar-bg-dark: $neutral-black !default;
+$sidebar-text-dark: $neutral-gray-20 !default;
+$sidebar-border-dark: $neutral-gray-100 !default;
+$sidebar-hover-dark: $neutral-gray-140 !default;
+$sidebar-active-dark: $neutral-gray-130 !default;
+
+// Header
+$header-bg-dark: $neutral-gray-150 !default;
+$header-text-dark: $neutral-gray-20 !default;
+$header-border-dark: $neutral-gray-100 !default;
+
+// Footer
+$footer-bg-dark: $neutral-gray-150 !default;
+$footer-text-dark: $neutral-gray-20 !default;
+$footer-border-dark: $neutral-gray-100 !default;
+
+// ===== COMPONENT-SPECIFIC VARIABLES =====
+
+// Spacing
+$component-padding: $spacing-md !default;
+$component-margin: $spacing-md !default;
+$component-gap: $spacing-md !default;
+
+// Sidebar Navigation
+$sidebar-link-padding: $spacing-md !default;
+$sidebar-padding: $spacing-lg !default;
+$sidebar-icon-gap: $spacing-sm !default;
+
+// Typography
+$body-font-size: $font-size-md !default;
+$body-font-weight: $font-weight-regular !default;
+$heading-font-weight: $font-weight-semibold !default;
+
+// Borders
+$component-border-radius: $border-radius-md !default;
+$component-border-width: 1px !default;
+
+// Transitions
+$component-transition: $transition-normal !default;

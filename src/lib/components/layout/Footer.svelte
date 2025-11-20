@@ -5,14 +5,12 @@
 		children?: SlotType
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	let {
 		children = undefined,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	let element: HTMLElement | undefined = $state()

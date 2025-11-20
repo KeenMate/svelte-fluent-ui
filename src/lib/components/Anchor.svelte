@@ -24,7 +24,6 @@
 		preventDefault?: boolean
 		use?: ((node: HTMLElement) => any) | undefined
 		onClick?: (event: MouseEvent) => void
-		[prop: string]: any
 	}
 
 	let element: HTMLElement
@@ -47,8 +46,7 @@
 		children = undefined,
 		preventDefault = false,
 		use = undefined,
-		onClick = undefined,
-		...restProps
+		onClick = undefined
 	}: Props = $props()
 
 	$effect(() => {

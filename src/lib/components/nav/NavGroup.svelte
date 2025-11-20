@@ -14,7 +14,7 @@
 		linkIcon?: SlotType
 		linkText?: SlotType
 		children?: SlotType
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
@@ -24,12 +24,12 @@
 		    linkIcon = undefined,
 		    linkText = undefined,
 		    children = undefined,
-		    ...restProps
+		    class: className = undefined
 	    }: Props = $props()
 
 	const navItemClass = $derived(classList(
 		expanded && "expanded",
-		restProps.class
+		className
 	))
 
 	// Load expanded state from localStorage on mount

@@ -19,7 +19,6 @@
 		onLast?: () => void
 		summaryTemplate?: SlotType
 		paginationTextTemplate?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -36,8 +35,7 @@
 		onNext = undefined,
 		onLast = undefined,
 		summaryTemplate = undefined,
-		paginationTextTemplate = undefined,
-		...restProps
+		paginationTextTemplate = undefined
 	}: Props = $props()
 </script>
 

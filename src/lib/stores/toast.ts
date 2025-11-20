@@ -78,19 +78,15 @@ function createToastStore() {
 			persistent
 		}
 
-		console.log("[Toast Store] Adding toast:", toast)
-
 		// Add to store
 		update((toasts) => {
 			const newToasts = [...toasts, toast]
-			console.log("[Toast Store] Current toasts:", newToasts.length, newToasts)
 			return newToasts
 		})
 
 		// Auto-dismiss if not persistent
 		if (!persistent) {
 			setTimeout(() => {
-				console.log("[Toast Store] Auto-dismissing toast:", id)
 				dismiss(id)
 			}, duration)
 		}
@@ -102,10 +98,8 @@ function createToastStore() {
 	 * Remove a toast by ID
 	 */
 	function dismiss(id: string): void {
-		console.log("[Toast Store] Dismissing toast:", id)
 		update((toasts) => {
 			const filtered = toasts.filter((toast) => toast.id !== id)
-			console.log("[Toast Store] Remaining toasts:", filtered.length)
 			return filtered
 		})
 	}

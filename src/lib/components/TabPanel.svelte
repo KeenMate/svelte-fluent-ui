@@ -11,7 +11,6 @@
 		active?: boolean
 		defer?: boolean
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -20,8 +19,7 @@
 		id = undefined,
 		active = true,
 		defer = false,
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props()
 </script>
 

@@ -14,7 +14,6 @@
 		readonly?: boolean
 		disabled?: boolean
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
@@ -22,8 +21,7 @@
 		name,
 		readonly = undefined,
 		disabled = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	    }: Props = $props()
 
 	const ctx = $state({

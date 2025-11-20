@@ -16,7 +16,6 @@
 		verticalViewportLock?: boolean;
 		children?: SlotType;
 		maxWidth?: string;
-		[prop:string]:any;
 	};
 
 	let {
@@ -30,8 +29,7 @@
 		horizontalViewportLock = undefined,
 		verticalViewportLock = undefined,
 		children = undefined,
-		maxWidth = undefined,
-		...restProps
+		maxWidth = undefined
 	}: Props = $props();
 </script>
 

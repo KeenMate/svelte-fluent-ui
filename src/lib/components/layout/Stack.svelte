@@ -14,7 +14,6 @@
 		reversed?: boolean
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	// Filter out null/undefined values from object to prevent Svelte 5 spreading errors
@@ -37,8 +36,7 @@
 		height = undefined,
 		reversed = false,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	const computedClass = $derived([

@@ -15,7 +15,6 @@
 			selected?: boolean
 			disabled?: boolean
 			children: any
-			[prop: string]: any
 		}
 
 		let {
@@ -24,8 +23,7 @@
 				disabled = false,
 				selected = undefined,
 				onClick  = undefined,
-				children,
-				...restProps
+				children
 			}: Props = $props()
 
 		const selectedValue = getContext<SelectedOptionSvelteContext | undefined>("selected-options")

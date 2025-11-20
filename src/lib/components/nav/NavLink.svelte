@@ -12,7 +12,7 @@
 		afterText?: SlotType
 		children?: SlotType
 		linkAction?: (node: HTMLElement) => void
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
@@ -23,7 +23,7 @@
 		    afterText = undefined,
 		    children  = undefined,
 		    linkAction = undefined,
-		    ...restProps
+		    class: className = undefined
 	    }: Props = $props()
 
 	let renderElement = $derived(href
@@ -36,7 +36,7 @@
 	this={renderElement}
 	{href}
 	{rel}
-	class="fluent-nav-link {restProps.class || ''}"
+	class="fluent-nav-link {className || ''}"
 	onclick={onClick}
 	use:linkAction
 >

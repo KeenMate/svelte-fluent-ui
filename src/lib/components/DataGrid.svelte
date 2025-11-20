@@ -14,7 +14,6 @@
 		onCloseColumnOptions?: (e: Event) => void;
 		onCloseColumnResize?: (e: Event) => void;
 		children?: SlotType;
-		[prop: string]: any;
 	};
 
 	let {
@@ -26,8 +25,7 @@
 		role = "grid",
 		onCloseColumnOptions = undefined,
 		onCloseColumnResize = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props();
 
 	function handleCloseColumnOptions(e: Event) {

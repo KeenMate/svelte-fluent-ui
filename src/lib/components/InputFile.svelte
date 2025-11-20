@@ -26,7 +26,6 @@
 		onCompleted?: () => void
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	let {
@@ -42,8 +41,7 @@
 		onFileError = undefined,
 		onCompleted = undefined,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	type FileWithProgress = {

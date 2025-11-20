@@ -11,7 +11,7 @@
 		onClick?: (ev: MouseEvent) => void
 		icon?: SlotType
 		children?: SlotType
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
@@ -21,12 +21,12 @@
 		    onClick = undefined,
 		    icon = undefined,
 		    children = undefined,
-		    ...restProps
+		    class: className = undefined
 	    }: Props = $props()
 </script>
 
 <div
-	class="fluent-appbar-item {restProps.class || ''}"
+	class="fluent-appbar-item {className || ''}"
 >
 	<div class="fluentui-counterbadge-container">
 		<a

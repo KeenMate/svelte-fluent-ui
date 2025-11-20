@@ -11,10 +11,9 @@
 		value?: ValueType
 		multi?: boolean
 		children?: SlotType
-		[prop: string]: any
 	}
 
-	let {value = $bindable(), multi = undefined, children = undefined, ...restProps}: Props = $props()
+	let {value = $bindable(), multi = undefined, children = undefined}: Props = $props()
 
 	const ctx: FluentAccordionSvelteContext = $state({value: toContextValue(value)})
 	setContext("fluent-accordion", ctx)

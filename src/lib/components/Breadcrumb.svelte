@@ -8,12 +8,10 @@
 	
 	type Props = {
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
-		children = undefined,
-		...restProps
+		children = undefined
 	    }: Props = $props()
 </script>
 

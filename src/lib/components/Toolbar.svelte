@@ -10,7 +10,6 @@
 		style?: string;
 		orientation?: "horizontal" | "vertical";
 		children?: SlotType;
-		[prop: string]: any;
 	};
 
 	let {
@@ -18,8 +17,7 @@
 		class: className = "",
 		style = "",
 		orientation = "horizontal",
-		children = undefined,
-		...restProps
+		children = undefined
 	}: Props = $props();
 </script>
 

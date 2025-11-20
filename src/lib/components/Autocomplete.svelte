@@ -35,7 +35,6 @@
 		style?: string
 		onOptionsSearch?: (searchText: string) => Promise<OptionItem<T>[]> | OptionItem<T>[]
 		onSelectedOptionsChange?: (selected: T[]) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -55,8 +54,7 @@
 		class: className = "",
 		style = "",
 		onOptionsSearch = undefined,
-		onSelectedOptionsChange = undefined,
-		...restProps
+		onSelectedOptionsChange = undefined
 	}: Props = $props()
 
 	let searchText = $state("")

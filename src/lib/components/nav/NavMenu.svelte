@@ -8,7 +8,7 @@
 		collapsed?: boolean
 		collapsible?: boolean
 		children?: SlotType
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
@@ -16,7 +16,7 @@
 		    collapsed   = $bindable(),
 		    collapsible = undefined,
 		    children    = undefined,
-		    ...restProps
+		    class: className = undefined
 	    }: Props = $props()
 
 	const computedStyle = $derived(styleList(
@@ -26,7 +26,7 @@
 
 <div
 	role="menu"
-	class="fluent-nav-menu {restProps.class || ''}"
+	class="fluent-nav-menu {className || ''}"
 	class:collapsed
 	style={computedStyle}
 >

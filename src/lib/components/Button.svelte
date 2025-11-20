@@ -22,7 +22,6 @@
 		children?: SlotType
 		style?: string
 		onClick?: (ev: MouseEvent) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -42,8 +41,7 @@
 		end = undefined,
 		children = undefined,
 		style= "",
-		onClick = undefined,
-		...restProps
+		onClick = undefined
 	}: Props = $props()
 </script>
 

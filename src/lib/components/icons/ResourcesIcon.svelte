@@ -4,8 +4,7 @@
 	}
 
 	const {
-		      active = undefined,
-		      ...restProps
+		      active = undefined
 	      }: Props = $props()
 </script>
 

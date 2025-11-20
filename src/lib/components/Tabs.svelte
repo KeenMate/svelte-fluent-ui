@@ -16,7 +16,6 @@
 		moreButtonId?: string;
 		styleMoreValues?: string;
 		onTabChange?: (e: Event) => void;
-		[prop: string]: any;
 	};
 
 	let {
@@ -30,8 +29,7 @@
 		overflow = [],
 		moreButtonId = "more-button",
 		styleMoreValues = "",
-		onTabChange = undefined,
-		...restProps
+		onTabChange = undefined
 	}: Props = $props();
 
 	function handleTabChange(e: Event) {

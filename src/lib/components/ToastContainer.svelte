@@ -2,8 +2,6 @@
 	import {toast, type Toast, type ToastPosition} from "$lib/stores/toast.js"
 	import {onMount} from "svelte"
 
-	console.log("[ToastContainer] Component script loaded")
-
 	let toasts: Toast[] = []
 	let toastsByPosition: Record<ToastPosition, Toast[]> = {
 		"top-right": [],
@@ -16,7 +14,6 @@
 
 	// Subscribe to toast store
 	toast.subscribe((value) => {
-		console.log("[ToastContainer] Store updated, toasts:", value.length, value)
 		toasts = value
 
 		// Group toasts by position
@@ -32,8 +29,6 @@
 		toasts.forEach((t) => {
 			toastsByPosition[t.position].push(t)
 		})
-
-		console.log("[ToastContainer] Toasts by position:", toastsByPosition)
 	})
 
 	// Icons for variants
@@ -45,12 +40,10 @@
 	}
 
 	function handleDismiss(id: string) {
-		console.log("[ToastContainer] Dismiss button clicked:", id)
 		toast.dismiss(id)
 	}
 
 	function handleToastClick(id: string) {
-		console.log("[ToastContainer] Toast clicked:", id)
 		toast.dismiss(id)
 	}
 
@@ -58,7 +51,6 @@
 	let mountedToasts = new Set<string>()
 
 	onMount(() => {
-		console.log("[ToastContainer] Component mounted")
 		// Mark all existing toasts as mounted for animation
 		toasts.forEach((t) => {
 			setTimeout(() => mountedToasts.add(t.id), 10)

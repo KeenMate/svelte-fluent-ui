@@ -10,14 +10,12 @@
 		href?: string
 		separator?: SlotType
 		children?: SlotType
-		[prop: string]: any
 	}
 
 	let {
 		href = undefined,
     separator = undefined,
-		children = undefined,
-		...restProps
+		children = undefined
 	    }: Props = $props()
 </script>
 

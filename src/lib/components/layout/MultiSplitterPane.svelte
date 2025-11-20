@@ -13,7 +13,6 @@
 		collapsible?: boolean
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	let {
@@ -24,8 +23,7 @@
 		resizable = true,
 		collapsible = false,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	let element: HTMLDivElement | undefined = $state()

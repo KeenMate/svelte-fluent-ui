@@ -13,11 +13,13 @@ A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2
 - ✨ **FluentUI Blazor Inspired** - Advanced components like DatePicker, TimePicker, InputFile, and Autocomplete
 - 💾 **Navigation Persistence** - Sidebar menu state persists across page reloads with localStorage
 - 🎯 **Active Route Highlighting** - Current page automatically highlighted in navigation
+- 🔔 **Toast Notifications** - Programmatic toast service with multiple positions and auto-dismiss
 
 ## Highlights
 
 - **Navigation Persistence** - Sidebar menu state automatically saved to localStorage and restored on page reload
 - **Active Route Highlighting** - Current page is automatically highlighted in the navigation menu
+- **Toast Service** - Programmatic notifications with `toast.success()`, `toast.error()`, etc. - 6 positions, progress bars, auto-dismiss
 - **DatePicker & TimePicker** - Full-featured date and time selection with calendar popup and time picker
 - **InputFile** - Drag-and-drop file upload with validation and progress tracking
 - **Autocomplete** - Multiple selection with tag/chip display and async search support
@@ -90,7 +92,8 @@ npm install svelte-fluentui
 
 ### Feedback
 - `Dialog` - Modal dialogs
-- `Toast` - Notification messages
+- `Toast` - Declarative notification messages
+- `ToastContainer` + `toast` - Programmatic toast service (success, error, warning, info)
 - `Accordion` / `AccordionItem` - Collapsible content
 
 ### Utilities
@@ -305,6 +308,39 @@ npm install svelte-fluentui
 />
 ```
 
+### Toast Notifications
+```svelte
+<script>
+  import { ToastContainer, toast } from 'svelte-fluentui'
+
+  function showSuccess() {
+    toast.success('Operation completed successfully!')
+  }
+
+  function showError() {
+    const id = toast.error('Something went wrong', {
+      persistent: true,
+      position: 'top-center'
+    })
+    // Later: toast.dismiss(id)
+  }
+
+  function showWithProgress() {
+    toast.info('Processing your request...', {
+      showProgress: true,
+      duration: 8000
+    })
+  }
+</script>
+
+<!-- Add once in your layout -->
+<ToastContainer />
+
+<button onclick={showSuccess}>Show Success</button>
+<button onclick={showError}>Show Error</button>
+<button onclick={showWithProgress}>Show With Progress</button>
+```
+
 ## Development
 
 Clone the repository and install dependencies:
@@ -315,20 +351,48 @@ cd svelte-fluentui
 npm install
 ```
 
-Start the development server:
+### Working on the Library
+
+The library source code is in `src/lib/`. To package the library:
 
 ```bash
+npm run package
+```
+
+### Working on Documentation
+
+The documentation site is in the `docs/` folder as a separate SvelteKit project:
+
+```bash
+cd docs
+npm install
 npm run dev
+```
+
+Or use the Makefile:
+
+```bash
+make dev  # Runs docs dev server
 ```
 
 Visit `http://localhost:5173` to see the component showcase and examples.
 
 ## Building
 
-Build the library:
+Build the library for publishing:
 
 ```bash
 npm run build
+```
+
+Build documentation Docker image:
+
+```bash
+# With local source
+make docker-build-docs
+
+# With specific npm version
+make docker-build-docs VERSION=1.0.0-rc03
 ```
 
 ## Contributing

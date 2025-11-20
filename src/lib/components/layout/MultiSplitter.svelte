@@ -27,7 +27,6 @@
 		onResize?: (args: MultiSplitterResizeEventArgs) => void
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	let {
@@ -40,8 +39,7 @@
 		onExpand = undefined,
 		onResize = undefined,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	let element: HTMLDivElement | undefined = $state()

@@ -6,13 +6,13 @@
 	type Props = {
 		orientation?: AppBarOrientation
 		children?: SlotType
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
 		    orientation = undefined,
 		    children    = undefined,
-		    ...restProps
+		    class: className = undefined
 	    }: Props = $props()
 
 	const computedClasses = $derived(classList(
@@ -20,7 +20,7 @@
 		orientation === AppBarOrientation.Horizontal
 			? "horizontal"
 			: "vertical",
-		restProps.class
+		className
 	))
 </script>
 

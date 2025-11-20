@@ -30,7 +30,6 @@
 		children?: SlotType
 		onInput?: (value: string) => void
 		onChange?: (value: string) => void
-		[prop: string]: any
 	}
 
 	let {
@@ -58,8 +57,7 @@
 		labelTemplate = undefined,
 		children = undefined,
 		onInput = undefined,
-		onChange = undefined,
-		...restProps
+		onChange = undefined
 	}: Props = $props()
 
 	function handleInput(e: Event) {

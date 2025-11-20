@@ -6,7 +6,7 @@
 		group?: boolean
 		onClick?: (ev: MouseEvent) => void
 		children?: SlotType
-		[prop: string]: any
+		class?: string
 	}
 
 	let {
@@ -14,7 +14,7 @@
 		    group    = undefined,
 		    onClick = undefined,
 		    children = undefined,
-		    ...restProps
+		    class: className = undefined
 	    }: Props = $props()
 
 	// const isInNavGroup = getContext<NavGroupSvelteContext>("nav-group")
@@ -23,7 +23,7 @@
 <div
 	role="menuitem"
 	{disabled}
-	class="fluent-nav-item {restProps.class || ''}"
+	class="fluent-nav-item {className || ''}"
 	class:fluent-nav-group={group}
 	class:disabled
 	onclick={onClick}

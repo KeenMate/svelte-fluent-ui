@@ -7,7 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc03] - 2025-11-20
+
 ### Added
+- **Toast Service** - Programmatic toast notification system
+  - Store-based toast API with `toast.success()`, `toast.error()`, `toast.warning()`, `toast.info()`
+  - ToastContainer component for rendering toasts
+  - Support for 6 positions: top-right, top-left, top-center, bottom-right, bottom-left, bottom-center
+  - Auto-dismiss with configurable duration
+  - Optional progress bars
+  - Persistent toasts that require manual dismissal
+  - Programmatic dismiss by ID or dismiss all
+  - Demo page at `/components/toast-service`
+
+- **Documentation Project Structure** - Separated library and documentation
+  - Created `docs/` folder with independent SvelteKit project
+  - Documentation uses `svelte-fluentui` as package dependency (`file:..`)
+  - Validates that library exports work correctly
+  - Docker build system with VERSION parameter support
+    - Build with local source: `make docker-build-docs` or `VERSION=file:..`
+    - Build with npm version: `make docker-build-docs VERSION=1.0.0-rc03`
+  - Follows svelte-spa-router pattern for better separation of concerns
+
+### Added (from previous unreleased)
 - **Navigation Persistence** - Sidebar navigation state persists across page reloads
   - LocalStorage integration for NavGroup expanded/collapsed state
   - New `navigationStore` for managing navigation state
@@ -140,6 +162,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Three-state checkbox examples
   - Parent-child relationship with indeterminate state
   - Matches FluentUI Blazor documentation style
+
+- **Analytics Domain** - Updated Plausible analytics tracking
+  - Changed domain from generic to `svelte-fluentui.keenmate.dev`
 
 ## [1.0.0-rc02] - 2025-10-05
 

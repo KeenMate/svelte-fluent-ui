@@ -44,8 +44,7 @@
 		    required     = undefined,
 		    autofocus    = undefined,
 		    name         = undefined,
-		    children     = undefined,
-		    ...restProps
+		    children     = undefined
 	    }: Props = $props()
 
 	const selectedOptions = createSelectedOptions(value)

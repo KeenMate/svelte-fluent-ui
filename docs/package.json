@@ -1,0 +1,29 @@
+{
+	"name": "svelte-fluentui-docs",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Documentation and showcase for Svelte FluentUI components",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"svelte-fluentui": "file:.."
+	},
+	"devDependencies": {
+		"@fluentui/web-components": "^2.6.1",
+		"@sveltejs/adapter-static": "^3.0.10",
+		"@sveltejs/kit": "^2.43.8",
+		"@sveltejs/vite-plugin-svelte": "^6.2.1",
+		"sass-embedded": "^1.93.2",
+		"svelte": "^5.39.8",
+		"svelte-check": "^4.3.2",
+		"svelte-preprocess": "^6.0.3",
+		"typescript": "^5.9.3",
+		"vite": "^7.1.9"
+	}
+}

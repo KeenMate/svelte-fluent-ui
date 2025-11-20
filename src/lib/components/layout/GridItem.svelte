@@ -19,7 +19,6 @@
 		hiddenWhen?: GridItemHidden
 		class?: string
 		style?: string
-		[prop: string]: any
 	}
 
 	let {
@@ -35,8 +34,7 @@
 		adaptiveRendering = undefined,
 		hiddenWhen = undefined,
 		class: className = "",
-		style = "",
-		...restProps
+		style = ""
 	}: Props = $props()
 
 	const grid = getContext<{currentSize: string | undefined; adaptiveRendering: boolean}>("grid")
