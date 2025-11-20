@@ -1,18 +1,25 @@
 # Build stage
 FROM node:22-alpine AS builder
 
-# Build argument for version (latest for npm, file:.. for local source, or specific version like 1.0.0-rc03)
-ARG VERSION=latest
+# Build argument for version (file:.. for local source, or specific version like 1.0.0-rc04)
+ARG VERSION=1.0.0-rc04
 
 WORKDIR /app
 
-# Copy docs package files
-COPY docs/package*.json ./docs/
+# Copy library source files to /app (needed for VERSION=file:..)
+# When building from npm (VERSION != file:..), these are copied but not used
+COPY src/ ./src/
+COPY scripts/ ./scripts/
+COPY svelte.config.js package.json ./
 
+# Copy docs folder
+COPY docs/ ./docs/
+
+# Switch to docs directory for build
 WORKDIR /app/docs
 
 # Conditional installation based on VERSION
-# If VERSION is "file:..", install with local dependency (requires library source copied)
+# If VERSION is "file:..", use local source from ../
 # Otherwise, install specific version from npm
 RUN if [ "$VERSION" = "file:.." ]; then \
       echo "Installing with local svelte-fluentui (file:..)"; \
@@ -23,15 +30,6 @@ RUN if [ "$VERSION" = "file:.." ]; then \
       npm install svelte-fluentui@$VERSION; \
       npm install; \
     fi
-
-# Copy docs source files
-COPY docs/. ./
-
-# Copy library source if building locally (VERSION=file:..)
-# These copies will fail gracefully when building from npm (VERSION != file:..)
-COPY src/ ../src/ 2>/dev/null || true
-COPY scripts/ ../scripts/ 2>/dev/null || true
-COPY svelte.config.js package.json ../ 2>/dev/null || true
 
 # Build the documentation site
 RUN npm run build

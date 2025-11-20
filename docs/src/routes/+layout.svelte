@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "../assets/styles/demo-pages.scss"
-	import "svelte-fluentui/main"
+	import "svelte-fluentui/styles.scss"
 	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer} from "svelte-fluentui"
 	import SiteSettings from "../lib/components/SiteSettings.svelte"
 	import {settings, accentColors} from "svelte-fluentui"

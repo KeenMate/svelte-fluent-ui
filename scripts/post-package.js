@@ -38,11 +38,11 @@ const mainScssContent = `/**
  *
  * // custom-theme.scss
  * @use 'my-variables' as variables;
- * @use 'svelte-fluentui/assets/styles/fluent-ui/main';
- * @use 'svelte-fluentui/assets/styles/theme' with ($navbar-bg-light: #FFCC00);
- * @use 'svelte-fluentui/assets/styles/layout';
- * @use 'svelte-fluentui/assets/styles/nav';
- * @use 'svelte-fluentui/assets/styles/components';
+ * @use 'svelte-fluentui/fluent-ui';
+ * @use 'svelte-fluentui/theme' with ($navbar-bg-light: #FFCC00);
+ * @use 'svelte-fluentui/layout';
+ * @use 'svelte-fluentui/nav';
+ * @use 'svelte-fluentui/components';
  */
 
 // Use FluentUI web components styles

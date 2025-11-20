@@ -1,6 +1,6 @@
 {
 	"name": "svelte-fluentui",
-	"version": "1.0.0-rc03",
+	"version": "1.0.0-rc04",
 	"description": "A Svelte wrapper library for Microsoft FluentUI web components",
 	"license": "MIT",
 	"author": "KeenMate",
@@ -45,6 +45,11 @@
 		"./styles": "./dist/main.css",
 		"./styles.scss": "./dist/main.scss",
 		"./main": "./dist/main.scss",
+		"./fluent-ui": "./dist/assets/styles/fluent-ui/main.scss",
+		"./theme": "./dist/assets/styles/theme.scss",
+		"./layout": "./dist/assets/styles/layout.scss",
+		"./nav": "./dist/assets/styles/nav.scss",
+		"./components": "./dist/assets/styles/components.scss",
 		"./assets/*": "./dist/assets/*"
 	},
 	"peerDependencies": {

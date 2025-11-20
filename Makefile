@@ -46,7 +46,7 @@ help:
 	@echo "  docker-deploy  - Build and run Docker container"
 	@echo ""
 	@echo "Docker (Documentation Site):"
-	@echo "  docker-build-docs - Build docs Docker image (default: latest from npm, or VERSION=file:.. for local)"
+	@echo "  docker-build-docs - Build docs Docker image (default: VERSION=1.0.0-rc04, or VERSION=file:.. for local)"
 	@echo "  docker-run-docs   - Run docs container on port 8080"
 	@echo "  docker-stop-docs  - Stop docs container"
 	@echo ""
@@ -128,12 +128,12 @@ ifdef VERSION
 	@echo "Using version: $(VERSION)"
 	@echo "Image tag: $(if $(filter file:..,$(VERSION)),local,$(VERSION))"
 else
-	@echo "Using version: latest (from npm)"
-	@echo "Image tag: latest"
+	@echo "Using version: 1.0.0-rc04 (from npm)"
+	@echo "Image tag: 1.0.0-rc04"
 endif
 	docker build --no-cache \
-		$(if $(VERSION),--build-arg VERSION=$(VERSION),--build-arg VERSION=latest) \
-		-t svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),latest) \
+		$(if $(VERSION),--build-arg VERSION=$(VERSION),--build-arg VERSION=1.0.0-rc04) \
+		-t svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),1.0.0-rc04) \
 		.
 	@echo "Documentation Docker image built successfully!"
 
@@ -141,7 +141,7 @@ docker-run-docs: ## Run documentation Docker container on port 8080
 	@echo "Starting documentation container on http://localhost:8080..."
 	docker run -d --name svelte-fluentui-docs \
 		-p 8080:80 \
-		svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),latest)
+		svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),1.0.0-rc04)
 	@echo "Documentation running at http://localhost:8080"
 	@echo "To stop: make docker-stop-docs"
 

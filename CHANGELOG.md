@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc04] - 2025-11-20
+
+### Added
+- **Short SCSS Export Paths** - Cleaner imports following industry standards
+  - New short paths: `svelte-fluentui/fluent-ui`, `svelte-fluentui/theme`, `svelte-fluentui/layout`, `svelte-fluentui/nav`, `svelte-fluentui/components`
+  - Old verbose paths like `svelte-fluentui/assets/styles/fluent-ui/main` still work via `./assets/*` export
+  - Follows conventions used by Bootstrap, Tailwind, Angular Material
+- **Comprehensive Getting Started Documentation**
+  - Installation instructions with peer dependencies
+  - Two styling options: SCSS (recommended) vs CSS
+  - SCSS variable customization guide with `@use ... with ()` syntax
+  - Complete setup example with FluentUI theme configuration
+  - Constants and TypeScript usage examples
+
+### Changed
+- **SCSS by Default** - Styles now default to SCSS for variable override capability
+  - Main import changed from `svelte-fluentui/styles` (CSS) to `svelte-fluentui/styles.scss` (SCSS)
+  - Allows consumers to override SCSS variables using `@use ... with ()` syntax
+  - CSS import still available for projects without SCSS processing
+- **Removed Toast-related console.log statements** for production readiness
+
+### Fixed
+- **Docker Build** - Consolidated Dockerfile to root with VERSION parameter support
+  - Removed redundant `docs/Dockerfile` and `docs/nginx.conf`
+  - Default VERSION changed to `latest` (pulls from npm) instead of `file:..` (local source)
+  - Simplified build process with proper SCSS file copying
+- **GitIgnore** - Updated `.svelte-kit` to ignore in all directories (root and docs)
+
 ## [1.0.0-rc03] - 2025-11-20
 
 ### Added

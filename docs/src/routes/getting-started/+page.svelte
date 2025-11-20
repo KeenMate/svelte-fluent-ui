@@ -11,18 +11,19 @@
 	<Card>
 		<h2>Installation</h2>
 		<p>Install the package via npm:</p>
-		<pre><code>npm install @keenmate/svelte-fluentui</code></pre>
+		<pre><code>npm install svelte-fluentui @fluentui/web-components</code></pre>
 		<p>Or using pnpm:</p>
-		<pre><code>pnpm add @keenmate/svelte-fluentui</code></pre>
+		<pre><code>pnpm add svelte-fluentui @fluentui/web-components</code></pre>
 		<p>Or using yarn:</p>
-		<pre><code>yarn add @keenmate/svelte-fluentui</code></pre>
+		<pre><code>yarn add svelte-fluentui @fluentui/web-components</code></pre>
+		<p class="note"><strong>Note:</strong> <code>@fluentui/web-components</code> is a peer dependency required for the library to work.</p>
 	</Card>
 
 	<Card>
 		<h2>Basic Usage</h2>
 		<p>Import and use components in your Svelte files:</p>
 		<pre><code>&lt;script&gt;
-  import &#123; Button, TextField, Card &#125; from '@keenmate/svelte-fluentui'
+  import &#123; Button, TextField, Card &#125; from 'svelte-fluentui'
 &lt;/script&gt;
 
 &lt;Card&gt;
@@ -33,17 +34,66 @@
 	</Card>
 
 	<Card>
-		<h2>Setting up FluentUI Theme</h2>
-		<p>To properly style the components, you need to import the main stylesheet and set up the FluentUI theme:</p>
+		<h2>Setting up Styles</h2>
+		<p>Svelte FluentUI requires styles to be imported in your application. You have two options depending on your needs:</p>
 
-		<h3>1. Import Styles</h3>
-		<p>In your main layout file (e.g., <code>+layout.svelte</code>):</p>
+		<h3>Option 1: Import SCSS (Recommended)</h3>
+		<p>Use this approach if you want to customize variables or need full styling flexibility. Make sure your project is configured to process SCSS files.</p>
 		<pre><code>&lt;script&gt;
-  import '@keenmate/svelte-fluentui/styles'
+  // In your main layout file (e.g., +layout.svelte)
+  import 'svelte-fluentui/styles.scss'
 &lt;/script&gt;</code></pre>
+		<p><strong>Benefits:</strong></p>
+		<ul>
+			<li>Can override SCSS variables</li>
+			<li>Full theming capabilities</li>
+			<li>Better integration with custom styles</li>
+		</ul>
 
-		<h3>2. Set Base Layer Luminance</h3>
-		<p>Configure the theme luminance for light/dark mode support:</p>
+		<h3>Option 2: Import Compiled CSS</h3>
+		<p>Use this if you don't need to customize variables or if SCSS processing is not available:</p>
+		<pre><code>&lt;script&gt;
+  // In your main layout file (e.g., +layout.svelte)
+  import 'svelte-fluentui/styles'
+&lt;/script&gt;</code></pre>
+		<p><strong>Limitations:</strong></p>
+		<ul>
+			<li>Cannot override SCSS variables</li>
+			<li>Uses default theme values</li>
+		</ul>
+	</Card>
+
+	<Card>
+		<h2>Customizing Styles with SCSS Variables</h2>
+		<p>If you need to override theme variables, import individual SCSS modules using Sass <code>@use</code> syntax with the <code>with</code> clause:</p>
+		<pre><code>// Create a custom-theme.scss file
+@use 'svelte-fluentui/fluent-ui';
+@use 'svelte-fluentui/theme' with (
+  $navbar-bg-light: #FFCC00,
+  $sidebar-bg: #333,
+  $accent-color: #0078d4
+);
+@use 'svelte-fluentui/layout';
+@use 'svelte-fluentui/nav';
+@use 'svelte-fluentui/components';</code></pre>
+		<p>Then import your custom theme instead of the main styles:</p>
+		<pre><code>&lt;script&gt;
+  import './custom-theme.scss'
+&lt;/script&gt;</code></pre>
+		<p><strong>Available SCSS Modules:</strong></p>
+		<ul>
+			<li><code>svelte-fluentui/fluent-ui</code> - FluentUI web components base styles</li>
+			<li><code>svelte-fluentui/theme</code> - Theme system and CSS variables</li>
+			<li><code>svelte-fluentui/layout</code> - Layout component styles</li>
+			<li><code>svelte-fluentui/nav</code> - Navigation component styles</li>
+			<li><code>svelte-fluentui/components</code> - Custom component styles</li>
+		</ul>
+		<p>View all available SCSS variables in the <a href="/theme/variables">CSS Variables documentation</a>.</p>
+	</Card>
+
+	<Card>
+		<h2>Setting up FluentUI Theme</h2>
+		<p>Configure the FluentUI design system luminance for light/dark mode support:</p>
 		<pre><code>&lt;script&gt;
   import &#123; onMount &#125; from 'svelte'
   import &#123; baseLayerLuminance, StandardLuminance &#125; from '@fluentui/web-components'
@@ -65,43 +115,83 @@
 	</Card>
 
 	<Card>
+		<h2>Complete Setup Example</h2>
+		<p>Here's a complete example of setting up Svelte FluentUI in your main layout:</p>
+		<pre><code>&lt;!-- +layout.svelte --&gt;
+&lt;script lang="ts"&gt;
+  import &#123; onMount &#125; from 'svelte'
+  import &#123; Layout, ToastContainer &#125; from 'svelte-fluentui'
+  import &#123; baseLayerLuminance, StandardLuminance &#125; from '@fluentui/web-components'
+
+  // Import styles (SCSS for customization, or '/styles' for CSS)
+  import 'svelte-fluentui/styles.scss'
+
+  onMount(() =&gt; &#123;
+    baseLayerLuminance.setValueFor(document.body, StandardLuminance.LightMode)
+  &#125;)
+
+  let &#123;children&#125; = $props()
+&lt;/script&gt;
+
+&lt;Layout&gt;
+  &#123;@render children()&#125;
+&lt;/Layout&gt;
+
+&lt;!-- Optional: Add ToastContainer for programmatic toasts --&gt;
+&lt;ToastContainer /&gt;</code></pre>
+	</Card>
+
+	<Card>
 		<h2>Component Categories</h2>
 		<p>Svelte FluentUI includes the following component categories:</p>
 
 		<h3>Forms & Inputs</h3>
-		<p>TextField, TextArea, NumberField, Checkbox, Radio, Switch, Select, Combobox, Listbox, Search, Calendar</p>
+		<p>TextField, TextArea, NumberField, Checkbox, Radio, Switch, Select, Combobox, Listbox, Search, Calendar, DatePicker, TimePicker, InputFile, Autocomplete</p>
 
 		<h3>Buttons & Actions</h3>
 		<p>Button, Anchor</p>
 
 		<h3>Layout</h3>
-		<p>Layout, Grid, GridItem, Stack, Spacer, MultiSplitter, BodyContent</p>
+		<p>Layout, Grid, GridItem, Stack, Spacer, MultiSplitter, BodyContent, Header, Footer</p>
 
 		<h3>Navigation</h3>
-		<p>NavMenu, NavGroup, NavLinkItem, AppBar, Breadcrumbs, Tabs, Accordion</p>
+		<p>NavMenu, NavGroup, NavLinkItem, AppBar, AppBarItem, Breadcrumbs, Tabs, Accordion</p>
 
 		<h3>Display</h3>
-		<p>Card, Badge</p>
+		<p>Card, Badge, Divider</p>
 
 		<h3>Feedback</h3>
-		<p>Dialog, Toast, Tooltip</p>
+		<p>Dialog, Toast, Toast Service, Tooltip, Progress</p>
 
 		<h3>Data Display</h3>
-		<p>DataGrid, QuickGrid, Paginator, Toolbar</p>
+		<p>DataGrid, QuickGrid, Paginator, Toolbar, Tree</p>
 	</Card>
 
 	<Card>
 		<h2>TypeScript Support</h2>
 		<p>All components are written in TypeScript and include full type definitions. You'll get autocomplete and type checking out of the box.</p>
+		<pre><code>import type &#123; ButtonAppearance &#125; from 'svelte-fluentui'
+
+const appearance: ButtonAppearance = 'accent'</code></pre>
+	</Card>
+
+	<Card>
+		<h2>Importing Constants and Enums</h2>
+		<p>The library exports various constants and enums for component configuration:</p>
+		<pre><code>import &#123; Button &#125; from 'svelte-fluentui'
+import &#123; AppBarOrientation, ButtonAppearance &#125; from 'svelte-fluentui/constants'
+
+&lt;Button appearance=&#123;ButtonAppearance.Accent&#125;&gt;Click Me&lt;/Button&gt;</code></pre>
 	</Card>
 
 	<Card>
 		<h2>Next Steps</h2>
 		<ul>
-			<li>Browse the <a href="/">component list</a> to see all available components</li>
+			<li>Browse the <a href="/components">component list</a> to see all available components</li>
 			<li>Check out the <a href="/theme/variables">CSS Variables</a> documentation to customize the theme</li>
+			<li>Learn about <a href="/components/toast-service">Toast Service</a> for programmatic notifications</li>
 			<li>Visit the <a href="https://github.com/KeenMate/svelte-fluentui" target="_blank" rel="noopener noreferrer">GitHub repository</a> for examples and source code</li>
-			<li>Refer to <a href="https://docs.microsoft.com/en-us/fluent-ui/web-components/" target="_blank" rel="noopener noreferrer">FluentUI Web Components documentation</a> for detailed API information</li>
+			<li>Refer to <a href="https://www.fluentui-blazor.net/" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a> and <a href="https://developer.microsoft.com/en-us/fluentui" target="_blank" rel="noopener noreferrer">FluentUI</a> for design patterns and inspiration</li>
 		</ul>
 	</Card>
 </Stack>
@@ -132,6 +222,13 @@
 	p {
 		margin: 0 0 1rem 0;
 		line-height: 1.6;
+	}
+
+	p.note {
+		background: var(--neutral-layer-2, #f5f5f5);
+		border-left: 3px solid var(--accent-fill-rest, #0078d4);
+		padding: 0.75rem 1rem;
+		border-radius: 4px;
 	}
 
 	pre {
