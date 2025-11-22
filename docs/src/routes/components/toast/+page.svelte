@@ -111,9 +111,9 @@
 					topAction="Undo"
 					primaryAction="View Details"
 					secondaryAction="Dismiss"
-					onTopActionClick={handleTopAction}
-					onPrimaryActionClick={handlePrimaryAction}
-					onSecondaryActionClick={handleSecondaryAction}
+					ontopactionclick={handleTopAction}
+					onprimaryactionclick={handlePrimaryAction}
+					onsecondaryactionclick={handleSecondaryAction}
 				></Toast>
 			</div>
 		{/if}

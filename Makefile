@@ -1,5 +1,5 @@
-# Svelte FluentUI - Makefile
-# Development and build commands for the FluentUI wrapper library
+# Svelte FluentUI Workspace - Makefile
+# Development and build commands for the FluentUI wrapper library (workspace version)
 
 # === Configuration ===
 # Force bash shell for Windows compatibility
@@ -8,145 +8,132 @@ SHELL := /bin/bash
 # Docker image settings
 DOCKER_IMAGE_NAME = registry.km8.es/svelte-fluentui-showcase
 DOCKER_TAG = production
-DOCKER_CONTAINER_NAME = svelte-fluentui-showcase
+DOCKER_CONTAINER_NAME = svelte-fluentui-docs
 DOCKER_PORT = 8080
 
-.PHONY: install setup dev build package clean lint check format publish publish-dry help
-.PHONY: docker-build docker-run docker-stop docker-start docker-restart docker-logs docker-clean docker-deploy
-.PHONY: docker-build-docs docker-run-docs docker-stop-docs
+.PHONY: setup dev build package link unlink publish publish-dry clean help
+.PHONY: docker-build-docs docker-run-docs docker-stop-docs docker-clean-docs
 
 # Default target
 help:
-	@echo "Svelte FluentUI - Available Commands:"
-	@echo ""
-	@echo "Development:"
-	@echo "  install      - Install dependencies"
-	@echo "  setup        - Set up the project (install)"
-	@echo "  dev          - Start development server"
-	@echo "  build        - Build production version (demo site + package)"
-	@echo "  package      - Package the library for publishing"
-	@echo ""
-	@echo "Quality:"
-	@echo "  lint         - Run linting (Prettier + ESLint)"
-	@echo "  check        - Run TypeScript checking"
-	@echo "  format       - Format code with Prettier"
-	@echo ""
-	@echo "Publishing:"
-	@echo "  publish      - Publish package to npm"
-	@echo "  publish-dry  - Dry run publish (show what would be published)"
-	@echo ""
-	@echo "Docker (Legacy Showcase):"
-	@echo "  docker-build   - Build Docker image"
-	@echo "  docker-run     - Run Docker container (creates new)"
-	@echo "  docker-start   - Start existing Docker container"
-	@echo "  docker-stop    - Stop Docker container"
-	@echo "  docker-restart - Restart Docker container"
-	@echo "  docker-logs    - Show Docker container logs"
-	@echo "  docker-clean   - Remove Docker container and image"
-	@echo "  docker-deploy  - Build and run Docker container"
-	@echo ""
-	@echo "Docker (Documentation Site):"
-	@echo "  docker-build-docs - Build docs Docker image (default: VERSION=1.0.0-rc04, or VERSION=file:.. for local)"
-	@echo "  docker-run-docs   - Run docs container on port 8080"
-	@echo "  docker-stop-docs  - Stop docs container"
-	@echo ""
-	@echo "Cleanup:"
-	@echo "  clean        - Clean build artifacts"
+	@echo Svelte FluentUI Workspace - Available Commands:
+	@echo
+	@echo Development:
+	@echo   setup        - Install dependencies for all workspace packages
+	@echo   dev          - Start development server (docs with HMR)
+	@echo   build        - Build production version (library + docs)
+	@echo   package      - Package the library for publishing
+	@echo   link         - Create global npm link for svelte-fluentui
+	@echo   unlink       - Remove global npm link for svelte-fluentui
+	@echo
+	@echo Publishing:
+	@echo   publish      - Publish package to npm (asks for confirmation)
+	@echo   publish-dry  - Dry run publish (show what would be published)
+	@echo
+	@echo Docker (Documentation Site):
+	@echo   docker-build-docs - Build docs Docker image (--no-cache --progress plain)
+	@echo   docker-run-docs   - Run docs container on port $(DOCKER_PORT)
+	@echo   docker-stop-docs  - Stop docs container
+	@echo   docker-clean-docs - Stop and remove docs container and image
+	@echo
+	@echo Cleanup:
+	@echo   clean        - Clean build artifacts
 
-install:
+setup:
+	@echo Installing workspace dependencies...
 	npm install
-
-setup: install
-	@echo "Setup complete!"
+	@echo
+	@echo Setup complete!
 
 dev:
-	cd docs && npm run dev
+	@echo Starting development server with HMR...
+	npm run dev
 
 build:
+	@echo Building library and documentation...
 	npm run build
 
 package:
-	npm run package
+	@echo
+	@echo Building library package...
+	cd packages/svelte-fluentui && npm run package
+	@echo
+	@echo Package built successfully
+	@printf "  Files: %s\n" "$$(find packages/svelte-fluentui/dist -type f | wc -l)"
+	@printf "  Size: %s\n" "$$(du -sh packages/svelte-fluentui/dist | cut -f1)"
+	@echo
 
-lint:
-	npm run lint
+link: package
+	@echo
+	@echo Creating global npm link for svelte-fluentui...
+	cd packages/svelte-fluentui && npm link
+	@echo
+	@echo Link created successfully!
+	@echo To use in your project, run: npm link svelte-fluentui
+	@echo
 
-check:
-	npm run check
-
-format:
-	npm run format
+unlink:
+	@echo
+	@echo Removing global npm link for svelte-fluentui...
+	cd packages/svelte-fluentui && npm unlink
+	@echo
+	@echo Link removed successfully!
+	@echo
 
 publish: package
-	npm publish --tag rc
+	@echo
+	@echo WARNING: You are about to publish to npm!
+	@echo
+	@read -p "Are you sure you want to publish? (yes/no): " confirm; \
+	if [ "$$confirm" = "yes" ]; then \
+		echo Publishing to npm...; \
+		cd packages/svelte-fluentui && npm publish --tag rc; \
+		echo Published successfully!; \
+	else \
+		echo Publish cancelled.; \
+		exit 1; \
+	fi
 
 publish-dry: package
-	npm publish --dry-run
+	@echo Dry run - showing what would be published...
+	cd packages/svelte-fluentui && npm publish --dry-run
 
 clean:
-	rm -rf dist node_modules/.vite
-	@echo "Cleaned build artifacts"
+	@echo Cleaning build artifacts...
+	rm -rf packages/svelte-fluentui/dist packages/svelte-fluentui/node_modules/.vite
+	rm -rf docs/.svelte-kit docs/build
+	@echo Cleaned build artifacts
 
-# Docker commands
-docker-build: ## Build Docker image
-	@echo "Building Docker image: $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
-	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
-	@echo "Docker image built successfully!"
-
-docker-run: ## Run Docker container
-	@echo "Starting Docker container on port $(DOCKER_PORT)"
-	docker run -d --name $(DOCKER_CONTAINER_NAME) -p $(DOCKER_PORT):80 $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
-	@echo "Application is running at: http://localhost:$(DOCKER_PORT)"
-
-docker-stop: ## Stop Docker container
-	@echo "Stopping Docker container"
-	docker stop $(DOCKER_CONTAINER_NAME)
-	@echo "Container stopped successfully"
-
-docker-restart: docker-stop docker-start ## Restart Docker container
-
-docker-start: ## Start existing Docker container
-	@echo "Starting existing Docker container"
-	docker start $(DOCKER_CONTAINER_NAME)
-	@echo "Application is running at: http://localhost:$(DOCKER_PORT)"
-
-docker-logs: ## Show Docker container logs
-	docker logs -f $(DOCKER_CONTAINER_NAME)
-
-docker-clean: docker-stop ## Remove Docker container and image
-	@echo "Cleaning up Docker resources"
-	docker rm $(DOCKER_CONTAINER_NAME)
-	docker rmi $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
-	@echo "Cleanup complete"
-
-docker-deploy: docker-build docker-run ## Build and run Docker container
-
-# Documentation Docker commands
-docker-build-docs: ## Build documentation Docker image with --no-cache (use VERSION=1.0.0-rc02 or file:.. for local)
-	@echo "Building documentation Docker image with --no-cache..."
-ifdef VERSION
-	@echo "Using version: $(VERSION)"
-	@echo "Image tag: $(if $(filter file:..,$(VERSION)),local,$(VERSION))"
-else
-	@echo "Using version: 1.0.0-rc04 (from npm)"
-	@echo "Image tag: 1.0.0-rc04"
-endif
-	docker build --no-cache \
-		$(if $(VERSION),--build-arg VERSION=$(VERSION),--build-arg VERSION=1.0.0-rc04) \
-		-t svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),1.0.0-rc04) \
+# Docker commands for documentation site
+docker-build-docs:
+	@echo Building documentation Docker image...
+	@echo   - Using --no-cache for fresh build
+	@echo   - Using --progress plain for detailed output
+	@echo
+	docker build --no-cache --progress plain \
+		-t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) \
+		-t $(DOCKER_IMAGE_NAME):latest \
 		.
-	@echo "Documentation Docker image built successfully!"
+	@echo
+	@echo Documentation Docker image built successfully!
 
-docker-run-docs: ## Run documentation Docker container on port 8080
-	@echo "Starting documentation container on http://localhost:8080..."
-	docker run -d --name svelte-fluentui-docs \
-		-p 8080:80 \
-		svelte-fluentui-docs:$(if $(VERSION),$(if $(filter file:..,$(VERSION)),local,$(VERSION)),1.0.0-rc04)
-	@echo "Documentation running at http://localhost:8080"
-	@echo "To stop: make docker-stop-docs"
+docker-run-docs:
+	@echo Starting documentation container on http://localhost:$(DOCKER_PORT)...
+	docker run -d --name $(DOCKER_CONTAINER_NAME) \
+		-p $(DOCKER_PORT):80 \
+		$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+	@echo
+	@echo Documentation running at http://localhost:$(DOCKER_PORT)
+	@echo    To stop: make docker-stop-docs
 
-docker-stop-docs: ## Stop documentation Docker container
-	@echo "Stopping documentation container..."
-	-docker stop svelte-fluentui-docs
-	-docker rm svelte-fluentui-docs
-	@echo "Documentation container stopped and removed"
+docker-stop-docs:
+	@echo Stopping documentation container...
+	-docker stop $(DOCKER_CONTAINER_NAME)
+	-docker rm $(DOCKER_CONTAINER_NAME)
+	@echo Documentation container stopped and removed
+
+docker-clean-docs: docker-stop-docs
+	@echo Removing Docker image...
+	-docker rmi $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+	-docker rmi $(DOCKER_IMAGE_NAME):latest
+	@echo Docker cleanup complete

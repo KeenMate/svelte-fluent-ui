@@ -99,19 +99,19 @@
 		<p>Dialogs can be displayed in different predefined sizes using the <code>size</code> prop.</p>
 
 		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
-			<Button appearance="accent" onClick={() => smallDialog = true}>
+			<Button appearance="accent" onclick={() => smallDialog = true}>
 				Small (400px)
 			</Button>
-			<Button appearance="accent" onClick={() => mediumDialog = true}>
+			<Button appearance="accent" onclick={() => mediumDialog = true}>
 				Medium (600px)
 			</Button>
-			<Button appearance="accent" onClick={() => largeDialog = true}>
+			<Button appearance="accent" onclick={() => largeDialog = true}>
 				Large (800px)
 			</Button>
-			<Button appearance="accent" onClick={() => extraLargeDialog = true}>
+			<Button appearance="accent" onclick={() => extraLargeDialog = true}>
 				Extra Large (1000px)
 			</Button>
-			<Button appearance="accent" onClick={() => fullDialog = true}>
+			<Button appearance="accent" onclick={() => fullDialog = true}>
 				Full (90vw x 90vh)
 			</Button>
 		</Stack>
@@ -122,7 +122,7 @@
 			<p>This is a small dialog (400px wide).</p>
 			<p>Perfect for simple confirmations or short messages.</p>
 			<div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-				<Button appearance="accent" onClick={() => smallDialog = false}>Close</Button>
+				<Button appearance="accent" onclick={() => smallDialog = false}>Close</Button>
 			</div>
 		</Dialog>
 
@@ -132,7 +132,7 @@
 			<p>This is a medium dialog (600px wide) - the default size.</p>
 			<p>Suitable for most dialog content including forms and detailed information.</p>
 			<div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-				<Button appearance="accent" onClick={() => mediumDialog = false}>Close</Button>
+				<Button appearance="accent" onclick={() => mediumDialog = false}>Close</Button>
 			</div>
 		</Dialog>
 
@@ -143,7 +143,7 @@
 			<p>Great for more complex content, multiple columns, or detailed forms.</p>
 			<p>You can add more content here and it will have plenty of space to display properly.</p>
 			<div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-				<Button appearance="accent" onClick={() => largeDialog = false}>Close</Button>
+				<Button appearance="accent" onclick={() => largeDialog = false}>Close</Button>
 			</div>
 		</Dialog>
 
@@ -154,7 +154,7 @@
 			<p>Perfect for dashboards, complex data tables, or multi-step wizards.</p>
 			<p>This size provides maximum space while still maintaining a dialog feel.</p>
 			<div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-				<Button appearance="accent" onClick={() => extraLargeDialog = false}>Close</Button>
+				<Button appearance="accent" onclick={() => extraLargeDialog = false}>Close</Button>
 			</div>
 		</Dialog>
 
@@ -165,7 +165,7 @@
 			<p>Use this for immersive experiences that need maximum screen real estate.</p>
 			<p>Great for image galleries, video players, or complex workflows.</p>
 			<div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-				<Button appearance="accent" onClick={() => fullDialog = false}>Close</Button>
+				<Button appearance="accent" onclick={() => fullDialog = false}>Close</Button>
 			</div>
 		</Dialog>
 	</Card>
@@ -175,7 +175,7 @@
 		<h3>Basic Dialog</h3>
 		<p>Simple dialog with programmatic control using <code>show()</code> and <code>hide()</code> methods.</p>
 
-		<Button appearance="accent" onClick={() => dialog.show()} style="margin-top: 1rem;">
+		<Button appearance="accent" onclick={() => dialog.show()} style="margin-top: 1rem;">
 			Open Basic Dialog
 		</Button>
 

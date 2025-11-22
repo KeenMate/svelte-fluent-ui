@@ -54,6 +54,7 @@
 	let customSearchResults = $state<string[]>([])
 	let peopleResults = $state<string[]>([])
 	let initialOptionsResults = $state<string[]>([])
+	let singleSelectResult = $state<string[]>([])
 
 	// Simulate async search
 	async function handleCustomSearch(searchText: string) {
@@ -200,7 +201,7 @@
 	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
 		<Autocomplete
 			bind:selectedOptions={customSearchResults}
-			onOptionsSearch={handleCustomSearch}
+			onoptionssearch={handleCustomSearch}
 			label="Search countries (async)"
 			placeholder="Type to search..."
 			maxOptionsSearch={5}
@@ -218,7 +219,7 @@
 		<Autocomplete
 			bind:selectedOptions={initialOptionsResults}
 			options={popularCountries}
-			onOptionsSearch={handleCountrySearch}
+			onoptionssearch={handleCountrySearch}
 			showInitialOptions={true}
 			initialOptionsCount={5}
 			label="Select country"
@@ -236,13 +237,32 @@
 	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
 		<Autocomplete
 			bind:selectedOptions={peopleResults}
-			onOptionsSearch={handlePeopleSearch}
+			onoptionssearch={handlePeopleSearch}
 			label="Add people"
 			placeholder="Search by name or email..."
 			maxSelectedOptions={3}
 		/>
 		<p style="margin: 0;">
 			Selected: {peopleResults.length > 0 ? peopleResults.join(", ") : "None"}
+		</p>
+	</Stack>
+</Card>
+
+<!-- Single-Select Mode -->
+<Card>
+	<h3>Single-Select Mode</h3>
+	<p>When maxSelectedOptions is set to 1, the selected value appears inline with a clear button [X].</p>
+
+	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Autocomplete
+			bind:selectedOptions={singleSelectResult}
+			options={colors}
+			maxSelectedOptions={1}
+			label="Select a color"
+			placeholder="Choose one color..."
+		/>
+		<p style="margin: 0;">
+			Selected: {singleSelectResult.length > 0 ? singleSelectResult[0] : "None"}
 		</p>
 	</Stack>
 </Card>
@@ -264,6 +284,27 @@
 			label="Outline"
 			placeholder="Search colors..."
 			appearance="outline"
+		/>
+	</Stack>
+</Card>
+
+<!-- Browser Autocomplete Control -->
+<Card>
+	<h3>Browser Autocomplete Control</h3>
+	<p>Disable browser autocomplete to prevent interference with the custom dropdown.</p>
+
+	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Autocomplete
+			options={countries}
+			label="Autocomplete Off"
+			placeholder="Browser won't suggest values"
+			autocomplete="off"
+		/>
+
+		<Autocomplete
+			options={countries}
+			label="Autocomplete On (default)"
+			placeholder="Browser may suggest values"
 		/>
 	</Stack>
 </Card>
@@ -389,6 +430,12 @@
 				<td>Visual style (filled, outline)</td>
 			</tr>
 			<tr>
+				<td><code>autocomplete</code></td>
+				<td><code>string</code></td>
+				<td><code>undefined</code></td>
+				<td>Browser autocomplete behavior ("off", "on", etc.)</td>
+			</tr>
+			<tr>
 				<td><code>maxSelectedOptions</code></td>
 				<td><code>number</code></td>
 				<td><code>undefined</code></td>
@@ -500,7 +547,7 @@
 
 &lt;Autocomplete
   bind:selectedOptions=&#123;selected&#125;
-  onOptionsSearch=&#123;searchItems&#125;
+  onoptionssearch=&#123;searchItems&#125;
   label="Search items"
   placeholder="Type to search..."
   maxOptionsSearch=&#123;10&#125;
@@ -509,7 +556,7 @@
 	<h3>People Picker</h3>
 	<pre><code>{`<Autocomplete
   bind:selectedOptions={selectedPeople}
-  onOptionsSearch={searchPeople}
+  onoptionssearch={searchPeople}
   label="Add team members"
   placeholder="Search by name or email..."
   maxSelectedOptions={5}
@@ -534,7 +581,7 @@
 <Autocomplete
   bind:selectedOptions={selected}
   options={popularItems}
-  onOptionsSearch={searchAllItems}
+  onoptionssearch={searchAllItems}
   showInitialOptions={true}
   initialOptionsCount={5}
   label="Search items"

@@ -35,7 +35,7 @@
 		<Button appearance="outline">Outline</Button>
 		<Button appearance="stealth">Stealth</Button>
 		<Button appearance="accent" style="--accent-fill-rest: #ffd800; --accent-fill-hover: #e6c200; --accent-fill-active: #ccad00; color: #000;">Colored</Button>
-		<Button appearance="accent" disabled={loading1} onClick={() => handleRefresh('loading1')}>
+		<Button appearance="accent" disabled={loading1} onclick={() => handleRefresh('loading1')}>
 			{loading1 ? 'Loading...' : 'Loading'}
 		</Button>
 	</Stack>
@@ -110,7 +110,7 @@
 		<div>
 			<h3>With icon and loading</h3>
 			<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap;">
-				<Button disabled={loading2} onClick={() => handleRefresh('loading2')}>
+				<Button disabled={loading2} onclick={() => handleRefresh('loading2')}>
 					{#snippet start()}
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style={loading2 ? 'animation: spin 1s linear infinite;' : ''}>
 							<path d="M3.75 10a6.25 6.25 0 0 1 11.25-3.75h-2.5a.625.625 0 0 0 0 1.25h3.75a.625.625 0 0 0 .625-.625v-3.75a.625.625 0 0 0-1.25 0v1.91A7.49 7.49 0 0 0 2.5 10a7.5 7.5 0 0 0 14.98.68.625.625 0 0 0-1.25-.1A6.25 6.25 0 0 1 3.75 10Z"/>
@@ -119,7 +119,7 @@
 					Refresh
 				</Button>
 
-				<Button appearance="accent" disabled={loading2} onClick={() => handleRefresh('loading2')}>
+				<Button appearance="accent" disabled={loading2} onclick={() => handleRefresh('loading2')}>
 					{#snippet start()}
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style={loading2 ? 'animation: spin 1s linear infinite;' : ''}>
 							<path d="M3.75 10a6.25 6.25 0 0 1 11.25-3.75h-2.5a.625.625 0 0 0 0 1.25h3.75a.625.625 0 0 0 .625-.625v-3.75a.625.625 0 0 0-1.25 0v1.91A7.49 7.49 0 0 0 2.5 10a7.5 7.5 0 0 0 14.98.68.625.625 0 0 0-1.25-.1A6.25 6.25 0 0 1 3.75 10Z"/>

@@ -1,0 +1,31 @@
+/**
+ * Main SCSS Entry Point
+ * This file imports all component styles and theme system
+ *
+ * Usage in themes:
+ * Use @use to override variables before including this file:
+ *
+ * // 1. Use tokens
+ * @use 'svelte-fluentui/assets/styles/tokens';
+ *
+ * // 2. Override variables with @use ... with ()
+ * @use 'svelte-fluentui/main' with (
+ *   $navbar-bg-light: #FFCC00,
+ *   $sidebar-bg-light: #000000
+ * );
+ */
+
+// Use FluentUI web components styles
+@use "assets/styles/fluent-ui/main";
+
+// Use theme system (converts variables to CSS custom properties)
+// Note: theme.scss internally loads variables.scss
+@use "assets/styles/theme.scss";
+
+// Use component styles
+@use "assets/styles/layout.scss";
+@use "assets/styles/nav.scss";
+@use "assets/styles/components.scss";
+
+// Use FluentUI Blazor compatibility styles
+@use "assets/styles/fluent-blazor-compat.scss";

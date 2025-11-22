@@ -234,52 +234,52 @@
 			title: "Forms & Inputs",
 			icon: "📝",
 			items: [
-				{label: "TextField", href: "/components/forms/text-field"},
-				{label: "TextArea", href: "/components/forms/text-area"},
-				{label: "NumberField", href: "/components/forms/number-field"},
-				{label: "Checkbox", href: "/components/checkbox"},
-				{label: "Radio", href: "/components/forms/radio"},
-				{label: "Switch", href: "/components/forms/switch"},
-				{label: "Select", href: "/components/forms/select"},
-				{label: "Combobox", href: "/components/forms/combobox"},
 				{label: "Autocomplete", href: "/components/autocomplete"},
-				{label: "Listbox", href: "/components/listbox"},
-				{label: "Search", href: "/components/forms/search"},
 				{label: "Calendar", href: "/components/forms/calendar"},
+				{label: "Checkbox", href: "/components/checkbox"},
+				{label: "Combobox", href: "/components/forms/combobox"},
 				{label: "DatePicker", href: "/components/datepicker"},
-				{label: "TimePicker", href: "/components/timepicker"},
-				{label: "InputFile", href: "/components/inputfile"}
+				{label: "InputFile", href: "/components/inputfile"},
+				{label: "Listbox", href: "/components/listbox"},
+				{label: "NumberField", href: "/components/forms/number-field"},
+				{label: "Radio", href: "/components/forms/radio"},
+				{label: "Search", href: "/components/forms/search"},
+				{label: "Select", href: "/components/forms/select"},
+				{label: "Switch", href: "/components/forms/switch"},
+				{label: "TextArea", href: "/components/forms/text-area"},
+				{label: "TextField", href: "/components/forms/text-field"},
+				{label: "TimePicker", href: "/components/timepicker"}
 			]
 		},
 		{
 			title: "Buttons & Actions",
 			icon: "🔘",
 			items: [
-				{label: "Button", href: "/components/button"},
-				{label: "Anchor", href: "/components/anchor"}
+				{label: "Anchor", href: "/components/anchor"},
+				{label: "Button", href: "/components/button"}
 			]
 		},
 		{
 			title: "Layout",
 			icon: "📐",
 			items: [
-				{label: "Layout", href: "/components/navigation-layout/layout"},
+				{label: "BodyContent", href: "/components/navigation-layout/body-content"},
 				{label: "Grid", href: "/components/navigation-layout/grid"},
-				{label: "Stack", href: "/components/navigation-layout/stack"},
-				{label: "Spacer", href: "/components/navigation-layout/spacer"},
+				{label: "Layout", href: "/components/navigation-layout/layout"},
 				{label: "MultiSplitter", href: "/components/navigation-layout/multisplitter"},
-				{label: "BodyContent", href: "/components/navigation-layout/body-content"}
+				{label: "Spacer", href: "/components/navigation-layout/spacer"},
+				{label: "Stack", href: "/components/navigation-layout/stack"}
 			]
 		},
 		{
 			title: "Navigation",
 			icon: "🧭",
 			items: [
-				{label: "NavMenu", href: "/components/navigation-layout/navigation"},
+				{label: "Accordion", href: "/components/navigation-layout/accordion"},
 				{label: "AppBar", href: "/components/navigation-layout/appbar"},
 				{label: "Breadcrumbs", href: "/components/breadcrumbs"},
-				{label: "Tabs", href: "/components/tabs"},
-				{label: "Accordion", href: "/components/navigation-layout/accordion"}
+				{label: "NavMenu", href: "/components/navigation-layout/navigation"},
+				{label: "Tabs", href: "/components/tabs"}
 			]
 		},
 		{
@@ -305,8 +305,8 @@
 			icon: "📊",
 			items: [
 				{label: "DataGrid", href: "/components/datagrid"},
-				{label: "QuickGrid", href: "/components/quickgrid"},
 				{label: "Paginator", href: "/components/paginator"},
+				{label: "QuickGrid", href: "/components/quickgrid"},
 				{label: "Toolbar", href: "/components/toolbar"}
 			]
 		}
@@ -318,10 +318,10 @@
 	<div class="topnav">
 		<a href="/" class="topnav-brand">Svelte FluentUI</a>
 		<div class="topnav-actions">
-			<Button appearance="stealth" onClick={toggleTheme}>
+			<Button appearance="stealth" onclick={toggleTheme}>
 				{effectiveTheme === "light" ? "🌙" : "☀️"}
 			</Button>
-			<Button appearance="stealth" onClick={openSettings}>
+			<Button appearance="stealth" onclick={openSettings}>
 				⚙️
 			</Button>
 		</div>
@@ -382,6 +382,9 @@
 
 <style>
 	.topnav {
+		position: sticky;
+		top: 0;
+		z-index: 100;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;

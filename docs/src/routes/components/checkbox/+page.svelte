@@ -104,7 +104,7 @@
 	<h3>Three States List</h3>
 
 	<Stack orientation="vertical" gap="0.5rem">
-		<Checkbox checked={allChecked} withIntermediate onClick={handleAllClick}>
+		<Checkbox checked={allChecked} withIntermediate onclick={handleAllClick}>
 			All ({allChecked === null ? 'Indeterminate' : allChecked ? 'True' : 'False'})
 		</Checkbox>
 		<div style="margin-left: 1.5rem;">

@@ -229,3 +229,39 @@ Variables are organized by their component/purpose:
 <Badge appearance="Accent" />
 <Toast topCTAType="Timestamp" />
 ```
+
+### Event Handler Naming
+
+**IMPORTANT**: All event handlers follow Svelte 5's lowercase convention:
+
+#### Standard DOM Event Handlers
+- Use **lowercase** for all event handler props
+- Examples: `onclick`, `onchange`, `oninput`, `onkeydown`, `onkeyup`, `onfocus`, `onblur`, `ondblclick`
+- ❌ Never use: `onClick`, `onChange`, `onInput` (capitalized camelCase)
+
+#### Custom Event Handlers
+For custom component-specific callbacks, use lowercase with descriptive names:
+- Examples: `ondismiss`, `ontopactionclick`, `onprimaryactionclick`, `onoptionssearch`, `onselectedoptionschange`
+- ❌ Never use: `onDismiss`, `onTopActionClick`, `onOptionsSearch` (capitalized camelCase)
+
+#### Examples
+
+✅ **Correct:**
+```svelte
+<Button onclick={handleClick} />
+<TextField oninput={handleInput} onchange={handleChange} />
+<Checkbox onclick={handleCheck} />
+<Toast ondismiss={handleDismiss} ontopactionclick={handleAction} />
+<Autocomplete onoptionssearch={searchOptions} onselectedoptionschange={handleSelection} />
+```
+
+❌ **Incorrect:**
+```svelte
+<Button onClick={handleClick} />
+<TextField onInput={handleInput} onChange={handleChange} />
+<Checkbox onClick={handleCheck} />
+<Toast onDismiss={handleDismiss} onTopActionClick={handleAction} />
+<Autocomplete onOptionsSearch={searchOptions} onSelectedOptionsChange={handleSelection} />
+```
+
+**Rationale**: Svelte 5 standardizes on lowercase event attributes (matching the DOM standard), making components more consistent with web platform conventions and avoiding confusion between different naming styles.

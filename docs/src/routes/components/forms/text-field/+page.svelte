@@ -32,7 +32,8 @@
 		{name: "type", type: "string", default: '"text"', description: "Input type (text, password, email, etc.)"},
 		{name: "name", type: "string", default: "undefined", description: "Form name"},
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
-		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"}
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"},
+		{name: "autocomplete", type: "string", default: "undefined", description: 'Browser autocomplete ("off", "on", "email", "username", etc.)'}
 	]
 
 	const callbacks: Property[] = [
@@ -102,11 +103,44 @@
 
 	<Card>
 		<h2>Examples</h2>
+
+		<h3>Basic TextField</h3>
 		<TextField
 			bind:this={textField}
 			bind:value={textValue}
 			placeholder="Enter text"
-			onInput={onTextInputChanged}
+			oninput={onTextInputChanged}
 		/>
+
+		<h3 style="margin-top: 2rem;">Autocomplete Examples</h3>
+		<p>Control browser autocomplete behavior with the <code>autocomplete</code> prop:</p>
+
+		<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+			<TextField
+				label="Autocomplete Off"
+				placeholder="Browser won't suggest values"
+				autocomplete="off"
+			/>
+
+			<TextField
+				label="Email Field"
+				type="email"
+				placeholder="user@example.com"
+				autocomplete="email"
+			/>
+
+			<TextField
+				label="Username"
+				placeholder="Enter username"
+				autocomplete="username"
+			/>
+
+			<TextField
+				label="Current Password"
+				type="password"
+				placeholder="Enter password"
+				autocomplete="current-password"
+			/>
+		</Stack>
 	</Card>
 </Stack>

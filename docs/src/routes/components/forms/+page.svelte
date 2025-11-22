@@ -120,7 +120,7 @@
 					Selected value: {listboxValue}
 				</div>
 				<div>
-					<Button onClick={() => listboxValue = null}>
+					<Button onclick={() => listboxValue = null}>
 						Reset
 					</Button>
 				</div>

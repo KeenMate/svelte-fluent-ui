@@ -105,7 +105,7 @@
 
 		<h3>Controlled switch</h3>
 		<p>
-			<Switch label="Custom toggle" bind:checked={switchState} onChange={(val) => switchState = val} />
+			<Switch label="Custom toggle" bind:checked={switchState} onchange={(val) => switchState = val} />
 			<br />
 			State: {switchState ? "ON" : "OFF"}
 		</p>
