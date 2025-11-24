@@ -201,15 +201,18 @@
 
 	const navigation = [
 		{
-			title: "Home",
-			icon: "🏠",
-			items: [
-				{label: "List of Components", href: "/"}
-			]
+			title: "Changelog",
+			icon: "📋",
+			href: "/"
+		},
+		{
+			title: "List of Components",
+			icon: "📚",
+			href: "/components-list"
 		},
 		{
 			title: "Documentation",
-			icon: "📚",
+			icon: "📖",
 			items: [
 				{label: "Getting Started", href: "/getting-started"},
 				{label: "Layout Example", href: "/layout-example"}
@@ -340,26 +343,40 @@
 			<GridItem xs={12} md={3} lg={2}>
 				<div class="sidebar">
 					<NavMenu>
-						{#each navigation as group}
-							<NavGroup title={group.title}>
-								{#snippet linkIcon()}
-									<span class="nav-icon">{group.icon}</span>
-								{/snippet}
-								{#snippet linkText()}
-									{group.title}
-								{/snippet}
+						{#each navigation as navItem}
+							{#if navItem.href}
+								<!-- Top-level link -->
+								<NavLinkItem
+									href={navItem.href}
+									class={isActive(navItem.href) ? "active" : ""}
+								>
+									{#snippet icon()}
+										<span class="nav-icon">{navItem.icon}</span>
+									{/snippet}
+									{navItem.title}
+								</NavLinkItem>
+							{:else if navItem.items}
+								<!-- Group with sub-items -->
+								<NavGroup title={navItem.title}>
+									{#snippet linkIcon()}
+										<span class="nav-icon">{navItem.icon}</span>
+									{/snippet}
+									{#snippet linkText()}
+										{navItem.title}
+									{/snippet}
 
-								{#each group.items as item}
-									<NavLinkItem
-										href={item.href}
-										target={item.target}
-										rel={item.rel}
-										class={isActive(item.href) ? "active" : ""}
-									>
-										{item.label}
-									</NavLinkItem>
-								{/each}
-							</NavGroup>
+									{#each navItem.items as item}
+										<NavLinkItem
+											href={item.href}
+											target={item.target}
+											rel={item.rel}
+											class={isActive(item.href) ? "active" : ""}
+										>
+											{item.label}
+										</NavLinkItem>
+									{/each}
+								</NavGroup>
+							{/if}
 						{/each}
 					</NavMenu>
 				</div>
@@ -422,6 +439,11 @@
 
 	.sidebar :global(.nav-icon) {
 		margin-right: var(--fluent-sidebar-icon-gap);
+	}
+
+	/* Reduce spacing for top-level nav items (direct children of nav-menu) */
+	.sidebar :global(.fluent-nav-menu > .fluent-nav-item) {
+		margin: 2px 0;
 	}
 
 	.content {

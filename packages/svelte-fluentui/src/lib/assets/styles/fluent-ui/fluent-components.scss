@@ -2498,19 +2498,19 @@ fluent-menu-item .fluent-nav-link {
 }
 
 /* level indenting */
-.fluent-nav-group * .fluent-nav-menu .fluent-nav-item .content-region {
+.fluent-collapsible-region-container > .fluent-nav-menu > .fluent-nav-item .content-region {
 	padding-inline-start: 24px;
 }
 
-.fluent-nav-group * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item .content-region {
+.fluent-collapsible-region-container .fluent-collapsible-region-container > .fluent-nav-menu > .fluent-nav-item .content-region {
 	padding-inline-start: 48px;
 }
 
-.fluent-nav-group * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item .content-region {
+.fluent-collapsible-region-container .fluent-collapsible-region-container .fluent-collapsible-region-container > .fluent-nav-menu > .fluent-nav-item .content-region {
 	padding-inline-start: 72px;
 }
 
-.fluent-nav-group * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item * .fluent-nav-menu .fluent-nav-item .content-region {
+.fluent-collapsible-region-container .fluent-collapsible-region-container .fluent-collapsible-region-container .fluent-collapsible-region-container > .fluent-nav-menu > .fluent-nav-item .content-region {
 	padding-inline-start: 96px;
 }
 

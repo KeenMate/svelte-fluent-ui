@@ -59,8 +59,6 @@ package:
 	cd packages/svelte-fluentui && npm run package
 	@echo
 	@echo Package built successfully
-	@printf "  Files: %s\n" "$$(find packages/svelte-fluentui/dist -type f | wc -l)"
-	@printf "  Size: %s\n" "$$(du -sh packages/svelte-fluentui/dist | cut -f1)"
 	@echo
 
 link: package
@@ -82,17 +80,11 @@ unlink:
 
 publish: package
 	@echo
-	@echo WARNING: You are about to publish to npm!
+	@echo Publishing to npm with tag 'rc'...
 	@echo
-	@read -p "Are you sure you want to publish? (yes/no): " confirm; \
-	if [ "$$confirm" = "yes" ]; then \
-		echo Publishing to npm...; \
-		cd packages/svelte-fluentui && npm publish --tag rc; \
-		echo Published successfully!; \
-	else \
-		echo Publish cancelled.; \
-		exit 1; \
-	fi
+	cd packages/svelte-fluentui && npm publish --tag rc
+	@echo
+	@echo Published successfully!
 
 publish-dry: package
 	@echo Dry run - showing what would be published...
