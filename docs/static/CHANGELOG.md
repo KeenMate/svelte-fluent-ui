@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Escape key now closes dialog (respects `preventClose`, `closeOnEscape`, and `onbeforeclose`)
   - X button also respects `onbeforeclose` callback
 
+- **Icon Component Enhancements** - New color system matching FluentUI Blazor
+  - `color` prop - Color enum: `neutral`, `accent`, `warning`, `info`, `error`, `success`, `fill`, `fill-inverse`, `lightweight`, `disabled`, `custom`
+  - `customColor` prop - Custom color value when `color="custom"`
+  - `width` prop - Override width independently of size
+  - Colors map to FluentUI CSS variables (e.g., `accent` → `var(--accent-fill-rest)`)
+  - Legacy `primaryFill` still supported for backwards compatibility
+
 - **Select/Option Component Data Support** - Select now returns both value and item data on change
   - `Option` component: Added `data` prop to store arbitrary context data
   - `Select` component: `onchange` now returns `{ value: string, data?: Record<string, unknown> }`

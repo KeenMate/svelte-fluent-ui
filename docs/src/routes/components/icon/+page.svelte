@@ -98,16 +98,91 @@ export default defineConfig({
 	</Stack>
 </Card>
 
+<h2>Color Options</h2>
+
+<p>Icons can be drawn and filled with a color through the <code>color</code> parameter which maps to FluentUI CSS variables.</p>
+
+<Card>
+	<div class="table-wrapper">
+		<table>
+			<thead>
+				<tr>
+					<th>Color</th>
+					<th>CSS Variable</th>
+					<th>Example</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>neutral</td>
+					<td><code>var(--neutral-foreground-rest)</code></td>
+					<td><Icon name="alert" size={24} color="neutral" /> <Icon name="alert" size={24} color="neutral" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>accent</td>
+					<td><code>var(--accent-fill-rest)</code></td>
+					<td><Icon name="alert" size={24} color="accent" /> <Icon name="alert" size={24} color="accent" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>warning</td>
+					<td><code>var(--warning)</code></td>
+					<td><Icon name="alert" size={24} color="warning" /> <Icon name="alert" size={24} color="warning" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>info</td>
+					<td><code>var(--info)</code></td>
+					<td><Icon name="alert" size={24} color="info" /> <Icon name="alert" size={24} color="info" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>error</td>
+					<td><code>var(--error)</code></td>
+					<td><Icon name="alert" size={24} color="error" /> <Icon name="alert" size={24} color="error" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>success</td>
+					<td><code>var(--success)</code></td>
+					<td><Icon name="alert" size={24} color="success" /> <Icon name="alert" size={24} color="success" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>fill</td>
+					<td><code>var(--neutral-fill-rest)</code></td>
+					<td><Icon name="alert" size={24} color="fill" /> <Icon name="alert" size={24} color="fill" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>fill-inverse</td>
+					<td><code>var(--neutral-fill-inverse-rest)</code></td>
+					<td><span style="background: var(--neutral-foreground-rest); padding: 4px; border-radius: 4px;"><Icon name="alert" size={24} color="fill-inverse" /> <Icon name="alert" size={24} color="fill-inverse" variant="filled" /></span></td>
+				</tr>
+				<tr>
+					<td>lightweight</td>
+					<td><code>var(--neutral-layer-1)</code></td>
+					<td><span style="background: var(--neutral-foreground-rest); padding: 4px; border-radius: 4px;"><Icon name="alert" size={24} color="lightweight" /> <Icon name="alert" size={24} color="lightweight" variant="filled" /></span></td>
+				</tr>
+				<tr>
+					<td>disabled</td>
+					<td><code>var(--neutral-stroke-rest)</code></td>
+					<td><Icon name="alert" size={24} color="disabled" /> <Icon name="alert" size={24} color="disabled" variant="filled" /></td>
+				</tr>
+				<tr>
+					<td>custom</td>
+					<td>Uses <code>customColor</code> prop</td>
+					<td><Icon name="alert" size={24} color="custom" customColor="#8764b8" /> <Icon name="alert" size={24} color="custom" customColor="#8764b8" variant="filled" /></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</Card>
+
 <h2>Custom Color</h2>
 
-<p>Use the <code>primaryFill</code> prop to change the icon color, or set it via CSS <code>color</code>.</p>
+<p>For custom colors, use <code>color="custom"</code> with <code>customColor</code>, or use the legacy <code>primaryFill</code> prop, or inherit via CSS <code>color</code>.</p>
 
 <Card>
 	<Stack orientation="horizontal" gap="1rem" style="align-items: center; flex-wrap: wrap;">
-		<Icon name="heart" size={32} variant="filled" primaryFill="#e81123" />
-		<Icon name="checkmark_circle" size={32} variant="filled" primaryFill="#107c10" />
-		<Icon name="warning" size={32} variant="filled" primaryFill="#ffb900" />
-		<Icon name="info" size={32} variant="filled" primaryFill="#0078d4" />
+		<Icon name="heart" size={32} variant="filled" color="custom" customColor="#e81123" />
+		<Icon name="checkmark_circle" size={32} variant="filled" color="custom" customColor="#107c10" />
+		<Icon name="warning" size={32} variant="filled" color="custom" customColor="#ffb900" />
+		<Icon name="info" size={32} variant="filled" color="custom" customColor="#0078d4" />
 		<span style="color: #8764b8;">
 			<Icon name="star" size={32} variant="filled" />
 		</span>
@@ -322,16 +397,34 @@ const icons = [
 					<td>Icon variant style</td>
 				</tr>
 				<tr>
+					<td><code>color</code></td>
+					<td><code>'neutral' | 'accent' | 'warning' | 'info' | 'error' | 'success' | 'fill' | 'fill-inverse' | 'lightweight' | 'disabled' | 'custom'</code></td>
+					<td><code>undefined</code></td>
+					<td>Color enum mapping to FluentUI CSS variables. Defaults to Accent.</td>
+				</tr>
+				<tr>
+					<td><code>customColor</code></td>
+					<td><code>string</code></td>
+					<td><code>undefined</code></td>
+					<td>Custom color value (hex, rgb, CSS variable). Only used when <code>color="custom"</code>.</td>
+				</tr>
+				<tr>
 					<td><code>primaryFill</code></td>
 					<td><code>string</code></td>
 					<td><code>'currentColor'</code></td>
-					<td>Icon fill color</td>
+					<td>Legacy: Icon fill color. Use <code>color</code> instead.</td>
 				</tr>
 				<tr>
 					<td><code>hoverEffect</code></td>
 					<td><code>boolean</code></td>
 					<td><code>false</code></td>
 					<td>Switch to filled variant on hover</td>
+				</tr>
+				<tr>
+					<td><code>width</code></td>
+					<td><code>string</code></td>
+					<td><code>undefined</code></td>
+					<td>Custom width (overrides size-based width)</td>
 				</tr>
 				<tr>
 					<td><code>class</code></td>

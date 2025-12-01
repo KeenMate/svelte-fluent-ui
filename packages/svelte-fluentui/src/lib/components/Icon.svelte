@@ -1,45 +1,61 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
-
 	type IconSize = 16 | 20 | 24 | 28 | 32 | 48
 	type IconVariant = 'regular' | 'filled'
+	type IconColor = 'neutral' | 'accent' | 'warning' | 'info' | 'error' | 'success' | 'fill' | 'fill-inverse' | 'lightweight' | 'disabled' | 'custom'
 
 	type Props = {
 		name: string
 		size?: IconSize
 		variant?: IconVariant
-		primaryFill?: string
+		color?: IconColor
+		customColor?: string
+		primaryFill?: string  // Legacy prop, use color instead
 		hoverEffect?: boolean
 		class?: string
 		style?: string
 		title?: string
-	}
-	// Filter out null/undefined values from object to prevent Svelte 5 spreading errors
-	function filterNullProps(obj: Record<string, any> | undefined): Record<string, any> {
-		console.log('[filterNullProps] INCOMING:', obj, 'type:', typeof obj)
-		if (!obj) {
-			console.log('[filterNullProps] OUTGOING: {} (was null/undefined)')
-			return {}
-		}
-		const filtered = Object.fromEntries(
-			Object.entries(obj).filter(([_, value]) => value != null)
-		)
-		console.log('[filterNullProps] OUTGOING:', filtered)
-		return filtered
+		width?: string
 	}
 
-
+	// Color enum to CSS variable mapping (matching FluentUI Blazor)
+	const colorMap: Record<IconColor, string> = {
+		'neutral': 'var(--neutral-foreground-rest)',
+		'accent': 'var(--accent-fill-rest)',
+		'warning': 'var(--warning)',
+		'info': 'var(--info)',
+		'error': 'var(--error)',
+		'success': 'var(--success)',
+		'fill': 'var(--neutral-fill-rest)',
+		'fill-inverse': 'var(--neutral-fill-inverse-rest)',
+		'lightweight': 'var(--neutral-layer-1)',
+		'disabled': 'var(--neutral-stroke-rest)',
+		'custom': ''  // Uses customColor prop
+	}
 
 	let {
 		name,
 		size = 24,
 		variant = 'regular',
-		primaryFill = 'currentColor',
+		color = undefined,
+		customColor = undefined,
+		primaryFill = undefined,
 		hoverEffect = false,
 		class: className = '',
 		style: styleParam = '',
-		title = undefined
+		title = undefined,
+		width = undefined
 	}: Props = $props()
+
+	// Resolve the fill color: color enum > customColor > primaryFill > currentColor
+	let resolvedFill = $derived.by(() => {
+		if (color === 'custom' && customColor) {
+			return customColor
+		}
+		if (color && colorMap[color]) {
+			return colorMap[color]
+		}
+		return primaryFill || 'currentColor'
+	})
 
 	let svgContent = $state<string>('')
 	let svgContentFilled = $state<string>('')
@@ -50,7 +66,10 @@
 	let computedStyle = $derived.by(() => {
 		let styles = styleParam || ''
 		styles += ` --icon-size: ${size}px;`
-		styles += ` --icon-fill: ${primaryFill};`
+		styles += ` --icon-fill: ${resolvedFill};`
+		if (width) {
+			styles += ` width: ${width};`
+		}
 		return styles
 	})
 
