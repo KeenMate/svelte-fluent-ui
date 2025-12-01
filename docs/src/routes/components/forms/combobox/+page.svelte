@@ -1,20 +1,66 @@
 <script lang="ts">
-	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
+	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui";
 
-	const stOptions = [
-		{ value: "ds9", label: "Deep Space 9" },
-		{ value: "voy", label: "Voyager" },
-		{ value: "ent", label: "Enterprise" },
-		{ value: "tng", label: "The Next generation" },
-		{ value: "tos", label: "The Original series", disabled: true }
-	];
+	// Sample data - songs
+	const songs = [
+		{ value: "1", label: "Happy Birthday" },
+		{ value: "2", label: "Jingle Bells" },
+		{ value: "3", label: "Amazing Grace" },
+		{ value: "4", label: "Twinkle Twinkle" },
+		{ value: "5", label: "Silent Night" }
+	]
 
-	let combobox1: HTMLElement
+	// Sample data - sizes
+	const sizes = [
+		{ value: "small", label: "Small" },
+		{ value: "medium", label: "Medium" },
+		{ value: "large", label: "Large" }
+	]
 
-	let value = $state("");
-	let value1: string | null = $state(null);
-	let gpuSelectedValue: string | null = $state(null)
-	let comboboxSelectedValue: string | null = $state(null)
+	// Long list for scroll example
+	const longList = Array.from({ length: 20 }, (_, i) => ({
+		value: `item-${i + 1}`,
+		label: `Item ${i + 1}`
+	}))
+
+	// People data for option template example
+	const people = [
+		{ value: "1", firstName: "Jean", lastName: "Martin" },
+		{ value: "2", firstName: "António", lastName: "Langa" },
+		{ value: "3", firstName: "Julie", lastName: "Smith" },
+		{ value: "4", firstName: "Nur", lastName: "Sari" },
+		{ value: "5", firstName: "Jose", lastName: "Hernandez" },
+		{ value: "6", firstName: "Bert", lastName: "de Vries" },
+		{ value: "7", firstName: "Jaques", lastName: "Martin" },
+		{ value: "8", firstName: "Elizabeth", lastName: "Johnson" },
+		{ value: "9", firstName: "Jakob", lastName: "Berger" }
+	]
+
+	// State for each example
+	let basicValue = $state<string[]>([])
+	let preselectedValue = $state<string[]>(["3"])
+	let placeholderValue = $state<string[]>([])
+	let stringValue = $state<string[]>([])
+	let intValue = $state<string[]>([])
+	let disabledValue = $state<string[]>(["medium"])
+	let disabledItemsValue = $state<string[]>([])
+	let allDisabledValue = $state<string[]>(["small"])
+	let filledValue = $state<string[]>([])
+	let inlineValue = $state<string[]>([])
+	let listValue = $state<string[]>([])
+	let bothValue = $state<string[]>([])
+	let longListValue = $state<string[]>([])
+	let aboveValue = $state<string[]>([])
+	let belowValue = $state<string[]>([])
+	let templateValue = $state<string[]>([])
+	let widthValue = $state<string[]>([])
+	let callbackValue = $state<string[]>([])
+	let callbackMessage = $state<string>("")
+
+	// Callback handler example
+	function handleSelectionChange(value: string[]) {
+		callbackMessage = `Selection changed to: ${value[0] || "None"}`
+	}
 
 	type Property = {
 		name: string
@@ -24,36 +70,28 @@
 	}
 
 	const properties: Property[] = [
-		{name: "appearance", type: '"outline" | "filled"', default: "undefined", description: "Visual style"},
-		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
-		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"},
-		{name: "currentValue", type: "string", default: "undefined", description: "Current input text"},
-		{name: "disabled", type: "boolean", default: "undefined", description: "Disable the combobox"},
-		{name: "name", type: "string", default: "undefined", description: "Form name"},
-		{name: "open", type: "boolean", default: "undefined", description: "Dropdown open state"},
+		{name: "id", type: "string", default: "Required", description: "Unique identifier"},
+		{name: "value", type: "string[]", default: "[]", description: "Selected value(s) (bindable)"},
 		{name: "options", type: "OptionItem[]", default: "undefined", description: "Array of option items"},
+		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the combobox"},
+		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label content"},
 		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
+		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
 		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
-		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only mode"},
-		{name: "required", type: "boolean", default: "undefined", description: "Required field"},
-		{name: "value", type: "string | null", default: "undefined", description: "Selected value (bindable)"}
-	]
-
-	const callbacks: Property[] = [
-		{name: "onChange", type: "(value: string | null) => void", default: "undefined", description: "Fires when selection changes"}
-	]
-
-	const slots: Property[] = [
-		{name: "children", type: "SlotType", default: "undefined", description: ""}
-	]
-
-	const actions: Property[] = [
-		{name: "select", type: "() => void;", default: "-", description: ""},
-		{name: "checkValidity", type: "() => boolean;", default: "-", description: ""},
-		{name: "reportValidity", type: "() => boolean;", default: "-", description: ""},
-		{name: "setCustomValidity", type: "(message: string) => any;", default: "-", description: ""},
-		{name: "setValidity", type: "(flags: any, message: any, anchor: any) => void;", default: "-", description: ""},
-		{name: "setSelectionRange", type: "(start: number, end: number, direction?: \"forward\" | \"backward\" | \"none\") => void;", default: "-", description: ""}
+		{name: "appearance", type: '"outline" | "filled"', default: "outline", description: "Visual style"},
+		{name: "disabled", type: "boolean", default: "false", description: "Disable the combobox"},
+		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
+		{name: "required", type: "boolean", default: "false", description: "Required field"},
+		{name: "open", type: "boolean", default: "false", description: "Dropdown open state"},
+		{name: "autofocus", type: "boolean", default: "false", description: "Auto focus on mount"},
+		{name: "name", type: "string", default: "undefined", description: "Form field name"},
+		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label (aria-label)"},
+		{name: "title", type: "string", default: "undefined", description: "Tooltip text"},
+		{name: "width", type: "string", default: "undefined", description: "Component width (e.g., '300px', '100%')"},
+		{name: "height", type: "string", default: "undefined", description: "Component height"},
+		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"},
+		{name: "onchange", type: "Function", default: "undefined", description: "Called when selection changes"}
 	]
 
 	const propertyColumns = [
@@ -67,6 +105,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Combobox</h1>
 
+	<p>
+		A combobox is an input widget with an associated popup that enables users to select a value from
+		a collection of possible values.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
@@ -76,71 +119,308 @@
 		</p>
 	</Card>
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Actions</h2>
-					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
-				</Card>
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<h2>API</h2>
 
 	<Card>
-		<h2 class="content-subhead">Examples</h2>
+		<h3>Properties</h3>
+		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+	</Card>
 
-		<h3>Plain combobox with static options</h3>
-		<Combobox
-			bind:this={combobox1}
-			bind:value
-			placeholder="Do you feel lucky, punk?"
-		>
-			<Option value="yes">YES!</Option>
-			<Option value="no">no..</Option>
-			<Option value="what?">What?</Option>
-		</Combobox>
-		Selected value: {value}
+	<Card>
+		<h3>Autocomplete Modes</h3>
+		<table class="api-table">
+			<thead>
+				<tr>
+					<th>Mode</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>inline</code></td>
+					<td>Autocompletes text in the input field as you type</td>
+				</tr>
+				<tr>
+					<td><code>list</code></td>
+					<td>Filters the dropdown list to matching options</td>
+				</tr>
+				<tr>
+					<td><code>both</code></td>
+					<td>Combines inline autocomplete with list filtering</td>
+				</tr>
+			</tbody>
+		</table>
+	</Card>
 
-		<h3>Plain combobox with array options</h3>
-		<Combobox
-			bind:value={value1}
-			placeholder="Best StarTrek series?"
-			options={stOptions}
-		></Combobox>
-		Selected value: {value1}
+	<h2>Examples</h2>
 
-		<h3>With autocomplete</h3>
-		<Combobox id="combo-2" bind:value={gpuSelectedValue} autocomplete="both" placeholder="Select a graphics card">
-			<Option value="1">GTX 1060</Option>
-			<Option value="2">GTX 1070</Option>
-			<Option value="3">GTX 1080</Option>
-			<Option value="4">GTX 1090</Option>
-		</Combobox>
-		Selected value: {gpuSelectedValue}
+	<!-- Default Examples -->
+	<Card>
+		<h3>Default examples</h3>
+		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Combobox id="basic" bind:value={basicValue} options={songs} label="Select the best song" />
+					<small>Selected: {basicValue[0] || "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Combobox id="preselected" bind:value={preselectedValue} options={songs} label="Pre-selected option" />
+					<small>Selected: {preselectedValue[0] || "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Combobox id="placeholder" bind:value={placeholderValue} options={songs} label="With Placeholder" placeholder="Please select a song..." />
+					<small>Selected: {placeholderValue[0] || "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
 
-		<h3>Disabled</h3>
-		<Combobox id="combo-disabled" bind:value={comboboxSelectedValue} disabled placeholder="Select an option">
-			<Option value="1">Option 1</Option>
-			<Option value="2">Option 2</Option>
-			<Option value="3">Option 3</Option>
-		</Combobox>
-		Selected value: {comboboxSelectedValue}
+	<!-- From a list of Option<T> items -->
+	<Card>
+		<h3>From a list of Option&lt;T&gt; items</h3>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>From list of Option&lt;string&gt; items</strong>
+					<Combobox id="string-options" bind:value={stringValue} options={songs} />
+					<small>Selected Value: {stringValue[0] || "None"}</small>
+					<small>Selected Item: {stringValue[0] ? songs.find(s => s.value === stringValue[0])?.label : "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>From list of Option&lt;int&gt; items</strong>
+					<small style="color: var(--neutral-foreground-hint);">First item disabled. None initially selected.</small>
+					<Combobox id="int-options" bind:value={intValue}>
+						<Option value="1" disabled>Type 1</Option>
+						<Option value="2">Type 2</Option>
+						<Option value="3">Type 3</Option>
+					</Combobox>
+					<small>Selected Value: {intValue[0] || "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Disabled Examples -->
+	<Card>
+		<h3>Disabled examples</h3>
+		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Disabled Combobox</strong>
+					<Combobox id="disabled" bind:value={disabledValue} options={sizes} disabled />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>With disabled items</strong>
+					<Combobox id="disabled-items" bind:value={disabledItemsValue}>
+						<Option value="small">Small</Option>
+						<Option value="medium" disabled>Medium</Option>
+						<Option value="large">Large</Option>
+					</Combobox>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>All items disabled</strong>
+					<Combobox id="all-disabled" bind:value={allDisabledValue}>
+						<Option value="small" disabled>Small</Option>
+						<Option value="medium" disabled>Medium</Option>
+						<Option value="large" disabled>Large</Option>
+					</Combobox>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Appearance Example -->
+	<Card>
+		<h3>Appearance example</h3>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Filled</strong>
+					<Combobox id="filled" bind:value={filledValue} options={sizes} appearance="filled" />
+					<small>Selected: {filledValue[0] || "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Autocomplete Examples -->
+	<Card>
+		<h3>Autocomplete examples</h3>
+		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Inline Autocomplete</strong>
+					<Combobox id="inline" bind:value={inlineValue} options={songs} autocomplete="inline" />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>List Autocomplete</strong>
+					<Combobox id="list" bind:value={listValue} options={songs} autocomplete="list" />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Both Autocomplete</strong>
+					<Combobox id="both" bind:value={bothValue} options={songs} autocomplete="both" />
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- List Examples -->
+	<Card>
+		<h3>List examples</h3>
+		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>With long list</strong>
+					<Combobox id="long-list" bind:value={longListValue} options={longList} />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Position above</strong>
+					<Combobox id="above" bind:value={aboveValue} options={sizes} position="above" />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Position below</strong>
+					<Combobox id="below" bind:value={belowValue} options={sizes} position="below" />
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Option Template -->
+	<Card>
+		<h3>Option template</h3>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Combobox id="template" bind:value={templateValue}>
+						{#each people as person (person.value)}
+							<Option value={person.value} label={`${person.firstName} (${person.lastName})`}>
+								<span class="person-option">
+									<Icon name="Person" size="16" />
+									<span>{person.firstName} ({person.lastName})</span>
+								</span>
+							</Option>
+						{/each}
+					</Combobox>
+					<small>Selected: {templateValue[0] ? people.find(p => p.value === templateValue[0])?.firstName : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Width and Styling -->
+	<Card>
+		<h3>Width and styling</h3>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Custom width (200px)</strong>
+					<Combobox id="width-small" bind:value={widthValue} options={sizes} width="200px" />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Full width (100%)</strong>
+					<Combobox id="width-full" bind:value={widthValue} options={sizes} width="100%" />
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Callback Example -->
+	<Card>
+		<h3>Callback example</h3>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>With onchange callback</strong>
+					<Combobox
+						id="callback"
+						bind:value={callbackValue}
+						options={songs}
+						onchange={() => handleSelectionChange(callbackValue)}
+					/>
+					<small>{callbackMessage || "Make a selection to see the callback"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
 	</Card>
 </Stack>
+
+<style>
+	h1 {
+		font-size: 2rem;
+		margin: 0;
+		font-weight: 600;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+		margin: 1rem 0 0 0;
+		font-weight: 600;
+	}
+
+	h3 {
+		font-size: 1.25rem;
+		margin: 0 0 0.5rem 0;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0 0 0.5rem 0;
+		line-height: 1.5;
+	}
+
+	small {
+		font-size: 0.875rem;
+	}
+
+	.person-option {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.api-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+	}
+
+	.api-table th {
+		text-align: left;
+		padding: 0.75rem;
+		background: var(--neutral-layer-3);
+		font-weight: 600;
+		border-bottom: 2px solid var(--neutral-stroke-rest);
+	}
+
+	.api-table td {
+		padding: 0.75rem;
+		border-bottom: 1px solid var(--neutral-stroke-rest);
+	}
+
+	.api-table code {
+		background: var(--neutral-layer-3);
+		padding: 0.125rem 0.375rem;
+		border-radius: 3px;
+		font-size: 0.875rem;
+	}
+</style>

@@ -6,7 +6,7 @@
 
 	type Props = {
 		appearance?: string
-		autofocus?: string
+		autofocus?: boolean
 		disabled?: string
 		form?: string
 		formaction?: string
@@ -45,11 +45,13 @@
 	}: Props = $props()
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events a11y_autofocus -->
 <fluent-button
 	{type}
 	{name}
 	{value}
 	{appearance}
+	{autofocus}
 	{formaction}
 	{form}
 	{formenctype}

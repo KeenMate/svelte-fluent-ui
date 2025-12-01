@@ -110,13 +110,13 @@
 	<div
 		class={className}
 		style={computedStyle}
-		data-xs={noBreakpointsDefined ? 0 : xs}
-		data-sm={sm}
-		data-md={md}
-		data-lg={lg}
-		data-xl={xl}
-		data-xxl={xxl}
-		data-hidden-when={hiddenWhen}
+		{...(noBreakpointsDefined ? { "data-xs": 0 } : xs !== undefined ? { "data-xs": xs } : {})}
+		{...(sm !== undefined ? { "data-sm": sm } : {})}
+		{...(md !== undefined ? { "data-md": md } : {})}
+		{...(lg !== undefined ? { "data-lg": lg } : {})}
+		{...(xl !== undefined ? { "data-xl": xl } : {})}
+		{...(xxl !== undefined ? { "data-xxl": xxl } : {})}
+		{...(hiddenWhen !== undefined ? { "data-hidden-when": hiddenWhen } : {})}
 	>
 		{@render children?.()}
 	</div>

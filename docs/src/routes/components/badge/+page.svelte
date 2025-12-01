@@ -67,86 +67,152 @@
 		</GridItem>
 	</Grid>
 
+	<!-- Built-in Colors -->
 	<Card>
-		<h2 class="content-subhead">Examples</h2>
-		<Badge class="lightweight clickable-badge" appearance="lightweight">
-			<span class="badge-content"><!--!-->
-				Lightweight
-			</span>
-		</Badge>
+		<h3>Built-in Colors</h3>
+		<p>Pre-defined colors: brand, danger, important, informative, severe, subtle, success, warning</p>
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+			<Badge color="brand">brand</Badge>
+			<Badge color="danger">danger</Badge>
+			<Badge color="important">important</Badge>
+			<Badge color="informative">informative</Badge>
+			<Badge color="severe">severe</Badge>
+			<Badge color="subtle">subtle</Badge>
+			<Badge color="success">success</Badge>
+			<Badge color="warning">warning</Badge>
+		</Stack>
+	</Card>
 
-		<Badge
-			appearance="accent" class="accent"
-		>
-			<span class="badge-content">
-				<!--!-->
-				Accent
-			</span>
-		</Badge>
+	<!-- Appearance Examples -->
+	<Card>
+		<h3>Appearance</h3>
+		<p>Different appearance styles:</p>
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+			<Badge appearance="accent">Accent</Badge>
+			<Badge appearance="lightweight">Lightweight</Badge>
+			<Badge appearance="neutral">Neutral</Badge>
+			<Badge appearance="outline">Outline</Badge>
+			<Badge appearance="tint">Tint</Badge>
+		</Stack>
+	</Card>
 
-		<Badge
-			appearance="neutral" class="neutral"
-		>
-			<span class="badge-content">
-				<!--!-->
-				Neutral
-			</span>
-		</Badge>
+	<!-- Color + Appearance Combinations -->
+	<Card>
+		<h3>Color + Appearance Combinations</h3>
+		<p>Combining color with different appearances:</p>
+		<Grid columns={4} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>danger</strong>
+					<Badge color="danger" appearance="accent">accent</Badge>
+					<Badge color="danger" appearance="lightweight">lightweight</Badge>
+					<Badge color="danger" appearance="neutral">neutral</Badge>
+					<Badge color="danger" appearance="outline">outline</Badge>
+					<Badge color="danger" appearance="tint">tint</Badge>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>success</strong>
+					<Badge color="success" appearance="accent">accent</Badge>
+					<Badge color="success" appearance="lightweight">lightweight</Badge>
+					<Badge color="success" appearance="neutral">neutral</Badge>
+					<Badge color="success" appearance="outline">outline</Badge>
+					<Badge color="success" appearance="tint">tint</Badge>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>warning</strong>
+					<Badge color="warning" appearance="accent">accent</Badge>
+					<Badge color="warning" appearance="lightweight">lightweight</Badge>
+					<Badge color="warning" appearance="neutral">neutral</Badge>
+					<Badge color="warning" appearance="outline">outline</Badge>
+					<Badge color="warning" appearance="tint">tint</Badge>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>informative</strong>
+					<Badge color="informative" appearance="accent">accent</Badge>
+					<Badge color="informative" appearance="lightweight">lightweight</Badge>
+					<Badge color="informative" appearance="neutral">neutral</Badge>
+					<Badge color="informative" appearance="outline">outline</Badge>
+					<Badge color="informative" appearance="tint">tint</Badge>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
 
-		<Badge
-			style="--badge-fill-somevalue: red; --badge-color-somevalue: white;"
-			appearance="neutral"
-			fill="somevalue"
-			color="somevalue"
-			class="neutral"
-		>
-			<span class="badge-content">
-				Red
-				and White
-			</span>
-		</Badge>
-		<Badge
-			style="--badge-fill-highlight: #ffd800; --badge-color-highlight: #000;"
-			appearance="neutral"
-			fill="highlight"
-			color="highlight"
-			class="neutral"
-		>
-			<span class="badge-content">
+	<!-- Custom Colors -->
+	<Card>
+		<h3>Custom Colors</h3>
+		<p>Custom colors using CSS variables <code>--badge-fill-[name]</code> and <code>--badge-color-[name]</code>:</p>
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+			<Badge
+				style="--badge-fill-custom1: red; --badge-color-custom1: white;"
+				fill="custom1"
+				color="custom1"
+			>
+				Red/White
+			</Badge>
+			<Badge
+				style="--badge-fill-custom2: #ffd800; --badge-color-custom2: #000;"
+				fill="custom2"
+				color="custom2"
+			>
 				Highlight
-			</span>
-		</Badge>
-		<Badge
-			style="--badge-fill-lowlight: #000; --badge-color-lowlight: #fff;"
-			appearance="neutral"
-			fill="lowlight"
-			color="lowlight"
-			class="neutral"
-		>
-			<span class="badge-content">
+			</Badge>
+			<Badge
+				style="--badge-fill-custom3: #000; --badge-color-custom3: #fff;"
+				fill="custom3"
+				color="custom3"
+			>
 				Lowlight
-			</span>
-		</Badge>
-		<Badge style="width: 250px;" appearance="neutral" class="neutral">
-			<span class="badge-content large-badge-content">
-				Bigger
-				<!--!-->
-			</span>
+			</Badge>
+			<Badge
+				style="--badge-fill-custom4: linear-gradient(90deg, #ff0000, #0000ff); --badge-color-custom4: white;"
+				fill="custom4"
+				color="custom4"
+			>
+				Gradient
+			</Badge>
+		</Stack>
+	</Card>
 
-		</Badge>
+	<!-- Circular -->
+	<Card>
+		<h3>Circular</h3>
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+			<Badge circular>1</Badge>
+			<Badge circular color="danger">5</Badge>
+			<Badge circular color="success">99+</Badge>
+		</Stack>
 	</Card>
 </Stack>
 
 <style>
-	.badge-content {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		white-space: nowrap;
+	h1 {
+		font-size: 2rem;
+		margin: 0;
+		font-weight: 600;
 	}
 
-	.large-badge-content {
-		height: 250px;
+	h3 {
+		font-size: 1.25rem;
+		margin: 0 0 0.5rem 0;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0 0 0.5rem 0;
+		line-height: 1.5;
+	}
+
+	code {
+		background: var(--neutral-layer-3);
+		padding: 0.125rem 0.375rem;
+		border-radius: 3px;
+		font-size: 0.875rem;
 	}
 </style>

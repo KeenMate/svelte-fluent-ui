@@ -11,15 +11,17 @@
 		value: string
 		readonly?: boolean
 		disabled?: boolean
+		autofocus?: boolean
 		children?: SlotType
 	}
 
 	let {
 		value,
-		    readonly = undefined,
-		    disabled = undefined,
+		readonly = undefined,
+		disabled = undefined,
+		autofocus = undefined,
 		children = undefined
-  }: Props = $props()
+	}: Props = $props()
 
 	const ctx: any = getContext("radio-group")
 
@@ -33,8 +35,10 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-radio
 	{value}
+	{autofocus}
 	checked={ctx.value === value}
 	onclick={handleOnClick}
 >

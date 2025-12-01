@@ -103,11 +103,11 @@
 	autocomplete={autocomplete}
 	{placeholder}
 	{list}
-	{maxlength}
+	{...(maxlength !== undefined ? { maxlength } : {})}
 	{value}
-	{minlength}
+	{...(minlength !== undefined ? { minlength } : {})}
 	{pattern}
-	{size}
+	{...(size !== undefined ? { size } : {})}
 	{spellcheck}
 	{disabled}
 	{required}

@@ -2,22 +2,12 @@
 	import {toast, type Toast, type ToastPosition} from "../stores/toast.js"
 	import {onMount} from "svelte"
 
-	let toasts: Toast[] = []
-	let toastsByPosition: Record<ToastPosition, Toast[]> = {
-		"top-right": [],
-		"top-left": [],
-		"top-center": [],
-		"bottom-right": [],
-		"bottom-left": [],
-		"bottom-center": []
-	}
+	let toasts = $state<Toast[]>([])
+	let mountedToasts = $state(new Set<string>())
 
-	// Subscribe to toast store
-	toast.subscribe((value) => {
-		toasts = value
-
-		// Group toasts by position
-		toastsByPosition = {
+	// Group toasts by position
+	let toastsByPosition = $derived.by(() => {
+		const grouped: Record<ToastPosition, Toast[]> = {
 			"top-right": [],
 			"top-left": [],
 			"top-center": [],
@@ -27,8 +17,15 @@
 		}
 
 		toasts.forEach((t) => {
-			toastsByPosition[t.position].push(t)
+			grouped[t.position].push(t)
 		})
+
+		return grouped
+	})
+
+	// Subscribe to toast store
+	toast.subscribe((value) => {
+		toasts = value
 	})
 
 	// Icons for variants
@@ -47,33 +44,34 @@
 		toast.dismiss(id)
 	}
 
-	// Track mounted toasts for animations
-	let mountedToasts = new Set<string>()
-
 	onMount(() => {
 		// Mark all existing toasts as mounted for animation
 		toasts.forEach((t) => {
-			setTimeout(() => mountedToasts.add(t.id), 10)
+			setTimeout(() => {
+				mountedToasts.add(t.id)
+				mountedToasts = new Set(mountedToasts)
+			}, 10)
 		})
 	})
 
 	// Watch for new toasts and trigger show animation
-	$: {
+	$effect(() => {
 		toasts.forEach((t) => {
 			if (!mountedToasts.has(t.id)) {
 				setTimeout(() => {
 					mountedToasts.add(t.id)
-					mountedToasts = mountedToasts
+					mountedToasts = new Set(mountedToasts)
 				}, 10)
 			}
 		})
-	}
+	})
 </script>
 
 {#each Object.entries(toastsByPosition) as [position, positionToasts]}
 	{#if positionToasts.length > 0}
 		<div id="toast-container-{position}" class="fluent-toast-container fluent-toast-container--{position}">
 			{#each positionToasts as toastItem (toastItem.id)}
+				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 				<div
 					id={toastItem.id}
 					class="fluent-toast fluent-toast--{toastItem.variant}"

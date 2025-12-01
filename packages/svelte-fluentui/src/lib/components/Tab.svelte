@@ -19,7 +19,9 @@
 		showClose?: boolean;
 		overflow?: string;
 		visible?: boolean;
-		onCloseClick?: () => void;
+		/** Arbitrary context data passed to ontabchange when this tab is selected */
+		data?: Record<string, unknown>;
+		oncloseclick?: () => void;
 	};
 
 	let {
@@ -37,7 +39,8 @@
 		showClose = false,
 		overflow = undefined,
 		visible = true,
-		onCloseClick = undefined
+		data = undefined,
+		oncloseclick = undefined
 	}: Props = $props();
 </script>
 
@@ -49,6 +52,7 @@
 		{disabled}
 		aria-label={ariaLabel || label}
 		{overflow}
+		data-tab-context={data ? JSON.stringify(data) : undefined}
 	>
 		{#if icon}
 			{@render icon?.()}
@@ -76,7 +80,7 @@
 				width="12px"
 				class="fluent-tab-close"
 				title="Close"
-				onclick={onCloseClick}
+				onclick={oncloseclick}
 			/>
 		{/if}
 	</fluent-tab>

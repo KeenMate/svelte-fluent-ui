@@ -18,6 +18,7 @@
 		disabled?: boolean
 		readonly?: boolean
 		required?: boolean
+		autofocus?: boolean
 		label?: string
 		appearance?: string
 		culture?: Intl.Locale
@@ -35,6 +36,7 @@
 		disabled = false,
 		readonly = false,
 		required = false,
+		autofocus = undefined,
 		label = undefined,
 		appearance = undefined,
 		culture = new Intl.Locale(window.navigator.language),
@@ -48,6 +50,7 @@
 
 	let isOpen = $state(false)
 	let inputValue = $state("")
+	// svelte-ignore non_reactive_update
 	let textFieldElement: HTMLElement | undefined
 
 	// Format date for display
@@ -112,6 +115,7 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y_label_has_associated_control -->
 <div class="fluent-datepicker {className}" style={style}>
 	{#if label}
 		<label class="datepicker-label">
@@ -128,6 +132,7 @@
 			{disabled}
 			readonly={true}
 			{required}
+			{autofocus}
 			{appearance}
 			oninput={handleInputChange}
 			style="width: 100%; cursor: pointer;"

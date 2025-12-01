@@ -55,6 +55,8 @@ build:
 
 package:
 	@echo
+	@echo Cleaning previous dist folder...
+	cd packages/svelte-fluentui && node -e "const fs=require('fs');if(fs.existsSync('dist'))fs.rmSync('dist',{recursive:true,force:true})"
 	@echo Building library package...
 	cd packages/svelte-fluentui && npm run package
 	@echo

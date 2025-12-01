@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../assets/styles/demo-pages.scss"
 	import "svelte-fluentui/styles.scss"
-	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer} from "svelte-fluentui"
+	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer, Icon} from "svelte-fluentui"
 	import SiteSettings from "../lib/components/SiteSettings.svelte"
 	import {settings, accentColors} from "svelte-fluentui"
 	import {onMount, tick} from "svelte"
@@ -202,17 +202,17 @@
 	const navigation = [
 		{
 			title: "Changelog",
-			icon: "📋",
+			icon: "history",
 			href: "/"
 		},
 		{
 			title: "List of Components",
-			icon: "📚",
+			icon: "library",
 			href: "/components-list"
 		},
 		{
 			title: "Documentation",
-			icon: "📖",
+			icon: "book",
 			items: [
 				{label: "Getting Started", href: "/getting-started"},
 				{label: "Layout Example", href: "/layout-example"}
@@ -220,14 +220,14 @@
 		},
 		{
 			title: "Theme",
-			icon: "🎨",
+			icon: "color",
 			items: [
 				{label: "CSS Variables", href: "/theme/variables"}
 			]
 		},
 		{
 			title: "Resources",
-			icon: "🔗",
+			icon: "link",
 			items: [
 				{label: "GitHub", href: "https://github.com/KeenMate/svelte-fluentui", target: "_blank", rel: "noopener noreferrer"},
 				{label: "FluentUI Docs", href: "https://docs.microsoft.com/en-us/fluent-ui/web-components/", target: "_blank", rel: "noopener noreferrer"}
@@ -235,7 +235,7 @@
 		},
 		{
 			title: "Forms & Inputs",
-			icon: "📝",
+			icon: "textbox",
 			items: [
 				{label: "Autocomplete", href: "/components/autocomplete"},
 				{label: "Calendar", href: "/components/forms/calendar"},
@@ -256,7 +256,7 @@
 		},
 		{
 			title: "Buttons & Actions",
-			icon: "🔘",
+			icon: "cursor_hover",
 			items: [
 				{label: "Anchor", href: "/components/anchor"},
 				{label: "Button", href: "/components/button"}
@@ -264,7 +264,7 @@
 		},
 		{
 			title: "Layout",
-			icon: "📐",
+			icon: "panel_left",
 			items: [
 				{label: "BodyContent", href: "/components/navigation-layout/body-content"},
 				{label: "Grid", href: "/components/navigation-layout/grid"},
@@ -276,7 +276,7 @@
 		},
 		{
 			title: "Navigation",
-			icon: "🧭",
+			icon: "navigation",
 			items: [
 				{label: "Accordion", href: "/components/navigation-layout/accordion"},
 				{label: "AppBar", href: "/components/navigation-layout/appbar"},
@@ -287,16 +287,18 @@
 		},
 		{
 			title: "Display",
-			icon: "🖼️",
+			icon: "image",
 			items: [
+				{label: "Badge", href: "/components/badge"},
 				{label: "Card", href: "/components/card"},
-				{label: "Badge", href: "/components/badge"}
+				{label: "Icon", href: "/components/icon"}
 			]
 		},
 		{
 			title: "Feedback",
-			icon: "💬",
+			icon: "chat",
 			items: [
+				{label: "Alert", href: "/components/alert"},
 				{label: "Dialog", href: "/components/dialog"},
 				{label: "Toast", href: "/components/toast"},
 				{label: "Toast Service", href: "/components/toast-service"},
@@ -305,11 +307,12 @@
 		},
 		{
 			title: "Data Display",
-			icon: "📊",
+			icon: "table",
 			items: [
 				{label: "DataGrid", href: "/components/datagrid"},
 				{label: "Paginator", href: "/components/paginator"},
 				{label: "QuickGrid", href: "/components/quickgrid"},
+				{label: "QuickGrid Editable", href: "/components/quickgrid-editable"},
 				{label: "Toolbar", href: "/components/toolbar"}
 			]
 		}
@@ -322,10 +325,14 @@
 		<a href="/" class="topnav-brand">Svelte FluentUI</a>
 		<div class="topnav-actions">
 			<Button appearance="stealth" onclick={toggleTheme}>
-				{effectiveTheme === "light" ? "🌙" : "☀️"}
+				{#if effectiveTheme === "light"}
+					<Icon name="weather_moon" size={20} />
+				{:else}
+					<Icon name="weather_sunny" size={20} />
+				{/if}
 			</Button>
 			<Button appearance="stealth" onclick={openSettings}>
-				⚙️
+				<Icon name="settings" size={20} />
 			</Button>
 		</div>
 	</div>
@@ -351,7 +358,7 @@
 									class={isActive(navItem.href) ? "active" : ""}
 								>
 									{#snippet icon()}
-										<span class="nav-icon">{navItem.icon}</span>
+										<Icon name={navItem.icon} size={16} />
 									{/snippet}
 									{navItem.title}
 								</NavLinkItem>
@@ -359,7 +366,7 @@
 								<!-- Group with sub-items -->
 								<NavGroup title={navItem.title}>
 									{#snippet linkIcon()}
-										<span class="nav-icon">{navItem.icon}</span>
+										<Icon name={navItem.icon} size={16} />
 									{/snippet}
 									{#snippet linkText()}
 										{navItem.title}
@@ -437,7 +444,7 @@
 		padding: 0 !important;
 	}
 
-	.sidebar :global(.nav-icon) {
+	.sidebar :global(.fluent-icon) {
 		margin-right: var(--fluent-sidebar-icon-gap);
 	}
 
@@ -450,9 +457,6 @@
 		padding: 2rem;
 	}
 
-	.nav-icon {
-		font-size: 16px;
-	}
 
 	@media (max-width: 768px) {
 		.sidebar {

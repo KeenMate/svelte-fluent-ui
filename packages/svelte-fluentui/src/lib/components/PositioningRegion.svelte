@@ -18,14 +18,14 @@
 		children = undefined
 	}: Props = $props()
 
+	// svelte-ignore non_reactive_update
 	let overlayElement: HTMLDivElement | undefined = undefined
 	let position = $state({ top: 0, left: 0, width: 0 })
+	let wasVisible = $state(false)
 
-	// Update position when anchor or visibility changes
-	async function updatePosition() {
+	// Update position - synchronous calculation
+	function updatePosition() {
 		if (!anchor || !overlayElement || !visible) return
-
-		await tick()
 
 		const anchorRect = anchor.getBoundingClientRect()
 		const overlayRect = overlayElement.getBoundingClientRect()
@@ -45,10 +45,13 @@
 		position = { top, left, width }
 	}
 
+	// Only update position when dropdown opens (visible becomes true), not on every re-render
 	$effect(() => {
-		if (visible && anchor) {
-			updatePosition()
+		if (visible && anchor && !wasVisible) {
+			// Use tick to ensure element is mounted before calculating position
+			tick().then(() => updatePosition())
 		}
+		wasVisible = visible
 	})
 
 	onMount(() => {

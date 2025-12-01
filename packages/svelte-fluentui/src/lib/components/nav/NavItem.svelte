@@ -20,8 +20,10 @@
 	// const isInNavGroup = getContext<NavGroupSvelteContext>("nav-group")
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 <div
 	role="menuitem"
+	tabindex="0"
 	{disabled}
 	class="fluent-nav-item {className || ''}"
 	class:fluent-nav-group={group}

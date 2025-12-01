@@ -11,6 +11,7 @@
 		readonly?: boolean
 		id?: string
 		disabled?: boolean
+		autofocus?: boolean
 		name?: string
 		ariaLabel?: string
 		label?: string
@@ -29,6 +30,7 @@
 		readonly = undefined,
 		id = undefined,
 		disabled = undefined,
+		autofocus = undefined,
 		name = undefined,
 		ariaLabel = undefined,
 		label = undefined,
@@ -61,12 +63,14 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-switch
 	class={className}
 	{style}
 	{readonly}
 	{id}
 	{disabled}
+	{autofocus}
 	{name}
 	aria-label={ariaLabel || label}
 	{required}

@@ -8,24 +8,36 @@
 	type Props = {
 		checked: boolean | null;
 		withIntermediate?: boolean;
+		threeStateOrderUncheckToIntermediate?: boolean;
 		autofocus?: boolean;
 		children?: any;
 		disabled?: boolean;
 		readonly?: boolean;
 		required?: boolean;
+		name?: string;
+		label?: string;
+		ariaLabel?: string;
+		class?: string;
+		style?: string;
 		onclick?: (ev: PointerEvent, previousValue: boolean | null) => void
 	}
 
 	let {
-		    checked  = $bindable(),
-		    withIntermediate  = undefined,
-		    autofocus = undefined,
-		    disabled = undefined,
-		    readonly = undefined,
-		    required = undefined,
-		    children = undefined,
+		checked = $bindable(),
+		withIntermediate = undefined,
+		threeStateOrderUncheckToIntermediate = false,
+		autofocus = undefined,
+		disabled = undefined,
+		readonly = undefined,
+		required = undefined,
+		name = undefined,
+		label = undefined,
+		ariaLabel = undefined,
+		class: className = "",
+		style = "",
+		children = undefined,
 		onclick = undefined
-	    }: Props = $props()
+	}: Props = $props()
 
 	let element: HTMLElement & {
 		checkValidity: () => boolean
@@ -62,13 +74,24 @@
 		const previousValue = $state.snapshot(checked)
 
 		if (withIntermediate) {
-			// Three-state cycle: true -> null (indeterminate) -> false -> true
-			if (previousValue === true) {
-				checked = null
-			} else if (previousValue === null) {
-				checked = false
+			if (threeStateOrderUncheckToIntermediate) {
+				// Blazor order: false -> null (indeterminate) -> true -> false
+				if (previousValue === false) {
+					checked = null
+				} else if (previousValue === null) {
+					checked = true
+				} else {
+					checked = false
+				}
 			} else {
-				checked = true
+				// Default order: false -> true -> null (indeterminate) -> false
+				if (previousValue === true) {
+					checked = null
+				} else if (previousValue === null) {
+					checked = false
+				} else {
+					checked = true
+				}
 			}
 		} else {
 			// Two-state toggle: true <-> false
@@ -79,6 +102,7 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events a11y_autofocus -->
 <fluent-checkbox
 	bind:this={element}
 	checked={checked === true}
@@ -87,7 +111,15 @@
 	{readonly}
 	{disabled}
 	{required}
+	{name}
+	aria-label={ariaLabel || null}
+	class={className || null}
+	style={style || null}
 	onclick={handleOnClick}
 >
-	{@render children?.()}
+	{#if children}
+		{@render children()}
+	{:else if label}
+		{label}
+	{/if}
 </fluent-checkbox>

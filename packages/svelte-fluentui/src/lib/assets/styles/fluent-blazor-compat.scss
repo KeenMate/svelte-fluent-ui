@@ -5,6 +5,49 @@
  */
 
 // =============================================================================
+// Badge Colors
+// FluentUI v2.6.x badge uses CSS variables for fill/color attributes.
+// The badge generates inline styles: background-color: var(--badge-fill-[name]); color: var(--badge-color-[name]);
+// We define these CSS variables for built-in color names.
+// Note: User must set both fill="[name]" and color="[name]" for both background and text color to work.
+// =============================================================================
+
+// Define CSS variables for built-in badge colors
+:root {
+	// Brand colors
+	--badge-fill-brand: var(--accent-fill-rest);
+	--badge-color-brand: var(--foreground-on-accent-rest);
+
+	// Danger (red)
+	--badge-fill-danger: #c50f1f;
+	--badge-color-danger: #ffffff;
+
+	// Important (dark foreground on light background inverted)
+	--badge-fill-important: var(--neutral-foreground-rest);
+	--badge-color-important: var(--neutral-layer-1);
+
+	// Informative (secondary fill)
+	--badge-fill-informative: var(--neutral-fill-secondary-rest);
+	--badge-color-informative: var(--neutral-foreground-rest);
+
+	// Severe (orange)
+	--badge-fill-severe: #da3b01;
+	--badge-color-severe: #ffffff;
+
+	// Subtle (layer background)
+	--badge-fill-subtle: var(--neutral-layer-1);
+	--badge-color-subtle: var(--neutral-foreground-rest);
+
+	// Success (green)
+	--badge-fill-success: #107c10;
+	--badge-color-success: #ffffff;
+
+	// Warning (yellow)
+	--badge-fill-warning: #fde300;
+	--badge-color-warning: var(--neutral-foreground-rest);
+}
+
+// =============================================================================
 // RTL Support
 // =============================================================================
 

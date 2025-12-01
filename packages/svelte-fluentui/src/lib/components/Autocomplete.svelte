@@ -4,11 +4,11 @@
  * https://www.fluentui-blazor.net/Autocomplete
  *
  * Multiple selection autocomplete with tag/chip display and custom filtering
+ * Supports three tag positions: inline (default), above, below
 -->
 
 <script lang="ts">
-	import TextField from "./TextField.svelte"
-	import Badge from "./Badge.svelte"
+	import type { Snippet } from "svelte"
 	import PositioningRegion from "./PositioningRegion.svelte"
 
 	type OptionItem<T = any> = {
@@ -24,7 +24,9 @@
 		disabled?: boolean
 		readonly?: boolean
 		required?: boolean
+		autofocus?: boolean
 		label?: string
+		labelTemplate?: Snippet
 		appearance?: string
 		autocomplete?: string
 		maxSelectedOptions?: number
@@ -34,10 +36,23 @@
 		initialOptionsCount?: number
 		keepOpen?: boolean
 		width?: string
+		height?: string
+		id?: string
+		title?: string
+		ariaLabel?: string
+		multiple?: boolean
+		loading?: boolean
+		immediateDelay?: number
+		selectValueOnTab?: boolean
+		tagsPosition?: "inline" | "above" | "below"
+		headerContent?: Snippet
+		footerContent?: Snippet
+		optionTemplate?: Snippet<[OptionItem<T>]>
 		class?: string
 		style?: string
 		onoptionssearch?: (searchText: string) => Promise<OptionItem<T>[]> | OptionItem<T>[]
 		onselectedoptionschange?: (selected: T[]) => void
+		ondismissed?: () => void
 	}
 
 	let {
@@ -47,7 +62,9 @@
 		disabled = false,
 		readonly = false,
 		required = false,
+		autofocus = undefined,
 		label = undefined,
+		labelTemplate = undefined,
 		appearance = undefined,
 		autocomplete = undefined,
 		maxSelectedOptions = undefined,
@@ -57,36 +74,83 @@
 		initialOptionsCount = undefined,
 		keepOpen = false,
 		width = undefined,
+		height = undefined,
+		id = undefined,
+		title = undefined,
+		ariaLabel = undefined,
+		multiple = undefined,
+		loading = undefined,
+		immediateDelay = 0,
+		selectValueOnTab = true,
+		tagsPosition = "inline",
+		headerContent = undefined,
+		footerContent = undefined,
+		optionTemplate = undefined,
 		class: className = "",
 		style = "",
 		onoptionssearch = undefined,
-		onselectedoptionschange = undefined
+		onselectedoptionschange = undefined,
+		ondismissed = undefined
 	}: Props = $props()
 
 	let searchText = $state("")
 	let isOpen = $state(false)
 	let filteredOptions = $state<OptionItem[]>([])
 	let highlightedIndex = $state(-1)
-	let textFieldElement = $state<HTMLElement | undefined>(undefined)
+	let containerElement = $state<HTMLElement | undefined>(undefined)
+	let inputElement = $state<HTMLInputElement | undefined>(undefined)
 	let isSearching = $state(false)
+	let isFocused = $state(false)
+	let debounceTimer: ReturnType<typeof setTimeout> | undefined = undefined
 
-	// Filter options based on search text
-	async function filterOptions(text: string) {
-		console.log("3. filterOptions called with text:", text)
+	// Compute effective multi/single select mode
+	// If multiple is explicitly set, use it. Otherwise, infer from maxSelectedOptions
+	let effectiveMultiple = $derived(
+		multiple !== undefined ? multiple : (maxSelectedOptions === undefined || maxSelectedOptions !== 1)
+	)
 
-		// Handle empty search text
+	// Perform the actual search
+	async function performSearch(text: string) {
+		// Show loading state (either from prop or internal state)
+		isSearching = true
+
+		try {
+			if (onoptionssearch) {
+				const results = await onoptionssearch(text)
+				filteredOptions = results.slice(0, maxOptionsSearch)
+			} else {
+				// Default filtering: contains (case insensitive)
+				// Filter out already selected options to avoid duplicates
+				const filtered = options.filter(opt =>
+					opt.text.toLowerCase().includes(text.toLowerCase()) &&
+					!isSelected(opt.value)
+				)
+				filteredOptions = filtered.slice(0, maxOptionsSearch)
+			}
+
+			isOpen = filteredOptions.length > 0 || showOverlayOnEmptyResults
+		} finally {
+			isSearching = false
+		}
+	}
+
+	// Filter options based on search text (with optional debounce)
+	function filterOptions(text: string) {
+		// Clear any pending debounce timer
+		if (debounceTimer) {
+			clearTimeout(debounceTimer)
+			debounceTimer = undefined
+		}
+
+		// Handle empty search text (no debounce needed)
 		if (!text || !text.trim()) {
-			console.log("4. Text is empty")
-
 			// Show initial options if enabled
 			if (showInitialOptions && options.length > 0) {
-				console.log("5. Showing initial options")
 				const limit = initialOptionsCount ?? maxOptionsSearch
 				const filtered = options.filter(opt => !isSelected(opt.value))
 				filteredOptions = filtered.slice(0, limit)
 				isOpen = filteredOptions.length > 0
 			} else {
-				console.log("5. Clearing options, showInitialOptions =", showInitialOptions)
 				filteredOptions = []
 				if (!showOverlayOnEmptyResults) {
 					isOpen = false
@@ -95,47 +159,21 @@
 			return
 		}
 
-		console.log("6. Starting search, isSearching = true")
-		isSearching = true
-
-		try {
-			if (onoptionssearch) {
-				console.log("7. Using custom onoptionssearch")
-				const results = await onoptionssearch(text)
-				console.log("8. Custom search results:", results)
-				filteredOptions = results.slice(0, maxOptionsSearch)
-			} else {
-				console.log("9. Using default filtering with options:", options)
-				// Default filtering: contains (case insensitive)
-				// Filter out already selected options to avoid duplicates
-				const filtered = options.filter(opt =>
-					opt.text.toLowerCase().includes(text.toLowerCase()) &&
-					!isSelected(opt.value)
-				)
-				console.log("10. Filtered results:", filtered)
-				filteredOptions = filtered.slice(0, maxOptionsSearch)
-			}
-
-			console.log("11. filteredOptions:", filteredOptions)
-			console.log("12. Setting isOpen to:", filteredOptions.length > 0 || showOverlayOnEmptyResults)
-			isOpen = filteredOptions.length > 0 || showOverlayOnEmptyResults
-		} finally {
-			isSearching = false
-			console.log("13. isSearching = false, isOpen =", isOpen)
+		// Apply debounce if immediateDelay is set
+		if (immediateDelay > 0) {
+			isSearching = true // Show loading immediately
+			debounceTimer = setTimeout(() => {
+				performSearch(text)
+			}, immediateDelay)
+		} else {
+			// No debounce, search immediately
+			performSearch(text)
 		}
 	}
 
 	// Check if an option is already selected
 	function isSelected(value: any): boolean {
 		return selectedOptions.some(v => v === value)
-	}
-
-	// Handle search input change
-	async function handleSearchChange(event: Event) {
-		const target = event.target as HTMLInputElement
-		searchText = target.value
-		highlightedIndex = -1
-		await filterOptions(searchText)
 	}
 
 	// Handle option selection
@@ -152,14 +190,17 @@
 		highlightedIndex = -1
 
 		if (!keepOpen || (maxSelectedOptions && selectedOptions.length >= maxSelectedOptions)) {
-			isOpen = false
+			closeDropdown()
 		}
 
 		onselectedoptionschange?.(selectedOptions)
 	}
 
 	// Remove selected option
-	function removeOption(value: any) {
+	function removeOption(value: any, event?: MouseEvent) {
+		if (event) {
+			event.stopPropagation()
+		}
 		if (disabled || readonly) return
 
 		selectedOptions = selectedOptions.filter(v => v !== value)
@@ -172,8 +213,23 @@
 		return option ? option.text : String(value)
 	}
 
+	// Close dropdown and call ondismissed callback
+	function closeDropdown() {
+		if (isOpen) {
+			isOpen = false
+			ondismissed?.()
+		}
+	}
+
 	// Handle keyboard navigation
 	function handleKeyDown(event: KeyboardEvent) {
+		// Handle backspace to remove last chip when input is empty
+		if (event.key === "Backspace" && searchText === "" && effectiveMultiple && selectedOptions.length > 0) {
+			const lastValue = selectedOptions[selectedOptions.length - 1]
+			removeOption(lastValue)
+			return
+		}
+
 		if (!isOpen) return
 
 		switch (event.key) {
@@ -193,13 +249,13 @@
 				break
 			case "Escape":
 				event.preventDefault()
-				isOpen = false
+				closeDropdown()
 				searchText = ""
 				filteredOptions = []
 				break
 			case "Tab":
-				// Tab key behavior can be controlled by selectValueOnTab prop in the future
-				if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
+				// Tab key behavior controlled by selectValueOnTab prop
+				if (selectValueOnTab && highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
 					event.preventDefault()
 					selectOption(filteredOptions[highlightedIndex])
 				}
@@ -208,7 +264,8 @@
 	}
 
 	// Handle input focus
-	function handleFocus() {
+	function handleInputFocus() {
+		isFocused = true
 		if (!disabled && !readonly) {
 			if (searchText.trim()) {
 				filterOptions(searchText)
@@ -219,10 +276,25 @@
 		}
 	}
 
+	// Handle input blur
+	function handleInputBlur() {
+		isFocused = false
+	}
+
+	// Handle container click to focus input
+	function handleContainerClick(event: MouseEvent) {
+		// Don't focus if clicking remove button or clear button
+		const target = event.target as HTMLElement
+		if (target.closest('.chip-remove, .clear-button')) {
+			return
+		}
+		inputElement?.focus()
+	}
+
 	// Handle click outside
 	function handleClickOutside(event: MouseEvent) {
-		if (textFieldElement && !textFieldElement.contains(event.target as Node)) {
-			isOpen = false
+		if (containerElement && !containerElement.contains(event.target as Node)) {
+			closeDropdown()
 		}
 	}
 
@@ -239,16 +311,25 @@
 	// Check if max selections reached
 	let isMaxReached = $derived(maxSelectedOptions !== undefined && selectedOptions.length >= maxSelectedOptions)
 
-	// Single-select mode detection
-	let isSingleSelect = $derived(maxSelectedOptions === 1)
+	// Single-select mode detection (uses effectiveMultiple for explicit control)
+	let isSingleSelect = $derived(!effectiveMultiple)
 	let hasSingleSelection = $derived(isSingleSelect && selectedOptions.length === 1)
 
-	// Computed display value for TextField
+	// Computed display value for input
 	let displayValue = $derived(hasSingleSelection ? getOptionText(selectedOptions[0]) : searchText)
+
+	// Computed loading state (external prop or internal state)
+	let showLoading = $derived(loading !== undefined ? loading : isSearching)
+
+	// Compute placeholder - hide when there are inline chips
+	let effectivePlaceholder = $derived(
+		(tagsPosition === 'inline' && selectedOptions.length > 0 && effectiveMultiple)
+			? ''
+			: placeholder
+	)
 
 	// Handle input change
 	function handleInput(event: Event) {
-		console.log("1. handleInput called")
 		const target = event.target as HTMLInputElement
 
 		// In single-select mode, clear selection when user starts typing
@@ -258,23 +339,35 @@
 		}
 
 		searchText = target.value
-		console.log("2. searchText set to:", searchText)
 		highlightedIndex = -1
 		filterOptions(searchText)
 	}
 
 	// Clear selection for single-select mode
-	function clearSingleSelection() {
+	function clearSingleSelection(event: MouseEvent) {
+		event.stopPropagation()
 		if (!disabled && !readonly) {
 			selectedOptions = []
 			searchText = ""
 			onselectedoptionschange?.(selectedOptions)
 		}
 	}
+
+	// Should show tags - only for multi-select with selections
+	let showTags = $derived(selectedOptions.length > 0 && effectiveMultiple)
 </script>
 
-<div class="fluent-autocomplete {className}" style="{style} {width ? `width: ${width};` : ''}">
-	{#if label}
+<!-- svelte-ignore a11y_label_has_associated_control -->
+<div
+	class="fluent-autocomplete {className}"
+	style="{style}{width ? ` width: ${width};` : ''}{height ? ` height: ${height};` : ''}"
+	{...id ? { id } : {}}
+	{...title ? { title } : {}}
+	{...ariaLabel ? { 'aria-label': ariaLabel } : {}}
+>
+	{#if labelTemplate}
+		{@render labelTemplate()}
+	{:else if label}
 		<label class="autocomplete-label">
 			{label}
 			{#if required}<span class="required-indicator">*</span>{/if}
@@ -282,106 +375,177 @@
 	{/if}
 
 	<div class="autocomplete-container">
-		<!-- Selected options (chips/tags) - Hide for single-select mode, show inline instead -->
-		{#if selectedOptions.length > 0 && !hasSingleSelection}
+		<!-- Tags ABOVE (if tagsPosition === 'above') -->
+		{#if tagsPosition === 'above' && showTags}
 			<div class="selected-options">
 				{#each selectedOptions as value}
-					<Badge appearance="neutral" class="selected-chip">
-						<span class="chip-content">
-							{getOptionText(value)}
-							{#if !disabled && !readonly}
-								<svg
-									class="remove-icon"
-									width="12"
-									height="12"
-									viewBox="0 0 24 24"
-									fill="var(--accent-fill-rest)"
-									role="button"
-									tabindex="0"
-									onclick={() => removeOption(value)}
-									onkeydown={(e) => e.key === 'Enter' && removeOption(value)}
-									aria-label="Remove {getOptionText(value)}"
-								>
-									<title>Remove {getOptionText(value)}</title>
+					<span class="external-chip">
+						<span class="chip-text">{getOptionText(value)}</span>
+						{#if !disabled && !readonly}
+							<button
+								type="button"
+								class="chip-remove"
+								onclick={(e) => removeOption(value, e)}
+								aria-label="Remove {getOptionText(value)}"
+								title="Remove {getOptionText(value)}"
+							>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
 									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
 								</svg>
-							{/if}
-						</span>
-					</Badge>
+							</button>
+						{/if}
+					</span>
 				{/each}
 			</div>
 		{/if}
 
-		<!-- Search input -->
-		<div class="search-input-wrapper" bind:this={textFieldElement}>
-			<TextField
+		<!-- Input container -->
+		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+		<div
+			class="autocomplete-input-container"
+			class:inline-mode={tagsPosition === 'inline'}
+			class:focused={isFocused}
+			class:disabled
+			class:readonly
+			class:filled={appearance === 'filled'}
+			bind:this={containerElement}
+			onclick={handleContainerClick}
+			role="combobox"
+			aria-expanded={isOpen}
+			aria-haspopup="listbox"
+		>
+			<!-- Tags INLINE (if tagsPosition === 'inline') -->
+			{#if tagsPosition === 'inline' && showTags}
+				{#each selectedOptions as value}
+					<span class="inline-chip">
+						<span class="chip-text">{getOptionText(value)}</span>
+						{#if !disabled && !readonly}
+							<button
+								type="button"
+								class="chip-remove"
+								onclick={(e) => removeOption(value, e)}
+								aria-label="Remove {getOptionText(value)}"
+								title="Remove {getOptionText(value)}"
+							>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
+								</svg>
+							</button>
+						{/if}
+					</span>
+				{/each}
+			{/if}
+
+			<!-- Native input element -->
+			<input
+				type="text"
+				class="autocomplete-native-input"
+				bind:this={inputElement}
 				value={displayValue}
-				{placeholder}
-				disabled={disabled || undefined}
-				readonly={readonly || undefined}
+				placeholder={effectivePlaceholder}
+				disabled={disabled}
+				readonly={readonly}
 				{required}
-				{appearance}
-				autocomplete={autocomplete}
+				autofocus={autofocus}
+				autocomplete={autocomplete || 'off'}
 				oninput={handleInput}
 				onkeydown={handleKeyDown}
-				onfocus={handleFocus}
-				style="width: 100%;"
-			>
-				{#snippet end()}
-					{#if hasSingleSelection && !disabled && !readonly}
-						<!-- Clear button for single-select mode -->
-						<button
-							type="button"
-							class="clear-button"
-							onclick={clearSingleSelection}
-							aria-label="Clear selection"
-							title="Clear selection"
-						>
-							<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-								<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
-							</svg>
-						</button>
-					{:else if isSearching}
-						<div class="loading-indicator">
-							<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="spinner">
-								<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" fill="none" opacity="0.25"/>
-								<path d="M8 1a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-							</svg>
-						</div>
-					{/if}
-				{/snippet}
-			</TextField>
+				onfocus={handleInputFocus}
+				onblur={handleInputBlur}
+			/>
 
-			<!-- Dropdown options -->
-			{#if isOpen && textFieldElement}
-				<PositioningRegion
-					anchor={textFieldElement}
-					visible={isOpen}
-					style="z-index: 1000; background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto;"
-				>
-					<div class="options-list">
-						{#if filteredOptions.length > 0}
-							{#each filteredOptions as option, index}
-								<button
-									type="button"
-									class="option-item"
-									class:highlighted={index === highlightedIndex}
-									class:disabled={option.disabled}
-									onclick={() => selectOption(option)}
-									disabled={option.disabled}
-								>
-									{option.text}
-								</button>
-							{/each}
-						{:else if showOverlayOnEmptyResults}
-							<div class="no-results">No results found</div>
-						{/if}
+			<!-- End slot: clear button or loading indicator -->
+			<div class="input-end">
+				{#if hasSingleSelection && !disabled && !readonly}
+					<button
+						type="button"
+						class="clear-button"
+						onclick={clearSingleSelection}
+						aria-label="Clear selection"
+						title="Clear selection"
+					>
+						<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+							<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
+						</svg>
+					</button>
+				{:else if showLoading}
+					<div class="loading-indicator">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="spinner">
+							<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" fill="none" opacity="0.25"/>
+							<path d="M8 1a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+						</svg>
 					</div>
-				</PositioningRegion>
-			{/if}
+				{/if}
+			</div>
 		</div>
 
-		<!-- Max selections message - Don't show for single-select (shown inline) -->
+		<!-- Tags BELOW (if tagsPosition === 'below') -->
+		{#if tagsPosition === 'below' && showTags}
+			<div class="selected-options">
+				{#each selectedOptions as value}
+					<span class="external-chip">
+						<span class="chip-text">{getOptionText(value)}</span>
+						{#if !disabled && !readonly}
+							<button
+								type="button"
+								class="chip-remove"
+								onclick={(e) => removeOption(value, e)}
+								aria-label="Remove {getOptionText(value)}"
+								title="Remove {getOptionText(value)}"
+							>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
+								</svg>
+							</button>
+						{/if}
+					</span>
+				{/each}
+			</div>
+		{/if}
+
+		<!-- Dropdown options -->
+		{#if isOpen && containerElement}
+			<PositioningRegion
+				anchor={containerElement}
+				visible={isOpen}
+				style="z-index: 1000; background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto;"
+			>
+				<div class="options-list">
+					{#if headerContent}
+						<div class="options-header">
+							{@render headerContent()}
+						</div>
+					{/if}
+					{#if filteredOptions.length > 0}
+						{#each filteredOptions as option, index}
+							<button
+								type="button"
+								class="option-item"
+								class:highlighted={index === highlightedIndex}
+								class:disabled={option.disabled}
+								onclick={() => selectOption(option)}
+								disabled={option.disabled}
+							>
+								{#if optionTemplate}
+									{@render optionTemplate(option)}
+								{:else}
+									{option.text}
+								{/if}
+							</button>
+						{/each}
+					{:else if showOverlayOnEmptyResults}
+						<div class="no-results">No results found</div>
+					{/if}
+					{#if footerContent}
+						<div class="options-footer">
+							{@render footerContent()}
+						</div>
+					{/if}
+				</div>
+			</PositioningRegion>
+		{/if}
+
+		<!-- Max selections message - Don't show for single-select -->
 		{#if isMaxReached && !isSingleSelect}
 			<div class="max-message">
 				Maximum {maxSelectedOptions} selection{maxSelectedOptions !== 1 ? 's' : ''} reached
@@ -412,74 +576,256 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		position: relative;
 	}
 
+	/* ===== Input Container (base styles for non-inline mode) ===== */
+	.autocomplete-input-container {
+		display: flex;
+		align-items: center;
+		position: relative;
+	}
+
+	/* ===== Input Container: Inline Mode (mimics fluent-text-field) ===== */
+	.autocomplete-input-container.inline-mode {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px;
+		min-height: 32px;
+		padding: 4px 8px;
+		background: var(--neutral-fill-input-rest, #ffffff);
+		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		cursor: text;
+		transition: border-color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+	}
+
+	.autocomplete-input-container.inline-mode:hover:not(.disabled):not(.readonly) {
+		background: var(--neutral-fill-input-hover, #f5f5f5);
+	}
+
+	.autocomplete-input-container.inline-mode.focused:not(.disabled) {
+		border-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: 0 0 0 1px var(--accent-fill-rest, #0078d4);
+	}
+
+	.autocomplete-input-container.inline-mode.disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+		background: var(--neutral-fill-input-rest, #ffffff);
+	}
+
+	.autocomplete-input-container.inline-mode.readonly {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+	}
+
+	/* Filled appearance for inline mode */
+	.autocomplete-input-container.inline-mode.filled {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		border: none;
+		border-bottom: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
+	}
+
+	.autocomplete-input-container.inline-mode.filled:hover:not(.disabled):not(.readonly) {
+		background: var(--neutral-fill-secondary-hover, #ebebeb);
+	}
+
+	.autocomplete-input-container.inline-mode.filled.focused:not(.disabled) {
+		border-bottom-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: 0 1px 0 0 var(--accent-fill-rest, #0078d4);
+	}
+
+	/* ===== Inline Chips ===== */
+	.inline-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 2px 8px;
+		background: var(--neutral-fill-secondary-rest, #f0f0f0);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		font-size: 12px;
+		line-height: 1.4;
+		white-space: nowrap;
+		max-width: 150px;
+		color: var(--neutral-foreground-rest, #242424);
+	}
+
+	.chip-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.chip-remove {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: transparent;
+		border: none;
+		padding: 2px;
+		cursor: pointer;
+		color: var(--neutral-foreground-hint, #717171);
+		border-radius: 2px;
+		flex-shrink: 0;
+		transition: color 0.1s ease, background 0.1s ease;
+	}
+
+	.chip-remove:hover {
+		background: var(--neutral-fill-secondary-hover, #e0e0e0);
+		color: var(--neutral-foreground-rest, #242424);
+	}
+
+	.chip-remove:focus {
+		outline: 1px solid var(--accent-fill-rest, #0078d4);
+		outline-offset: 1px;
+	}
+
+	/* ===== Native Input ===== */
+	.autocomplete-native-input {
+		flex: 1;
+		min-width: 60px;
+		border: none;
+		outline: none;
+		background: transparent;
+		font-family: inherit;
+		font-size: 14px;
+		line-height: 20px;
+		color: var(--neutral-foreground-rest, #242424);
+		padding: 4px 0;
+	}
+
+	.autocomplete-native-input::placeholder {
+		color: var(--neutral-foreground-hint, #717171);
+	}
+
+	.autocomplete-native-input:disabled {
+		cursor: not-allowed;
+	}
+
+	/* Non-inline mode: make input full width */
+	.autocomplete-input-container:not(.inline-mode) .autocomplete-native-input {
+		padding: 6px 8px;
+		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		background: var(--neutral-fill-input-rest, #ffffff);
+		width: 100%;
+	}
+
+	.autocomplete-input-container:not(.inline-mode) .autocomplete-native-input:hover:not(:disabled) {
+		background: var(--neutral-fill-input-hover, #f5f5f5);
+	}
+
+	.autocomplete-input-container:not(.inline-mode) .autocomplete-native-input:focus {
+		border-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: 0 0 0 1px var(--accent-fill-rest, #0078d4);
+	}
+
+	.autocomplete-input-container:not(.inline-mode).filled .autocomplete-native-input {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		border: none;
+		border-bottom: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
+	}
+
+	/* ===== Input End Slot ===== */
+	.input-end {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		padding-left: 4px;
+	}
+
+	/* Non-inline mode: position end slot inside input */
+	.autocomplete-input-container:not(.inline-mode) .input-end {
+		position: absolute;
+		right: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	/* ===== Selected Options Container (above/below modes) ===== */
 	.selected-options {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-		padding: 0.5rem;
-		background: var(--neutral-layer-2);
-		border-radius: 4px;
-		overflow-x: auto;
+		padding: 0.25rem 0;
 		max-height: 120px;
 		overflow-y: auto;
 	}
 
-	.selected-options :global(.selected-chip) {
-		padding: 0.25rem 0.5rem;
-	}
-
-	.chip-content {
-		width: 100%;
-		display: flex;
+	/* External chips (above/below modes) - FluentUI Blazor style */
+	.external-chip {
+		display: inline-flex;
 		align-items: center;
-		justify-content: center;
+		gap: 4px;
+		padding: 2px 8px;
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		color: var(--neutral-foreground-rest, #242424);
+		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		font-size: 14px;
+		font-weight: 400;
 		white-space: nowrap;
 	}
 
-	.remove-icon {
+	.external-chip .chip-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 200px;
+	}
+
+	.external-chip .chip-remove {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: transparent;
+		border: none;
+		padding: 2px;
 		cursor: pointer;
-		margin: 2px 0 0 2px;
+		color: var(--error-foreground-rest, #c42b1c);
+		border-radius: 2px;
 	}
 
-	.remove-icon:focus {
-		outline: 1px solid var(--accent-fill-rest);
-		outline-offset: 2px;
+	.external-chip .chip-remove:hover {
+		color: var(--error-foreground-hover, #a32315);
 	}
 
-	.search-input-wrapper {
-		position: relative;
+	.external-chip .chip-remove:focus {
+		outline: 1px solid var(--accent-fill-rest, #0078d4);
+		outline-offset: 1px;
 	}
 
+	/* ===== Clear Button ===== */
 	.clear-button {
 		background: transparent;
 		border: none;
 		cursor: pointer;
-		padding: 0.25rem;
+		padding: 4px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--neutral-foreground-hint);
+		color: var(--neutral-foreground-hint, #717171);
 		border-radius: 2px;
-		transition: background 0.1s ease;
+		transition: background 0.1s ease, color 0.1s ease;
 	}
 
 	.clear-button:hover {
-		background: var(--neutral-fill-secondary-hover);
-		color: var(--neutral-foreground-rest);
+		background: var(--neutral-fill-secondary-hover, #e0e0e0);
+		color: var(--neutral-foreground-rest, #242424);
 	}
 
 	.clear-button:focus {
-		outline: 1px solid var(--accent-fill-rest);
+		outline: 1px solid var(--accent-fill-rest, #0078d4);
 		outline-offset: 2px;
 	}
 
+	/* ===== Loading Indicator ===== */
 	.loading-indicator {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.25rem;
+		padding: 4px;
 	}
 
 	.spinner {
@@ -492,11 +838,24 @@
 		}
 	}
 
+	/* ===== Dropdown Options ===== */
 	.options-list {
 		display: flex;
 		flex-direction: column;
 		padding: 0.25rem;
 		min-width: 200px;
+	}
+
+	.options-header {
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		margin-bottom: 0.25rem;
+	}
+
+	.options-footer {
+		padding: 0.5rem 0.75rem;
+		border-top: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		margin-top: 0.25rem;
 	}
 
 	.option-item {
@@ -506,16 +865,16 @@
 		text-align: left;
 		cursor: pointer;
 		border-radius: 4px;
-		color: var(--neutral-foreground-rest);
+		color: var(--neutral-foreground-rest, #242424);
 		font-size: 0.875rem;
 	}
 
 	.option-item:hover:not(.disabled) {
-		background: var(--neutral-fill-secondary-hover);
+		background: var(--neutral-fill-secondary-hover, #e0e0e0);
 	}
 
 	.option-item.highlighted {
-		background: var(--neutral-fill-secondary-hover);
+		background: var(--neutral-fill-secondary-hover, #e0e0e0);
 	}
 
 	.option-item.disabled {
@@ -526,13 +885,13 @@
 	.no-results {
 		padding: 1rem;
 		text-align: center;
-		color: var(--neutral-foreground-hint);
+		color: var(--neutral-foreground-hint, #717171);
 		font-size: 0.875rem;
 	}
 
 	.max-message {
 		font-size: 0.875rem;
-		color: var(--neutral-foreground-hint);
+		color: var(--neutral-foreground-hint, #717171);
 		padding: 0.25rem 0.5rem;
 	}
 </style>

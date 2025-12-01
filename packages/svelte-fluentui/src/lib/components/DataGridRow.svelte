@@ -45,6 +45,7 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y_interactive_supports_focus -->
 <fluent-data-grid-row
 	class={className}
 	{style}

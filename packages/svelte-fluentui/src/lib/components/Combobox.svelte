@@ -13,39 +13,61 @@
 
 	type Props = {
 		id: string
-		value: SelectedValue;
-		options?: OptionItem[];
-		children?: SlotType;
-		autocomplete?: any;
-		open?: boolean;
-		currentValue?: any;
-		placeholder?: string;
-		position?: string;
-		disabled?: boolean;
-		readonly?: boolean;
-		appearance?: string;
-		required?: boolean;
-		autofocus?: any;
-		name?: string;
-	};
+		value?: SelectedValue
+		options?: OptionItem[]
+		children?: SlotType
+		autocomplete?: "inline" | "list" | "both" | "none"
+		open?: boolean
+		currentValue?: string
+		placeholder?: string
+		position?: "above" | "below"
+		disabled?: boolean
+		readonly?: boolean
+		appearance?: "outline" | "filled"
+		required?: boolean
+		autofocus?: boolean
+		name?: string
+		// New properties
+		class?: string
+		style?: string
+		label?: string
+		labelTemplate?: SlotType
+		ariaLabel?: string
+		title?: string
+		width?: string
+		height?: string
+		multiple?: boolean
+		onchange?: (value: SelectedValue) => void
+	}
 
 	let {
 		id,
-		    value        = $bindable(),
-		    options      = undefined,
-		    autocomplete = undefined,
-		    open         = undefined,
-		    currentValue = undefined,
-		    placeholder  = undefined,
-		    position     = undefined,
-		    disabled     = undefined,
-		    readonly     = undefined,
-		    appearance   = undefined,
-		    required     = undefined,
-		    autofocus    = undefined,
-		    name         = undefined,
-		    children     = undefined
-	    }: Props = $props()
+		value = $bindable(),
+		options = undefined,
+		autocomplete = undefined,
+		open = undefined,
+		currentValue = undefined,
+		placeholder = undefined,
+		position = undefined,
+		disabled = undefined,
+		readonly = undefined,
+		appearance = undefined,
+		required = undefined,
+		autofocus = undefined,
+		name = undefined,
+		children = undefined,
+		// New properties
+		class: className = "",
+		style = "",
+		label = undefined,
+		labelTemplate = undefined,
+		ariaLabel = undefined,
+		title = undefined,
+		width = undefined,
+		height = undefined,
+		multiple = false,
+		onchange = undefined
+	}: Props = $props()
 
 	const selectedOptions = createSelectedOptions(value)
 	setContext<SelectedOptionSvelteContext>(
@@ -61,6 +83,24 @@
 		    selectedIndex: number;
 	    })
 		    | undefined = undefined
+
+	// Initialize display value when element is mounted and has a preselected value
+	$effect(() => {
+		if (element && value?.[0] && options) {
+			// Use setTimeout to wait for fluent-option elements to be registered
+			setTimeout(() => {
+				if (element && element.options?.length > 0) {
+					const selectedOptionElement = element.options.find(
+						(x: HTMLOptionElement) => x.value === value?.[0],
+					)
+					if (selectedOptionElement) {
+						element.value = selectedOptionElement.dataset.optionLabel ||
+							selectedOptionElement.innerText.trim()
+					}
+				}
+			}, 0)
+		}
+	})
 
 	// $inspect(id, "combobox selected options", selectedOptions.value)
 
@@ -130,22 +170,67 @@
 				? value[0]
 				: value) === ctxValue?.[0]
 	}
+
+	// Handle change event
+	function handleChange() {
+		onchange?.(value)
+	}
+
+	// Compute combined styles
+	let computedStyle = $derived(() => {
+		const styles: string[] = []
+		if (width) styles.push(`width: ${width}`)
+		if (height) styles.push(`--height: ${height}`)
+		if (style) styles.push(style)
+		return styles.join("; ")
+	})
+
+	// Conditional props for web component (to avoid rendering "undefined" or "null" as string values)
+	let titleProps = $derived(title ? { title } : {})
+
+	console.log("Combobox", { id, position })
+
+	// Set position property on element (web components need property, not just attribute)
+	$effect(() => {
+		if (element && position) {
+			(element as any).position = position
+		}
+	})
 </script>
 
+<!-- svelte-ignore a11y_label_has_associated_control -->
+{#if label || labelTemplate}
+	<label class="combobox-label">
+		{#if label}
+			{label}
+		{/if}
+		{#if labelTemplate}
+			{@render labelTemplate()}
+		{/if}
+		{#if required}<span class="required-indicator">*</span>{/if}
+	</label>
+{/if}
+
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-combobox
 	bind:this={element}
+	class={className}
+	style={computedStyle()}
 	{id}
-	{autocomplete}
-	{open}
-	{currentValue}
-	{placeholder}
-	{position}
-	{disabled}
-	{readonly}
-	{appearance}
-	{required}
-	{autofocus}
-	{name}
+	autocomplete={autocomplete || null}
+	open={open || null}
+	current-value={currentValue || null}
+	placeholder={placeholder || null}
+	position={position}
+	disabled={disabled || null}
+	readonly={readonly || null}
+	appearance={appearance || null}
+	required={required || null}
+	autofocus={autofocus || null}
+	name={name || null}
+	aria-label={ariaLabel || label || null}
+	{...titleProps}
+	onchange={handleChange}
 >
 	{#if children}
 		{@render children()}
@@ -157,3 +242,18 @@
 		{/each}
 	{/if}
 </fluent-combobox>
+
+<style>
+	.combobox-label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--neutral-foreground-rest);
+		margin-bottom: 0.25rem;
+	}
+
+	.required-indicator {
+		color: var(--error-foreground-rest, #d13438);
+		margin-left: 0.25rem;
+	}
+</style>

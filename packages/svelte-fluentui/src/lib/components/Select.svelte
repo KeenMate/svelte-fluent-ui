@@ -4,6 +4,11 @@
 
 	provideFluentDesignSystem().register(fluentSelect());
 
+	type SelectChangeDetail = {
+		value: string;
+		data?: Record<string, unknown>;
+	};
+
 	type Props = {
 		id?: string;
 		class?: string;
@@ -14,13 +19,14 @@
 		disabled?: boolean;
 		appearance?: "outline" | "filled";
 		required?: boolean;
+		autofocus?: boolean;
 		name?: string;
 		value?: string;
 		label?: string;
 		ariaLabel?: string;
 		labelTemplate?: SlotType;
 		children?: SlotType;
-		onchange?: (value: string) => void;
+		onchange?: (detail: SelectChangeDetail) => void;
 	};
 
 	let {
@@ -33,6 +39,7 @@
 		disabled = undefined,
 		appearance = undefined,
 		required = undefined,
+		autofocus = undefined,
 		name = undefined,
 		value = $bindable(),
 		label = undefined,
@@ -42,10 +49,18 @@
 		onchange = undefined
 	}: Props = $props();
 
+	let selectElement: HTMLElement | undefined = $state();
+
 	function handleChange(e: Event) {
 		const target = e.target as HTMLSelectElement;
 		value = target.value;
-		onchange?.(target.value);
+
+		// Find selected option and extract its data
+		const selectedOption = selectElement?.querySelector(`fluent-option[value="${target.value}"]`) as HTMLElement | null;
+		const contextData = selectedOption?.dataset.optionContext;
+		const data = contextData ? JSON.parse(contextData) : undefined;
+
+		onchange?.({ value: target.value, data });
 	}
 </script>
 
@@ -60,7 +75,9 @@
 	</label>
 {/if}
 
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-select
+	bind:this={selectElement}
 	id={id}
 	class={className}
 	style={style}
@@ -70,6 +87,7 @@
 	{disabled}
 	appearance={appearance}
 	required={required}
+	{autofocus}
 	{name}
 	current-value={value}
 	aria-label={ariaLabel || label}

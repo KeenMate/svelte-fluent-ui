@@ -7,6 +7,264 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **QuickGrid Editable Mode** - Excel-like inline cell editing (inspired by FluentUI Blazor)
+  - Navigate mode with arrow key navigation between cells
+  - Editor types: `text`, `number`, `checkbox`, `select`, `date`, `autocomplete`, `custom`
+  - Custom editor support via `oncelledit` callback with context object
+  - Sync and async validation with `validate` callback
+  - Dynamic options loading with `loadOptions` and `optionsLoadTrigger`
+  - Per-column edit triggers: `click`, `dblclick`, `button`, `always`, `navigate`
+  - Events: `onrowchange`, `onroweditstart`, `onroweditcancel`, `onvalidationerror`
+  - GridCellEditor component for consistent editor UI
+  - Demo page at `/components/quickgrid-editable`
+
+- **Dialog Component Enhancements** - Improved keyboard handling and close control
+  - `closeOnEscape` prop - Enable/disable Escape key to close dialog (default: true)
+  - `onbeforeclose` callback - Return false to prevent closing (for unsaved data checks)
+  - Escape key now closes dialog (respects `preventClose`, `closeOnEscape`, and `onbeforeclose`)
+  - X button also respects `onbeforeclose` callback
+
+- **Select/Option Component Data Support** - Select now returns both value and item data on change
+  - `Option` component: Added `data` prop to store arbitrary context data
+  - `Select` component: `onchange` now returns `{ value: string, data?: Record<string, unknown> }`
+  - Eliminates need to manually look up selected item from data array
+
+- **Tabs/Tab Component Enhancements** - Tab change event now includes context data
+  - `Tab` component: Added `data` prop to store arbitrary context data
+  - `Tabs` component: `ontabchange` now returns `{ tabId: string, data?: Record<string, unknown> }`
+  - Renamed `onTabChange` → `ontabchange` (Svelte 5 convention)
+  - Renamed `onCloseClick` → `oncloseclick` on Tab component
+
+- **Dialog Modal Backdrop** - Added proper backdrop for modal dialogs
+  - Backdrop blocks interaction with content behind the dialog
+  - Semi-transparent overlay (rgba(0, 0, 0, 0.4))
+  - Proper z-index layering (backdrop: 1040, dialog: 1050)
+
+- **Badge Component Rewrite** - Replaced buggy fluent-badge with custom implementation
+  - Same API: `color`, `fill`, `appearance`, `circular`, `onclick`, `class`, `style`
+  - Uses CSS variables for theming (`--badge-fill-*`, `--badge-color-*`)
+  - Appearance variants: lightweight, accent, neutral, outline, tint
+
+- **NumberField Component Enhancements** - New properties matching FluentUI Blazor API
+  - `minlength` - Minimum character length
+  - `maxlength` - Maximum character length
+  - `size` - Input field size
+  - `list` - ID of a datalist element for suggestions
+  - `ariaLabel` - Accessibility label (aria-label)
+  - `title` - Tooltip text on hover
+  - `width` - Component width (e.g., '300px', '100%')
+  - `height` - Component height
+  - `class` - Additional CSS classes
+  - `start` slot - Content/icon before the input
+  - `end` slot - Content/icon after the input
+  - `onfocus`, `onblur`, `onkeydown`, `onkeyup` event handlers
+  - `focus()`, `blur()`, `select()` methods
+
+- **NumberField Documentation Page** - Comprehensive rewrite with FluentUI Blazor examples
+  - API documentation tables (Parameters, EventCallbacks, Methods, Slots)
+  - Reference links to FluentUI Web Components and FluentUI Blazor
+  - Default examples (integer, nullable integer, positive integer)
+  - Types examples (short, integer, long, float, decimal)
+  - Types with constraints (min/max overrides)
+  - Display examples (full width, placeholder, hide steps, required, disabled, read-only)
+  - Icons examples with start/end slots
+  - Focus examples (autofocus, focus async with button)
+  - Filled appearance examples
+  - Callback example with onchange
+
+### Fixed
+- **Dialog Padding** - Fixed excessive default padding on fluent-dialog
+  - Added `::part(control)` CSS to set standard 1rem padding
+
+- **QuickGrid Navigate Mode - Custom Editor Focus** - Fixed arrow keys not working after custom editor commit
+  - Custom editors now properly refocus the cell after commit/cancel in navigate mode
+  - Same fix previously applied to checkbox/select/date editors
+
+- **ToastContainer Svelte 5 Compatibility** - Fixed legacy `$:` reactive statement
+  - Converted `$:` block to `$effect()` for Svelte 5 runes mode
+  - Converted variables to `$state` and `$derived`
+  - Fixes "legacy_reactive_statement_invalid" error in runes mode
+
+- **Dialog X Button Not Working** - Fixed close button using wrong event handler name
+  - Changed `onClick` → `onclick` (Svelte 5 convention)
+  - Also fixed Dismiss button handler
+
+- **Numeric Property Binding Issues** - Fixed multiple components failing with falsy values like 0
+  - Pattern `prop={prop || null}` fails when value is 0 (e.g., `min={0}` becomes `null`)
+  - Fixed using spread pattern: `{...(prop !== undefined ? { prop } : {})}`
+  - Components fixed: NumberField, Search, Textarea, Listbox, GridItem
+
+- **GridItem Data Attributes** - Fixed undefined values being passed to data attributes
+  - Changed from `data-sm={sm}` to spread pattern to avoid "Cannot convert undefined to object" errors
+
+- **NumberField "undefined" Rendering** - Fixed attributes rendering as literal "undefined"
+  - All optional attributes now use `|| null` pattern
+  - Title attribute uses spread pattern to avoid rendering "null"
+
+- **Checkbox Component** - Added missing props matching FluentUI Blazor API
+  - `name` - Form field name
+  - `label` - Label text (alternative to children slot)
+  - `ariaLabel` - Accessibility label
+  - `class` - Additional CSS classes
+  - `style` - Inline styles
+  - `threeStateOrderUncheckToIntermediate` - Controls three-state cycle order (false: Unchecked→Checked→Intermediate, true: Unchecked→Intermediate→Checked)
+
+- **Checkbox Documentation Page** - Comprehensive rewrite with FluentUI Blazor examples
+  - API documentation tables (Properties, Callbacks)
+  - Reference links to FluentUI Web Components and FluentUI Blazor
+  - Default checkbox examples (horizontal/vertical layouts)
+  - Three-state examples with value display
+  - Three-state list with parent/child checkboxes
+  - Disabled and read-only examples
+  - Label and form integration examples
+
+- **Listbox Component** - Added missing props matching FluentUI Blazor API
+  - `name` - Form field name
+  - `label` - Label text displayed above the listbox
+  - `ariaLabel` - Accessibility label
+  - `width` - Component width (e.g., '300px', '100%')
+  - `height` - Component height (e.g., '200px')
+  - `size` - Number of visible options
+  - `class` - Additional CSS classes
+  - `style` - Inline styles
+  - `onchange` - Callback when selection changes
+
+- **Listbox Documentation Page** - Comprehensive rewrite with FluentUI Blazor examples
+  - API documentation tables (Properties, Callbacks, Slots)
+  - Reference links to FluentUI Web Components and FluentUI Blazor
+  - Manual example with various option states
+  - Default example with people picker
+  - From list of Option<T> items examples
+  - Long list example (US States)
+  - Long list with Width and Height example
+  - Option template with icons and badges
+  - Multiple selection example
+  - Disabled and label examples
+
+- **Badge Component** - Enhanced with color system and documentation
+  - `fill` - Background color key referencing `--badge-fill-[name]` CSS variable
+  - `color` - Text color key referencing `--badge-color-[name]` CSS variable
+  - `class` - Additional CSS classes
+  - `style` - Inline styles
+  - Built-in colors: brand, danger, important, informative, severe, subtle, success, warning
+  - Auto-fills `fill` from `color` when only color is specified
+  - Technical documentation comment explaining the color system
+
+- **Badge Documentation Page** - Comprehensive examples
+  - API documentation tables (Properties, Callbacks, Slots)
+  - Reference links to FluentUI Web Components and FluentUI Blazor
+  - Built-in colors showcase
+  - Appearance examples (accent, lightweight, neutral, outline, tint)
+  - Color + Appearance combinations grid
+  - Custom colors with CSS variables
+  - Circular badge examples
+
+- **Autocomplete Component Enhancements** - New properties matching FluentUI Blazor API
+  - `tagsPosition` - Control where selected tags appear: `"inline"` (default, inside input like FluentUI Blazor), `"above"`, or `"below"` the input field
+  - `labelTemplate` - Custom label content via Svelte snippet
+  - `id` - Element ID
+  - `title` - Tooltip text
+  - `ariaLabel` - Accessibility label
+  - `height` - Component height
+  - `multiple` - Explicitly enable/disable multi-select mode (independent of maxSelectedOptions)
+  - `loading` - External loading state control (overrides internal isSearching state)
+  - `immediateDelay` - Debounce delay in ms before triggering search
+  - `selectValueOnTab` - Control whether Tab key selects highlighted option (default: true)
+  - `headerContent` - Snippet for custom header in dropdown
+  - `footerContent` - Snippet for custom footer in dropdown
+  - `optionTemplate` - Snippet for custom option rendering
+  - `ondismissed` - Callback when dropdown closes
+  - Backspace key removes last chip when input is empty (inline mode UX improvement)
+  - Custom inline chips with proper focus state management
+  - Click anywhere in inline container focuses input
+
+- **Autocomplete Documentation Page** - Comprehensive examples matching FluentUI Blazor
+  - Default examples with basic, pre-selected, and single-select variants
+  - **Tags Position examples** - Demonstrates all three modes: inline (default), above, and below
+  - Multiple vs single-select mode examples
+  - Many items with maxOptionsSearch and maxSelectedOptions
+  - Close via code with keepOpen
+  - Initial options with async search pattern
+  - Disabled, readonly, and required states
+  - Appearance styles (outline, filled)
+  - Width customization
+  - Debounce (immediateDelay) example
+  - Option template with custom rendering (icons, email)
+  - Header and footer content snippets
+  - Select on Tab behavior examples
+  - Callback examples (onselectedoptionschange, ondismissed)
+  - Code examples for basic usage, async search, and custom templates
+
+- **Combobox Component Enhancements** - New properties matching FluentUI Blazor API
+  - `label` - Label text displayed above the combobox
+  - `labelTemplate` - Custom label content via Svelte snippet
+  - `ariaLabel` - Accessibility label (aria-label)
+  - `title` - Tooltip text
+  - `width` - Component width (e.g., '300px', '100%')
+  - `height` - Component height
+  - `class` - Additional CSS classes
+  - `style` - Inline styles
+  - `onchange` - Callback when selection changes
+
+- **Combobox Documentation Page** - Comprehensive examples matching FluentUI Blazor
+  - Default examples with basic, pre-selected, and placeholder variants
+  - Option types: from Option array and inline Option elements
+  - Disabled states: entire combobox, individual items, all items disabled
+  - Appearance styles: outline (default) and filled
+  - Autocomplete modes: inline, list, and both
+  - List examples: long scrollable list, position above/below
+  - Option template with custom content (icons + formatted text)
+  - Width/styling examples
+  - Callback example demonstrating onchange
+
+### Fixed
+- **Autocomplete Dropdown Jumping** - Fixed dropdown moving up/down when navigating with arrow keys
+  - PositioningRegion now only calculates position when dropdown opens, not on every re-render
+  - Prevents position recalculation during keyboard navigation
+
+- **Autocomplete Tags Styling (above/below modes)** - Fixed ugly appearance of tags
+  - Replaced `<fluent-badge>` with custom styled elements for full CSS control
+  - Tags now match FluentUI Blazor style: neutral background, dark text, red X icon
+
+- **Combobox "undefined" Display Bug** - Fixed attributes rendering as literal "undefined" string
+  - Fixed `title` attribute showing "undefined" tooltip when not set (now uses spread pattern)
+  - Fixed `data-option-label` in Option.svelte rendering "undefined" (now uses `|| null`)
+
+- **Combobox Position Prop** - Fixed `position="above"` not being applied correctly
+  - FluentUI web components require property assignment, not just attribute
+  - Added `$effect` to set `element.position` property after mount
+  - Position now correctly forces dropdown above or below input
+
+- **Combobox Pre-selected Value Display** - Fixed pre-selected values not showing label on initial render
+  - Added initialization effect with setTimeout to wait for fluent-option elements to register
+  - Now correctly displays the selected option's label text in the input field
+
+## [1.0.0-rc06] - 2025-11-27
+
+### Added
+- **Alert Component** - Notification banner for displaying important messages
+  - 4 intent levels: `info`, `success`, `warning`, `danger`
+  - Optional `title` prop for header
+  - Optional `dismissable` prop with dismiss button
+  - Custom `icon` slot (Svelte 5 snippet) to override default intent icons
+  - `ondismiss` callback
+  - Demo page at `/components/alert`
+
+- **Icon Component Documentation** - Comprehensive guide for using FluentUI icons
+  - Setup instructions with Vite plugin
+  - Examples for sizes, variants, colors, and hover effects
+  - API reference and plugin options
+  - Demo page at `/components/icon`
+
+- **Vite Plugin: fluentuiIcons** - Smart icon bundling for production builds
+  - Dev mode: Serves icons directly from node_modules
+  - Build mode: Scans source files and copies only used icons to output
+  - Auto-detects `<Icon name="..." />` patterns in .svelte, .ts, .js files
+  - Config file support (`fluentui-icons.config.json`) for registering dynamic icons
+  - Configurable sizes, variants, and output path
+  - Import via `import { fluentuiIcons } from 'svelte-fluentui/vite'`
+
 ## [1.0.0-rc05] - 2025-11-24 - PUBLISHED
 
 ### Added

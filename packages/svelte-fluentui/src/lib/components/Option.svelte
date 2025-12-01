@@ -11,9 +11,11 @@
 			value: string
 			label?: string
 			style?: string
-			onClick?: Function
+			onclick?: Function
 			selected?: boolean
 			disabled?: boolean
+			/** Arbitrary context data passed to onchange when this option is selected */
+			data?: Record<string, unknown>
 			children: any
 		}
 
@@ -22,7 +24,8 @@
 				label    = undefined,
 				disabled = false,
 				selected = undefined,
-				onClick  = undefined,
+				onclick  = undefined,
+				data     = undefined,
 				children
 			}: Props = $props()
 
@@ -42,14 +45,16 @@
 				selectedValue.toggle(value)
 			}
 
-			onClick?.(ev)
+			onclick?.(ev)
 		}
 	</script>
 
+	<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 	<fluent-option
 		{value}
 		selected={selected !== undefined ? selected : selectedValue?.value?.includes(value) ?? false}
-		data-option-label={label}
+		data-option-label={label || null}
+		data-option-context={data ? JSON.stringify(data) : undefined}
 		{disabled}
 		onclick={handleOnClick}
 	>

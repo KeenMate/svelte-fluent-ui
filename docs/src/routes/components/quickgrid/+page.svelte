@@ -88,6 +88,8 @@
 			<span style="color: #999; cursor: not-allowed;" title="Custom component">QuickGrid (Custom)</span>
 			|
 			<a href="https://aspnet.github.io/quickgridsamples/" target="_blank" rel="noopener noreferrer">ASP.NET QuickGrid (Inspiration)</a>
+			|
+			<a href="/components/quickgrid-editable">QuickGrid Editable</a>
 		</p>
 	</Card>
 
@@ -96,7 +98,7 @@
 	</p>
 
 	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
 				<h2>QuickGrid Component</h2>
 				<table class="member-table">
@@ -157,11 +159,17 @@
 							<td>true</td>
 							<td>Highlight rows on hover</td>
 						</tr>
+						<tr>
+							<td>editable</td>
+							<td>boolean</td>
+							<td>false</td>
+							<td>Enable inline editing (<a href="/components/quickgrid-editable">see editable docs</a>)</td>
+						</tr>
 					</tbody>
 				</table>
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
 				<h2>Column Definition</h2>
 				<table class="member-table">
@@ -216,6 +224,12 @@
 							<td>undefined</td>
 							<td>Custom cell formatter</td>
 						</tr>
+						<tr>
+							<td>editable</td>
+							<td>boolean</td>
+							<td>undefined</td>
+							<td>Enable editing (<a href="/components/quickgrid-editable">see editable docs</a>)</td>
+						</tr>
 					</tbody>
 				</table>
 			</Card>
@@ -269,5 +283,11 @@
 		<h2>No Stripes, No Hover</h2>
 		<p>Grid without alternating row colors or hover effects:</p>
 		<QuickGrid items={sampleData} columns={basicColumns} striped={false} hoverable={false} />
+	</Card>
+
+	<Card>
+		<h2>Editable Grid</h2>
+		<p>QuickGrid supports inline editing with multiple editor types, validation, dynamic options loading, and custom editors.</p>
+		<p><a href="/components/quickgrid-editable">See QuickGrid Editable documentation</a> for examples and full API reference.</p>
 	</Card>
 </Stack>

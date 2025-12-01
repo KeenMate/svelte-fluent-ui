@@ -8,8 +8,7 @@
 	type Props = {
 		value?: string;
 		placeholder?: string;
-		appearance?: string;
-		style?: string;
+		appearance?: "outline" | "filled";
 		disabled?: boolean;
 		readonly?: boolean;
 		required?: boolean;
@@ -20,18 +19,33 @@
 		step?: number;
 		min?: number;
 		max?: number;
+		minlength?: number;
+		maxlength?: number;
+		size?: number;
+		list?: string;
 		hideStep?: boolean;
+		ariaLabel?: string;
+		title?: string;
+		width?: string;
+		height?: string;
+		class?: string;
+		style?: string;
 		children?: SlotType;
+		start?: SlotType;
+		end?: SlotType;
 
 		oninput?: (ev: InputEvent) => void;
 		onchange?: (ev: Event) => void;
+		onfocus?: (ev: FocusEvent) => void;
+		onblur?: (ev: FocusEvent) => void;
+		onkeydown?: (ev: KeyboardEvent) => void;
+		onkeyup?: (ev: KeyboardEvent) => void;
 	};
 
 	let {
 		value = $bindable<string>(),
 		placeholder,
 		appearance,
-		style,
 		disabled,
 		readonly,
 		required,
@@ -42,23 +56,50 @@
 		step,
 		min,
 		max,
+		minlength,
+		maxlength,
+		size,
+		list,
 		hideStep,
+		ariaLabel,
+		title,
+		width,
+		height,
+		class: className,
+		style,
 		children,
+		start,
+		end,
 		oninput,
 		onchange,
+		onfocus,
+		onblur,
+		onkeydown,
+		onkeyup,
 	}: Props = $props();
 
-	step ??= 1;
-	min ??= -Infinity;
-	max ??= Infinity;
+	// Compute style with width/height
+	let computedStyle = $derived.by(() => {
+		let s = style || "";
+		if (width) s += (s ? "; " : "") + `width: ${width}`;
+		if (height) s += (s ? "; " : "") + `height: ${height}`;
+		return s || null;
+	});
+
+	// Handle title separately to avoid rendering "null" as text
+	let titleProps = $derived(title ? { title } : {});
 
 	let element: HTMLElement & {
 		value: string;
+		valueAsNumber: number;
 		stepUp: () => void;
 		stepDown: () => void;
 		checkValidity: () => boolean;
 		reportValidity: () => boolean;
 		setCustomValidity: (message: string) => void;
+		focus: () => void;
+		blur: () => void;
+		select: () => void;
 	};
 
 	// Exposed methods
@@ -82,6 +123,18 @@
 		element?.setCustomValidity(message);
 	}
 
+	export function focus() {
+		element?.focus();
+	}
+
+	export function blur() {
+		element?.blur();
+	}
+
+	export function select() {
+		element?.select();
+	}
+
 	function handleOnInput(event: InputEvent) {
 		const target = event.target as HTMLInputElement;
 		value = target.value;
@@ -90,6 +143,22 @@
 
 	function handleOnChange(event: Event) {
 		onchange?.(event);
+	}
+
+	function handleOnFocus(event: FocusEvent) {
+		onfocus?.(event);
+	}
+
+	function handleOnBlur(event: FocusEvent) {
+		onblur?.(event);
+	}
+
+	function handleOnKeydown(event: KeyboardEvent) {
+		onkeydown?.(event);
+	}
+
+	function handleOnKeyup(event: KeyboardEvent) {
+		onkeyup?.(event);
 	}
 
 	// Apply autocomplete attribute via shadow DOM
@@ -102,26 +171,43 @@
 
 <fluent-number-field
 	bind:this={element}
-	{placeholder}
-	{appearance}
-	{style}
-	{disabled}
-	{readonly}
-	{required}
-	{autofocus}
-	autocomplete={autocomplete}
-	{step}
-	{min}
-	{max}
-	{hideStep}
-	{name}
-	value={value}
+	class={className || null}
+	style={computedStyle}
+	placeholder={placeholder || null}
+	appearance={appearance || null}
+	disabled={disabled || null}
+	readonly={readonly || null}
+	required={required || null}
+	autofocus={autofocus || null}
+	autocomplete={autocomplete || null}
+	{...(step !== undefined ? { step } : {})}
+	{...(min !== undefined ? { min } : {})}
+	{...(max !== undefined ? { max } : {})}
+	{...(minlength !== undefined ? { minlength } : {})}
+	{...(maxlength !== undefined ? { maxlength } : {})}
+	{...(size !== undefined ? { size } : {})}
+	list={list || null}
+	hide-step={hideStep || null}
+	name={name || null}
+	aria-label={ariaLabel || null}
+	value={value ?? ""}
+	{...titleProps}
 	oninput={handleOnInput}
 	onchange={handleOnChange}
+	onfocus={handleOnFocus}
+	onblur={handleOnBlur}
+	onkeydown={handleOnKeydown}
+	onkeyup={handleOnKeyup}
 >
+	{#if start}
+		<span slot="start">{@render start()}</span>
+	{/if}
 	{#if children}
 		{@render children()}
-	{:else}
+	{:else if label}
 		{label}
+	{/if}
+	{#if end}
+		<span slot="end">{@render end()}</span>
 	{/if}
 </fluent-number-field>

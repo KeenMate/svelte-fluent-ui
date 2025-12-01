@@ -1,6 +1,41 @@
 <script lang="ts" generics="T">
 	import type {Snippet} from "svelte"
 	import type {SlotType} from "../types/index.js"
+	import GridCellEditor from "./GridCellEditor.svelte"
+
+	type EditorType = "text" | "number" | "checkbox" | "select" | "date" | "autocomplete" | "custom"
+	type EditTrigger = "click" | "dblclick" | "button" | "always" | "navigate"
+	type OptionsLoadTrigger = "immediate" | "oneditstart" | "ondropdownopen"
+
+	type EditorOption = {
+		value: string
+		label: string
+	}
+
+	type EditorOptions = {
+		// For select/autocomplete - static options
+		options?: EditorOption[]
+		// For select/autocomplete - dynamic options loading
+		loadOptions?: (row: T, field: string) => Promise<EditorOption[]>
+		optionsLoadTrigger?: OptionsLoadTrigger  // Default: "oneditstart"
+		// For number
+		min?: number
+		max?: number
+		step?: number
+		// For text
+		maxLength?: number
+		// For autocomplete
+		onSearch?: (query: string, row: T) => Promise<EditorOption[]>
+	}
+
+	type CustomEditorContext<T> = {
+		value: any
+		row: T
+		rowIndex: number
+		field: string
+		commit: (newValue: any) => void
+		cancel: () => void
+	}
 
 	type Column<T> = {
 		field: keyof T | string
@@ -12,6 +47,25 @@
 		format?: (value: any, row: T) => string
 		template?: (row: T) => string
 		snippet?: Snippet<[T]>
+		// Editing props
+		editable?: boolean
+		editor?: EditorType
+		editTrigger?: EditTrigger  // Per-column override
+		editorOptions?: EditorOptions
+		// Validation - sync or async
+		validate?: (value: any, row: T) => string | null | Promise<string | null>
+		// Custom editor callback
+		oncelledit?: (context: CustomEditorContext<T>) => void
+		// Show edit button in cell
+		showEditButton?: boolean
+	}
+
+	type RowChangeDetail<T> = {
+		row: T
+		rowIndex: number
+		field: string
+		oldValue: any
+		newValue: any
 	}
 
 	type Props<T> = {
@@ -26,6 +80,13 @@
 		class?: string
 		style?: string
 		cellTemplate?: SlotType
+		// Editing props
+		editable?: boolean
+		editTrigger?: EditTrigger
+		onrowchange?: (detail: RowChangeDetail<T>) => void
+		onroweditstart?: (detail: { row: T, rowIndex: number, field: string }) => void
+		onroweditcancel?: (detail: { row: T, rowIndex: number, field: string }) => void
+		onvalidationerror?: (detail: { row: T, rowIndex: number, field: string, error: string }) => void
 	}
 
 	let {
@@ -39,7 +100,14 @@
 		hoverable = true,
 		class: className = "",
 		style = "",
-		cellTemplate = undefined
+		cellTemplate = undefined,
+		// Editing props
+		editable = false,
+		editTrigger = "dblclick",
+		onrowchange = undefined,
+		onroweditstart = undefined,
+		onroweditcancel = undefined,
+		onvalidationerror = undefined
 	}: Props<T> = $props()
 
 	// Sorting state
@@ -51,6 +119,35 @@
 
 	// Pagination state
 	let currentPage = $state(1)
+
+	// Editing state
+	let editingCell = $state<{ rowIndex: number; field: string } | null>(null)
+	let validationError = $state<string | null>(null)
+	let isValidating = $state(false)
+
+	// Navigation mode state (for "navigate" editTrigger)
+	let focusedCell = $state<{ rowIndex: number; colIndex: number } | null>(null)
+	let isNavigateMode = $derived(editTrigger === "navigate" || columns.some(c => c.editTrigger === "navigate"))
+	let tableElement: HTMLTableElement | undefined = $state()
+	let isCommittingFromKeyboard = $state(false)
+
+	// Dynamic options cache (for "immediate" load trigger)
+	let dynamicOptionsCache = $state<Record<string, EditorOption[]>>({})
+	let loadingOptions = $state<Record<string, boolean>>({})
+
+	// Load options with "immediate" trigger on mount
+	$effect(() => {
+		columns.forEach(column => {
+			const field = String(column.field)
+			if (
+				column.editorOptions?.loadOptions &&
+				column.editorOptions?.optionsLoadTrigger === "immediate" &&
+				!dynamicOptionsCache[field]
+			) {
+				loadOptionsForColumn(column, items[0], field)
+			}
+		})
+	})
 
 	// Computed: filtered items
 	let filteredItems = $derived.by(() => {
@@ -145,11 +242,416 @@
 		return !!column.snippet
 	}
 
-	let computedClass = $derived(`quickgrid ${striped ? "striped" : ""} ${hoverable ? "hoverable" : ""} ${className}`.trim())
+	// Dynamic options loading
+	async function loadOptionsForColumn(column: Column<T>, row: T, field: string): Promise<EditorOption[]> {
+		if (!column.editorOptions?.loadOptions) return column.editorOptions?.options || []
+
+		const cacheKey = field
+		loadingOptions[cacheKey] = true
+
+		try {
+			const options = await column.editorOptions.loadOptions(row, field)
+			dynamicOptionsCache[cacheKey] = options
+			return options
+		} catch (error) {
+			console.error(`Failed to load options for ${field}:`, error)
+			return []
+		} finally {
+			loadingOptions[cacheKey] = false
+		}
+	}
+
+	function getOptionsForColumn(column: Column<T>): EditorOption[] {
+		const field = String(column.field)
+		// Return cached dynamic options if available
+		if (dynamicOptionsCache[field]) {
+			return dynamicOptionsCache[field]
+		}
+		// Otherwise return static options
+		return column.editorOptions?.options || []
+	}
+
+	// Editing functions
+	function isEditing(rowIndex: number, field: string): boolean {
+		return editingCell?.rowIndex === rowIndex && editingCell?.field === field
+	}
+
+	function isCellEditable(column: Column<T>): boolean {
+		return editable && (column.editable ?? false)
+	}
+
+	function getColumnEditTrigger(column: Column<T>): EditTrigger {
+		return column.editTrigger || editTrigger
+	}
+
+	async function startEdit(rowIndex: number, field: string, item: T, column: Column<T>, colIndex?: number) {
+		const columnField = String(column.field)
+		validationError = null
+
+		// Handle custom editor
+		if (column.editor === "custom" && column.oncelledit) {
+			const context: CustomEditorContext<T> = {
+				value: item[column.field as keyof T],
+				row: item,
+				rowIndex,
+				field: columnField,
+				commit: (newValue: any) => {
+					commitEditDirect(rowIndex, column, newValue, item, colIndex)
+				},
+				cancel: () => {
+					editingCell = null
+					// Refocus cell on cancel in navigate mode
+					if (isNavigateMode && colIndex !== undefined) {
+						focusCell(rowIndex, colIndex)
+					}
+				}
+			}
+			column.oncelledit(context)
+			// Mark as editing so we can show visual feedback
+			editingCell = { rowIndex, field }
+			return
+		}
+
+		// Load options if needed (oneditstart trigger)
+		if (
+			column.editorOptions?.loadOptions &&
+			(column.editorOptions?.optionsLoadTrigger === "oneditstart" || !column.editorOptions?.optionsLoadTrigger)
+		) {
+			await loadOptionsForColumn(column, item, columnField)
+		}
+
+		editingCell = { rowIndex, field }
+		onroweditstart?.({ row: item, rowIndex, field })
+	}
+
+	function cancelEdit(item: T, rowIndex: number) {
+		if (editingCell) {
+			const field = editingCell.field
+			onroweditcancel?.({ row: item, rowIndex, field })
+			editingCell = null
+			validationError = null
+		}
+	}
+
+	// Direct commit without validation (used by custom editors that handle their own validation)
+	function commitEditDirect(rowIndex: number, column: Column<T>, newValue: any, item: T, colIndex?: number) {
+		const field = String(column.field)
+		const oldValue = item[column.field as keyof T]
+
+		// Only fire event if value changed
+		if (oldValue !== newValue) {
+			onrowchange?.({
+				row: item,
+				rowIndex,
+				field,
+				oldValue,
+				newValue
+			})
+		}
+
+		editingCell = null
+		validationError = null
+
+		// Refocus cell in navigate mode so arrow key navigation continues to work
+		if (isNavigateMode && colIndex !== undefined) {
+			focusCell(rowIndex, colIndex)
+		}
+	}
+
+	async function commitEdit(rowIndex: number, column: Column<T>, newValue: any, item: T, colIndex?: number) {
+		const field = String(column.field)
+		const oldValue = item[column.field as keyof T]
+
+		// Validate if validator exists (supports sync and async)
+		if (column.validate) {
+			isValidating = true
+			try {
+				const result = column.validate(newValue, item)
+				const error = result instanceof Promise ? await result : result
+
+				if (error) {
+					validationError = error
+					isValidating = false
+					onvalidationerror?.({ row: item, rowIndex, field, error })
+					return
+				}
+			} catch (err) {
+				const errorMsg = err instanceof Error ? err.message : "Validation failed"
+				validationError = errorMsg
+				isValidating = false
+				onvalidationerror?.({ row: item, rowIndex, field, error: errorMsg })
+				return
+			}
+			isValidating = false
+		}
+
+		validationError = null
+
+		// Only fire event if value changed
+		if (oldValue !== newValue) {
+			onrowchange?.({
+				row: item,
+				rowIndex,
+				field,
+				oldValue,
+				newValue
+			})
+		}
+
+		editingCell = null
+
+		// For immediate-commit editors (checkbox, select, date) in navigate mode,
+		// refocus the cell so arrow key navigation continues to work
+		if (isNavigateMode && colIndex !== undefined) {
+			const isImmediateCommitEditor = column.editor === "checkbox" || column.editor === "select" || column.editor === "date"
+			if (isImmediateCommitEditor) {
+				focusCell(rowIndex, colIndex)
+			}
+		}
+	}
+
+	function handleCellClick(e: MouseEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
+		if (!isCellEditable(column)) return
+		const trigger = getColumnEditTrigger(column)
+		if (trigger === "click") {
+			startEdit(rowIndex, String(column.field), item, column, colIndex)
+		}
+	}
+
+	function handleCellDblClick(e: MouseEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
+		if (!isCellEditable(column)) return
+		const trigger = getColumnEditTrigger(column)
+		if (trigger === "dblclick") {
+			startEdit(rowIndex, String(column.field), item, column, colIndex)
+		}
+	}
+
+	function handleEditButtonClick(e: MouseEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
+		e.stopPropagation()
+		startEdit(rowIndex, String(column.field), item, column, colIndex)
+	}
+
+	function getEditorType(column: Column<T>): EditorType {
+		return column.editor || "text"
+	}
+
+	function shouldShowEditButton(column: Column<T>): boolean {
+		return column.showEditButton === true || getColumnEditTrigger(column) === "button"
+	}
+
+	// Navigation mode functions
+	function getEditableColumns(): { index: number; column: Column<T> }[] {
+		return columns
+			.map((col, index) => ({ index, column: col }))
+			.filter(({ column }) => isCellEditable(column))
+	}
+
+	function isCellFocused(rowIndex: number, colIndex: number): boolean {
+		return focusedCell?.rowIndex === rowIndex && focusedCell?.colIndex === colIndex
+	}
+
+	function focusCell(rowIndex: number, colIndex: number) {
+		focusedCell = { rowIndex, colIndex }
+		// Focus the td element for keyboard events
+		requestAnimationFrame(() => {
+			const cell = tableElement?.querySelector(`[data-row="${rowIndex}"][data-col="${colIndex}"]`) as HTMLElement
+			cell?.focus()
+		})
+	}
+
+	function handleCellFocus(rowIndex: number, colIndex: number) {
+		if (isNavigateMode && !editingCell) {
+			focusedCell = { rowIndex, colIndex }
+		}
+	}
+
+	function handleNavigationKeyDown(e: KeyboardEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
+		if (!isNavigateMode || editingCell) return
+
+		const editableCols = getEditableColumns()
+		const currentEditableIndex = editableCols.findIndex(ec => ec.index === colIndex)
+
+		switch (e.key) {
+			case "ArrowUp":
+				e.preventDefault()
+				if (rowIndex > 0) {
+					focusCell(rowIndex - 1, colIndex)
+				}
+				break
+			case "ArrowDown":
+				e.preventDefault()
+				if (rowIndex < displayItems.length - 1) {
+					focusCell(rowIndex + 1, colIndex)
+				}
+				break
+			case "ArrowLeft":
+				e.preventDefault()
+				if (currentEditableIndex > 0) {
+					focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
+				}
+				break
+			case "ArrowRight":
+				e.preventDefault()
+				if (currentEditableIndex < editableCols.length - 1) {
+					focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
+				}
+				break
+			case "Tab":
+				e.preventDefault()
+				if (e.shiftKey) {
+					// Move to previous cell
+					if (currentEditableIndex > 0) {
+						focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
+					} else if (rowIndex > 0) {
+						focusCell(rowIndex - 1, editableCols[editableCols.length - 1].index)
+					}
+				} else {
+					// Move to next cell
+					if (currentEditableIndex < editableCols.length - 1) {
+						focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
+					} else if (rowIndex < displayItems.length - 1) {
+						focusCell(rowIndex + 1, editableCols[0].index)
+					}
+				}
+				break
+			case "Enter":
+			case "F2":
+				e.preventDefault()
+				startEdit(rowIndex, String(column.field), item, column, colIndex)
+				break
+			case " ":
+				// Space toggles checkbox immediately
+				if (column.editor === "checkbox") {
+					e.preventDefault()
+					const newValue = !item[column.field as keyof T]
+					commitEditDirect(rowIndex, column, newValue, item, colIndex)
+				}
+				break
+			default:
+				// Any printable character starts editing (for text/number fields)
+				if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+					if (column.editor === "text" || column.editor === "number" || !column.editor) {
+						startEdit(rowIndex, String(column.field), item, column, colIndex)
+						// Don't prevent default - let the character be typed
+					}
+				}
+				break
+		}
+	}
+
+	async function handleEditorKeyDownInNavigateMode(e: KeyboardEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
+		if (!isNavigateMode) return
+
+		const editableCols = getEditableColumns()
+		const currentEditableIndex = editableCols.findIndex(ec => ec.index === colIndex)
+
+		if (e.key === "Tab") {
+			e.preventDefault()
+			e.stopPropagation()  // Prevent bubbling to handleNavigationKeyDown
+			isCommittingFromKeyboard = true
+
+			// Commit current edit first (for text/number inputs)
+			const input = e.target as HTMLInputElement
+			if (column.editor === "checkbox") {
+				// Checkbox already committed on change, just clear editing state
+				editingCell = null
+			} else if (input?.value !== undefined) {
+				await commitEdit(rowIndex, column, column.editor === "number" ? Number(input.value) : input.value, item)
+			}
+
+			isCommittingFromKeyboard = false
+
+			// Only move if no validation error
+			if (!validationError) {
+				// Then move to next/prev cell
+				if (e.shiftKey) {
+					if (currentEditableIndex > 0) {
+						focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
+					} else if (rowIndex > 0) {
+						focusCell(rowIndex - 1, editableCols[editableCols.length - 1].index)
+					}
+				} else {
+					if (currentEditableIndex < editableCols.length - 1) {
+						focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
+					} else if (rowIndex < displayItems.length - 1) {
+						focusCell(rowIndex + 1, editableCols[0].index)
+					}
+				}
+			}
+		} else if (e.key === "Escape") {
+			e.preventDefault()
+			e.stopPropagation()  // Prevent bubbling to handleNavigationKeyDown
+			cancelEdit(item, rowIndex)
+			focusCell(rowIndex, colIndex)
+		} else if (e.key === "Enter") {
+			e.preventDefault()
+			e.stopPropagation()  // Prevent bubbling to handleNavigationKeyDown
+			isCommittingFromKeyboard = true
+
+			const input = e.target as HTMLInputElement
+			if (column.editor === "checkbox") {
+				// Checkbox already committed on change, just clear editing state
+				editingCell = null
+			} else if (input?.value !== undefined) {
+				await commitEdit(rowIndex, column, column.editor === "number" ? Number(input.value) : input.value, item)
+			}
+
+			isCommittingFromKeyboard = false
+
+			// Only move if no validation error
+			if (!validationError) {
+				// Move to cell below after Enter
+				if (rowIndex < displayItems.length - 1) {
+					focusCell(rowIndex + 1, colIndex)
+				} else {
+					focusCell(rowIndex, colIndex)
+				}
+			}
+		} else if (e.key === " " && column.editor === "checkbox") {
+			// Space toggles checkbox while in edit mode
+			e.preventDefault()
+			e.stopPropagation()
+			const newValue = !item[column.field as keyof T]
+			await commitEdit(rowIndex, column, newValue, item, colIndex)
+		} else if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
+			// Arrow keys navigate while editing - commit current value and move
+			e.preventDefault()
+			e.stopPropagation()
+			isCommittingFromKeyboard = true
+
+			// Commit current edit first
+			const input = e.target as HTMLInputElement
+			if (column.editor === "checkbox") {
+				editingCell = null
+			} else if (input?.value !== undefined) {
+				await commitEdit(rowIndex, column, column.editor === "number" ? Number(input.value) : input.value, item)
+			}
+
+			isCommittingFromKeyboard = false
+
+			// Only move if no validation error
+			if (!validationError) {
+				if (e.key === "ArrowUp" && rowIndex > 0) {
+					focusCell(rowIndex - 1, colIndex)
+				} else if (e.key === "ArrowDown" && rowIndex < displayItems.length - 1) {
+					focusCell(rowIndex + 1, colIndex)
+				} else if (e.key === "ArrowLeft" && currentEditableIndex > 0) {
+					focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
+				} else if (e.key === "ArrowRight" && currentEditableIndex < editableCols.length - 1) {
+					focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
+				} else {
+					// Stay in current cell if can't move
+					focusCell(rowIndex, colIndex)
+				}
+			}
+		}
+	}
+
+	let computedClass = $derived(`quickgrid ${striped ? "striped" : ""} ${hoverable ? "hoverable" : ""} ${editable ? "editable" : ""} ${isNavigateMode ? "navigate-mode" : ""} ${className}`.trim())
 </script>
 
 <div class="quickgrid-container" {style} >
-	<table class={computedClass}>
+	<table bind:this={tableElement} class={computedClass}>
 		<thead>
 			{#if filterable}
 				<tr class="filter-row">
@@ -170,6 +672,7 @@
 			{/if}
 			<tr>
 				{#each columns as column}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<th
 						class={`column-header ${column.sortable !== false && sortable ? "sortable" : ""} ${
 							sortColumn === String(column.field) ? `sorted sorted-${sortDirection}` : ""
@@ -203,14 +706,90 @@
 			{:else}
 				{#each displayItems as item, rowIndex}
 					<tr>
-						{#each columns as column}
-							<td style={`text-align: ${column.align || "left"}`}>
-								{#if hasSnippet(column)}
-									{@render column.snippet?.(item)}
-								{:else if hasTemplate(column)}
-									{@html getCellValue(item, column)}
+						{#each columns as column, colIndex}
+							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+							<td
+								data-row={rowIndex}
+								data-col={colIndex}
+								tabindex={isNavigateMode && isCellEditable(column) ? 0 : undefined}
+								style={`text-align: ${column.align || "left"}`}
+								class={`${isCellEditable(column) ? "editable-cell" : ""} ${isEditing(rowIndex, String(column.field)) && validationError ? "validation-error" : ""} ${isCellFocused(rowIndex, colIndex) ? "focused" : ""}`}
+								onclick={(e) => handleCellClick(e, rowIndex, colIndex, column, item)}
+								ondblclick={(e) => handleCellDblClick(e, rowIndex, colIndex, column, item)}
+								onfocus={() => handleCellFocus(rowIndex, colIndex)}
+								onkeydown={(e) => handleNavigationKeyDown(e, rowIndex, colIndex, column, item)}
+								title={isEditing(rowIndex, String(column.field)) && validationError ? validationError : undefined}
+							>
+								{#if isEditing(rowIndex, String(column.field))}
+									{#if column.editor === "custom"}
+										<!-- Custom editor - handled via callback, show indicator -->
+										<span class="custom-editing-indicator">Editing...</span>
+									{:else}
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div
+											class="editor-wrapper"
+											class:validating={isValidating}
+											onkeydown={(e) => handleEditorKeyDownInNavigateMode(e, rowIndex, colIndex, column, item)}
+										>
+											<GridCellEditor
+												type={getEditorType(column)}
+												value={item[column.field as keyof T]}
+												options={{
+													...column.editorOptions,
+													options: getOptionsForColumn(column)
+												}}
+												oncommit={(newValue) => commitEdit(rowIndex, column, newValue, item, colIndex)}
+												oncancel={() => cancelEdit(item, rowIndex)}
+												skipBlurCommit={isCommittingFromKeyboard}
+												skipKeyboardCommit={isNavigateMode}
+											/>
+											{#if isValidating}
+												<span class="validating-indicator">...</span>
+											{/if}
+										</div>
+										{#if validationError}
+											<div class="validation-error-message">{validationError}</div>
+										{/if}
+									{/if}
+								{:else if isCellEditable(column) && getColumnEditTrigger(column) === "always"}
+									<GridCellEditor
+										type={getEditorType(column)}
+										value={item[column.field as keyof T]}
+										options={{
+											...column.editorOptions,
+											options: getOptionsForColumn(column)
+										}}
+										oncommit={(newValue) => commitEdit(rowIndex, column, newValue, item)}
+										oncancel={() => {}}
+									/>
 								{:else}
-									{getCellValue(item, column)}
+									<div class="cell-content">
+										{#if hasSnippet(column)}
+											{@render column.snippet?.(item)}
+										{:else if hasTemplate(column)}
+											{@html getCellValue(item, column)}
+										{:else if isNavigateMode && column.editor === "checkbox"}
+											<!-- Show checkbox display in navigate mode -->
+											<input
+												type="checkbox"
+												class="cell-checkbox-display"
+												checked={!!item[column.field as keyof T]}
+												disabled
+												tabindex={-1}
+											/>
+										{:else}
+											{getCellValue(item, column)}
+										{/if}
+										{#if isCellEditable(column) && shouldShowEditButton(column)}
+											<button
+												class="cell-edit-btn"
+												onclick={(e) => handleEditButtonClick(e, rowIndex, colIndex, column, item)}
+												title="Edit"
+											>
+												✎
+											</button>
+										{/if}
+									</div>
 								{/if}
 							</td>
 						{/each}
@@ -417,5 +996,197 @@
 
 	[data-theme="dark"] .quickgrid.hoverable tbody tr:hover {
 		background: var(--neutral-layer-3, #333333);
+	}
+
+	/* Editable cell styles */
+	.quickgrid.editable .editable-cell {
+		cursor: pointer;
+		position: relative;
+	}
+
+	.quickgrid.editable .editable-cell:hover {
+		background: var(--neutral-fill-secondary-hover, #f0f0f0);
+	}
+
+	.quickgrid.editable .editable-cell:hover::after {
+		content: "";
+		position: absolute;
+		inset: 2px;
+		border: 1px dashed var(--neutral-stroke-input-rest, #d1d1d1);
+		border-radius: 2px;
+		pointer-events: none;
+	}
+
+	[data-theme="dark"] .quickgrid.editable .editable-cell:hover {
+		background: var(--neutral-fill-secondary-hover, #3a3a3a);
+	}
+
+	[data-theme="dark"] .quickgrid.editable .editable-cell:hover::after {
+		border-color: var(--neutral-stroke-input-rest, #5a5a5a);
+	}
+
+	/* Cell content with edit button */
+	.cell-content {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 4px;
+	}
+
+	.cell-edit-btn {
+		opacity: 0;
+		padding: 2px 6px;
+		background: var(--neutral-layer-2, #f5f5f5);
+		border: 1px solid var(--neutral-stroke-input-rest, #d1d1d1);
+		border-radius: var(--control-corner-radius, 4px);
+		cursor: pointer;
+		font-size: 12px;
+		line-height: 1;
+		transition: opacity 0.15s ease;
+	}
+
+	.editable-cell:hover .cell-edit-btn {
+		opacity: 1;
+	}
+
+	.cell-edit-btn:hover {
+		background: var(--neutral-layer-3, #ebebeb);
+		border-color: var(--accent-fill-rest, #0078d4);
+	}
+
+	/* Validation error styles */
+	.validation-error {
+		background: var(--error-fill-rest, #fde7e9) !important;
+	}
+
+	.validation-error::after {
+		border-color: var(--error-stroke-rest, #d13438) !important;
+		border-style: solid !important;
+	}
+
+	.validation-error-message {
+		font-size: 11px;
+		color: var(--error-foreground, #d13438);
+		margin-top: 2px;
+	}
+
+	/* Editor wrapper and validating state */
+	.editor-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.editor-wrapper.validating {
+		opacity: 0.7;
+		pointer-events: none;
+	}
+
+	.validating-indicator {
+		font-size: 10px;
+		color: var(--neutral-foreground-hint, #707070);
+		animation: pulse 1s infinite;
+	}
+
+	@keyframes pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.4; }
+	}
+
+	/* Custom editing indicator */
+	.custom-editing-indicator {
+		font-size: 12px;
+		color: var(--accent-foreground-rest, #0078d4);
+		font-style: italic;
+	}
+
+	/* Dark mode for new styles */
+	[data-theme="dark"] .cell-edit-btn {
+		background: var(--neutral-layer-2, #2b2b2b);
+		border-color: var(--neutral-stroke-input-rest, #5a5a5a);
+		color: var(--neutral-foreground-rest, #e0e0e0);
+	}
+
+	[data-theme="dark"] .cell-edit-btn:hover {
+		background: var(--neutral-layer-3, #333333);
+	}
+
+	[data-theme="dark"] .validation-error {
+		background: var(--error-fill-rest, #442726) !important;
+	}
+
+	[data-theme="dark"] .validation-error-message {
+		color: var(--error-foreground, #f87c86);
+	}
+
+	/* Navigate mode styles */
+	.quickgrid.navigate-mode .editable-cell {
+		cursor: cell;
+	}
+
+	.quickgrid.navigate-mode .editable-cell:focus {
+		outline: none;
+	}
+
+	.quickgrid.navigate-mode .editable-cell.focused {
+		outline: 2px solid var(--accent-fill-rest, #0078d4);
+		outline-offset: -2px;
+		background: var(--neutral-fill-secondary-hover, #f0f0f0);
+	}
+
+	.quickgrid.navigate-mode .editable-cell.focused::after {
+		display: none;
+	}
+
+	[data-theme="dark"] .quickgrid.navigate-mode .editable-cell.focused {
+		background: var(--neutral-fill-secondary-hover, #3a3a3a);
+	}
+
+	/* Editing cell styles - seamless input */
+	.editable-cell .editor-wrapper {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		padding: calc(var(--design-unit) * 2px) calc(var(--design-unit) * 3px);
+		box-sizing: border-box;
+	}
+
+	/* Make editable cells position relative for absolute editor */
+	tbody td.editable-cell {
+		position: relative;
+	}
+
+	/* When a cell is being edited, show the accent border on the cell itself */
+	tbody td:has(.editor-wrapper) {
+		outline: 2px solid var(--accent-fill-rest, #0078d4);
+		outline-offset: -2px;
+		background: var(--neutral-layer-1, #ffffff);
+	}
+
+	tbody td:has(.editor-wrapper)::after {
+		display: none;
+	}
+
+	[data-theme="dark"] tbody td:has(.editor-wrapper) {
+		background: var(--neutral-layer-1, #1f1f1f);
+	}
+
+	/* Always-editing mode - different styling */
+	.editable-cell :global(.grid-cell-editor:not(:has(:focus))) {
+		/* When not focused, no border */
+	}
+
+	.editable-cell :global(.grid-cell-editor:has(:focus)) {
+		/* Show accent border when focused in always mode */
+	}
+
+	/* Checkbox display in navigate mode (read-only visual) */
+	.cell-checkbox-display {
+		width: 18px;
+		height: 18px;
+		pointer-events: none;
+		accent-color: var(--accent-fill-rest, #0078d4);
 	}
 </style>

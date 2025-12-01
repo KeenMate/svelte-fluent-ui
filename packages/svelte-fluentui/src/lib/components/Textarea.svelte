@@ -102,11 +102,11 @@
 	autocomplete={autocomplete}
 	{form}
 	{list}
-	{maxlength}
-	{minlength}
+	{...(maxlength !== undefined ? { maxlength } : {})}
+	{...(minlength !== undefined ? { minlength } : {})}
 	{placeholder}
-	{cols}
-	{rows}
+	{...(cols !== undefined ? { cols } : {})}
+	{...(rows !== undefined ? { rows } : {})}
 	{spellcheck}
 	{id}
 	{name}

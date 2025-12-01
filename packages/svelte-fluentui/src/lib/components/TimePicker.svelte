@@ -18,6 +18,7 @@
 		disabled?: boolean
 		readonly?: boolean
 		required?: boolean
+		autofocus?: boolean
 		label?: string
 		appearance?: string
 		use24Hours?: boolean
@@ -35,6 +36,7 @@
 		disabled = false,
 		readonly = false,
 		required = false,
+		autofocus = undefined,
 		label = undefined,
 		appearance = undefined,
 		use24Hours = true,
@@ -189,6 +191,7 @@
 		</label>
 	{/if}
 
+	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 	<div class="timepicker-wrapper" onclick={handleInputClick} style="cursor: pointer;">
 		<TextField
 			bind:this={textFieldElement}
@@ -197,6 +200,7 @@
 			{disabled}
 			readonly={true}
 			{required}
+			{autofocus}
 			{appearance}
 			style="width: 100%;"
 		>
@@ -236,6 +240,7 @@
 				visible={isOpen}
 				style="z-index: 1000; background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); min-width: 280px;"
 			>
+				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 				<div class="time-picker-panel" onclick={handlePopupClick}>
 					<div class="time-selectors">
 						<!-- Hour selector -->

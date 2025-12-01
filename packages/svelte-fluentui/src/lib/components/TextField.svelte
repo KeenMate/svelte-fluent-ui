@@ -128,12 +128,12 @@
 	// Apply autocomplete attribute via shadow DOM
 	$effect(() => {
 		if (autocomplete !== undefined) {
-			console.log("setting autocomplete1: ", autocomplete)
 			setAutocompleteOnShadowInput(element, autocomplete)
 		}
 	})
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions a11y_autofocus -->
 <fluent-text-field
 	bind:this={element}
 	{value}
