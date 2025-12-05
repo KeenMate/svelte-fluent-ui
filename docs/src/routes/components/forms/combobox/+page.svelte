@@ -36,6 +36,25 @@
 		{ value: "9", firstName: "Jakob", lastName: "Berger" }
 	]
 
+	// Names with diacritics for testing autocomplete
+	const namesWithDiacritics = [
+		{ value: "1", label: "José García" },
+		{ value: "2", label: "François Müller" },
+		{ value: "3", label: "Søren Østergård" },
+		{ value: "4", label: "Jiří Dvořák" },
+		{ value: "5", label: "Zoë Brontë" },
+		{ value: "6", label: "Renée Lefèvre" },
+		{ value: "7", label: "Håkon Ødegård" },
+		{ value: "8", label: "Ñoño Peña" },
+		{ value: "9", label: "Łukasz Wójcik" },
+		{ value: "10", label: "Ágnes Németh" },
+		{ value: "11", label: "Günther Größe" },
+		{ value: "12", label: "Beyoncé Knowles" },
+		{ value: "13", label: "Chloë Sevigny" },
+		{ value: "14", label: "Fañch Le Hénaff" },
+		{ value: "15", label: "Anaïs Dupont" }
+	]
+
 	// State for each example
 	let basicValue = $state<string[]>([])
 	let preselectedValue = $state<string[]>(["3"])
@@ -56,6 +75,7 @@
 	let widthValue = $state<string[]>([])
 	let callbackValue = $state<string[]>([])
 	let callbackMessage = $state<string>("")
+	let diacriticsValue = $state<string[]>([])
 
 	// Callback handler example
 	function handleSelectionChange(value: string[]) {
@@ -276,6 +296,12 @@
 				</Stack>
 			</GridItem>
 		</Grid>
+		<Stack orientation="vertical" gap="0.5rem" style="margin-top: 1rem;">
+			<strong>Diacritics Test</strong>
+			<small style="color: var(--neutral-foreground-hint);">Try typing: jose, francois, soren, jiri, etc.</small>
+			<Combobox id="diacritics" bind:value={diacriticsValue} options={namesWithDiacritics} autocomplete="list" width="300px" />
+			<small>Selected: {diacriticsValue[0] ? namesWithDiacritics.find(n => n.value === diacriticsValue[0])?.label : "None"}</small>
+		</Stack>
 	</Card>
 
 	<!-- List Examples -->

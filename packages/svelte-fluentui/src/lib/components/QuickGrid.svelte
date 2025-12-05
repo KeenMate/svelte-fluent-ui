@@ -972,25 +972,17 @@
 
 		// Popup height estimate (32px = 24px buttons + 8px padding)
 		const popupHeight = 32
-		const gap = 2
 
 		// Check if popup would extend beyond the container's bottom edge
 		// (this prevents scrollbars from appearing in the container/card)
-		const popupBottomIfBelow = (rowRect.bottom - containerRect.top) + gap + popupHeight
+		const popupBottomIfBelow = (rowRect.bottom - containerRect.top) + popupHeight
 		const containerHeight = containerRect.height
 		const flipAbove = popupBottomIfBelow > containerHeight
 
-		console.log('[RowAction] rowIndex:', rowIndex, {
-			containerHeight,
-			popupBottomIfBelow,
-			flipAbove,
-			rowBottomRelative: rowRect.bottom - containerRect.top
-		})
-
 		return {
 			top: flipAbove
-				? rowRect.top - containerRect.top - popupHeight - gap  // Above row
-				: rowRect.bottom - containerRect.top + gap,             // Below row
+				? rowRect.top - containerRect.top - popupHeight  // Flush above row
+				: rowRect.bottom - containerRect.top,             // Flush below row
 			left: cellRect.left - containerRect.left,
 			flipAbove
 		}
