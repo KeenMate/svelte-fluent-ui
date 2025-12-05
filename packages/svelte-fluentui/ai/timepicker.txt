@@ -1,0 +1,301 @@
+TIMEPICKER COMPONENT
+====================
+
+OVERVIEW
+--------
+Time selection field with popup time picker panel.
+Custom implementation inspired by FluentUI Blazor.
+Supports 12-hour and 24-hour formats.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { TimePicker } from "svelte-fluentui"
+  let selectedTime = $state<string | null>(null)
+</script>
+
+<TimePicker
+  bind:value={selectedTime}
+  placeholder="Select time"
+/>
+
+
+VALUE FORMAT
+------------
+Time value is a string in HH:mm or HH:mm:ss format:
+- "14:30"    - 2:30 PM (without seconds)
+- "14:30:45" - 2:30:45 PM (with seconds)
+- "09:00"    - 9:00 AM
+
+
+PROPS
+-----
+value?: string | null          # Bindable - time string (HH:mm or HH:mm:ss)
+placeholder?: string           # Input placeholder (default: "Select time")
+disabled?: boolean
+readonly?: boolean
+required?: boolean
+autofocus?: boolean
+label?: string                 # Field label
+appearance?: string            # Input appearance
+use24Hours?: boolean           # 24-hour format (default: true)
+showSeconds?: boolean          # Show seconds selector (default: false)
+minuteStep?: number            # Minute increment (default: 1)
+hourStep?: number              # Hour increment (default: 1)
+class?: string
+style?: string
+
+CALLBACKS:
+onValueChange?: (value: string | null) => void
+
+
+12-HOUR VS 24-HOUR FORMAT
+-------------------------
+
+24-HOUR (default):
+<TimePicker bind:value={time} use24Hours={true} />
+// Shows: "14:30" for 2:30 PM
+
+12-HOUR:
+<TimePicker bind:value={time} use24Hours={false} />
+// Shows: "02:30 PM" for 2:30 PM
+
+Note: Regardless of display format, value is always stored in 24-hour format.
+
+
+SHOW SECONDS
+------------
+<TimePicker
+  bind:value={time}
+  showSeconds
+/>
+// Shows hour, minute, and second selectors
+
+
+STEP INCREMENTS
+---------------
+
+15-MINUTE INTERVALS:
+<TimePicker
+  bind:value={time}
+  minuteStep={15}
+/>
+// Minutes: 00, 15, 30, 45
+
+30-MINUTE INTERVALS:
+<TimePicker
+  bind:value={time}
+  minuteStep={30}
+/>
+// Minutes: 00, 30
+
+2-HOUR INTERVALS:
+<TimePicker
+  bind:value={time}
+  hourStep={2}
+/>
+// Hours: 00, 02, 04, 06, ...
+
+
+WITH LABEL
+----------
+<TimePicker
+  bind:value={appointmentTime}
+  label="Appointment Time"
+  required
+/>
+
+
+FORM INTEGRATION
+----------------
+<script>
+  import { TimePicker, DatePicker, TextField, Button, Stack } from "svelte-fluentui"
+
+  let formData = $state({
+    title: "",
+    date: null as Date | null,
+    startTime: null as string | null,
+    endTime: null as string | null
+  })
+
+  function handleSubmit() {
+    console.log("Meeting:", formData)
+  }
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <TextField bind:value={formData.title} placeholder="Meeting Title" />
+
+  <DatePicker bind:value={formData.date} label="Date" />
+
+  <Stack orientation="horizontal" gap="1rem">
+    <TimePicker
+      bind:value={formData.startTime}
+      label="Start Time"
+      minuteStep={15}
+    />
+    <TimePicker
+      bind:value={formData.endTime}
+      label="End Time"
+      minuteStep={15}
+    />
+  </Stack>
+
+  <Button appearance="accent" onclick={handleSubmit}>
+    Schedule Meeting
+  </Button>
+</Stack>
+
+
+CONTROLLED VALUE CHANGE
+-----------------------
+<script>
+  let time = $state<string | null>(null)
+
+  function handleTimeChange(newTime: string | null) {
+    time = newTime
+    console.log("Time changed:", newTime)
+  }
+</script>
+
+<TimePicker
+  value={time}
+  onValueChange={handleTimeChange}
+/>
+
+
+CLEAR BUTTON
+------------
+When a time is selected and the field is not disabled/readonly,
+a clear button (X) appears next to the clock icon.
+Clicking it clears the selection.
+
+
+TIME PICKER PANEL
+-----------------
+The popup panel shows scrollable lists for:
+- Hours (0-23 or 1-12 depending on use24Hours)
+- Minutes (0-59, respecting minuteStep)
+- Seconds (0-59, only if showSeconds is true)
+- AM/PM (only if use24Hours is false)
+
+Click "OK" button to apply selection.
+
+
+EXAMPLES
+--------
+
+BUSINESS HOURS PICKER:
+<TimePicker
+  bind:value={businessTime}
+  label="Opening Time"
+  use24Hours
+  minuteStep={30}
+/>
+
+
+APPOINTMENT TIME:
+<TimePicker
+  bind:value={appointmentTime}
+  label="Appointment"
+  use24Hours={false}
+  minuteStep={15}
+/>
+
+
+PRECISE TIME (with seconds):
+<TimePicker
+  bind:value={preciseTime}
+  label="Event Start"
+  showSeconds
+/>
+
+
+TIME RANGE:
+<script>
+  let startTime = $state<string | null>(null)
+  let endTime = $state<string | null>(null)
+</script>
+
+<Stack orientation="horizontal" gap="1rem">
+  <TimePicker
+    bind:value={startTime}
+    label="From"
+    minuteStep={15}
+  />
+  <TimePicker
+    bind:value={endTime}
+    label="To"
+    minuteStep={15}
+  />
+</Stack>
+
+
+DISPLAY FORMAT EXAMPLES
+-----------------------
+24-hour format (use24Hours=true):
+- "09:00" displays as "09:00"
+- "14:30" displays as "14:30"
+- "23:45" displays as "23:45"
+
+12-hour format (use24Hours=false):
+- "09:00" displays as "09:00 AM"
+- "14:30" displays as "02:30 PM"
+- "23:45" displays as "11:45 PM"
+
+With seconds (showSeconds=true):
+- "14:30:00" displays as "14:30:00"
+- "14:30:45" displays as "14:30:45"
+
+
+STYLING
+-------
+CSS Classes:
+- .fluent-timepicker - Main container
+- .timepicker-label - Label element
+- .required-indicator - Required asterisk
+- .timepicker-wrapper - Input wrapper
+- .clock-button - Clock icon button
+- .clear-button - Clear X button
+- .time-picker-panel - Popup panel
+- .time-selectors - Time columns container
+- .time-column - Individual column
+- .time-list - Scrollable list
+- .time-option - Individual time option
+- .time-option.selected - Selected option
+- .time-actions - OK button container
+
+
+CSS CUSTOMIZATION:
+.fluent-timepicker .time-option.selected {
+  background: var(--accent-fill-rest);
+  color: var(--neutral-foreground-on-accent);
+}
+
+
+ACCESSIBILITY
+-------------
+- Label associated with input
+- Clock button has aria-label="Open time picker"
+- Clear button has aria-label="Clear time"
+- Time options are keyboard navigable
+
+
+COMMON ISSUES
+-------------
+
+Issue: Time not updating
+Solution: Use bind:value or onValueChange callback
+
+Issue: Wrong format displayed
+Solution: Check use24Hours prop setting
+
+Issue: Minutes not incrementing correctly
+Solution: Adjust minuteStep prop value
+
+Issue: Popup hidden behind other elements
+Solution: Check z-index of parent containers
+
+Issue: Value format unexpected
+Solution: Value is always HH:mm or HH:mm:ss regardless of display format

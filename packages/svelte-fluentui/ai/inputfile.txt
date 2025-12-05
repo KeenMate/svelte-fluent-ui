@@ -1,0 +1,348 @@
+INPUTFILE COMPONENT
+===================
+
+OVERVIEW
+--------
+File upload component with drag-drop support, validation, and progress tracking.
+Custom implementation inspired by FluentUI Blazor InputFile.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { InputFile } from "svelte-fluentui"
+
+  function handleFilesSelected(files: File[]) {
+    console.log("Selected files:", files)
+  }
+</script>
+
+<InputFile onFileSelected={handleFilesSelected} />
+
+
+PROPS
+-----
+accept?: string                # Accepted file types (e.g., ".pdf,.doc", "image/*")
+multiple?: boolean             # Allow multiple files (default: false)
+disabled?: boolean
+maxFileSize?: number           # Max size in bytes (default: 10MB)
+maxFileCount?: number          # Max files when multiple (default: 10)
+showDragDropZone?: boolean     # Show drag-drop area (default: true)
+uploadFileCallback?: FileUploadHandler  # Async upload function
+class?: string
+style?: string
+
+CALLBACKS:
+onFileSelected?: (files: File[]) => void     # Files selected
+onFileUploaded?: (file: File) => void        # Single file upload complete
+onFileError?: (file: File, error: string) => void  # Upload/validation error
+onCompleted?: () => void                     # All uploads complete
+
+
+FILE UPLOAD HANDLER TYPE
+------------------------
+type FileUploadHandler = (
+  file: File,
+  onProgress: (percent: number) => void
+) => Promise<void>
+
+
+ACCEPT FORMATS
+--------------
+File extensions:
+  accept=".pdf"
+  accept=".pdf,.doc,.docx"
+  accept=".jpg,.jpeg,.png,.gif"
+
+MIME types:
+  accept="image/*"           # All images
+  accept="video/*"           # All videos
+  accept="audio/*"           # All audio
+  accept="application/pdf"   # Specific MIME type
+
+Combined:
+  accept="image/*,.pdf"      # Images and PDFs
+
+
+EXAMPLES
+--------
+
+SIMPLE FILE SELECT (No Upload):
+<script>
+  function handleFiles(files: File[]) {
+    files.forEach(file => {
+      console.log(`Selected: ${file.name} (${file.size} bytes)`)
+    })
+  }
+</script>
+
+<InputFile
+  onFileSelected={handleFiles}
+  accept=".pdf,.doc,.docx"
+/>
+
+
+MULTIPLE FILES:
+<InputFile
+  multiple
+  maxFileCount={5}
+  onFileSelected={handleFiles}
+/>
+
+
+IMAGE UPLOAD:
+<InputFile
+  accept="image/*"
+  maxFileSize={5 * 1024 * 1024}  // 5MB
+  onFileSelected={handleImages}
+/>
+
+
+WITH UPLOAD CALLBACK:
+<script>
+  async function uploadFile(file: File, onProgress: (percent: number) => void) {
+    const formData = new FormData()
+    formData.append("file", file)
+
+    // Simulated progress (real implementation would track XMLHttpRequest)
+    for (let i = 0; i <= 100; i += 10) {
+      onProgress(i)
+      await new Promise(r => setTimeout(r, 100))
+    }
+
+    await fetch("/api/upload", {
+      method: "POST",
+      body: formData
+    })
+  }
+
+  function handleUploaded(file: File) {
+    console.log(`Uploaded: ${file.name}`)
+  }
+
+  function handleError(file: File, error: string) {
+    console.error(`Error uploading ${file.name}: ${error}`)
+  }
+
+  function handleComplete() {
+    console.log("All uploads complete!")
+  }
+</script>
+
+<InputFile
+  multiple
+  uploadFileCallback={uploadFile}
+  onFileUploaded={handleUploaded}
+  onFileError={handleError}
+  onCompleted={handleComplete}
+/>
+
+
+REAL UPLOAD WITH PROGRESS:
+<script>
+  async function uploadWithProgress(
+    file: File,
+    onProgress: (percent: number) => void
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          onProgress(Math.round((e.loaded / e.total) * 100))
+        }
+      })
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve()
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status}`))
+        }
+      })
+
+      xhr.addEventListener("error", () => {
+        reject(new Error("Network error"))
+      })
+
+      const formData = new FormData()
+      formData.append("file", file)
+
+      xhr.open("POST", "/api/upload")
+      xhr.send(formData)
+    })
+  }
+</script>
+
+<InputFile
+  multiple
+  uploadFileCallback={uploadWithProgress}
+/>
+
+
+NO DRAG-DROP ZONE (Button Only):
+<InputFile
+  showDragDropZone={false}
+  onFileSelected={handleFiles}
+/>
+
+
+FILE SIZE LIMITS:
+<InputFile
+  maxFileSize={1024 * 1024}      // 1MB
+  onFileError={(file, error) => {
+    alert(`${file.name}: ${error}`)
+  }}
+/>
+
+Error message: "File size exceeds 1 MB"
+
+
+DRAG AND DROP
+-------------
+The drag-drop zone:
+1. Shows "Drag and drop files here, or" with Browse button
+2. Changes appearance when dragging files over
+3. Shows "Drop files here" during drag
+4. Displays accepted types and max size hints
+
+
+FILE LIST
+---------
+After selection, shows list with:
+- File name and size
+- Progress bar (during upload)
+- Status: "Pending", "✓ Completed", "✗ Error message"
+- Remove button for each file
+- Clear all button
+
+
+FILE STATUSES
+-------------
+- pending: File selected, not yet uploaded
+- uploading: Upload in progress (shows progress bar)
+- completed: Upload successful
+- error: Validation or upload error
+
+
+VALIDATION
+----------
+Built-in validation checks:
+1. File type (accept prop)
+2. File size (maxFileSize prop)
+3. File count (maxFileCount prop when multiple)
+
+Validation errors trigger onFileError callback.
+
+
+FORM INTEGRATION
+----------------
+<script>
+  let uploadedFiles: string[] = $state([])
+
+  async function uploadFile(file: File, onProgress: (percent: number) => void) {
+    // Upload logic...
+    const response = await uploadToServer(file)
+    uploadedFiles = [...uploadedFiles, response.fileId]
+  }
+
+  function handleSubmit() {
+    // uploadedFiles contains IDs of uploaded files
+    console.log("Submitted with files:", uploadedFiles)
+  }
+</script>
+
+<form>
+  <InputFile
+    multiple
+    uploadFileCallback={uploadFile}
+  />
+
+  <Button type="submit" onclick={handleSubmit}>
+    Submit
+  </Button>
+</form>
+
+
+DOCUMENT UPLOAD:
+<InputFile
+  accept=".pdf,.doc,.docx,.xls,.xlsx"
+  maxFileSize={25 * 1024 * 1024}  // 25MB
+  multiple
+  maxFileCount={10}
+  uploadFileCallback={uploadDocument}
+/>
+
+
+AVATAR UPLOAD:
+<InputFile
+  accept="image/*"
+  maxFileSize={2 * 1024 * 1024}  // 2MB
+  showDragDropZone={false}
+  onFileSelected={handleAvatarSelect}
+/>
+
+
+STYLING
+-------
+CSS Classes:
+- .fluent-inputfile - Main container
+- .drop-zone - Drag-drop area
+- .drop-zone.dragging - Active drag state
+- .drop-zone.disabled - Disabled state
+- .drop-zone-content - Inner content
+- .upload-icon - Upload icon
+- .drop-zone-text - Main text
+- .drop-zone-hint - Hint text (accepted types, max size)
+- .file-list - Files container
+- .file-list-header - Header with count and clear all
+- .file-item - Individual file entry
+- .file-item.error - File with error
+- .file-name - File name text
+- .file-size - File size text
+- .status-text - Status indicator
+- .status-text.success - Success state
+- .status-text.error - Error state
+- .status-text.pending - Pending state
+- .remove-button - Remove file button
+- .clear-button - Clear all button
+
+
+CSS CUSTOMIZATION:
+.fluent-inputfile .drop-zone {
+  border-color: var(--accent-fill-rest);
+}
+
+.fluent-inputfile .drop-zone.dragging {
+  background: var(--accent-fill-subtle);
+}
+
+
+ACCESSIBILITY
+-------------
+- Browse button is keyboard accessible
+- Remove buttons have aria-label
+- Drag-drop zone accepts keyboard focus
+- Screen reader announcements for file status
+
+
+COMMON ISSUES
+-------------
+
+Issue: Files not uploading
+Solution: Provide uploadFileCallback prop
+
+Issue: Progress not updating
+Solution: Call onProgress callback in upload function
+
+Issue: Wrong file type error
+Solution: Check accept prop format
+
+Issue: Drag-drop not working
+Solution: Ensure not disabled, check browser support
+
+Issue: Files rejected silently
+Solution: Add onFileError callback for error messages
+
+Issue: Multiple uploads not sequential
+Solution: Files upload in order; wait for onCompleted

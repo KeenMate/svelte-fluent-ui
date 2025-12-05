@@ -1,0 +1,397 @@
+SVELTE-FLUENTUI AI REFERENCE INDEX
+===================================
+
+QUICK KEYWORD LOOKUP
+--------------------
+Find the right file by keyword, feature, or use case.
+
+FORMAT: keyword → filename
+Multiple keywords per line indicate same file.
+
+
+GETTING STARTED
+---------------
+installation, npm, setup → getting-started.txt
+sveltekit, vite, integration → getting-started.txt
+import, component imports → getting-started.txt
+fluentui, web components → getting-started.txt
+typescript, types → getting-started.txt
+
+
+DATA GRID (QuickGrid)
+---------------------
+quickgrid, table, data grid → quickgrid.txt
+sorting, column sort → quickgrid.txt
+filtering, column filter → quickgrid.txt
+pagination, paging, page size → quickgrid.txt
+editable, inline edit, cell editor → quickgrid.txt
+checkbox editor, select editor → quickgrid.txt
+custom editor, json editor → quickgrid.txt
+navigate mode, excel-like → quickgrid.txt
+edit trigger, click, dblclick → quickgrid.txt
+validation, onbeforecommit → quickgrid.txt
+row change, onrowchange → quickgrid.txt
+
+
+DATA GRID (FluentUI Wrapper)
+-----------------------------
+datagrid, fluent-data-grid → datagrid.txt
+datagridrow, datagridcell → datagrid.txt
+sticky header → datagrid.txt
+
+
+DIALOG & MODALS
+---------------
+dialog, modal, popup → dialog.txt
+overlay, backdrop → dialog.txt
+visible, show, hide → dialog.txt
+z-index, stacking → dialog.txt
+close, dismiss, escape → dialog.txt
+
+
+TOAST NOTIFICATIONS
+-------------------
+toast, notification → toast.txt
+toastcontainer, toastservice → toast.txt
+success, error, warning, info → toast.txt
+dismiss, timeout, duration → toast.txt
+
+
+DATE & TIME
+-----------
+calendar, month view → calendar.txt
+datepicker, date selection → datepicker.txt
+timepicker, time selection → timepicker.txt
+date format, locale → datepicker.txt
+
+
+AUTOCOMPLETE & SEARCH
+---------------------
+autocomplete, typeahead → autocomplete.txt
+async search, debounce → autocomplete.txt
+multiple selection, tags → autocomplete.txt
+initial options, popular items → autocomplete.txt
+
+
+FILE UPLOAD
+-----------
+inputfile, file upload → inputfile.txt
+drag drop, dropzone → inputfile.txt
+file validation, max size → inputfile.txt
+progress, upload progress → inputfile.txt
+
+
+LAYOUT COMPONENTS
+-----------------
+layout, page layout → layout.txt
+stack, flexbox, vertical, horizontal → layout.txt
+grid, responsive grid, columns → layout.txt
+griditem, span, responsive → layout.txt
+header, footer, bodycontent → layout.txt
+spacer, gap, spacing → layout.txt
+
+
+SPLITTER
+--------
+multisplitter, resizable → multisplitter.txt
+pane, panel, split → multisplitter.txt
+resize, drag → multisplitter.txt
+
+
+TABS
+----
+tabs, tab, tabpanel → tabs.txt
+tab navigation, tab content → tabs.txt
+
+
+NAVIGATION
+----------
+navmenu, sidebar menu → navigation.txt
+navgroup, nav section → navigation.txt
+navlinkitem, nav link → navigation.txt
+appbar, app bar → navigation.txt
+breadcrumb, breadcrumbs → navigation.txt
+
+
+FORM INPUTS
+-----------
+textfield, text input → form-inputs.txt
+numberfield, number input → form-inputs.txt
+textarea, multiline → form-inputs.txt
+checkbox, check box → form-inputs.txt
+radio, radiogroup → form-inputs.txt
+switch, toggle → form-inputs.txt
+select, dropdown → form-inputs.txt
+combobox, combo box → form-inputs.txt
+listbox, list selection → form-inputs.txt
+search, search box → form-inputs.txt
+slider, range → form-inputs.txt
+
+
+BUTTONS
+-------
+button, fluent-button → buttons.txt
+anchor, link button → buttons.txt
+appearance, accent, stealth → buttons.txt
+
+
+DISPLAY COMPONENTS
+------------------
+badge, label, tag → display.txt
+card, content card → display.txt
+icon, fluent icon → display.txt
+divider, separator → display.txt
+progress, progress bar → display.txt
+tooltip, hover tip → display.txt
+
+
+ACCORDION
+---------
+accordion, collapsible → accordion.txt
+accordionitem, panel → accordion.txt
+expand, collapse → accordion.txt
+
+
+MENU
+----
+menu, context menu → menu.txt
+menuitem, menu option → menu.txt
+
+
+TREE
+----
+tree, treeview → tree.txt
+treeitem, tree node → tree.txt
+expand, collapse, hierarchy → tree.txt
+
+
+THEMING & STYLING
+-----------------
+theme, dark mode, light mode → theming.txt
+css variables, custom properties → theming.txt
+accent color, neutral color → theming.txt
+design tokens → theming.txt
+
+
+==============================================================================
+FILE DESCRIPTIONS
+==============================================================================
+
+getting-started.txt
+  Installation, setup, SvelteKit integration, imports
+  Start here for: New projects, setup questions, import issues
+
+quickgrid.txt
+  Advanced data grid with sorting, filtering, pagination, editing
+  Start here for: Table display, editable grids, data tables
+
+datagrid.txt
+  FluentUI DataGrid wrapper (simpler than QuickGrid)
+  Start here for: Simple data display, fluent-data-grid usage
+
+dialog.txt
+  Modal dialogs, overlays, z-index management
+  Start here for: Popups, confirmations, modal forms
+
+toast.txt
+  Toast notifications and ToastService
+  Start here for: User feedback, notifications, alerts
+
+calendar.txt
+  Custom calendar component
+  Start here for: Month views, date display, embedded calendars
+
+datepicker.txt
+  Date selection with popup calendar
+  Start here for: Date input fields, date selection
+
+timepicker.txt
+  Time selection with hour/minute/second pickers
+  Start here for: Time input fields, time selection
+
+autocomplete.txt
+  Searchable dropdown with async loading
+  Start here for: Search boxes, tag inputs, async dropdowns
+
+inputfile.txt
+  File upload with drag-drop support
+  Start here for: File uploads, drag-drop zones
+
+layout.txt
+  Stack, Grid, Layout, Header, Footer, Spacer
+  Start here for: Page structure, flexbox/grid layouts
+
+multisplitter.txt
+  Resizable panel splitter
+  Start here for: Split panes, resizable layouts
+
+tabs.txt
+  Tab navigation and tab panels
+  Start here for: Tabbed interfaces, content switching
+
+navigation.txt
+  NavMenu, NavGroup, AppBar, Breadcrumbs
+  Start here for: Sidebars, navigation menus, app bars
+
+form-inputs.txt
+  TextField, Checkbox, Select, Radio, etc.
+  Start here for: Form fields, user input
+
+buttons.txt
+  Button, Anchor components
+  Start here for: Clickable actions, links
+
+display.txt
+  Badge, Card, Icon, Divider, Tooltip, Progress
+  Start here for: Visual elements, status indicators
+
+accordion.txt
+  Collapsible accordion panels
+  Start here for: Expandable sections, FAQ layouts
+
+menu.txt
+  Context menus and menu items
+  Start here for: Right-click menus, dropdown menus
+
+tree.txt
+  Tree view with expandable nodes
+  Start here for: Hierarchical data, file trees
+
+theming.txt
+  CSS variables, dark/light mode, customization
+  Start here for: Styling, colors, theming
+
+
+==============================================================================
+READING ORDER RECOMMENDATIONS
+==============================================================================
+
+Complete beginner:
+1. getting-started.txt
+2. layout.txt
+3. form-inputs.txt
+4. buttons.txt
+
+Building a data-heavy app:
+1. getting-started.txt
+2. quickgrid.txt
+3. dialog.txt
+4. toast.txt
+
+Building a dashboard:
+1. getting-started.txt
+2. layout.txt
+3. navigation.txt
+4. tabs.txt
+5. quickgrid.txt
+
+Adding forms:
+1. form-inputs.txt
+2. datepicker.txt
+3. autocomplete.txt
+4. dialog.txt
+
+
+==============================================================================
+COMPONENT TYPE REFERENCE
+==============================================================================
+
+CUSTOM IMPLEMENTATIONS (Built from scratch in Svelte):
+- QuickGrid - Advanced data grid
+- Calendar - Date calendar
+- DatePicker - Date selection
+- TimePicker - Time selection
+- Autocomplete - Search with async
+- InputFile - File upload
+- Card - Content container
+- Toast/ToastContainer - Notifications
+- Paginator - Pagination
+- Tab/Tabs - Tab navigation
+- All layout components (Stack, Grid, Layout, etc.)
+- All navigation components (NavMenu, NavGroup, etc.)
+
+FLUENTUI WEB COMPONENT WRAPPERS:
+- Accordion/AccordionItem → fluent-accordion
+- Badge → fluent-badge
+- Breadcrumb/BreadcrumbItem → fluent-breadcrumb
+- Button → fluent-button
+- Checkbox → fluent-checkbox
+- Combobox → fluent-combobox
+- DataGrid/Row/Cell → fluent-data-grid
+- Dialog → fluent-dialog
+- Divider → fluent-divider
+- Listbox → fluent-listbox
+- Menu/MenuItem → fluent-menu
+- NumberField → fluent-number-field
+- Option → fluent-option
+- Progress → fluent-progress
+- Radio/RadioGroup → fluent-radio
+- Search → fluent-search
+- Select → fluent-select
+- Slider → fluent-slider
+- Switch → fluent-switch
+- TabPanel → fluent-tab-panel
+- Textarea → fluent-text-area
+- TextField → fluent-text-field
+- Toolbar → fluent-toolbar
+- Tooltip → fluent-tooltip
+- Tree/TreeItem → fluent-tree-view
+
+
+==============================================================================
+QUICK PROBLEM SOLVING
+==============================================================================
+
+Problem: Component not showing
+→ getting-started.txt (check imports)
+→ theming.txt (check CSS setup)
+
+Problem: QuickGrid not sorting/filtering
+→ quickgrid.txt (check column config)
+
+Problem: Dialog appearing behind other elements
+→ dialog.txt (z-index section)
+
+Problem: Toast not showing
+→ toast.txt (ToastContainer setup)
+
+Problem: Date format wrong
+→ datepicker.txt (format options)
+
+Problem: Autocomplete not searching
+→ autocomplete.txt (onSearch callback)
+
+Problem: Layout not responsive
+→ layout.txt (Grid/GridItem responsive props)
+
+Problem: Dark mode not working
+→ theming.txt (theme setup)
+
+Problem: Icon not loading
+→ display.txt (Icon component, fluentui icons)
+
+
+==============================================================================
+NAMING CONVENTIONS
+==============================================================================
+
+Property names: camelCase
+  horizontalAlign, autoUpdateMode, editTrigger
+
+Property values: lowercase or kebab-case
+  "center", "accent", "flex-start", "space-between"
+
+Event handlers: lowercase
+  onclick, onchange, oninput, ondismiss
+
+Custom callbacks: lowercase
+  onoptionssearch, onrowchange, onbeforecommit
+
+
+==============================================================================
+SUPPORT & RESOURCES
+==============================================================================
+
+Demo pages: docs/src/routes/components/
+CLAUDE.md: Project conventions and component list
+Package exports: packages/svelte-fluentui/src/lib/index.ts

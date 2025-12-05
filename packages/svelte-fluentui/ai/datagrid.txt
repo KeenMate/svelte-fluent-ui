@@ -1,0 +1,239 @@
+DATAGRID COMPONENTS
+===================
+
+OVERVIEW
+--------
+FluentUI DataGrid wrapper components.
+For advanced features (sorting, filtering, editing), use QuickGrid instead.
+
+
+==============================================================================
+DATAGRID
+==============================================================================
+Wraps: <fluent-data-grid>
+Simple data table display.
+
+USAGE:
+<script>
+  import { DataGrid, DataGridRow, DataGridCell } from "svelte-fluentui"
+</script>
+
+<DataGrid>
+  <DataGridRow rowType="header">
+    <DataGridCell cellType="columnheader">Name</DataGridCell>
+    <DataGridCell cellType="columnheader">Email</DataGridCell>
+    <DataGridCell cellType="columnheader">Role</DataGridCell>
+  </DataGridRow>
+
+  {#each users as user}
+    <DataGridRow>
+      <DataGridCell>{user.name}</DataGridCell>
+      <DataGridCell>{user.email}</DataGridCell>
+      <DataGridCell>{user.role}</DataGridCell>
+    </DataGridRow>
+  {/each}
+</DataGrid>
+
+
+DATAGRID PROPS
+--------------
+generateHeader?: string     # "none" | "default" | "sticky"
+gridTemplateColumns?: string # CSS grid-template-columns
+rowsData?: any[]            # Data array (alternative to manual rows)
+class?: string
+style?: string
+
+
+DATAGRIDROW PROPS
+-----------------
+rowType?: "default" | "header" | "sticky-header"
+gridTemplateColumns?: string
+class?: string
+style?: string
+
+
+DATAGRIDCELL PROPS
+------------------
+cellType?: "default" | "columnheader" | "rowheader"
+gridColumn?: string         # CSS grid-column
+class?: string
+style?: string
+
+
+STICKY HEADER
+-------------
+<DataGrid generateHeader="sticky">
+  <DataGridRow rowType="sticky-header">
+    <DataGridCell cellType="columnheader">Name</DataGridCell>
+    <DataGridCell cellType="columnheader">Email</DataGridCell>
+  </DataGridRow>
+
+  {#each data as item}
+    <DataGridRow>
+      <DataGridCell>{item.name}</DataGridCell>
+      <DataGridCell>{item.email}</DataGridCell>
+    </DataGridRow>
+  {/each}
+</DataGrid>
+
+
+GRID TEMPLATE COLUMNS
+---------------------
+<DataGrid gridTemplateColumns="200px 1fr 150px">
+  <DataGridRow rowType="header">
+    <DataGridCell cellType="columnheader">Name</DataGridCell>
+    <DataGridCell cellType="columnheader">Description</DataGridCell>
+    <DataGridCell cellType="columnheader">Status</DataGridCell>
+  </DataGridRow>
+
+  {#each items as item}
+    <DataGridRow>
+      <DataGridCell>{item.name}</DataGridCell>
+      <DataGridCell>{item.description}</DataGridCell>
+      <DataGridCell>
+        <Badge>{item.status}</Badge>
+      </DataGridCell>
+    </DataGridRow>
+  {/each}
+</DataGrid>
+
+
+CUSTOM CELL CONTENT
+-------------------
+<DataGrid>
+  <DataGridRow rowType="header">
+    <DataGridCell cellType="columnheader">User</DataGridCell>
+    <DataGridCell cellType="columnheader">Actions</DataGridCell>
+  </DataGridRow>
+
+  {#each users as user}
+    <DataGridRow>
+      <DataGridCell>
+        <Stack orientation="horizontal" gap="0.5rem" align="center">
+          <img src={user.avatar} alt="" class="avatar" />
+          <span>{user.name}</span>
+        </Stack>
+      </DataGridCell>
+      <DataGridCell>
+        <Button appearance="stealth" onclick={() => editUser(user)}>
+          <Icon name="Edit" />
+        </Button>
+        <Button appearance="stealth" onclick={() => deleteUser(user)}>
+          <Icon name="Delete" />
+        </Button>
+      </DataGridCell>
+    </DataGridRow>
+  {/each}
+</DataGrid>
+
+
+WHEN TO USE DATAGRID VS QUICKGRID
+---------------------------------
+
+Use DataGrid when:
+- Simple static data display
+- Full control over row rendering
+- Custom cell layouts needed
+- No sorting/filtering/editing required
+
+Use QuickGrid when:
+- Column sorting needed
+- Column filtering needed
+- Pagination required
+- Inline editing required
+- Working with large datasets
+
+
+EXAMPLES
+--------
+
+SIMPLE TABLE:
+<DataGrid gridTemplateColumns="1fr 1fr 1fr">
+  <DataGridRow rowType="header">
+    <DataGridCell cellType="columnheader">Product</DataGridCell>
+    <DataGridCell cellType="columnheader">Price</DataGridCell>
+    <DataGridCell cellType="columnheader">Stock</DataGridCell>
+  </DataGridRow>
+
+  {#each products as product}
+    <DataGridRow>
+      <DataGridCell>{product.name}</DataGridCell>
+      <DataGridCell>${product.price.toFixed(2)}</DataGridCell>
+      <DataGridCell>{product.stock}</DataGridCell>
+    </DataGridRow>
+  {/each}
+</DataGrid>
+
+
+WITH CONDITIONAL STYLING:
+<DataGrid>
+  {#each orders as order}
+    <DataGridRow>
+      <DataGridCell>{order.id}</DataGridCell>
+      <DataGridCell>
+        <Badge appearance={order.status === "completed" ? "accent" : "neutral"}>
+          {order.status}
+        </Badge>
+      </DataGridCell>
+    </DataGridRow>
+  {/each}
+</DataGrid>
+
+
+EMPTY STATE:
+<DataGrid>
+  <DataGridRow rowType="header">
+    <DataGridCell cellType="columnheader">Name</DataGridCell>
+    <DataGridCell cellType="columnheader">Value</DataGridCell>
+  </DataGridRow>
+
+  {#if items.length === 0}
+    <DataGridRow>
+      <DataGridCell gridColumn="1 / -1" style="text-align: center; padding: 2rem;">
+        No data available
+      </DataGridCell>
+    </DataGridRow>
+  {:else}
+    {#each items as item}
+      <DataGridRow>
+        <DataGridCell>{item.name}</DataGridCell>
+        <DataGridCell>{item.value}</DataGridCell>
+      </DataGridRow>
+    {/each}
+  {/if}
+</DataGrid>
+
+
+STYLING
+-------
+DataGrid uses fluent-data-grid web component.
+
+CSS Classes:
+- fluent-data-grid - Grid container
+- fluent-data-grid-row - Row element
+- fluent-data-grid-cell - Cell element
+
+Override with ::part():
+fluent-data-grid::part(row) {
+  border-bottom: 1px solid var(--neutral-stroke-rest);
+}
+
+fluent-data-grid-cell::part(cell) {
+  padding: 0.75rem 1rem;
+}
+
+
+COMMON ISSUES
+-------------
+
+Issue: Columns not aligned
+Solution: Use gridTemplateColumns to define column widths
+
+Issue: Header not sticky
+Solution: Set generateHeader="sticky" and rowType="sticky-header"
+
+Issue: Need sorting/filtering
+Solution: Use QuickGrid component instead
+
+Issue: Cell content overflowing
+Solution: Add overflow: hidden to cell or adjust column widths

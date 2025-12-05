@@ -7,6 +7,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **QuickGrid Native Dropdown Editors** - Built-in Select, Combobox, and Autocomplete editors for grid cells
+  - **Native Select**: Click/Enter opens dropdown, arrow keys navigate, letter keys jump to matching option
+  - **Native Combobox**: Type to filter static options, arrow keys navigate filtered list
+  - **Native Autocomplete**: Type to trigger async search with debounce, can commit freeform text
+  - All editors use `PositioningRegion` for dropdown positioning
+  - FluentUI-styled dropdowns with proper theming and dark mode support
+  - Keyboard navigation: ArrowUp/Down navigate, Enter selects, Escape closes/cancels, Tab commits
+  - `initialSearchQuery` support for typing-to-edit in navigate mode (all dropdown types)
+
+- **QuickGrid dropdownShowOnFocus Prop** - Auto-enter edit mode for dropdown editors when cell is focused
+  - Configurable via `dropdownShowOnFocus` prop (default: true)
+  - Select, Combobox, and Autocomplete columns show editor immediately on cell focus
+  - Eliminates need for double-click or Enter to start editing dropdown cells
+
+- **QuickGrid Column Header Info** - Info icons with tooltips for column headers
+  - New `headerInfo` column property displays ⓘ icon next to header title
+  - Uses FluentUI Icon component (`info` icon with accent color)
+  - Hover tooltip shows the info text
+
+- **QuickGrid Draft Row Editing** - Row-level draft editing for validation workflows
+  - When editing starts, row is cloned to preserve original values
+  - Invalid values are shown in the cell (not reverted)
+  - `RowChangeDetail` now includes both `row` (original) and `draftRow` (with user changes)
+  - Enables "show what user typed even if invalid" UX pattern
+
+- **AbortController Support for Autocomplete Search** - Cancel stale search requests
+  - `onSearch` callback now receives optional `AbortSignal` parameter
+  - Previous in-flight requests are automatically aborted when user types more
+  - Prevents stale results from appearing (e.g., typing "cz" won't show "c" results)
+  - Proper cleanup when dropdown closes
+
+### Changed
+- **GridCellEditor Refactored** - Replaced external `Autocomplete` component with native implementations
+  - Removed dependency on `Autocomplete.svelte` for grid editing
+  - Cell editors now feel native to the grid with consistent styling
+  - Arrow keys properly captured by dropdown when open (don't navigate grid)
+  - No flash of initial options when entering edit mode by typing (FOAC fix)
+
+### Fixed
+- **QuickGrid Arrow Key Navigation** - Arrow keys no longer move grid focus when dropdown is open
+  - Added `e.stopPropagation()` to prevent event bubbling to grid
+  - QuickGrid's `handleEditorKeyDownInNavigateMode` now skips arrow key handling for dropdown editors
+- **QuickGrid Double-Click in Navigate Mode** - Double-click now properly enters edit mode
+  - Fixed `handleCellDblClick` to work with both "dblclick" and "navigate" edit triggers
+- **Dropdown Click-Outside Handling** - Clicking dropdown options no longer triggers blur/commit
+  - Added `onmousedown={(e) => e.preventDefault()}` to prevent focus loss when clicking options
+  - Changed from `onblur` to `onfocusout` (blur doesn't bubble, focusout does)
+- **QuickGrid Focus State Cleanup** - Cell focus border now clears when clicking outside the grid
+  - Added `handleGridFocusOut` to clear `focusedCell` when focus leaves the grid
+  - Prevents "stuck" focus border when clicking outside after editing
+- **Dropdown Scroll Blocking** - Page no longer scrolls when scrolling inside dropdown
+  - Added wheel event handler to block page scroll when dropdown is open
+  - Allows scrolling within dropdown options list
+- **Dropdown Width Matching** - Dropdown width now matches cell width exactly
+  - Dropdown anchors to parent `<td>` element instead of editor element
+  - Ensures consistent width regardless of cell padding
+- **Autocomplete Debounce** - Proper 300ms debounce for async search
+  - Initial options not shown when user starts editing by typing
+  - Search only triggered after debounce delay
+
 ## [1.0.0-rc05] - 2025-11-24 - PUBLISHED
 
 ### Added

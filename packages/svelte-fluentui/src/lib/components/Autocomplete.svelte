@@ -50,6 +50,7 @@
 		optionTemplate?: Snippet<[OptionItem<T>]>
 		class?: string
 		style?: string
+		initialSearchQuery?: string
 		onoptionssearch?: (searchText: string) => Promise<OptionItem<T>[]> | OptionItem<T>[]
 		onselectedoptionschange?: (selected: T[]) => void
 		ondismissed?: () => void
@@ -88,6 +89,7 @@
 		optionTemplate = undefined,
 		class: className = "",
 		style = "",
+		initialSearchQuery = "",
 		onoptionssearch = undefined,
 		onselectedoptionschange = undefined,
 		ondismissed = undefined
@@ -108,6 +110,16 @@
 	let effectiveMultiple = $derived(
 		multiple !== undefined ? multiple : (maxSelectedOptions === undefined || maxSelectedOptions !== 1)
 	)
+
+	// Handle initial search query (used when typing to start editing in grid)
+	$effect(() => {
+		if (initialSearchQuery && initialSearchQuery.length > 0) {
+			searchText = initialSearchQuery
+			isOpen = true
+			// Trigger search immediately (bypass debounce)
+			performSearch(initialSearchQuery)
+		}
+	})
 
 	// Perform the actual search
 	async function performSearch(text: string) {

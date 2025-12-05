@@ -1,0 +1,548 @@
+QUICKGRID COMPONENT
+===================
+
+OVERVIEW
+--------
+Advanced data grid with sorting, filtering, pagination, and inline editing.
+Custom implementation (not a FluentUI wrapper).
+Inspired by ASP.NET QuickGrid.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { QuickGrid } from "svelte-fluentui"
+
+  type Person = { id: number, name: string, age: number }
+
+  const columns = [
+    { field: "id", title: "ID" },
+    { field: "name", title: "Name" },
+    { field: "age", title: "Age" }
+  ]
+
+  const data: Person[] = [
+    { id: 1, name: "Alice", age: 28 },
+    { id: 2, name: "Bob", age: 34 }
+  ]
+</script>
+
+<QuickGrid items={data} {columns} />
+
+
+PROPS
+-----
+items: T[]                    # Data array (required)
+columns: Column<T>[]          # Column definitions (required)
+sortable: boolean             # Enable sorting (default: false)
+filterable: boolean           # Enable filtering (default: false)
+pageable: boolean             # Enable pagination (default: false)
+pageSize: number              # Items per page (default: 10)
+striped: boolean              # Striped rows (default: true)
+hoverable: boolean            # Row hover effect (default: true)
+class: string                 # Additional CSS classes
+style: string                 # Inline styles
+
+EDITING PROPS:
+editable: boolean             # Enable editing (default: false)
+editTrigger: EditTrigger      # How to start editing (default: "dblclick")
+dropdownShowOnFocus: boolean  # Auto-open dropdowns (default: true)
+checkboxAlwaysEditable: bool  # Checkboxes always clickable (default: false)
+invalidCells: CellValidationState[]  # Bindable validation errors
+
+CALLBACKS:
+onrowchange: (detail) => void      # Called after cell edit commits
+onroweditstart: (detail) => void   # Called when edit starts
+onroweditcancel: (detail) => void  # Called when edit cancelled
+onvalidationerror: (detail) => void # Called on validation failure
+
+
+COLUMN INTERFACE
+----------------
+type Column<T> = {
+  field: keyof T | string     # Property name in data
+  title: string               # Display header text
+  headerInfo?: string         # Tooltip text (shows ⓘ icon)
+  sortable?: boolean          # Enable sorting for column
+  filterable?: boolean        # Enable filtering for column
+  width?: string              # Column width (e.g., "100px", "20%")
+  align?: "left" | "center" | "right"
+
+  # Formatting
+  format?: (value, row) => string   # Format display value
+  template?: (row) => string        # HTML template (use @html)
+  snippet?: Snippet<[T]>            # Svelte snippet for cell content
+
+  # Editing
+  editable?: boolean                # Cell is editable
+  editor?: EditorType               # Editor type
+  editTrigger?: EditTrigger         # Per-column trigger override
+  editorOptions?: EditorOptions     # Editor configuration
+  showEditButton?: boolean          # Show edit button in cell
+
+  # Validation
+  onbeforecommit?: (context) => BeforeCommitResult  # Validate/transform
+  oncelledit?: (context) => void    # Custom editor callback
+}
+
+
+EDITOR TYPES
+------------
+EditorType = "text" | "number" | "checkbox" | "select" |
+             "combobox" | "date" | "autocomplete" | "custom"
+
+
+EDIT TRIGGERS
+-------------
+EditTrigger = "click" | "dblclick" | "button" | "always" | "navigate"
+
+"click"     - Single click to edit
+"dblclick"  - Double click to edit (default)
+"button"    - Click edit button (requires showEditButton: true)
+"always"    - Always in edit mode (spreadsheet-like)
+"navigate"  - Arrow keys to move, typing starts edit (Excel-like)
+
+
+EDITOR OPTIONS
+--------------
+Options for configuring cell editors.
+
+SHARED (select/combobox/autocomplete):
+  options: EditorOption[]           # Static options
+  loadOptions: (row, field) => Promise<EditorOption[]>  # Async load
+  optionsLoadTrigger: "immediate" | "oneditstart" | "ondropdownopen"
+  valueMember: string               # Property for value (default: "value")
+  displayMember: string             # Property for display (default: "label")
+  allowEmpty: boolean               # Allow null selection
+  emptyLabel: string                # Label for empty option
+
+TEXT:
+  maxLength: number
+  placeholder: string
+  pattern: string
+  inputMode: "text" | "numeric" | "email" | "tel" | "url"
+
+NUMBER:
+  min: number
+  max: number
+  step: number
+  decimalPlaces: number
+  allowNegative: boolean
+
+CHECKBOX:
+  trueValue: unknown    # Value when checked (default: true)
+  falseValue: unknown   # Value when unchecked (default: false)
+
+DATE:
+  minDate: Date | string
+  maxDate: Date | string
+  outputFormat: "date" | "iso" | "timestamp"
+
+AUTOCOMPLETE:
+  initialOptions: EditorOption[]    # Show before search
+  onSearch: (query, row, signal?) => Promise<EditorOption[]>
+  minSearchLength: number           # Min chars before search (default: 1)
+  debounceMs: number               # Debounce delay (default: 300)
+  multiple: boolean                 # Allow multiple selections
+  maxSelections: number             # Max items when multiple=true
+
+
+SORTING
+-------
+<QuickGrid
+  items={data}
+  columns={[
+    { field: "name", title: "Name", sortable: true },
+    { field: "age", title: "Age", sortable: true }
+  ]}
+  sortable
+/>
+
+Click column header to sort. Click again to reverse.
+
+
+FILTERING
+---------
+<QuickGrid
+  items={data}
+  columns={[
+    { field: "name", title: "Name", filterable: true },
+    { field: "age", title: "Age", filterable: true }
+  ]}
+  filterable
+/>
+
+Filter row appears below header with text inputs.
+
+
+PAGINATION
+----------
+<QuickGrid
+  items={data}
+  columns={columns}
+  pageable
+  pageSize={10}
+/>
+
+
+EDITABLE GRID
+-------------
+Basic editable text field:
+
+<QuickGrid
+  items={data}
+  columns={[
+    { field: "name", title: "Name", editable: true, editor: "text" },
+    { field: "age", title: "Age", editable: true, editor: "number" }
+  ]}
+  editable
+/>
+
+
+SELECT EDITOR
+-------------
+const columns = [
+  {
+    field: "role",
+    title: "Role",
+    editable: true,
+    editor: "select",
+    editorOptions: {
+      options: [
+        { value: "admin", label: "Administrator" },
+        { value: "user", label: "User" },
+        { value: "guest", label: "Guest" }
+      ]
+    }
+  }
+]
+
+
+COMBOBOX EDITOR
+---------------
+const columns = [
+  {
+    field: "city",
+    title: "City",
+    editable: true,
+    editor: "combobox",
+    editorOptions: {
+      options: [
+        { value: "nyc", label: "New York" },
+        { value: "la", label: "Los Angeles" }
+      ]
+    }
+  }
+]
+
+Combobox allows typing to filter options.
+
+
+CHECKBOX EDITOR
+---------------
+const columns = [
+  {
+    field: "active",
+    title: "Active",
+    editable: true,
+    editor: "checkbox"
+  }
+]
+
+
+DATE EDITOR
+-----------
+const columns = [
+  {
+    field: "birthDate",
+    title: "Birth Date",
+    editable: true,
+    editor: "date",
+    editorOptions: {
+      minDate: "1900-01-01",
+      maxDate: new Date(),
+      outputFormat: "iso"
+    }
+  }
+]
+
+
+AUTOCOMPLETE EDITOR (Async)
+---------------------------
+const columns = [
+  {
+    field: "country",
+    title: "Country",
+    editable: true,
+    editor: "autocomplete",
+    editorOptions: {
+      initialOptions: [
+        { value: "us", label: "United States" },
+        { value: "uk", label: "United Kingdom" }
+      ],
+      onSearch: async (query, row, signal) => {
+        const response = await fetch(`/api/countries?q=${query}`, { signal })
+        return response.json()
+      },
+      minSearchLength: 2,
+      debounceMs: 300
+    }
+  }
+]
+
+
+CUSTOM EDITOR
+-------------
+For complex editing needs, use custom editor with dialog:
+
+const columns = [
+  {
+    field: "metadata",
+    title: "Metadata",
+    editable: true,
+    editor: "custom",
+    showEditButton: true,
+    format: (value) => value ? JSON.stringify(value).slice(0, 20) + "..." : "(empty)",
+    oncelledit: (context) => {
+      // context: { value, row, rowIndex, field, commit, cancel }
+      editingContext = context
+      dialogOpen = true
+    }
+  }
+]
+
+// In your dialog:
+function handleSave() {
+  editingContext.commit(newValue)
+  dialogOpen = false
+}
+
+
+NAVIGATE MODE (Excel-like)
+--------------------------
+<QuickGrid
+  items={data}
+  columns={columns}
+  editable
+  editTrigger="navigate"
+/>
+
+Keyboard navigation:
+- Arrow keys: Move between cells
+- Enter: Start editing / confirm edit
+- Escape: Cancel edit
+- Tab: Move to next cell
+- Typing: Start editing with typed character
+
+
+VALIDATION (onbeforecommit)
+---------------------------
+Validate before committing:
+
+const columns = [
+  {
+    field: "age",
+    title: "Age",
+    editable: true,
+    editor: "number",
+    onbeforecommit: (context) => {
+      // context: { value, oldValue, row, rowIndex, field }
+      if (context.value < 0) {
+        return { valid: false, message: "Age must be positive" }
+      }
+      if (context.value > 150) {
+        return { valid: false, message: "Age too high" }
+      }
+      return { valid: true }
+    }
+  }
+]
+
+Return types:
+- { valid: true }                    # Accept value
+- { valid: false, message: "..." }   # Reject with message
+- { valid: true, transformedValue }  # Accept with transformation
+- true                               # Accept (shorthand)
+- false                              # Reject (no message)
+- "Error message"                    # Reject with message
+
+
+ASYNC VALIDATION
+----------------
+const columns = [
+  {
+    field: "email",
+    title: "Email",
+    editable: true,
+    editor: "text",
+    onbeforecommit: async (context) => {
+      const exists = await checkEmailExists(context.value)
+      if (exists) {
+        return { valid: false, message: "Email already taken" }
+      }
+      return { valid: true }
+    }
+  }
+]
+
+
+TRACKING ROW CHANGES
+--------------------
+<QuickGrid
+  items={data}
+  columns={columns}
+  editable
+  onrowchange={(detail) => {
+    // detail: { row, draftRow, rowIndex, field, oldValue, newValue, isValid, validationError }
+    console.log("Changed:", detail.field, detail.oldValue, "→", detail.newValue)
+  }}
+/>
+
+
+INVALID CELLS STATE
+-------------------
+Track validation errors externally:
+
+<script>
+  let invalidCells = $state([])
+</script>
+
+<QuickGrid
+  items={data}
+  columns={columns}
+  editable
+  bind:invalidCells
+/>
+
+{#if invalidCells.length > 0}
+  <p>Errors: {invalidCells.map(c => c.error).join(", ")}</p>
+{/if}
+
+
+CHECKBOX ALWAYS EDITABLE
+------------------------
+Keep checkboxes clickable in navigate mode:
+
+<QuickGrid
+  items={data}
+  columns={columns}
+  editable
+  editTrigger="navigate"
+  checkboxAlwaysEditable
+/>
+
+
+HEADER INFO TOOLTIP
+-------------------
+Add info icon with tooltip to column header:
+
+const columns = [
+  {
+    field: "score",
+    title: "Score",
+    headerInfo: "Score is calculated from multiple factors"
+  }
+]
+
+
+COLUMN FORMATTING
+-----------------
+Format cell display:
+
+const columns = [
+  {
+    field: "price",
+    title: "Price",
+    format: (value) => `$${value.toFixed(2)}`
+  },
+  {
+    field: "date",
+    title: "Date",
+    format: (value) => new Date(value).toLocaleDateString()
+  }
+]
+
+
+SNIPPETS FOR CELLS
+------------------
+Use Svelte snippets for complex cell content:
+
+const columns = [
+  {
+    field: "status",
+    title: "Status",
+    snippet: statusSnippet
+  }
+]
+
+{#snippet statusSnippet(row)}
+  <Badge appearance={row.status === "active" ? "accent" : "neutral"}>
+    {row.status}
+  </Badge>
+{/snippet}
+
+
+ASYNC OPTIONS LOADING
+---------------------
+Load options when dropdown opens:
+
+const columns = [
+  {
+    field: "category",
+    title: "Category",
+    editable: true,
+    editor: "select",
+    editorOptions: {
+      loadOptions: async (row, field) => {
+        const response = await fetch("/api/categories")
+        return response.json()
+      },
+      optionsLoadTrigger: "ondropdownopen"  // Load on dropdown open
+    }
+  }
+]
+
+
+STYLING
+-------
+Built-in classes:
+- .quickgrid-container - Wrapper
+- .quickgrid - Table element
+- .column-header - Header cells
+- .editable-cell - Cells that can be edited
+- .editing - Cell currently being edited
+- .validation-error - Cell with validation error
+
+CSS variables:
+--neutral-layer-1, --neutral-layer-2, --neutral-layer-3
+--neutral-stroke-layer-rest
+--neutral-foreground-rest
+--accent-fill-rest
+
+
+BEST PRACTICES
+--------------
+1. Type your data with TypeScript generics
+2. Use onbeforecommit for validation (not deprecated validate prop)
+3. Use navigate mode for Excel-like experience
+4. Load options lazily for performance
+5. Use snippets for complex cell rendering
+
+
+COMMON ISSUES
+-------------
+
+Issue: Editor not showing
+Solution: Check editable=true on QuickGrid AND column
+
+Issue: Dropdown options not loading
+Solution: Check loadOptions returns Promise<EditorOption[]>
+
+Issue: Validation message not showing
+Solution: Return { valid: false, message: "..." } from onbeforecommit
+
+Issue: Navigate mode not working
+Solution: Set editTrigger="navigate" on QuickGrid
+
+Issue: Checkbox not clickable
+Solution: Use checkboxAlwaysEditable prop in navigate mode

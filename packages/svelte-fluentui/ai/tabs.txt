@@ -1,0 +1,358 @@
+TABS COMPONENT
+==============
+
+OVERVIEW
+--------
+Tab navigation with panels.
+Uses fluent-tabs/fluent-tab web components with custom enhancements.
+Supports horizontal and vertical orientation.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Tabs, Tab } from "svelte-fluentui"
+</script>
+
+<Tabs>
+  {#snippet childContent()}
+    <Tab id="tab1" label="Overview">
+      {#snippet content()}
+        <p>Overview content here</p>
+      {/snippet}
+    </Tab>
+
+    <Tab id="tab2" label="Details">
+      {#snippet content()}
+        <p>Details content here</p>
+      {/snippet}
+    </Tab>
+
+    <Tab id="tab3" label="Settings">
+      {#snippet content()}
+        <p>Settings content here</p>
+      {/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+
+TABS PROPS
+----------
+id?: string
+class?: string
+style?: string
+orientation?: "horizontal" | "vertical"  # Tab direction (default: "horizontal")
+activeId?: string                        # Initially active tab ID
+showActiveIndicator?: boolean            # Show active indicator (default: true)
+overflow?: { label: string, onclick?: () => void }[]  # Overflow menu items
+moreButtonId?: string
+styleMoreValues?: string
+
+CALLBACKS:
+ontabchange?: (detail: TabChangeDetail) => void
+
+
+TAB PROPS
+---------
+id?: string                    # Required for active tab tracking
+label?: string                 # Tab label text
+disabled?: boolean
+ariaLabel?: string
+visible?: boolean              # Show/hide tab (default: true)
+icon?: SlotType               # Icon snippet
+header?: SlotType             # Custom header (replaces label)
+content?: SlotType            # Tab panel content
+childContent?: SlotType       # Alternative content slot
+labelEditable?: boolean       # Enable inline label editing (default: false)
+showClose?: boolean           # Show close button (default: false)
+data?: Record<string, unknown> # Custom data passed to ontabchange
+
+CALLBACKS:
+oncloseclick?: () => void
+
+
+TAB CHANGE EVENT
+----------------
+<script>
+  function handleTabChange(detail) {
+    console.log("Active tab:", detail.tabId)
+    console.log("Tab data:", detail.data)
+  }
+</script>
+
+<Tabs ontabchange={handleTabChange}>
+  {#snippet childContent()}
+    <Tab id="tab1" label="Tab 1" data={{ section: "overview" }}>
+      {#snippet content()}Content 1{/snippet}
+    </Tab>
+    <Tab id="tab2" label="Tab 2" data={{ section: "details" }}>
+      {#snippet content()}Content 2{/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+
+SET ACTIVE TAB
+--------------
+<script>
+  let activeTab = $state("tab1")
+</script>
+
+<Tabs activeId={activeTab}>
+  {#snippet childContent()}
+    <Tab id="tab1" label="First">
+      {#snippet content()}First content{/snippet}
+    </Tab>
+    <Tab id="tab2" label="Second">
+      {#snippet content()}Second content{/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+<button onclick={() => activeTab = "tab2"}>Go to Second</button>
+
+
+TAB WITH ICON
+-------------
+<Tab id="settings" label="Settings">
+  {#snippet icon()}
+    <Icon name="Settings" />
+  {/snippet}
+  {#snippet content()}
+    Settings panel content
+  {/snippet}
+</Tab>
+
+
+CUSTOM TAB HEADER
+-----------------
+<Tab id="custom">
+  {#snippet header()}
+    <div class="custom-header">
+      <Icon name="Star" />
+      <span>Featured</span>
+      <Badge>3</Badge>
+    </div>
+  {/snippet}
+  {#snippet content()}
+    Featured content
+  {/snippet}
+</Tab>
+
+
+CLOSABLE TABS
+-------------
+<script>
+  let tabs = $state([
+    { id: "tab1", label: "Document 1" },
+    { id: "tab2", label: "Document 2" },
+    { id: "tab3", label: "Document 3" }
+  ])
+
+  function closeTab(tabId: string) {
+    tabs = tabs.filter(t => t.id !== tabId)
+  }
+</script>
+
+<Tabs>
+  {#snippet childContent()}
+    {#each tabs as tab}
+      <Tab
+        id={tab.id}
+        label={tab.label}
+        showClose
+        oncloseclick={() => closeTab(tab.id)}
+      >
+        {#snippet content()}
+          Content for {tab.label}
+        {/snippet}
+      </Tab>
+    {/each}
+  {/snippet}
+</Tabs>
+
+
+EDITABLE TAB LABELS
+-------------------
+<Tab id="doc1" label="Untitled" labelEditable>
+  {#snippet content()}
+    Document content
+  {/snippet}
+</Tab>
+
+User can click to edit the tab label inline.
+
+
+DISABLED TAB
+------------
+<Tab id="disabled-tab" label="Coming Soon" disabled>
+  {#snippet content()}
+    This content won't be accessible
+  {/snippet}
+</Tab>
+
+
+VERTICAL TABS
+-------------
+<Tabs orientation="vertical">
+  {#snippet childContent()}
+    <Tab id="profile" label="Profile">
+      {#snippet content()}Profile settings{/snippet}
+    </Tab>
+    <Tab id="security" label="Security">
+      {#snippet content()}Security settings{/snippet}
+    </Tab>
+    <Tab id="notifications" label="Notifications">
+      {#snippet content()}Notification settings{/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+
+DYNAMIC TABS
+------------
+<script>
+  let tabs = $state([
+    { id: "1", label: "Tab 1" },
+    { id: "2", label: "Tab 2" }
+  ])
+
+  function addTab() {
+    const newId = String(tabs.length + 1)
+    tabs = [...tabs, { id: newId, label: `Tab ${newId}` }]
+  }
+</script>
+
+<button onclick={addTab}>Add Tab</button>
+
+<Tabs>
+  {#snippet childContent()}
+    {#each tabs as tab}
+      <Tab id={tab.id} label={tab.label}>
+        {#snippet content()}
+          Content for {tab.label}
+        {/snippet}
+      </Tab>
+    {/each}
+  {/snippet}
+</Tabs>
+
+
+CONDITIONAL TAB VISIBILITY
+--------------------------
+<script>
+  let showAdvanced = $state(false)
+</script>
+
+<Tabs>
+  {#snippet childContent()}
+    <Tab id="basic" label="Basic">
+      {#snippet content()}Basic options{/snippet}
+    </Tab>
+
+    <Tab id="advanced" label="Advanced" visible={showAdvanced}>
+      {#snippet content()}Advanced options{/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+
+OVERFLOW MENU
+-------------
+For many tabs, use overflow prop to show excess tabs in a menu:
+
+<Tabs
+  overflow={[
+    { label: "Extra 1", onclick: () => activateTab("extra1") },
+    { label: "Extra 2", onclick: () => activateTab("extra2") }
+  ]}
+>
+  {#snippet childContent()}
+    <Tab id="main" label="Main">
+      {#snippet content()}Main content{/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+Shows a "+N" badge that opens a dropdown menu.
+
+
+STYLING
+-------
+Tabs use fluent-tabs web component.
+
+CSS Classes:
+- .tab-wrapper - Tab element wrapper
+- .editable-label - Editable label container
+- .fluent-tab-close - Close button
+
+Override with ::part() selectors:
+fluent-tabs::part(tablist) {
+  border-bottom: 2px solid var(--neutral-stroke-rest);
+}
+
+fluent-tab::part(control) {
+  padding: 1rem 1.5rem;
+}
+
+
+COMMON PATTERNS
+---------------
+
+SETTINGS PAGE:
+<Tabs orientation="vertical">
+  {#snippet childContent()}
+    <Tab id="general" label="General">
+      {#snippet icon()}<Icon name="Settings" />{/snippet}
+      {#snippet content()}<GeneralSettings />{/snippet}
+    </Tab>
+    <Tab id="account" label="Account">
+      {#snippet icon()}<Icon name="Person" />{/snippet}
+      {#snippet content()}<AccountSettings />{/snippet}
+    </Tab>
+    <Tab id="privacy" label="Privacy">
+      {#snippet icon()}<Icon name="Shield" />{/snippet}
+      {#snippet content()}<PrivacySettings />{/snippet}
+    </Tab>
+  {/snippet}
+</Tabs>
+
+
+DOCUMENT TABS:
+<Tabs>
+  {#snippet childContent()}
+    {#each openDocuments as doc}
+      <Tab
+        id={doc.id}
+        label={doc.name}
+        showClose
+        oncloseclick={() => closeDocument(doc.id)}
+        data={{ documentId: doc.id }}
+      >
+        {#snippet content()}
+          <DocumentEditor document={doc} />
+        {/snippet}
+      </Tab>
+    {/each}
+  {/snippet}
+</Tabs>
+
+
+COMMON ISSUES
+-------------
+
+Issue: Tab content not showing
+Solution: Use {#snippet content()} inside Tab component
+
+Issue: Active tab not tracked
+Solution: Add unique id prop to each Tab
+
+Issue: Tab change not firing
+Solution: Check ontabchange callback on Tabs component
+
+Issue: Vertical tabs not working
+Solution: Set orientation="vertical" on Tabs
+
+Issue: Close button not visible
+Solution: Add showClose prop to Tab

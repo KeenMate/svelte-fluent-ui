@@ -11,7 +11,7 @@ DOCKER_TAG = production
 DOCKER_CONTAINER_NAME = svelte-fluentui-docs
 DOCKER_PORT = 8080
 
-.PHONY: setup dev build package link unlink publish publish-dry clean help
+.PHONY: setup dev build package create-link unlink publish publish-dry clean help
 .PHONY: docker-build-docs docker-run-docs docker-stop-docs docker-clean-docs
 
 # Default target
@@ -23,7 +23,7 @@ help:
 	@echo   dev          - Start development server (docs with HMR)
 	@echo   build        - Build production version (library + docs)
 	@echo   package      - Package the library for publishing
-	@echo   link         - Create global npm link for svelte-fluentui
+	@echo   create-link  - Create global npm link for svelte-fluentui
 	@echo   unlink       - Remove global npm link for svelte-fluentui
 	@echo
 	@echo Publishing:
@@ -63,7 +63,7 @@ package:
 	@echo Package built successfully
 	@echo
 
-link: package
+create-link: package
 	@echo
 	@echo Creating global npm link for svelte-fluentui...
 	cd packages/svelte-fluentui && npm link

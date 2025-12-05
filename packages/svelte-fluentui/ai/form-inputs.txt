@@ -1,0 +1,425 @@
+FORM INPUT COMPONENTS
+=====================
+
+OVERVIEW
+--------
+Form input components that wrap FluentUI Web Components (<fluent-*>).
+All use lowercase event handlers (onclick, onchange, oninput).
+
+
+==============================================================================
+TEXTFIELD
+==============================================================================
+Wraps: <fluent-text-field>
+
+USAGE:
+<script>
+  import { TextField } from "svelte-fluentui"
+  let value = $state("")
+</script>
+
+<TextField bind:value placeholder="Enter text" />
+
+PROPS:
+value: string              # Bindable
+placeholder: string
+disabled: boolean
+readonly: boolean
+required: boolean
+maxlength: number
+minlength: number
+pattern: string
+type: "text" | "email" | "password" | "tel" | "url"
+appearance: "outline" | "filled"
+size: string
+autofocus: boolean
+
+EVENTS:
+oninput: (e) => void
+onchange: (e) => void
+onfocus: (e) => void
+onblur: (e) => void
+
+
+==============================================================================
+NUMBERFIELD
+==============================================================================
+Wraps: <fluent-number-field>
+
+USAGE:
+<TextField bind:value={age} type="number" />
+
+Or use NumberField component:
+<NumberField bind:value min={0} max={100} step={1} />
+
+PROPS:
+value: number
+min: number
+max: number
+step: number
+placeholder: string
+disabled: boolean
+readonly: boolean
+required: boolean
+
+
+==============================================================================
+TEXTAREA
+==============================================================================
+Wraps: <fluent-text-area>
+
+USAGE:
+<Textarea bind:value placeholder="Enter description" rows={4} />
+
+PROPS:
+value: string              # Bindable
+placeholder: string
+rows: number
+cols: number
+disabled: boolean
+readonly: boolean
+required: boolean
+maxlength: number
+resize: "none" | "both" | "horizontal" | "vertical"
+
+
+==============================================================================
+CHECKBOX
+==============================================================================
+Wraps: <fluent-checkbox>
+
+USAGE:
+<script>
+  import { Checkbox } from "svelte-fluentui"
+  let checked = $state(false)
+</script>
+
+<Checkbox bind:checked>Remember me</Checkbox>
+
+PROPS:
+checked: boolean           # Bindable
+disabled: boolean
+required: boolean
+indeterminate: boolean
+readonly: boolean
+
+EVENTS:
+onchange: (e) => void
+onclick: (e) => void
+
+
+==============================================================================
+RADIO / RADIOGROUP
+==============================================================================
+Wraps: <fluent-radio>, <fluent-radio-group>
+
+USAGE:
+<script>
+  import { Radio, RadioGroup } from "svelte-fluentui"
+  let selected = $state("option1")
+</script>
+
+<RadioGroup bind:value={selected}>
+  <Radio value="option1">Option 1</Radio>
+  <Radio value="option2">Option 2</Radio>
+  <Radio value="option3">Option 3</Radio>
+</RadioGroup>
+
+RADIOGROUP PROPS:
+value: string              # Bindable (selected value)
+name: string
+disabled: boolean
+orientation: "horizontal" | "vertical"
+
+RADIO PROPS:
+value: string
+disabled: boolean
+checked: boolean
+
+
+==============================================================================
+SWITCH
+==============================================================================
+Wraps: <fluent-switch>
+
+USAGE:
+<script>
+  import { Switch } from "svelte-fluentui"
+  let enabled = $state(false)
+</script>
+
+<Switch bind:checked={enabled}>Enable notifications</Switch>
+
+PROPS:
+checked: boolean           # Bindable
+disabled: boolean
+readonly: boolean
+
+EVENTS:
+onchange: (e) => void
+
+
+==============================================================================
+SELECT
+==============================================================================
+Wraps: <fluent-select>
+
+USAGE:
+<script>
+  import { Select, Option } from "svelte-fluentui"
+  let selected = $state("")
+</script>
+
+<Select bind:value={selected}>
+  <Option value="">Select...</Option>
+  <Option value="opt1">Option 1</Option>
+  <Option value="opt2">Option 2</Option>
+</Select>
+
+PROPS:
+value: string              # Bindable
+disabled: boolean
+required: boolean
+multiple: boolean
+position: "above" | "below"
+
+OPTION PROPS:
+value: string
+disabled: boolean
+selected: boolean
+
+
+==============================================================================
+COMBOBOX
+==============================================================================
+Wraps: <fluent-combobox>
+
+USAGE:
+<script>
+  import { Combobox, Option } from "svelte-fluentui"
+  let value = $state("")
+</script>
+
+<Combobox bind:value placeholder="Search or select">
+  <Option value="apple">Apple</Option>
+  <Option value="banana">Banana</Option>
+  <Option value="cherry">Cherry</Option>
+</Combobox>
+
+PROPS:
+value: string              # Bindable
+placeholder: string
+disabled: boolean
+required: boolean
+autocomplete: "inline" | "list" | "both" | "none"
+position: "above" | "below"
+
+Combobox allows typing to filter options.
+
+
+==============================================================================
+LISTBOX
+==============================================================================
+Wraps: <fluent-listbox>
+
+USAGE:
+<script>
+  import { Listbox, Option } from "svelte-fluentui"
+</script>
+
+<Listbox>
+  <Option value="item1">Item 1</Option>
+  <Option value="item2">Item 2</Option>
+  <Option value="item3">Item 3</Option>
+</Listbox>
+
+PROPS:
+disabled: boolean
+multiple: boolean
+
+
+==============================================================================
+SEARCH
+==============================================================================
+Wraps: <fluent-search>
+
+USAGE:
+<script>
+  import { Search } from "svelte-fluentui"
+  let query = $state("")
+</script>
+
+<Search bind:value={query} placeholder="Search..." />
+
+PROPS:
+value: string              # Bindable
+placeholder: string
+disabled: boolean
+readonly: boolean
+autofocus: boolean
+
+EVENTS:
+oninput: (e) => void
+onchange: (e) => void
+
+
+==============================================================================
+SLIDER
+==============================================================================
+Wraps: <fluent-slider>
+
+USAGE:
+<script>
+  import { Slider } from "svelte-fluentui"
+  let volume = $state(50)
+</script>
+
+<Slider bind:value={volume} min={0} max={100} step={1} />
+
+PROPS:
+value: number              # Bindable
+min: number
+max: number
+step: number
+disabled: boolean
+readonly: boolean
+orientation: "horizontal" | "vertical"
+
+EVENTS:
+oninput: (e) => void
+onchange: (e) => void
+
+
+==============================================================================
+COMMON PATTERNS
+==============================================================================
+
+FORM WITH BINDING:
+<script>
+  import { TextField, Checkbox, Select, Option, Button, Stack } from "svelte-fluentui"
+
+  let formData = $state({
+    name: "",
+    email: "",
+    newsletter: false,
+    country: ""
+  })
+
+  function handleSubmit() {
+    console.log("Form data:", formData)
+  }
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <TextField bind:value={formData.name} placeholder="Name" required />
+  <TextField bind:value={formData.email} type="email" placeholder="Email" />
+  <Checkbox bind:checked={formData.newsletter}>Subscribe to newsletter</Checkbox>
+  <Select bind:value={formData.country}>
+    <Option value="">Select country</Option>
+    <Option value="us">United States</Option>
+    <Option value="uk">United Kingdom</Option>
+  </Select>
+  <Button appearance="accent" onclick={handleSubmit}>Submit</Button>
+</Stack>
+
+
+CONTROLLED INPUT:
+<script>
+  let value = $state("")
+
+  function handleInput(e) {
+    value = e.target.value.toUpperCase()
+  }
+</script>
+
+<TextField {value} oninput={handleInput} />
+
+
+VALIDATION PATTERN:
+<script>
+  let email = $state("")
+  let error = $derived(
+    email && !email.includes("@") ? "Invalid email" : ""
+  )
+</script>
+
+<TextField
+  bind:value={email}
+  placeholder="Email"
+  class={error ? "error" : ""}
+/>
+{#if error}
+  <span class="error-message">{error}</span>
+{/if}
+
+
+==============================================================================
+EVENT HANDLING
+==============================================================================
+
+All events use lowercase names (Svelte 5 convention):
+- onclick
+- onchange
+- oninput
+- onfocus
+- onblur
+- onkeydown
+- onkeyup
+
+Example:
+<TextField
+  value={text}
+  oninput={(e) => text = e.target.value}
+  onkeydown={(e) => {
+    if (e.key === "Enter") submit()
+  }}
+/>
+
+
+==============================================================================
+ACCESSIBILITY
+==============================================================================
+
+All FluentUI components have built-in accessibility:
+- Proper ARIA attributes
+- Keyboard navigation
+- Focus management
+- Screen reader support
+
+Add labels for better accessibility:
+<label>
+  Name
+  <TextField bind:value={name} />
+</label>
+
+Or use aria-label:
+<TextField bind:value={name} aria-label="Your name" />
+
+
+==============================================================================
+STYLING
+==============================================================================
+
+FluentUI inputs use CSS custom properties (design tokens):
+- --neutral-fill-input-rest
+- --neutral-stroke-input-rest
+- --accent-fill-rest
+
+Override with CSS:
+fluent-text-field::part(control) {
+  border-radius: 8px;
+}
+
+
+==============================================================================
+COMMON ISSUES
+==============================================================================
+
+Issue: Value not updating
+Solution: Use bind:value for two-way binding
+
+Issue: Event not firing
+Solution: Use lowercase event names (oninput not onInput)
+
+Issue: Styling not applying
+Solution: Use ::part() selectors for shadow DOM

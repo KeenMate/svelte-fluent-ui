@@ -72,7 +72,7 @@
 				position: fixed;
 				top: {position.top}px;
 				left: {position.left}px;
-				min-width: {position.width}px;
+				width: {position.width}px;
 				{style}
 			"
 		>

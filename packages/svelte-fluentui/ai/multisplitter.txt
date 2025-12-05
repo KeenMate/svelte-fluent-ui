@@ -1,0 +1,308 @@
+MULTISPLITTER COMPONENT
+=======================
+
+OVERVIEW
+--------
+Resizable multi-panel splitter layout.
+Custom implementation with drag-to-resize functionality.
+Supports horizontal and vertical orientations.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { MultiSplitter, MultiSplitterPane } from "svelte-fluentui"
+</script>
+
+<MultiSplitter orientation="horizontal" height="400px">
+  <MultiSplitterPane size="200px">
+    Left panel content
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    Main panel content
+  </MultiSplitterPane>
+
+  <MultiSplitterPane size="200px">
+    Right panel content
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+MULTISPLITTER PROPS
+-------------------
+orientation?: "horizontal" | "vertical"  # Split direction (default: "horizontal")
+barSize?: string                         # Resize bar thickness (default: "6px")
+width?: string                           # Container width
+height?: string                          # Container height
+class?: string
+style?: string
+
+CALLBACKS:
+onCollapse?: (args: MultiSplitterEventArgs) => void
+onExpand?: (args: MultiSplitterEventArgs) => void
+onResize?: (args: MultiSplitterResizeEventArgs) => void
+
+
+MULTISPLITTERPANE PROPS
+-----------------------
+size?: string              # Initial size (e.g., "200px", "30%")
+minSize?: string           # Minimum size during resize
+maxSize?: string           # Maximum size during resize
+resizable?: boolean        # Allow resizing (default: true)
+collapsible?: boolean      # Allow collapsing (default: false)
+class?: string
+style?: string
+
+
+EVENT TYPES
+-----------
+MultiSplitterEventArgs:
+  index: number      # Pane index
+  pane: HTMLElement  # Pane DOM element
+
+MultiSplitterResizeEventArgs:
+  index: number      # Pane index
+  pane: HTMLElement  # Pane DOM element
+  size: number       # New size in pixels
+
+
+HORIZONTAL SPLIT
+----------------
+<MultiSplitter orientation="horizontal">
+  <MultiSplitterPane size="250px" minSize="100px">
+    Sidebar
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    Main content (flexible)
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+VERTICAL SPLIT
+--------------
+<MultiSplitter orientation="vertical" height="600px">
+  <MultiSplitterPane size="200px">
+    Top panel
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    Middle panel (flexible)
+  </MultiSplitterPane>
+
+  <MultiSplitterPane size="150px">
+    Bottom panel
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+COLLAPSIBLE PANES
+-----------------
+<MultiSplitter
+  orientation="horizontal"
+  onCollapse={(args) => console.log("Collapsed pane", args.index)}
+  onExpand={(args) => console.log("Expanded pane", args.index)}
+>
+  <MultiSplitterPane size="250px" collapsible>
+    Collapsible sidebar
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    Main content
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+MIN/MAX SIZE CONSTRAINTS
+------------------------
+<MultiSplitter orientation="horizontal">
+  <MultiSplitterPane
+    size="300px"
+    minSize="150px"
+    maxSize="500px"
+  >
+    Constrained panel
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    Flexible panel
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+TRACKING RESIZE
+---------------
+<script>
+  function handleResize(args) {
+    console.log(`Pane ${args.index} resized to ${args.size}px`)
+  }
+</script>
+
+<MultiSplitter orientation="horizontal" onResize={handleResize}>
+  <MultiSplitterPane size="250px">Panel 1</MultiSplitterPane>
+  <MultiSplitterPane>Panel 2</MultiSplitterPane>
+</MultiSplitter>
+
+
+NON-RESIZABLE PANE
+------------------
+<MultiSplitter orientation="horizontal">
+  <MultiSplitterPane size="60px" resizable={false}>
+    Fixed sidebar
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    Flexible content
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+THREE-COLUMN LAYOUT
+-------------------
+<MultiSplitter orientation="horizontal" width="100%" height="100vh">
+  <MultiSplitterPane size="200px" minSize="150px" collapsible>
+    Navigation
+  </MultiSplitterPane>
+
+  <MultiSplitterPane minSize="300px">
+    Main content
+  </MultiSplitterPane>
+
+  <MultiSplitterPane size="300px" minSize="200px" collapsible>
+    Properties panel
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+NESTED SPLITTERS
+----------------
+<MultiSplitter orientation="horizontal" height="100vh">
+  <MultiSplitterPane size="250px">
+    Sidebar
+  </MultiSplitterPane>
+
+  <MultiSplitterPane>
+    <MultiSplitter orientation="vertical">
+      <MultiSplitterPane size="60%">
+        Editor
+      </MultiSplitterPane>
+
+      <MultiSplitterPane>
+        Terminal
+      </MultiSplitterPane>
+    </MultiSplitter>
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+FLEXIBLE PANE
+-------------
+A pane without size automatically flexes to fill remaining space:
+
+<MultiSplitter orientation="horizontal">
+  <MultiSplitterPane size="200px">Fixed left</MultiSplitterPane>
+  <MultiSplitterPane>Flexible center</MultiSplitterPane>
+  <MultiSplitterPane size="200px">Fixed right</MultiSplitterPane>
+</MultiSplitter>
+
+
+RESIZE BAR
+----------
+The resize bar appears between panes:
+- Horizontal: Vertical bar, drag left/right
+- Vertical: Horizontal bar, drag up/down
+
+Customize bar size:
+<MultiSplitter barSize="8px" orientation="horizontal">
+  ...
+</MultiSplitter>
+
+
+STYLING
+-------
+CSS Classes:
+- .fluent-multi-splitter - Main container
+- .fluent-multi-splitter-pane - Panel element
+- .fluent-multi-splitter-bar - Resize bar
+
+Pane Attributes:
+[data-status="collapsed"] - Collapsed pane
+[data-status="normal"] - Normal pane
+[data-index="0"] - Pane index
+
+CSS Variables:
+--bar-size - Resize bar thickness
+--neutral-stroke-divider-rest - Bar color
+--neutral-stroke-divider-hover - Bar hover color
+
+
+CUSTOM STYLING:
+.fluent-multi-splitter-bar {
+  background-color: var(--accent-fill-subtle);
+}
+
+.fluent-multi-splitter-bar:hover {
+  background-color: var(--accent-fill-rest);
+}
+
+
+COMMON PATTERNS
+---------------
+
+IDE LAYOUT:
+<MultiSplitter orientation="horizontal" height="100vh">
+  <MultiSplitterPane size="50px" resizable={false}>
+    Activity bar
+  </MultiSplitterPane>
+
+  <MultiSplitterPane size="200px" minSize="150px" collapsible>
+    Explorer
+  </MultiSplitterPane>
+
+  <MultiSplitterPane minSize="300px">
+    <MultiSplitter orientation="vertical">
+      <MultiSplitterPane>
+        Editor
+      </MultiSplitterPane>
+      <MultiSplitterPane size="200px" collapsible>
+        Terminal
+      </MultiSplitterPane>
+    </MultiSplitter>
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+EMAIL CLIENT:
+<MultiSplitter orientation="horizontal" height="100vh">
+  <MultiSplitterPane size="250px" minSize="150px">
+    Folders
+  </MultiSplitterPane>
+
+  <MultiSplitterPane size="350px" minSize="250px">
+    Message list
+  </MultiSplitterPane>
+
+  <MultiSplitterPane minSize="300px">
+    Message preview
+  </MultiSplitterPane>
+</MultiSplitter>
+
+
+COMMON ISSUES
+-------------
+
+Issue: Panes not showing
+Solution: Set explicit height on MultiSplitter
+
+Issue: Cannot resize
+Solution: Check resizable prop, ensure pane is not the last one
+
+Issue: Collapse not working
+Solution: Set collapsible prop on pane
+
+Issue: Pane too small/large
+Solution: Use minSize/maxSize constraints
+
+Issue: Nested splitter sizing
+Solution: Set height/width on parent splitter container

@@ -1,0 +1,273 @@
+GETTING STARTED WITH SVELTE-FLUENTUI
+=====================================
+
+OVERVIEW
+--------
+Svelte wrapper library for Microsoft FluentUI Web Components (v2.6.x).
+Uses Svelte 5 with SvelteKit, TypeScript, and Tailwind CSS.
+
+
+INSTALLATION
+------------
+npm install svelte-fluentui
+
+Or with your package manager:
+pnpm add svelte-fluentui
+yarn add svelte-fluentui
+
+
+PROJECT SETUP (SvelteKit)
+--------------------------
+1. Install the package
+2. Import styles in your root layout
+3. Import and use components
+
+Layout setup (src/routes/+layout.svelte):
+
+<script>
+  import "svelte-fluentui/styles.scss"
+  let { children } = $props()
+</script>
+
+{@render children()}
+
+
+BASIC USAGE
+-----------
+Import components individually:
+
+<script>
+  import { Button, TextField, Stack } from "svelte-fluentui"
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <TextField placeholder="Enter name" />
+  <Button appearance="accent">Submit</Button>
+</Stack>
+
+
+TYPESCRIPT SUPPORT
+------------------
+Full TypeScript support included.
+Types are exported from the package.
+
+import type { Column } from "svelte-fluentui"
+
+const columns: Column<MyData>[] = [
+  { field: "name", title: "Name" },
+  { field: "age", title: "Age", sortable: true }
+]
+
+
+COMPONENT CATEGORIES
+--------------------
+
+LAYOUT:
+  Stack, Grid, GridItem, Layout, Header, Footer, BodyContent, Spacer
+  MultiSplitter, MultiSplitterPane
+
+NAVIGATION:
+  NavMenu, NavGroup, NavLinkItem, NavItem, AppBar, Breadcrumb
+
+FORMS:
+  TextField, NumberField, Textarea, Checkbox, Radio, RadioGroup
+  Switch, Select, Combobox, Listbox, Search, Slider
+
+BUTTONS:
+  Button, Anchor
+
+DATA:
+  QuickGrid, DataGrid, DataGridRow, DataGridCell, Paginator
+
+DATE/TIME:
+  Calendar, DatePicker, TimePicker
+
+FEEDBACK:
+  Dialog, Toast, ToastContainer, Tooltip, Alert
+
+DISPLAY:
+  Badge, Card, Icon, Divider, Progress
+
+OTHER:
+  Accordion, AccordionItem, Menu, MenuItem, Tab, Tabs, TabPanel
+  Tree, TreeItem, Autocomplete, InputFile, Toolbar
+
+
+IMPORT PATTERNS
+---------------
+
+Named imports (recommended):
+import { Button, TextField, Dialog } from "svelte-fluentui"
+
+All components available from main export.
+
+
+SVELTE 5 FEATURES
+-----------------
+This library uses Svelte 5 features:
+
+Props with $props():
+let {
+  value = $bindable(),
+  onclick,
+  disabled = false
+}: Props = $props()
+
+Snippets for slots:
+<Button>
+  {#snippet icon()}
+    <Icon name="settings" />
+  {/snippet}
+  Settings
+</Button>
+
+Effects with $effect():
+$effect(() => {
+  // React to changes
+})
+
+
+FLUENTUI WEB COMPONENTS
+-----------------------
+Many components wrap FluentUI Web Components (<fluent-*>).
+These pass props through to the underlying web component.
+
+Wrapper components:
+- Only include props supported by fluent-* component
+- Props passed via {...restProps} or explicitly
+- Styling via FluentUI design tokens
+
+Custom components (built from scratch):
+- QuickGrid, Calendar, DatePicker, TimePicker
+- Autocomplete, InputFile, Card, Toast
+- All layout and navigation components
+
+
+STYLING
+-------
+Import the main stylesheet:
+
+import "svelte-fluentui/styles.scss"
+
+This includes:
+- FluentUI design tokens
+- Component styles
+- Dark/light mode support
+
+
+DARK MODE
+---------
+Set data-theme attribute on document:
+
+document.documentElement.setAttribute("data-theme", "dark")
+
+Or use the theme store:
+
+import { settings } from "svelte-fluentui"
+settings.setThemeMode("dark")
+
+
+COMMON PATTERNS
+---------------
+
+Form with validation:
+<script>
+  import { Stack, TextField, Button } from "svelte-fluentui"
+  let name = $state("")
+  let email = $state("")
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <TextField bind:value={name} placeholder="Name" />
+  <TextField bind:value={email} placeholder="Email" />
+  <Button onclick={() => submit()}>Submit</Button>
+</Stack>
+
+
+Data table:
+<script>
+  import { QuickGrid } from "svelte-fluentui"
+
+  const columns = [
+    { field: "name", title: "Name", sortable: true },
+    { field: "email", title: "Email" }
+  ]
+
+  const data = [
+    { name: "Alice", email: "alice@example.com" },
+    { name: "Bob", email: "bob@example.com" }
+  ]
+</script>
+
+<QuickGrid items={data} {columns} />
+
+
+Modal dialog:
+<script>
+  import { Dialog, Button } from "svelte-fluentui"
+  let dialogOpen = $state(false)
+</script>
+
+<Button onclick={() => dialogOpen = true}>Open</Button>
+
+<Dialog bind:visible={dialogOpen} modal>
+  <h2>Dialog Title</h2>
+  <p>Dialog content here.</p>
+</Dialog>
+
+
+DEBUGGING
+---------
+Components render as web components in browser.
+Use browser DevTools to inspect:
+- fluent-button, fluent-text-field, etc.
+- CSS custom properties (design tokens)
+- Shadow DOM content
+
+
+COMMON ISSUES
+-------------
+
+Issue: Components not styled
+Solution: Import styles.scss in root layout
+
+Issue: Dark mode not working
+Solution: Set data-theme="dark" on documentElement
+
+Issue: TypeScript errors with props
+Solution: Check prop types match component interface
+
+Issue: Events not firing
+Solution: Use lowercase event names (onclick, onchange)
+
+
+DEPENDENCIES
+------------
+- Svelte 5.x
+- SvelteKit
+- @fluentui/web-components 2.6.1
+- TypeScript
+- SASS
+
+
+DEVELOPMENT COMMANDS
+--------------------
+npm run dev        # Start dev server
+npm run build      # Build production
+npm run check      # TypeScript checking
+npm run lint       # Lint code
+npm run format     # Format code
+
+
+FILE STRUCTURE
+--------------
+packages/svelte-fluentui/
+  src/lib/
+    components/         # All component files
+      layout/           # Layout components
+      nav/              # Navigation components
+      icons/            # Icon components
+    assets/styles/      # SCSS stylesheets
+    stores/             # Svelte stores
+    types/              # TypeScript types
+  ai/                   # AI reference docs (this folder)

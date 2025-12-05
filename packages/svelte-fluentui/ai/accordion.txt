@@ -1,0 +1,248 @@
+ACCORDION COMPONENTS
+====================
+
+OVERVIEW
+--------
+Collapsible accordion panels.
+Wraps: <fluent-accordion>, <fluent-accordion-item>
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Accordion, AccordionItem } from "svelte-fluentui"
+</script>
+
+<Accordion>
+  <AccordionItem>
+    {#snippet heading()}
+      Section 1
+    {/snippet}
+    Content for section 1
+  </AccordionItem>
+
+  <AccordionItem>
+    {#snippet heading()}
+      Section 2
+    {/snippet}
+    Content for section 2
+  </AccordionItem>
+
+  <AccordionItem>
+    {#snippet heading()}
+      Section 3
+    {/snippet}
+    Content for section 3
+  </AccordionItem>
+</Accordion>
+
+
+ACCORDION PROPS
+---------------
+expandMode?: "single" | "multi"  # Allow one or multiple expanded (default: "multi")
+class?: string
+style?: string
+
+
+ACCORDIONITEM PROPS
+-------------------
+expanded?: boolean          # Initially expanded
+disabled?: boolean
+heading?: SlotType          # Header content (snippet)
+class?: string
+style?: string
+children: SlotType          # Panel content
+
+
+SINGLE EXPAND MODE
+------------------
+Only one panel open at a time:
+
+<Accordion expandMode="single">
+  <AccordionItem>
+    {#snippet heading()}First{/snippet}
+    Content 1
+  </AccordionItem>
+  <AccordionItem>
+    {#snippet heading()}Second{/snippet}
+    Content 2
+  </AccordionItem>
+</Accordion>
+
+
+DEFAULT EXPANDED
+----------------
+<Accordion>
+  <AccordionItem expanded>
+    {#snippet heading()}Open by default{/snippet}
+    This panel is initially open.
+  </AccordionItem>
+
+  <AccordionItem>
+    {#snippet heading()}Closed by default{/snippet}
+    This panel is initially closed.
+  </AccordionItem>
+</Accordion>
+
+
+DISABLED ITEM
+-------------
+<Accordion>
+  <AccordionItem>
+    {#snippet heading()}Available{/snippet}
+    This panel can be opened.
+  </AccordionItem>
+
+  <AccordionItem disabled>
+    {#snippet heading()}Not available{/snippet}
+    This panel cannot be opened.
+  </AccordionItem>
+</Accordion>
+
+
+CUSTOM HEADER
+-------------
+<Accordion>
+  <AccordionItem>
+    {#snippet heading()}
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Icon name="Settings" />
+        <span>Settings</span>
+        <Badge>3</Badge>
+      </Stack>
+    {/snippet}
+    Settings content here
+  </AccordionItem>
+</Accordion>
+
+
+FAQ PATTERN
+-----------
+<script>
+  const faqs = [
+    { q: "How do I reset my password?", a: "Click 'Forgot Password' on the login page..." },
+    { q: "What payment methods do you accept?", a: "We accept Visa, MasterCard, and PayPal..." },
+    { q: "How can I contact support?", a: "Email us at support@example.com..." }
+  ]
+</script>
+
+<Accordion expandMode="single">
+  {#each faqs as faq}
+    <AccordionItem>
+      {#snippet heading()}{faq.q}{/snippet}
+      <p>{faq.a}</p>
+    </AccordionItem>
+  {/each}
+</Accordion>
+
+
+SETTINGS PANEL
+--------------
+<Accordion>
+  <AccordionItem expanded>
+    {#snippet heading()}
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Icon name="Person" />
+        <span>Profile Settings</span>
+      </Stack>
+    {/snippet}
+    <Stack orientation="vertical" gap="1rem">
+      <TextField label="Name" bind:value={name} />
+      <TextField label="Email" bind:value={email} />
+    </Stack>
+  </AccordionItem>
+
+  <AccordionItem>
+    {#snippet heading()}
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Icon name="Shield" />
+        <span>Security</span>
+      </Stack>
+    {/snippet}
+    <Stack orientation="vertical" gap="1rem">
+      <Switch bind:checked={twoFactor}>Two-factor authentication</Switch>
+      <Button>Change Password</Button>
+    </Stack>
+  </AccordionItem>
+
+  <AccordionItem>
+    {#snippet heading()}
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Icon name="Ringer" />
+        <span>Notifications</span>
+      </Stack>
+    {/snippet}
+    <Stack orientation="vertical" gap="0.5rem">
+      <Checkbox bind:checked={emailNotif}>Email notifications</Checkbox>
+      <Checkbox bind:checked={pushNotif}>Push notifications</Checkbox>
+    </Stack>
+  </AccordionItem>
+</Accordion>
+
+
+DYNAMIC ITEMS
+-------------
+<script>
+  let sections = $state([
+    { id: "1", title: "Section 1", content: "Content 1" },
+    { id: "2", title: "Section 2", content: "Content 2" }
+  ])
+</script>
+
+<Accordion>
+  {#each sections as section (section.id)}
+    <AccordionItem>
+      {#snippet heading()}{section.title}{/snippet}
+      {section.content}
+    </AccordionItem>
+  {/each}
+</Accordion>
+
+
+NESTED CONTENT
+--------------
+<Accordion>
+  <AccordionItem>
+    {#snippet heading()}Products{/snippet}
+    <QuickGrid items={products} columns={productColumns} />
+  </AccordionItem>
+
+  <AccordionItem>
+    {#snippet heading()}Orders{/snippet}
+    <QuickGrid items={orders} columns={orderColumns} />
+  </AccordionItem>
+</Accordion>
+
+
+STYLING
+-------
+Accordion uses fluent-accordion web component.
+
+Override with ::part():
+fluent-accordion::part(panel) {
+  padding: 1rem;
+}
+
+fluent-accordion-item::part(heading) {
+  font-size: 1.1rem;
+}
+
+fluent-accordion-item::part(icon) {
+  color: var(--accent-fill-rest);
+}
+
+
+COMMON ISSUES
+-------------
+
+Issue: Heading not clickable
+Solution: Use {#snippet heading()} slot for header content
+
+Issue: Multiple items won't expand
+Solution: Remove expandMode="single" or use "multi"
+
+Issue: Content not showing
+Solution: Ensure children are outside the heading snippet
+
+Issue: Animation jerky
+Solution: Set fixed height on content or let FluentUI handle it

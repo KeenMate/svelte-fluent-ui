@@ -1,0 +1,304 @@
+TOAST NOTIFICATIONS
+===================
+
+OVERVIEW
+--------
+Toast notification system with ToastContainer and ToastService.
+Custom implementation styled with FluentUI design tokens.
+
+
+SETUP
+-----
+Add ToastContainer to your root layout once:
+
+<!-- src/routes/+layout.svelte -->
+<script>
+  import { ToastContainer } from "svelte-fluentui"
+  let { children } = $props()
+</script>
+
+{@render children()}
+<ToastContainer />
+
+
+TOAST SERVICE API
+-----------------
+Import and use the toast store:
+
+<script>
+  import { toast } from "svelte-fluentui"
+</script>
+
+
+METHODS:
+
+toast.success(message, options?)
+  Show success toast (green, checkmark)
+
+toast.error(message, options?)
+  Show error toast (red, X icon)
+
+toast.warning(message, options?)
+  Show warning toast (yellow, warning icon)
+
+toast.info(message, options?)
+  Show info toast (blue, info icon)
+
+toast.show(options)
+  Show toast with full control
+
+toast.dismiss(id)
+  Dismiss specific toast by ID
+
+toast.dismissAll(position?)
+  Dismiss all toasts (optionally by position)
+
+
+OPTIONS:
+variant?: "success" | "error" | "warning" | "info"
+title?: string             # Default based on variant
+message?: string           # Toast message
+position?: ToastPosition   # Where to show (default: "top-right")
+duration?: number          # Auto-dismiss time in ms (default: 5000)
+showProgress?: boolean     # Show progress bar (default: false)
+persistent?: boolean       # Don't auto-dismiss (default: false)
+
+
+POSITIONS:
+- "top-right"    (default)
+- "top-left"
+- "top-center"
+- "bottom-right"
+- "bottom-left"
+- "bottom-center"
+
+
+BASIC EXAMPLES
+--------------
+
+SUCCESS:
+toast.success("Changes saved successfully")
+
+ERROR:
+toast.error("Failed to save changes")
+
+WARNING:
+toast.warning("Your session is about to expire")
+
+INFO:
+toast.info("New update available")
+
+
+WITH OPTIONS:
+toast.success("Uploaded!", {
+  position: "bottom-right",
+  duration: 3000
+})
+
+
+PERSISTENT TOAST:
+const id = toast.warning("Server disconnected", {
+  persistent: true
+})
+
+// Later dismiss it
+toast.dismiss(id)
+
+
+WITH PROGRESS BAR:
+toast.success("Processing...", {
+  duration: 10000,
+  showProgress: true
+})
+
+
+CUSTOM TITLE:
+toast.show({
+  variant: "success",
+  title: "Order Confirmed",
+  message: "Your order #12345 has been placed",
+  duration: 8000
+})
+
+
+COMMON PATTERNS
+---------------
+
+FORM SUBMISSION:
+async function handleSubmit() {
+  try {
+    await saveData()
+    toast.success("Saved successfully")
+  } catch (error) {
+    toast.error(error.message || "Failed to save")
+  }
+}
+
+
+API ERROR HANDLING:
+async function fetchData() {
+  try {
+    const response = await fetch("/api/data")
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    return response.json()
+  } catch (error) {
+    toast.error(`Failed to load data: ${error.message}`)
+  }
+}
+
+
+OPERATION FEEDBACK:
+function deleteItem(id) {
+  const toastId = toast.info("Deleting...", {
+    persistent: true
+  })
+
+  deleteFromServer(id)
+    .then(() => {
+      toast.dismiss(toastId)
+      toast.success("Deleted")
+    })
+    .catch((err) => {
+      toast.dismiss(toastId)
+      toast.error(`Delete failed: ${err.message}`)
+    })
+}
+
+
+UNDO ACTION:
+function deleteItem(item) {
+  // Store for undo
+  const deletedItem = item
+
+  // Optimistic delete
+  removeFromList(item.id)
+
+  toast.show({
+    variant: "info",
+    title: "Item deleted",
+    message: "Click to undo",
+    duration: 5000,
+    // Note: Custom actions handled via Toast component
+  })
+}
+
+
+TOAST COMPONENT
+---------------
+For advanced use cases, use the Toast component directly:
+
+<script>
+  import { Toast } from "svelte-fluentui"
+</script>
+
+<Toast
+  id="custom-toast"
+  title="Custom Toast"
+  timestamp={new Date()}
+  topCTAType="timestamp"
+>
+  <p>Custom toast content here</p>
+</Toast>
+
+
+TOAST PROPS:
+id?: string
+title?: string
+timestamp?: Date
+topCTAType?: "dismiss" | "timestamp" | "action"
+topAction?: string              # Text for top action link
+primaryAction?: string          # Text for primary action
+secondaryAction?: string        # Text for secondary action
+ondismiss?: () => void
+ontopactionclick?: () => void
+onprimaryactionclick?: () => void
+onsecondaryactionclick?: () => void
+children?: SlotType            # Toast body content
+
+
+TOP CTA TYPES:
+- "dismiss"   - Shows X button to close
+- "timestamp" - Shows timestamp from timestamp prop
+- "action"    - Shows clickable action link
+
+
+TOAST COMPONENT EXAMPLE:
+<Toast
+  title="New Message"
+  topCTAType="timestamp"
+  timestamp={new Date()}
+  primaryAction="Reply"
+  secondaryAction="Dismiss"
+  onprimaryactionclick={() => openReply()}
+  onsecondaryactionclick={() => closeToast()}
+>
+  <p>You have a new message from John</p>
+</Toast>
+
+
+STYLING
+-------
+Toasts use FluentUI design tokens.
+
+CSS Classes:
+- .fluent-toast-container - Position container
+- .fluent-toast - Individual toast
+- .fluent-toast--success - Success variant
+- .fluent-toast--error - Error variant
+- .fluent-toast--warning - Warning variant
+- .fluent-toast--info - Info variant
+- .fluent-toast__icon - Icon area
+- .fluent-toast__content - Content area
+- .fluent-toast__title - Title text
+- .fluent-toast__message - Message text
+- .fluent-toast__close - Close button
+- .fluent-toast__progress - Progress bar
+
+CSS Variables:
+--success-foreground-rest
+--error-foreground-rest
+--warning-foreground-rest
+--accent-fill-rest (info)
+
+
+MULTIPLE TOASTS
+---------------
+Multiple toasts stack automatically.
+Each position handles its own stack.
+
+toast.success("First toast", { position: "top-right" })
+toast.info("Second toast", { position: "top-right" })
+// Both stack in top-right corner
+
+
+CLICK TO DISMISS
+----------------
+By default, clicking a toast dismisses it.
+The ToastContainer handles this automatically.
+
+
+ANIMATION
+---------
+Toasts animate in with slide + fade effect.
+Controlled by .fluent-toast--show class.
+
+
+COMMON ISSUES
+-------------
+
+Issue: Toast not showing
+Solution: Ensure ToastContainer is in root layout
+
+Issue: Toast in wrong position
+Solution: Check position option, default is "top-right"
+
+Issue: Toast not auto-dismissing
+Solution: Check persistent option, default is false
+
+Issue: Multiple ToastContainers
+Solution: Only add ToastContainer once in root layout
+
+Issue: Toast z-index issues
+Solution: ToastContainer sets z-index: 9999 by default

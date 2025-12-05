@@ -1,0 +1,400 @@
+AUTOCOMPLETE COMPONENT
+======================
+
+OVERVIEW
+--------
+Multiple selection autocomplete with search, tag display, and async loading.
+Custom implementation inspired by FluentUI Blazor.
+Supports single and multi-select modes with various tag positions.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Autocomplete } from "svelte-fluentui"
+
+  const options = [
+    { value: "js", text: "JavaScript" },
+    { value: "ts", text: "TypeScript" },
+    { value: "py", text: "Python" }
+  ]
+
+  let selected = $state<string[]>([])
+</script>
+
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  placeholder="Select languages..."
+/>
+
+
+OPTION FORMAT
+-------------
+type OptionItem<T> = {
+  value: T          # Unique value
+  text: string      # Display text
+  disabled?: boolean # Disable this option
+}
+
+
+PROPS
+-----
+selectedOptions?: T[]              # Bindable - selected values array
+options?: OptionItem<T>[]          # Static options list
+placeholder?: string               # Input placeholder
+disabled?: boolean
+readonly?: boolean
+required?: boolean
+autofocus?: boolean
+label?: string                     # Field label
+labelTemplate?: Snippet            # Custom label template
+appearance?: string                # "outline" | "filled"
+multiple?: boolean                 # Multi-select mode (inferred from maxSelectedOptions)
+maxSelectedOptions?: number        # Maximum selections allowed
+maxOptionsSearch?: number          # Max options to show (default: 9)
+showOverlayOnEmptyResults?: boolean # Show dropdown when no matches (default: true)
+showInitialOptions?: boolean       # Show options before typing (default: false)
+initialOptionsCount?: number       # How many initial options to show
+keepOpen?: boolean                 # Keep dropdown open after selection
+selectValueOnTab?: boolean         # Select highlighted option on Tab (default: true)
+tagsPosition?: "inline" | "above" | "below"  # Where to show tags (default: "inline")
+immediateDelay?: number            # Debounce delay in ms (default: 0)
+loading?: boolean                  # Show loading state
+initialSearchQuery?: string        # Pre-populate search text
+width?: string
+height?: string
+id?: string
+title?: string
+ariaLabel?: string
+class?: string
+style?: string
+
+SNIPPETS:
+headerContent?: Snippet            # Content above options list
+footerContent?: Snippet            # Content below options list
+optionTemplate?: Snippet<[OptionItem<T>]>  # Custom option rendering
+
+CALLBACKS:
+onoptionssearch?: (searchText: string) => Promise<OptionItem<T>[]> | OptionItem<T>[]
+onselectedoptionschange?: (selected: T[]) => void
+ondismissed?: () => void
+
+
+SINGLE VS MULTI-SELECT
+----------------------
+
+SINGLE SELECT (maxSelectedOptions=1):
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  maxSelectedOptions={1}
+  placeholder="Select one..."
+/>
+
+MULTI-SELECT (default):
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  placeholder="Select multiple..."
+/>
+
+EXPLICIT MULTI-SELECT:
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  multiple={true}
+  maxSelectedOptions={5}
+/>
+
+
+TAGS POSITION
+-------------
+
+INLINE (default) - Tags appear in the input field:
+<Autocomplete {options} bind:selectedOptions={selected} tagsPosition="inline" />
+
+ABOVE - Tags appear above the input:
+<Autocomplete {options} bind:selectedOptions={selected} tagsPosition="above" />
+
+BELOW - Tags appear below the input:
+<Autocomplete {options} bind:selectedOptions={selected} tagsPosition="below" />
+
+
+ASYNC SEARCH
+------------
+<script>
+  let selected = $state<string[]>([])
+
+  async function searchCountries(query: string) {
+    const response = await fetch(`/api/countries?q=${encodeURIComponent(query)}`)
+    return response.json() // Returns OptionItem[]
+  }
+</script>
+
+<Autocomplete
+  bind:selectedOptions={selected}
+  onoptionssearch={searchCountries}
+  placeholder="Search countries..."
+  immediateDelay={300}
+/>
+
+
+INITIAL OPTIONS (Popular Items)
+-------------------------------
+Show options before user types (great for popular/recent items):
+
+<Autocomplete
+  options={allOptions}
+  bind:selectedOptions={selected}
+  showInitialOptions
+  initialOptionsCount={5}
+  placeholder="Search or select from popular..."
+/>
+
+
+DEBOUNCING
+----------
+Add delay before triggering search:
+
+<Autocomplete
+  bind:selectedOptions={selected}
+  onoptionssearch={searchAPI}
+  immediateDelay={300}  # Wait 300ms after typing stops
+/>
+
+
+CUSTOM OPTION TEMPLATE
+----------------------
+<script>
+  let selected = $state<string[]>([])
+</script>
+
+{#snippet optionRenderer(option)}
+  <div class="custom-option">
+    <img src={option.icon} alt="" />
+    <span>{option.text}</span>
+    <small>{option.description}</small>
+  </div>
+{/snippet}
+
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  optionTemplate={optionRenderer}
+/>
+
+
+HEADER AND FOOTER CONTENT
+-------------------------
+{#snippet headerSnippet()}
+  <div class="dropdown-header">
+    <strong>Select Skills</strong>
+  </div>
+{/snippet}
+
+{#snippet footerSnippet()}
+  <div class="dropdown-footer">
+    <a href="/add-new">+ Add new skill</a>
+  </div>
+{/snippet}
+
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  headerContent={headerSnippet}
+  footerContent={footerSnippet}
+/>
+
+
+WITH LABEL
+----------
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  label="Skills"
+  required
+/>
+
+
+KEEP OPEN AFTER SELECTION
+-------------------------
+<Autocomplete
+  {options}
+  bind:selectedOptions={selected}
+  keepOpen
+  maxSelectedOptions={5}
+/>
+
+
+LOADING STATE
+-------------
+<script>
+  let isLoading = $state(false)
+  let selected = $state<string[]>([])
+
+  async function search(query: string) {
+    isLoading = true
+    try {
+      const results = await fetchResults(query)
+      return results
+    } finally {
+      isLoading = false
+    }
+  }
+</script>
+
+<Autocomplete
+  bind:selectedOptions={selected}
+  onoptionssearch={search}
+  loading={isLoading}
+/>
+
+
+KEYBOARD NAVIGATION
+-------------------
+- Type to search/filter options
+- Arrow Up/Down: Navigate options
+- Enter: Select highlighted option
+- Escape: Close dropdown, clear search
+- Tab: Select highlighted option (if selectValueOnTab)
+- Backspace: Remove last tag (when input empty, multi-select)
+
+
+COMMON PATTERNS
+---------------
+
+TAG INPUT:
+<script>
+  let tags = $state<string[]>([])
+  const predefinedTags = [
+    { value: "bug", text: "Bug" },
+    { value: "feature", text: "Feature" },
+    { value: "docs", text: "Documentation" }
+  ]
+</script>
+
+<Autocomplete
+  options={predefinedTags}
+  bind:selectedOptions={tags}
+  placeholder="Add tags..."
+  tagsPosition="inline"
+/>
+
+
+USER PICKER:
+<script>
+  let selectedUsers = $state<string[]>([])
+
+  async function searchUsers(query: string) {
+    const response = await fetch(`/api/users?search=${query}`)
+    const users = await response.json()
+    return users.map(u => ({
+      value: u.id,
+      text: u.name
+    }))
+  }
+</script>
+
+<Autocomplete
+  bind:selectedOptions={selectedUsers}
+  onoptionssearch={searchUsers}
+  placeholder="Add team members..."
+  immediateDelay={300}
+  maxSelectedOptions={10}
+/>
+
+
+COUNTRY SELECTOR:
+<script>
+  const countries = [
+    { value: "us", text: "United States" },
+    { value: "uk", text: "United Kingdom" },
+    { value: "de", text: "Germany" }
+    // ... more countries
+  ]
+  let selectedCountry = $state<string[]>([])
+</script>
+
+<Autocomplete
+  options={countries}
+  bind:selectedOptions={selectedCountry}
+  maxSelectedOptions={1}
+  placeholder="Select country..."
+  showInitialOptions
+  initialOptionsCount={10}
+/>
+
+
+FORM INTEGRATION:
+<script>
+  let formData = $state({
+    name: "",
+    skills: [] as string[],
+    department: [] as string[]
+  })
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <TextField bind:value={formData.name} placeholder="Name" />
+
+  <Autocomplete
+    options={skillOptions}
+    bind:selectedOptions={formData.skills}
+    label="Skills"
+    tagsPosition="below"
+  />
+
+  <Autocomplete
+    options={departmentOptions}
+    bind:selectedOptions={formData.department}
+    label="Department"
+    maxSelectedOptions={1}
+  />
+</Stack>
+
+
+STYLING
+-------
+CSS Classes:
+- .fluent-autocomplete - Main container
+- .autocomplete-label - Label element
+- .autocomplete-container - Inner container
+- .autocomplete-input-container - Input wrapper
+- .autocomplete-input-container.inline-mode - Input with inline tags
+- .autocomplete-input-container.focused - Focused state
+- .autocomplete-native-input - Text input
+- .selected-options - Tags container (above/below)
+- .external-chip - Tag in above/below position
+- .inline-chip - Tag in inline position
+- .chip-text - Tag text
+- .chip-remove - Remove button
+- .options-list - Dropdown container
+- .option-item - Individual option
+- .option-item.highlighted - Keyboard highlighted
+- .no-results - Empty state message
+- .loading-indicator - Loading spinner
+- .clear-button - Clear selection button
+- .max-message - "Max selections reached" message
+
+
+COMMON ISSUES
+-------------
+
+Issue: Options not showing
+Solution: Check options array format, ensure text property exists
+
+Issue: Search not working
+Solution: Check onoptionssearch callback returns Promise<OptionItem[]>
+
+Issue: Tags overlapping
+Solution: Use tagsPosition="above" or "below" for many selections
+
+Issue: Dropdown hidden
+Solution: Check z-index of parent containers
+
+Issue: Backspace deleting tags unexpectedly
+Solution: This is intended behavior in multi-select when input is empty
+
+Issue: Single-select not working
+Solution: Set maxSelectedOptions={1} or multiple={false}

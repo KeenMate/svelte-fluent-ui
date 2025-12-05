@@ -1,0 +1,288 @@
+BUTTON COMPONENTS
+=================
+
+OVERVIEW
+--------
+Button and Anchor components wrapping FluentUI web components.
+
+
+==============================================================================
+BUTTON
+==============================================================================
+Wraps: <fluent-button>
+
+USAGE:
+<script>
+  import { Button } from "svelte-fluentui"
+</script>
+
+<Button onclick={() => console.log("Clicked!")}>
+  Click Me
+</Button>
+
+PROPS:
+appearance?: string         # Visual style (see below)
+autofocus?: boolean
+disabled?: string
+form?: string               # Form ID to associate with
+formaction?: string
+formenctype?: string
+formmethod?: string
+formnovalidate?: string
+formtarget?: string
+name?: string               # Button name for forms
+type?: string               # "button" | "submit" | "reset"
+value?: string              # Button value for forms
+style?: string
+onclick?: (ev: MouseEvent) => void
+
+SLOTS:
+start?: SlotType            # Content before text (icon)
+end?: SlotType              # Content after text (icon)
+children?: SlotType         # Button text
+
+
+APPEARANCES:
+- "accent"    - Primary/highlighted action (blue)
+- "neutral"   - Default appearance
+- "outline"   - Outlined style
+- "stealth"   - Minimal, transparent background
+- "lightweight" - Very minimal styling
+
+
+EXAMPLES
+--------
+
+PRIMARY BUTTON:
+<Button appearance="accent" onclick={handleSubmit}>
+  Submit
+</Button>
+
+NEUTRAL BUTTON:
+<Button onclick={handleCancel}>
+  Cancel
+</Button>
+
+OUTLINE BUTTON:
+<Button appearance="outline" onclick={handleAction}>
+  Learn More
+</Button>
+
+STEALTH BUTTON (Icon buttons):
+<Button appearance="stealth" onclick={handleMenu}>
+  <Icon name="Navigation" />
+</Button>
+
+
+WITH START ICON:
+<Button appearance="accent" onclick={handleSave}>
+  {#snippet start()}
+    <Icon name="Save" />
+  {/snippet}
+  Save
+</Button>
+
+
+WITH END ICON:
+<Button onclick={handleNext}>
+  Next
+  {#snippet end()}
+    <Icon name="ChevronRight" />
+  {/snippet}
+</Button>
+
+
+ICON ONLY:
+<Button appearance="stealth" onclick={handleSettings}>
+  <Icon name="Settings" />
+</Button>
+
+
+DISABLED:
+<Button disabled="true" onclick={handleClick}>
+  Disabled
+</Button>
+
+
+SUBMIT BUTTON:
+<form onsubmit={handleSubmit}>
+  <TextField name="email" placeholder="Email" />
+  <Button type="submit" appearance="accent">
+    Submit
+  </Button>
+</form>
+
+
+BUTTON GROUP:
+<Stack orientation="horizontal" gap="0.5rem">
+  <Button appearance="accent" onclick={handleSave}>Save</Button>
+  <Button onclick={handleCancel}>Cancel</Button>
+</Stack>
+
+
+==============================================================================
+ANCHOR
+==============================================================================
+Wraps: <fluent-anchor>
+Link styled as button.
+
+USAGE:
+<script>
+  import { Anchor } from "svelte-fluentui"
+</script>
+
+<Anchor href="/about" appearance="hypertext">
+  Learn More
+</Anchor>
+
+PROPS:
+href?: string               # Link URL
+hreflang?: string
+ping?: string
+referrerpolicy?: string
+rel?: string
+target?: string             # "_blank", "_self", etc.
+type?: string               # MIME type
+download?: string
+appearance?: string         # Same as Button appearances
+children?: SlotType
+
+
+EXAMPLES
+--------
+
+TEXT LINK:
+<Anchor href="/about" appearance="hypertext">
+  About Us
+</Anchor>
+
+BUTTON-STYLED LINK:
+<Anchor href="/signup" appearance="accent">
+  Sign Up
+</Anchor>
+
+EXTERNAL LINK:
+<Anchor href="https://example.com" target="_blank" appearance="hypertext">
+  Visit Website
+</Anchor>
+
+DOWNLOAD LINK:
+<Anchor href="/files/report.pdf" download="report.pdf" appearance="outline">
+  Download Report
+</Anchor>
+
+
+==============================================================================
+COMMON PATTERNS
+==============================================================================
+
+ACTION BAR:
+<Stack orientation="horizontal" justify="flex-end" gap="0.5rem">
+  <Button appearance="stealth" onclick={handleDelete}>
+    <Icon name="Delete" />
+  </Button>
+  <Button appearance="stealth" onclick={handleEdit}>
+    <Icon name="Edit" />
+  </Button>
+  <Button appearance="accent" onclick={handleSave}>
+    Save
+  </Button>
+</Stack>
+
+
+DIALOG ACTIONS:
+<Dialog bind:visible={dialogOpen} modal>
+  <h2>Confirm Action</h2>
+  <p>Are you sure?</p>
+
+  {#snippet actions()}
+    <Button appearance="accent" onclick={handleConfirm}>
+      Confirm
+    </Button>
+    <Button onclick={() => dialogOpen = false}>
+      Cancel
+    </Button>
+  {/snippet}
+</Dialog>
+
+
+TOOLBAR:
+<Stack orientation="horizontal" gap="0.25rem">
+  <Button appearance="stealth" onclick={handleBold}>
+    <Icon name="TextBold" />
+  </Button>
+  <Button appearance="stealth" onclick={handleItalic}>
+    <Icon name="TextItalic" />
+  </Button>
+  <Button appearance="stealth" onclick={handleUnderline}>
+    <Icon name="TextUnderline" />
+  </Button>
+  <Divider orientation="vertical" />
+  <Button appearance="stealth" onclick={handleAlignLeft}>
+    <Icon name="TextAlignLeft" />
+  </Button>
+</Stack>
+
+
+LOADING BUTTON:
+<script>
+  let isLoading = $state(false)
+
+  async function handleSubmit() {
+    isLoading = true
+    try {
+      await saveData()
+    } finally {
+      isLoading = false
+    }
+  }
+</script>
+
+<Button
+  appearance="accent"
+  onclick={handleSubmit}
+  disabled={isLoading ? "true" : undefined}
+>
+  {#if isLoading}
+    Saving...
+  {:else}
+    Save
+  {/if}
+</Button>
+
+
+==============================================================================
+STYLING
+==============================================================================
+
+Button uses fluent-button web component.
+
+Override with ::part() selectors:
+fluent-button::part(control) {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+}
+
+CSS Variables (design tokens):
+--accent-fill-rest - Accent button background
+--accent-fill-hover - Accent button hover
+--accent-foreground-rest - Accent button text
+--neutral-fill-rest - Neutral button background
+--neutral-foreground-rest - Button text color
+
+
+==============================================================================
+COMMON ISSUES
+==============================================================================
+
+Issue: Click not working
+Solution: Use onclick (lowercase), not onClick
+
+Issue: Button in form submitting unexpectedly
+Solution: Set type="button" for non-submit buttons
+
+Issue: Icon not aligned
+Solution: Use {#snippet start()} or {#snippet end()} slots
+
+Issue: Disabled not working
+Solution: Use disabled="true" (string), not disabled={true}

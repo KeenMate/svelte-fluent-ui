@@ -1,0 +1,376 @@
+DISPLAY COMPONENTS
+==================
+
+OVERVIEW
+--------
+Visual display components for badges, cards, icons, dividers, progress, and tooltips.
+
+
+==============================================================================
+BADGE
+==============================================================================
+Wraps: <fluent-badge>
+Small label/tag for status or counts.
+
+USAGE:
+<script>
+  import { Badge } from "svelte-fluentui"
+</script>
+
+<Badge>New</Badge>
+<Badge appearance="accent">3</Badge>
+
+PROPS:
+appearance?: string         # "accent" | "neutral" | "informative" | etc.
+color?: string              # Custom color
+fill?: string               # "solid" | "ghost"
+shape?: string              # "rounded" | "circular"
+class?: string
+style?: string
+children: SlotType          # Badge content
+
+
+BADGE EXAMPLES:
+<Badge>Default</Badge>
+<Badge appearance="accent">Primary</Badge>
+<Badge appearance="informative">Info</Badge>
+<Badge shape="circular">5</Badge>
+<Badge fill="ghost">Ghost</Badge>
+
+
+==============================================================================
+CARD
+==============================================================================
+Custom card container with FluentUI styling.
+
+USAGE:
+<script>
+  import { Card } from "svelte-fluentui"
+</script>
+
+<Card>
+  <h3>Card Title</h3>
+  <p>Card content goes here.</p>
+</Card>
+
+PROPS:
+class?: string
+style?: string
+children: SlotType
+
+
+CARD EXAMPLES:
+
+SIMPLE CARD:
+<Card>
+  <h3>Welcome</h3>
+  <p>This is a simple card.</p>
+</Card>
+
+CARD WITH ACTIONS:
+<Card>
+  <h3>Project Status</h3>
+  <p>All systems operational.</p>
+  <Stack orientation="horizontal" gap="0.5rem">
+    <Button>View Details</Button>
+    <Button appearance="outline">Dismiss</Button>
+  </Stack>
+</Card>
+
+DASHBOARD CARD:
+<Card style="padding: 1.5rem;">
+  <Stack orientation="vertical" gap="0.5rem">
+    <span class="card-label">Total Sales</span>
+    <span class="card-value">$12,345</span>
+    <Badge appearance="accent">+12%</Badge>
+  </Stack>
+</Card>
+
+
+==============================================================================
+ICON
+==============================================================================
+FluentUI icon component.
+
+USAGE:
+<script>
+  import { Icon } from "svelte-fluentui"
+</script>
+
+<Icon name="Settings" />
+<Icon name="Home" size="24" />
+
+PROPS:
+name: string                # Icon name (from FluentUI icons)
+size?: string | number      # Icon size (default varies)
+class?: string
+style?: string
+
+
+COMMON ICONS:
+Home, Settings, Person, Mail, Calendar, Search, Add, Delete,
+Edit, Save, Close, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
+Check, Warning, Error, Info, Star, Heart, Send, Download, Upload,
+Folder, Document, Image, Video, Music, Link, Copy, Cut, Paste
+
+
+ICON EXAMPLES:
+<Icon name="Home" />
+<Icon name="Settings" size="32" />
+<Icon name="Warning" style="color: var(--warning-foreground-rest);" />
+
+WITH BUTTON:
+<Button appearance="stealth">
+  <Icon name="Settings" />
+</Button>
+
+
+==============================================================================
+DIVIDER
+==============================================================================
+Wraps: <fluent-divider>
+Visual separator line.
+
+USAGE:
+<script>
+  import { Divider } from "svelte-fluentui"
+</script>
+
+<Divider />
+
+PROPS:
+orientation?: "horizontal" | "vertical"
+role?: string               # ARIA role
+class?: string
+style?: string
+
+
+DIVIDER EXAMPLES:
+
+HORIZONTAL (default):
+<Stack orientation="vertical">
+  <p>Section 1</p>
+  <Divider />
+  <p>Section 2</p>
+</Stack>
+
+VERTICAL:
+<Stack orientation="horizontal" align="center">
+  <span>Item 1</span>
+  <Divider orientation="vertical" style="height: 20px;" />
+  <span>Item 2</span>
+</Stack>
+
+
+==============================================================================
+PROGRESS
+==============================================================================
+Wraps: <fluent-progress>
+Progress bar/indicator.
+
+USAGE:
+<script>
+  import { Progress } from "svelte-fluentui"
+</script>
+
+<Progress value={50} max={100} />
+
+PROPS:
+value?: number              # Current value
+max?: number                # Maximum value (default: 100)
+min?: number                # Minimum value (default: 0)
+paused?: boolean            # Pause animation
+class?: string
+style?: string
+
+
+PROGRESS EXAMPLES:
+
+DETERMINATE:
+<Progress value={75} max={100} />
+
+INDETERMINATE (no value):
+<Progress />
+
+WITH LABEL:
+<Stack orientation="vertical" gap="0.5rem">
+  <span>Uploading... 75%</span>
+  <Progress value={75} max={100} />
+</Stack>
+
+
+==============================================================================
+TOOLTIP
+==============================================================================
+Wraps: <fluent-tooltip>
+Hover tooltip for additional information.
+
+USAGE:
+<script>
+  import { Tooltip, Button } from "svelte-fluentui"
+</script>
+
+<Tooltip content="Click to save">
+  <Button>Save</Button>
+</Tooltip>
+
+PROPS:
+content?: string            # Tooltip text
+position?: string           # "top" | "bottom" | "left" | "right"
+delay?: number              # Show delay in ms
+class?: string
+style?: string
+children: SlotType          # Element to attach tooltip to
+
+
+TOOLTIP EXAMPLES:
+
+BASIC:
+<Tooltip content="Settings">
+  <Button appearance="stealth">
+    <Icon name="Settings" />
+  </Button>
+</Tooltip>
+
+POSITIONED:
+<Tooltip content="Delete item" position="bottom">
+  <Button appearance="stealth">
+    <Icon name="Delete" />
+  </Button>
+</Tooltip>
+
+
+==============================================================================
+ALERT
+==============================================================================
+Alert/message display component.
+
+USAGE:
+<script>
+  import { Alert } from "svelte-fluentui"
+</script>
+
+<Alert variant="success">Operation completed successfully!</Alert>
+
+PROPS:
+variant?: "info" | "success" | "warning" | "error"
+dismissible?: boolean       # Show dismiss button
+ondismiss?: () => void
+class?: string
+style?: string
+children: SlotType
+
+
+ALERT EXAMPLES:
+
+INFO:
+<Alert variant="info">
+  Please review the changes before saving.
+</Alert>
+
+SUCCESS:
+<Alert variant="success">
+  Your profile has been updated.
+</Alert>
+
+WARNING:
+<Alert variant="warning">
+  Your session will expire in 5 minutes.
+</Alert>
+
+ERROR:
+<Alert variant="error">
+  Failed to save changes. Please try again.
+</Alert>
+
+DISMISSIBLE:
+<script>
+  let showAlert = $state(true)
+</script>
+
+{#if showAlert}
+  <Alert variant="info" dismissible ondismiss={() => showAlert = false}>
+    This message can be dismissed.
+  </Alert>
+{/if}
+
+
+==============================================================================
+COMMON PATTERNS
+==============================================================================
+
+STATUS BADGE:
+<Badge appearance={status === "active" ? "accent" : "neutral"}>
+  {status}
+</Badge>
+
+NOTIFICATION COUNT:
+<span style="position: relative;">
+  <Icon name="Mail" size="24" />
+  {#if unreadCount > 0}
+    <Badge shape="circular" style="position: absolute; top: -5px; right: -5px;">
+      {unreadCount}
+    </Badge>
+  {/if}
+</span>
+
+STATS CARD:
+<Card>
+  <Stack orientation="vertical" gap="0.5rem">
+    <Stack orientation="horizontal" justify="space-between">
+      <span>Revenue</span>
+      <Icon name="ChartMultiple" />
+    </Stack>
+    <span style="font-size: 2rem; font-weight: 600;">$45,231</span>
+    <Badge appearance="accent">+20.1%</Badge>
+  </Stack>
+</Card>
+
+LOADING OVERLAY:
+<div style="position: relative;">
+  {#if isLoading}
+    <div class="loading-overlay">
+      <Progress />
+      <span>Loading...</span>
+    </div>
+  {/if}
+  <!-- Content -->
+</div>
+
+
+==============================================================================
+STYLING
+==============================================================================
+
+CSS Variables:
+--neutral-layer-1, --neutral-layer-2 - Card backgrounds
+--neutral-stroke-rest - Border colors
+--accent-fill-rest - Accent badge color
+--success-foreground-rest - Success alert
+--warning-foreground-rest - Warning alert
+--error-foreground-rest - Error alert
+
+Card default styles:
+.fluent-card {
+  background: var(--neutral-layer-1);
+  border: 1px solid var(--neutral-stroke-rest);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+
+==============================================================================
+COMMON ISSUES
+==============================================================================
+
+Issue: Icon not found
+Solution: Check icon name matches FluentUI icon library
+
+Issue: Tooltip not showing
+Solution: Ensure child element can receive focus/hover
+
+Issue: Progress not visible
+Solution: Set min-width on progress container
+
+Issue: Badge cut off
+Solution: Ensure parent has overflow: visible

@@ -1,0 +1,350 @@
+THEMING & STYLING
+=================
+
+OVERVIEW
+--------
+FluentUI design tokens, dark/light mode, and CSS customization.
+
+
+==============================================================================
+SETUP
+==============================================================================
+
+Import styles in root layout:
+
+<!-- src/routes/+layout.svelte -->
+<script>
+  import "svelte-fluentui/styles.scss"
+  let { children } = $props()
+</script>
+
+{@render children()}
+
+
+==============================================================================
+DARK MODE
+==============================================================================
+
+SET VIA ATTRIBUTE:
+<script>
+  import { onMount } from "svelte"
+
+  let darkMode = $state(false)
+
+  onMount(() => {
+    // Check system preference
+    darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+    updateTheme()
+  })
+
+  function updateTheme() {
+    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light")
+  }
+
+  function toggleTheme() {
+    darkMode = !darkMode
+    updateTheme()
+  }
+</script>
+
+<Button onclick={toggleTheme}>
+  Toggle Theme
+</Button>
+
+
+USING SETTINGS STORE:
+<script>
+  import { settings } from "svelte-fluentui"
+
+  function setDarkMode() {
+    settings.setThemeMode("dark")
+  }
+
+  function setLightMode() {
+    settings.setThemeMode("light")
+  }
+</script>
+
+
+SYSTEM PREFERENCE:
+<script>
+  import { onMount } from "svelte"
+
+  onMount(() => {
+    // Watch for system theme changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+
+    function handleChange(e: MediaQueryListEvent) {
+      document.documentElement.setAttribute(
+        "data-theme",
+        e.matches ? "dark" : "light"
+      )
+    }
+
+    mediaQuery.addEventListener("change", handleChange)
+
+    // Set initial theme
+    document.documentElement.setAttribute(
+      "data-theme",
+      mediaQuery.matches ? "dark" : "light"
+    )
+
+    return () => mediaQuery.removeEventListener("change", handleChange)
+  })
+</script>
+
+
+==============================================================================
+CSS VARIABLES (Design Tokens)
+==============================================================================
+
+BACKGROUNDS:
+--neutral-layer-1         # Primary background
+--neutral-layer-2         # Secondary background
+--neutral-layer-3         # Tertiary background
+--neutral-layer-4         # Quaternary background
+
+FOREGROUNDS:
+--neutral-foreground-rest # Primary text
+--neutral-foreground-hint # Secondary/muted text
+--neutral-foreground-on-accent  # Text on accent backgrounds
+
+FILLS:
+--neutral-fill-rest       # Button/input background
+--neutral-fill-hover      # Hover state
+--neutral-fill-active     # Active state
+--neutral-fill-input-rest # Input field background
+--neutral-fill-secondary-rest   # Secondary fills
+
+ACCENTS:
+--accent-fill-rest        # Primary accent (buttons, links)
+--accent-fill-hover       # Accent hover
+--accent-fill-active      # Accent active
+--accent-fill-subtle      # Subtle accent
+
+STROKES/BORDERS:
+--neutral-stroke-rest     # Default border
+--neutral-stroke-hover    # Border hover
+--neutral-stroke-layer-rest  # Layer borders
+--neutral-stroke-divider-rest # Dividers
+
+SEMANTIC COLORS:
+--success-foreground-rest # Success text/icons
+--warning-foreground-rest # Warning text/icons
+--error-foreground-rest   # Error text/icons
+
+TYPOGRAPHY:
+--body-font              # Body font family
+--base-height-multiplier # Line height base
+--base-horizontal-spacing-multiplier # Spacing base
+--design-unit            # Base spacing unit
+
+CONTROL:
+--control-corner-radius   # Border radius
+
+
+==============================================================================
+CUSTOMIZING ACCENT COLOR
+==============================================================================
+
+Override accent colors in your CSS:
+
+:root {
+  /* Custom blue accent */
+  --accent-fill-rest: #0078d4;
+  --accent-fill-hover: #106ebe;
+  --accent-fill-active: #005a9e;
+}
+
+/* Or use a completely different color */
+:root {
+  /* Green accent */
+  --accent-fill-rest: #107c10;
+  --accent-fill-hover: #0e6b0e;
+  --accent-fill-active: #0c5a0c;
+}
+
+
+==============================================================================
+COMPONENT-SPECIFIC VARIABLES
+==============================================================================
+
+SIDEBAR:
+--fluent-sidebar-background
+--fluent-sidebar-text
+--fluent-sidebar-padding
+--fluent-sidebar-icon-gap
+--fluent-sidebar-link-padding
+
+NAVBAR:
+--fluent-navbar-background
+--fluent-navbar-text
+--fluent-navbar-border
+--fluent-navbar-icon-gap
+
+HEADER:
+--fluent-header-background
+--fluent-header-text
+--fluent-header-border
+
+FOOTER:
+--fluent-footer-background
+--fluent-footer-text
+--fluent-footer-border
+
+
+==============================================================================
+FLUENT WEB COMPONENT STYLING
+==============================================================================
+
+FluentUI web components use Shadow DOM.
+Use ::part() selectors to override internal styles:
+
+/* Button styling */
+fluent-button::part(control) {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+}
+
+/* TextField styling */
+fluent-text-field::part(control) {
+  border-radius: 8px;
+}
+
+fluent-text-field::part(root) {
+  background: var(--neutral-fill-input-rest);
+}
+
+/* Dialog styling */
+fluent-dialog::part(control) {
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+
+==============================================================================
+CUSTOM THEMES
+==============================================================================
+
+Create custom theme by overriding CSS variables:
+
+/* styles/themes/custom-theme.css */
+[data-theme="custom"] {
+  /* Backgrounds */
+  --neutral-layer-1: #1a1a2e;
+  --neutral-layer-2: #16213e;
+  --neutral-layer-3: #0f3460;
+
+  /* Text */
+  --neutral-foreground-rest: #e4e4e4;
+  --neutral-foreground-hint: #a0a0a0;
+
+  /* Accent */
+  --accent-fill-rest: #e94560;
+  --accent-fill-hover: #d63d56;
+  --accent-fill-active: #c3364c;
+
+  /* Borders */
+  --neutral-stroke-rest: #2a2a4a;
+}
+
+Apply theme:
+document.documentElement.setAttribute("data-theme", "custom")
+
+
+==============================================================================
+TAILWIND CSS INTEGRATION
+==============================================================================
+
+Tailwind works alongside FluentUI styles.
+Use Tailwind utilities for layout and spacing:
+
+<div class="flex items-center gap-4 p-4">
+  <Button appearance="accent">Save</Button>
+  <Button>Cancel</Button>
+</div>
+
+For FluentUI-specific styling, use design tokens:
+<div style="background: var(--neutral-layer-2); padding: 1rem;">
+  Content
+</div>
+
+
+==============================================================================
+SCSS CUSTOMIZATION
+==============================================================================
+
+Import and customize in your SCSS:
+
+/* src/app.scss */
+@use "svelte-fluentui/styles.scss";
+
+/* Override variables */
+:root {
+  --accent-fill-rest: #your-color;
+}
+
+/* Component overrides */
+.fluent-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+==============================================================================
+COMMON PATTERNS
+==============================================================================
+
+THEME TOGGLE BUTTON:
+<script>
+  let darkMode = $state(false)
+
+  function toggleTheme() {
+    darkMode = !darkMode
+    document.documentElement.setAttribute(
+      "data-theme",
+      darkMode ? "dark" : "light"
+    )
+  }
+</script>
+
+<Button appearance="stealth" onclick={toggleTheme}>
+  <Icon name={darkMode ? "WeatherSunny" : "WeatherMoon"} />
+</Button>
+
+
+THEME SELECTOR:
+<script>
+  let theme = $state("light")
+
+  function setTheme(newTheme: string) {
+    theme = newTheme
+    document.documentElement.setAttribute("data-theme", theme)
+  }
+</script>
+
+<Select bind:value={theme} onchange={() => setTheme(theme)}>
+  <Option value="light">Light</Option>
+  <Option value="dark">Dark</Option>
+  <Option value="system">System</Option>
+</Select>
+
+
+==============================================================================
+COMMON ISSUES
+==============================================================================
+
+Issue: Styles not loading
+Solution: Import styles.scss in root layout
+
+Issue: Dark mode not working
+Solution: Set data-theme attribute on document.documentElement
+
+Issue: Component styles not overriding
+Solution: Use ::part() selectors for Shadow DOM components
+
+Issue: Accent color not changing
+Solution: Override --accent-fill-* variables in :root
+
+Issue: Tailwind conflicting
+Solution: FluentUI components use Shadow DOM, conflicts are rare

@@ -1,0 +1,365 @@
+LAYOUT COMPONENTS
+=================
+
+OVERVIEW
+--------
+Custom layout components (not FluentUI wrappers).
+Provide flexbox and grid-based layouts.
+
+
+==============================================================================
+STACK
+==============================================================================
+Flexbox container for vertical/horizontal layouts.
+
+USAGE:
+<script>
+  import { Stack, Button } from "svelte-fluentui"
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <Button>Button 1</Button>
+  <Button>Button 2</Button>
+  <Button>Button 3</Button>
+</Stack>
+
+PROPS:
+orientation: "vertical" | "horizontal"  # Flex direction (default: "vertical")
+gap: string                             # Gap between items (e.g., "1rem", "8px")
+align: string                           # align-items value
+justify: string                         # justify-content value
+wrap: boolean                           # flex-wrap: wrap
+class: string                           # Additional CSS classes
+style: string                           # Inline styles
+children: SlotType                      # Content slot
+
+EXAMPLES:
+
+Horizontal stack with gap:
+<Stack orientation="horizontal" gap="0.5rem">
+  <Button>Save</Button>
+  <Button>Cancel</Button>
+</Stack>
+
+Centered content:
+<Stack align="center" justify="center" style="height: 200px">
+  <p>Centered content</p>
+</Stack>
+
+Wrapping items:
+<Stack orientation="horizontal" gap="1rem" wrap>
+  {#each items as item}
+    <Card>{item.name}</Card>
+  {/each}
+</Stack>
+
+
+==============================================================================
+GRID
+==============================================================================
+Responsive 12-column grid system.
+
+USAGE:
+<script>
+  import { Grid, GridItem } from "svelte-fluentui"
+</script>
+
+<Grid spacing={3}>
+  <GridItem xs={12} md={6} lg={4}>Column 1</GridItem>
+  <GridItem xs={12} md={6} lg={4}>Column 2</GridItem>
+  <GridItem xs={12} md={12} lg={4}>Column 3</GridItem>
+</Grid>
+
+PROPS:
+spacing: number                         # Gap between items (in design units)
+class: string
+style: string
+children: SlotType
+
+
+==============================================================================
+GRIDITEM
+==============================================================================
+Grid column with responsive breakpoints.
+
+PROPS:
+xs: number          # Columns at extra-small (mobile)
+sm: number          # Columns at small (tablet)
+md: number          # Columns at medium
+lg: number          # Columns at large (desktop)
+xl: number          # Columns at extra-large
+span: number        # Default span (all breakpoints)
+class: string
+style: string
+
+Column values: 1-12 (12-column grid)
+
+EXAMPLES:
+
+Two columns on desktop, one on mobile:
+<Grid spacing={3}>
+  <GridItem xs={12} md={6}>Left column</GridItem>
+  <GridItem xs={12} md={6}>Right column</GridItem>
+</Grid>
+
+Three-column layout:
+<Grid spacing={3}>
+  <GridItem xs={12} lg={4}>Col 1</GridItem>
+  <GridItem xs={12} lg={4}>Col 2</GridItem>
+  <GridItem xs={12} lg={4}>Col 3</GridItem>
+</Grid>
+
+Sidebar layout:
+<Grid spacing={3}>
+  <GridItem xs={12} md={3} lg={2}>Sidebar</GridItem>
+  <GridItem xs={12} md={9} lg={10}>Main content</GridItem>
+</Grid>
+
+
+==============================================================================
+LAYOUT
+==============================================================================
+Page layout container with flex direction.
+
+USAGE:
+<script>
+  import { Layout, Header, BodyContent, Footer } from "svelte-fluentui"
+</script>
+
+<Layout orientation="vertical">
+  <Header>Site Header</Header>
+  <BodyContent>Main content</BodyContent>
+  <Footer>Footer</Footer>
+</Layout>
+
+PROPS:
+orientation: "vertical" | "horizontal"  # Default: "vertical"
+class: string
+style: string
+children: SlotType
+
+
+==============================================================================
+HEADER
+==============================================================================
+Page header section.
+
+USAGE:
+<Header class="my-header">
+  <h1>Site Title</h1>
+  <nav>Navigation</nav>
+</Header>
+
+PROPS:
+class: string
+style: string
+children: SlotType
+
+Typically used with CSS for sticky positioning:
+.my-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+
+==============================================================================
+FOOTER
+==============================================================================
+Page footer section.
+
+USAGE:
+<Footer>
+  © 2025 Company Name
+</Footer>
+
+PROPS:
+class: string
+style: string
+children: SlotType
+
+
+==============================================================================
+BODYCONTENT
+==============================================================================
+Main content area, typically scrollable.
+
+USAGE:
+<Layout orientation="vertical" style="min-height: 100vh">
+  <Header>Header</Header>
+  <BodyContent>
+    <!-- Main scrollable content -->
+    <Grid spacing={3}>
+      <GridItem xs={12}>Content here</GridItem>
+    </Grid>
+  </BodyContent>
+  <Footer>Footer</Footer>
+</Layout>
+
+PROPS:
+class: string
+style: string
+children: SlotType
+
+
+==============================================================================
+SPACER
+==============================================================================
+Creates space between elements.
+
+USAGE:
+<Stack orientation="vertical">
+  <h1>Title</h1>
+  <Spacer size="2rem" />
+  <p>Content below with space</p>
+</Stack>
+
+PROPS:
+size: string        # Size of space (e.g., "1rem", "16px")
+class: string
+style: string
+
+Spacer expands to fill available space if no size given:
+<Stack orientation="horizontal">
+  <Button>Left</Button>
+  <Spacer />
+  <Button>Right</Button>
+</Stack>
+
+
+==============================================================================
+COMMON PAGE LAYOUTS
+==============================================================================
+
+BASIC PAGE:
+<Layout orientation="vertical" style="min-height: 100vh">
+  <Header>
+    <Stack orientation="horizontal" justify="space-between" align="center">
+      <h1>App Name</h1>
+      <nav>Nav links</nav>
+    </Stack>
+  </Header>
+
+  <BodyContent>
+    <div class="content-wrapper">
+      <!-- Page content -->
+    </div>
+  </BodyContent>
+
+  <Footer>
+    © 2025 Company
+  </Footer>
+</Layout>
+
+
+SIDEBAR LAYOUT:
+<Layout orientation="vertical" style="min-height: 100vh">
+  <Header>Header</Header>
+
+  <BodyContent>
+    <Grid spacing={0}>
+      <GridItem xs={12} md={3} lg={2}>
+        <aside class="sidebar">
+          <!-- Sidebar content -->
+        </aside>
+      </GridItem>
+      <GridItem xs={12} md={9} lg={10}>
+        <main class="main-content">
+          <!-- Main content -->
+        </main>
+      </GridItem>
+    </Grid>
+  </BodyContent>
+
+  <Footer>Footer</Footer>
+</Layout>
+
+
+DASHBOARD LAYOUT:
+<Layout orientation="vertical">
+  <Header>Dashboard Header</Header>
+
+  <BodyContent>
+    <Grid spacing={3}>
+      <GridItem xs={12} lg={8}>
+        <Card>Main Chart</Card>
+      </GridItem>
+      <GridItem xs={12} lg={4}>
+        <Stack orientation="vertical" gap="1rem">
+          <Card>Stat 1</Card>
+          <Card>Stat 2</Card>
+        </Stack>
+      </GridItem>
+      <GridItem xs={12}>
+        <Card>
+          <QuickGrid items={data} columns={columns} />
+        </Card>
+      </GridItem>
+    </Grid>
+  </BodyContent>
+</Layout>
+
+
+CENTERED CONTENT:
+<Stack align="center" justify="center" style="min-height: 100vh">
+  <Card style="max-width: 400px; width: 100%">
+    <h1>Login</h1>
+    <form>
+      <!-- Form content -->
+    </form>
+  </Card>
+</Stack>
+
+
+==============================================================================
+RESPONSIVE DESIGN
+==============================================================================
+
+BREAKPOINTS (Grid):
+- xs: 0px and up (mobile)
+- sm: 576px and up
+- md: 768px and up (tablet)
+- lg: 992px and up (desktop)
+- xl: 1200px and up
+
+Use GridItem responsive props:
+<GridItem xs={12} sm={6} md={4} lg={3}>
+  <!-- Full width on mobile, half on sm, third on md, quarter on lg -->
+</GridItem>
+
+Stack wrap for responsive:
+<Stack orientation="horizontal" wrap gap="1rem">
+  {#each cards as card}
+    <div style="flex: 1 1 300px; max-width: 400px">
+      <Card>{card.title}</Card>
+    </div>
+  {/each}
+</Stack>
+
+
+==============================================================================
+CSS VARIABLES
+==============================================================================
+
+Layout uses FluentUI design tokens:
+- --design-unit: Base spacing unit
+- --neutral-layer-1: Background color
+- --neutral-layer-2: Secondary background
+- --neutral-stroke-layer-rest: Border color
+
+
+==============================================================================
+COMMON ISSUES
+==============================================================================
+
+Issue: Grid not responsive
+Solution: Use xs, sm, md, lg props on GridItem
+
+Issue: Footer not at bottom
+Solution: Set min-height: 100vh on Layout
+
+Issue: Stack items not aligned
+Solution: Use align and justify props
+
+Issue: Content overflowing
+Solution: Add overflow-x: hidden or use Grid instead of Stack

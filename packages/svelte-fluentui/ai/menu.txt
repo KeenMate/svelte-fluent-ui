@@ -1,0 +1,265 @@
+MENU COMPONENTS
+===============
+
+OVERVIEW
+--------
+Context menu and menu items.
+Wraps: <fluent-menu>, <fluent-menu-item>
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Menu, MenuItem, Button } from "svelte-fluentui"
+</script>
+
+<Button id="menu-trigger">
+  Open Menu
+</Button>
+
+<Menu anchor="menu-trigger">
+  <MenuItem onclick={() => handleNew()}>New</MenuItem>
+  <MenuItem onclick={() => handleOpen()}>Open</MenuItem>
+  <MenuItem onclick={() => handleSave()}>Save</MenuItem>
+</Menu>
+
+
+MENU PROPS
+----------
+anchor?: string             # ID of trigger element
+class?: string
+style?: string
+
+
+MENUITEM PROPS
+--------------
+role?: string               # "menuitem" (default), "menuitemcheckbox", "menuitemradio"
+disabled?: boolean
+checked?: boolean           # For checkbox/radio items
+class?: string
+style?: string
+onclick?: () => void
+children: SlotType
+
+
+CONTEXT MENU (Right-click)
+--------------------------
+<script>
+  let menuOpen = $state(false)
+  let menuPosition = $state({ x: 0, y: 0 })
+
+  function handleContextMenu(e: MouseEvent) {
+    e.preventDefault()
+    menuPosition = { x: e.clientX, y: e.clientY }
+    menuOpen = true
+  }
+</script>
+
+<div oncontextmenu={handleContextMenu}>
+  Right-click anywhere in this area
+</div>
+
+{#if menuOpen}
+  <Menu style="position: fixed; left: {menuPosition.x}px; top: {menuPosition.y}px;">
+    <MenuItem onclick={() => { handleCopy(); menuOpen = false }}>Copy</MenuItem>
+    <MenuItem onclick={() => { handlePaste(); menuOpen = false }}>Paste</MenuItem>
+    <MenuItem onclick={() => { handleDelete(); menuOpen = false }}>Delete</MenuItem>
+  </Menu>
+{/if}
+
+
+CHECKBOX MENU ITEMS
+-------------------
+<script>
+  let showHidden = $state(false)
+  let showExtensions = $state(true)
+</script>
+
+<Menu anchor="view-menu">
+  <MenuItem
+    role="menuitemcheckbox"
+    checked={showHidden}
+    onclick={() => showHidden = !showHidden}
+  >
+    Show Hidden Files
+  </MenuItem>
+  <MenuItem
+    role="menuitemcheckbox"
+    checked={showExtensions}
+    onclick={() => showExtensions = !showExtensions}
+  >
+    Show Extensions
+  </MenuItem>
+</Menu>
+
+
+RADIO MENU ITEMS
+----------------
+<script>
+  let sortBy = $state("name")
+</script>
+
+<Menu anchor="sort-menu">
+  <MenuItem
+    role="menuitemradio"
+    checked={sortBy === "name"}
+    onclick={() => sortBy = "name"}
+  >
+    Sort by Name
+  </MenuItem>
+  <MenuItem
+    role="menuitemradio"
+    checked={sortBy === "date"}
+    onclick={() => sortBy = "date"}
+  >
+    Sort by Date
+  </MenuItem>
+  <MenuItem
+    role="menuitemradio"
+    checked={sortBy === "size"}
+    onclick={() => sortBy = "size"}
+  >
+    Sort by Size
+  </MenuItem>
+</Menu>
+
+
+DISABLED ITEMS
+--------------
+<Menu anchor="edit-menu">
+  <MenuItem onclick={handleUndo}>Undo</MenuItem>
+  <MenuItem onclick={handleRedo} disabled>Redo</MenuItem>
+  <MenuItem onclick={handleCut}>Cut</MenuItem>
+  <MenuItem onclick={handleCopy}>Copy</MenuItem>
+  <MenuItem onclick={handlePaste} disabled={!clipboardHasContent}>Paste</MenuItem>
+</Menu>
+
+
+MENU WITH ICONS
+---------------
+<Menu anchor="file-menu">
+  <MenuItem onclick={handleNew}>
+    <Icon name="Add" slot="start" />
+    New
+  </MenuItem>
+  <MenuItem onclick={handleOpen}>
+    <Icon name="FolderOpen" slot="start" />
+    Open
+  </MenuItem>
+  <MenuItem onclick={handleSave}>
+    <Icon name="Save" slot="start" />
+    Save
+  </MenuItem>
+</Menu>
+
+
+DROPDOWN BUTTON
+---------------
+<script>
+  let menuVisible = $state(false)
+</script>
+
+<Button id="actions-btn" onclick={() => menuVisible = !menuVisible}>
+  Actions
+  <Icon name="ChevronDown" slot="end" />
+</Button>
+
+<Menu anchor="actions-btn">
+  <MenuItem onclick={handleEdit}>Edit</MenuItem>
+  <MenuItem onclick={handleDuplicate}>Duplicate</MenuItem>
+  <MenuItem onclick={handleArchive}>Archive</MenuItem>
+  <MenuItem onclick={handleDelete}>Delete</MenuItem>
+</Menu>
+
+
+SUBMENU PATTERN
+---------------
+Note: For nested menus, create separate Menu components:
+
+<Button id="format-btn">Format</Button>
+<Menu anchor="format-btn">
+  <MenuItem id="text-submenu">Text →</MenuItem>
+  <MenuItem id="paragraph-submenu">Paragraph →</MenuItem>
+</Menu>
+
+<Menu anchor="text-submenu">
+  <MenuItem onclick={handleBold}>Bold</MenuItem>
+  <MenuItem onclick={handleItalic}>Italic</MenuItem>
+</Menu>
+
+
+APPLICATION MENU BAR
+--------------------
+<Stack orientation="horizontal" gap="0">
+  <Button id="file-btn" appearance="stealth">File</Button>
+  <Button id="edit-btn" appearance="stealth">Edit</Button>
+  <Button id="view-btn" appearance="stealth">View</Button>
+  <Button id="help-btn" appearance="stealth">Help</Button>
+</Stack>
+
+<Menu anchor="file-btn">
+  <MenuItem onclick={handleNew}>New</MenuItem>
+  <MenuItem onclick={handleOpen}>Open</MenuItem>
+  <MenuItem onclick={handleSave}>Save</MenuItem>
+  <MenuItem onclick={handleExit}>Exit</MenuItem>
+</Menu>
+
+<Menu anchor="edit-btn">
+  <MenuItem onclick={handleUndo}>Undo</MenuItem>
+  <MenuItem onclick={handleRedo}>Redo</MenuItem>
+  <MenuItem onclick={handleCut}>Cut</MenuItem>
+  <MenuItem onclick={handleCopy}>Copy</MenuItem>
+  <MenuItem onclick={handlePaste}>Paste</MenuItem>
+</Menu>
+
+
+ROW ACTIONS MENU
+----------------
+<QuickGrid items={data} columns={columns}>
+  <!-- In your actions column snippet -->
+  {#snippet actionsCell(row)}
+    <Button id="row-{row.id}-menu" appearance="stealth">
+      <Icon name="MoreVertical" />
+    </Button>
+    <Menu anchor="row-{row.id}-menu">
+      <MenuItem onclick={() => editRow(row)}>Edit</MenuItem>
+      <MenuItem onclick={() => duplicateRow(row)}>Duplicate</MenuItem>
+      <MenuItem onclick={() => deleteRow(row)}>Delete</MenuItem>
+    </Menu>
+  {/snippet}
+</QuickGrid>
+
+
+STYLING
+-------
+Menu uses fluent-menu web component.
+
+Override with ::part():
+fluent-menu::part(menu) {
+  min-width: 200px;
+  padding: 0.5rem;
+}
+
+fluent-menu-item::part(content) {
+  padding: 0.5rem 1rem;
+}
+
+fluent-menu-item:hover {
+  background: var(--neutral-fill-secondary-hover);
+}
+
+
+COMMON ISSUES
+-------------
+
+Issue: Menu not showing
+Solution: Check anchor ID matches trigger element ID
+
+Issue: Menu position wrong
+Solution: For context menus, use fixed positioning with mouse coordinates
+
+Issue: Menu doesn't close
+Solution: Add onclick handlers that close menu after action
+
+Issue: Checkbox not toggling
+Solution: Update state in onclick handler and pass checked prop

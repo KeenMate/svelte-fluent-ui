@@ -1,0 +1,312 @@
+DATEPICKER COMPONENT
+====================
+
+OVERVIEW
+--------
+Date selection field with popup calendar.
+Custom implementation inspired by FluentUI Blazor.
+Combines TextField with Calendar component.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { DatePicker } from "svelte-fluentui"
+  let selectedDate = $state<Date | null>(null)
+</script>
+
+<DatePicker
+  bind:value={selectedDate}
+  placeholder="Select a date"
+/>
+
+
+PROPS
+-----
+value?: Date | null            # Bindable - selected date
+placeholder?: string           # Input placeholder (default: "Select a date")
+disabled?: boolean
+readonly?: boolean
+required?: boolean
+autofocus?: boolean
+label?: string                 # Field label
+appearance?: string            # Input appearance
+culture?: Intl.Locale          # Locale for formatting
+dateFormat?: Intl.DateTimeFormatOptions  # Date display format
+minDate?: Date                 # Minimum selectable date
+maxDate?: Date                 # Maximum selectable date
+class?: string
+style?: string
+
+CALLBACKS:
+onValueChange?: (value: Date | null) => void
+
+
+DEFAULT DATE FORMAT
+-------------------
+{ year: 'numeric', month: 'long', day: 'numeric' }
+
+Examples:
+- en-US: "December 4, 2025"
+- de-DE: "4. Dezember 2025"
+- ja-JP: "2025年12月4日"
+
+
+CUSTOM DATE FORMAT
+------------------
+<DatePicker
+  bind:value={date}
+  dateFormat={{ year: 'numeric', month: '2-digit', day: '2-digit' }}
+/>
+// Shows: "12/04/2025" (en-US)
+
+<DatePicker
+  bind:value={date}
+  dateFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
+/>
+// Shows: "Dec 4, 2025" (en-US)
+
+<DatePicker
+  bind:value={date}
+  dateFormat={{ weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }}
+/>
+// Shows: "Thursday, December 4, 2025"
+
+
+LOCALE/CULTURE
+--------------
+<script>
+  const frenchLocale = new Intl.Locale("fr-FR")
+</script>
+
+<DatePicker
+  bind:value={date}
+  culture={frenchLocale}
+/>
+// Shows: "4 décembre 2025"
+
+
+DATE CONSTRAINTS
+----------------
+
+MINIMUM DATE (no past dates):
+<DatePicker
+  bind:value={date}
+  minDate={new Date()}
+/>
+
+MAXIMUM DATE:
+<DatePicker
+  bind:value={date}
+  maxDate={new Date(2025, 11, 31)}
+/>
+
+DATE RANGE:
+<DatePicker
+  bind:value={date}
+  minDate={new Date(2025, 0, 1)}
+  maxDate={new Date(2025, 11, 31)}
+/>
+
+
+WITH LABEL
+----------
+<DatePicker
+  bind:value={birthDate}
+  label="Date of Birth"
+  required
+/>
+
+Shows label above input with required indicator (*) if required.
+
+
+FORM INTEGRATION
+----------------
+<script>
+  import { DatePicker, TextField, Button, Stack } from "svelte-fluentui"
+
+  let formData = $state({
+    name: "",
+    startDate: null as Date | null,
+    endDate: null as Date | null
+  })
+
+  function handleSubmit() {
+    console.log("Form data:", formData)
+  }
+</script>
+
+<Stack orientation="vertical" gap="1rem">
+  <TextField bind:value={formData.name} placeholder="Project Name" />
+
+  <DatePicker
+    bind:value={formData.startDate}
+    label="Start Date"
+    required
+  />
+
+  <DatePicker
+    bind:value={formData.endDate}
+    label="End Date"
+    minDate={formData.startDate || undefined}
+  />
+
+  <Button appearance="accent" onclick={handleSubmit}>
+    Submit
+  </Button>
+</Stack>
+
+
+CONTROLLED VALUE CHANGE
+-----------------------
+<script>
+  let selectedDate = $state<Date | null>(null)
+
+  function handleDateChange(date: Date | null) {
+    selectedDate = date
+    console.log("Date changed:", date)
+  }
+</script>
+
+<DatePicker
+  value={selectedDate}
+  onValueChange={handleDateChange}
+/>
+
+
+CLEAR BUTTON
+------------
+When a date is selected and the field is not disabled/readonly,
+a clear button (X) appears next to the calendar icon.
+Clicking it clears the selection.
+
+
+CALENDAR ICON
+-------------
+The calendar icon button opens/closes the calendar popup.
+When disabled, the icon is dimmed and non-interactive.
+
+
+POPUP POSITIONING
+-----------------
+Calendar popup automatically positions below the input field.
+Uses PositioningRegion for smart placement.
+
+
+APPEARANCE OPTIONS
+------------------
+<DatePicker bind:value={date} appearance="filled" />
+<DatePicker bind:value={date} appearance="outline" />
+
+
+EXAMPLES
+--------
+
+BIRTHDAY PICKER:
+<DatePicker
+  bind:value={birthday}
+  label="Birthday"
+  maxDate={new Date()}  // No future dates
+  dateFormat={{ year: 'numeric', month: 'long', day: 'numeric' }}
+/>
+
+
+EVENT DATE:
+<DatePicker
+  bind:value={eventDate}
+  label="Event Date"
+  minDate={new Date()}  // Future dates only
+  required
+/>
+
+
+APPOINTMENT SCHEDULER:
+<script>
+  let appointmentDate = $state<Date | null>(null)
+
+  // Only allow weekdays, no past dates
+  function isWeekend(date: Date) {
+    const day = date.getDay()
+    return day === 0 || day === 6
+  }
+</script>
+
+<DatePicker
+  bind:value={appointmentDate}
+  label="Appointment Date"
+  minDate={new Date()}
+/>
+
+
+DATE RANGE (TWO PICKERS):
+<script>
+  let startDate = $state<Date | null>(null)
+  let endDate = $state<Date | null>(null)
+</script>
+
+<Stack orientation="horizontal" gap="1rem">
+  <DatePicker
+    bind:value={startDate}
+    label="From"
+    onValueChange={() => {
+      // Clear end date if it's before start
+      if (endDate && startDate && endDate < startDate) {
+        endDate = null
+      }
+    }}
+  />
+
+  <DatePicker
+    bind:value={endDate}
+    label="To"
+    minDate={startDate || undefined}
+  />
+</Stack>
+
+
+STYLING
+-------
+CSS Classes:
+- .fluent-datepicker - Main container
+- .datepicker-label - Label element
+- .required-indicator - Required asterisk
+- .datepicker-wrapper - Input wrapper
+- .calendar-button - Calendar icon button
+- .clear-button - Clear X button
+
+
+CSS CUSTOMIZATION:
+.fluent-datepicker {
+  /* Custom styles */
+}
+
+.fluent-datepicker .calendar-button:hover {
+  background: var(--neutral-fill-secondary-hover);
+}
+
+
+ACCESSIBILITY
+-------------
+- Label associated with input
+- Calendar button has aria-label="Open calendar"
+- Clear button has aria-label="Clear date"
+- Calendar popup is keyboard navigable
+
+
+COMMON ISSUES
+-------------
+
+Issue: Date not updating
+Solution: Use bind:value or onValueChange callback
+
+Issue: Wrong date format
+Solution: Check dateFormat options and culture prop
+
+Issue: Calendar popup hidden
+Solution: Check z-index of parent containers
+
+Issue: minDate/maxDate not working
+Solution: Ensure dates are Date objects, not strings
+
+Issue: Locale not applying
+Solution: Pass Intl.Locale instance to culture prop

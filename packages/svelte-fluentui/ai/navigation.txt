@@ -1,0 +1,311 @@
+NAVIGATION COMPONENTS
+=====================
+
+OVERVIEW
+--------
+Custom navigation components for sidebars and app bars.
+Not FluentUI wrappers - built from scratch with FluentUI styling.
+
+
+==============================================================================
+NAVMENU
+==============================================================================
+Sidebar navigation menu container.
+
+USAGE:
+<script>
+  import { NavMenu, NavGroup, NavLinkItem } from "svelte-fluentui"
+  let collapsed = $state(false)
+</script>
+
+<NavMenu bind:collapsed collapsible width="250px">
+  <NavGroup title="Main">
+    <NavLinkItem href="/" icon="Home">Home</NavLinkItem>
+    <NavLinkItem href="/dashboard" icon="Chart">Dashboard</NavLinkItem>
+  </NavGroup>
+</NavMenu>
+
+PROPS:
+width?: string              # Menu width (default: "100%")
+collapsed?: boolean         # Bindable - collapsed state
+collapsible?: boolean       # Show collapse toggle
+class?: string
+
+
+==============================================================================
+NAVGROUP
+==============================================================================
+Groups navigation items with optional title.
+
+USAGE:
+<NavGroup title="Settings">
+  <NavLinkItem href="/settings/general">General</NavLinkItem>
+  <NavLinkItem href="/settings/account">Account</NavLinkItem>
+</NavGroup>
+
+PROPS:
+title?: string              # Group title
+expanded?: boolean          # Expanded state (default: true)
+class?: string
+
+
+==============================================================================
+NAVLINKITEM
+==============================================================================
+Navigation link with icon support.
+
+USAGE:
+<NavLinkItem href="/dashboard" icon="Chart" active>
+  Dashboard
+</NavLinkItem>
+
+PROPS:
+href?: string               # Link URL
+icon?: string               # Icon name
+active?: boolean            # Active/selected state
+disabled?: boolean
+onclick?: (e: MouseEvent) => void
+class?: string
+children: SlotType          # Link text
+
+
+==============================================================================
+NAVITEM
+==============================================================================
+Generic navigation item (non-link).
+
+USAGE:
+<NavItem icon="Settings" onclick={openSettings}>
+  Settings
+</NavItem>
+
+PROPS:
+icon?: string
+onclick?: (e: MouseEvent) => void
+class?: string
+children: SlotType
+
+
+==============================================================================
+APPBAR
+==============================================================================
+Application header bar.
+
+USAGE:
+<script>
+  import { AppBar } from "svelte-fluentui"
+</script>
+
+<AppBar>
+  {#snippet start()}
+    <Button appearance="stealth" onclick={toggleMenu}>
+      <Icon name="Navigation" />
+    </Button>
+    <h1>App Name</h1>
+  {/snippet}
+
+  {#snippet end()}
+    <Button appearance="stealth">
+      <Icon name="Settings" />
+    </Button>
+  {/snippet}
+</AppBar>
+
+SLOTS:
+start: SlotType             # Left side content
+end: SlotType               # Right side content
+children: SlotType          # Center content
+
+PROPS:
+class?: string
+style?: string
+
+
+==============================================================================
+BREADCRUMB
+==============================================================================
+Breadcrumb navigation (wraps fluent-breadcrumb).
+
+USAGE:
+<script>
+  import { Breadcrumb, BreadcrumbItem } from "svelte-fluentui"
+</script>
+
+<Breadcrumb>
+  <BreadcrumbItem href="/">Home</BreadcrumbItem>
+  <BreadcrumbItem href="/products">Products</BreadcrumbItem>
+  <BreadcrumbItem>Electronics</BreadcrumbItem>
+</Breadcrumb>
+
+BREADCRUMBITEM PROPS:
+href?: string               # Link URL (last item typically has no href)
+class?: string
+children: SlotType          # Item text
+
+
+==============================================================================
+EXAMPLES
+==============================================================================
+
+SIDEBAR WITH GROUPS:
+<NavMenu width="240px">
+  <NavGroup title="Main">
+    <NavLinkItem href="/" icon="Home">Home</NavLinkItem>
+    <NavLinkItem href="/inbox" icon="Mail">
+      Inbox
+      <Badge>12</Badge>
+    </NavLinkItem>
+  </NavGroup>
+
+  <NavGroup title="Admin">
+    <NavLinkItem href="/users" icon="People">Users</NavLinkItem>
+    <NavLinkItem href="/settings" icon="Settings">Settings</NavLinkItem>
+  </NavGroup>
+</NavMenu>
+
+
+COLLAPSIBLE SIDEBAR:
+<script>
+  let sidebarCollapsed = $state(false)
+</script>
+
+<NavMenu
+  bind:collapsed={sidebarCollapsed}
+  collapsible
+  width="250px"
+>
+  <NavLinkItem href="/" icon="Home">Home</NavLinkItem>
+  <NavLinkItem href="/dashboard" icon="Chart">Dashboard</NavLinkItem>
+</NavMenu>
+
+When collapsed, only icons are visible (40px width).
+
+
+ACTIVE LINK:
+<script>
+  import { page } from "$app/stores"
+</script>
+
+<NavMenu>
+  <NavLinkItem
+    href="/dashboard"
+    icon="Chart"
+    active={$page.url.pathname === "/dashboard"}
+  >
+    Dashboard
+  </NavLinkItem>
+</NavMenu>
+
+
+APP HEADER:
+<AppBar>
+  {#snippet start()}
+    <Button appearance="stealth" onclick={() => menuOpen = !menuOpen}>
+      <Icon name="Navigation" />
+    </Button>
+    <img src="/logo.svg" alt="Logo" style="height: 32px" />
+    <span class="app-title">My Application</span>
+  {/snippet}
+
+  {#snippet end()}
+    <Search bind:value={searchQuery} placeholder="Search..." />
+    <Button appearance="stealth">
+      <Icon name="Ringer" />
+    </Button>
+    <Button appearance="stealth">
+      <Icon name="Person" />
+    </Button>
+  {/snippet}
+</AppBar>
+
+
+FULL PAGE LAYOUT:
+<Layout orientation="vertical" style="min-height: 100vh">
+  <AppBar>
+    {#snippet start()}
+      <Button onclick={() => collapsed = !collapsed}>
+        <Icon name="Navigation" />
+      </Button>
+      <h1>App Name</h1>
+    {/snippet}
+  </AppBar>
+
+  <BodyContent>
+    <Grid spacing={0}>
+      <GridItem xs={collapsed ? 1 : 3} lg={collapsed ? 1 : 2}>
+        <NavMenu bind:collapsed collapsible width="100%">
+          <NavGroup title="Menu">
+            <NavLinkItem href="/" icon="Home">Home</NavLinkItem>
+            <NavLinkItem href="/about" icon="Info">About</NavLinkItem>
+          </NavGroup>
+        </NavMenu>
+      </GridItem>
+
+      <GridItem xs={collapsed ? 11 : 9} lg={collapsed ? 11 : 10}>
+        <main>
+          <!-- Page content -->
+        </main>
+      </GridItem>
+    </Grid>
+  </BodyContent>
+</Layout>
+
+
+BREADCRUMB NAVIGATION:
+<script>
+  const crumbs = [
+    { href: "/", label: "Home" },
+    { href: "/products", label: "Products" },
+    { href: "/products/electronics", label: "Electronics" },
+    { label: "Laptops" }  // Current page, no href
+  ]
+</script>
+
+<Breadcrumb>
+  {#each crumbs as crumb, i}
+    <BreadcrumbItem href={crumb.href}>
+      {crumb.label}
+    </BreadcrumbItem>
+  {/each}
+</Breadcrumb>
+
+
+==============================================================================
+STYLING
+==============================================================================
+
+CSS Variables:
+--fluent-sidebar-background
+--fluent-sidebar-text
+--fluent-sidebar-padding
+--fluent-sidebar-icon-gap
+--fluent-sidebar-link-padding
+--fluent-navbar-background
+--fluent-navbar-text
+--fluent-navbar-border
+--fluent-navbar-icon-gap
+
+CSS Classes:
+- .fluent-nav-menu - Menu container
+- .fluent-nav-menu.collapsed - Collapsed state
+- .fluent-nav-group - Group container
+- .fluent-nav-link-item - Link item
+- .fluent-nav-link-item.active - Active link
+- .fluent-app-bar - App bar container
+
+
+==============================================================================
+COMMON ISSUES
+==============================================================================
+
+Issue: Sidebar not collapsing
+Solution: Bind to collapsed prop and add collapsible
+
+Issue: Active state not showing
+Solution: Set active prop based on current route
+
+Issue: Icons not showing in collapsed mode
+Solution: Icons are preserved, text hides automatically
+
+Issue: Sidebar overflow
+Solution: NavMenu has overflow: auto by default

@@ -1,0 +1,325 @@
+TREE COMPONENTS
+===============
+
+OVERVIEW
+--------
+Hierarchical tree view with expandable nodes.
+Wraps: <fluent-tree-view>, <fluent-tree-item>
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Tree, TreeItem } from "svelte-fluentui"
+</script>
+
+<Tree>
+  <TreeItem>
+    Documents
+    <TreeItem>Work</TreeItem>
+    <TreeItem>Personal</TreeItem>
+  </TreeItem>
+
+  <TreeItem>
+    Pictures
+    <TreeItem>Vacation</TreeItem>
+    <TreeItem>Family</TreeItem>
+  </TreeItem>
+</Tree>
+
+
+TREE PROPS
+----------
+renderCollapsedNodes?: boolean  # Render collapsed content in DOM
+class?: string
+style?: string
+
+
+TREEITEM PROPS
+--------------
+expanded?: boolean          # Initially expanded
+selected?: boolean          # Selected state
+disabled?: boolean
+class?: string
+style?: string
+children: SlotType          # Item content and nested items
+
+
+EXPANDED BY DEFAULT
+-------------------
+<Tree>
+  <TreeItem expanded>
+    Documents
+    <TreeItem>Work</TreeItem>
+    <TreeItem>Personal</TreeItem>
+  </TreeItem>
+</Tree>
+
+
+SELECTED ITEM
+-------------
+<script>
+  let selectedPath = $state("")
+</script>
+
+<Tree>
+  <TreeItem
+    selected={selectedPath === "/documents"}
+    onclick={() => selectedPath = "/documents"}
+  >
+    Documents
+  </TreeItem>
+  <TreeItem
+    selected={selectedPath === "/pictures"}
+    onclick={() => selectedPath = "/pictures"}
+  >
+    Pictures
+  </TreeItem>
+</Tree>
+
+
+FILE TREE
+---------
+<script>
+  const files = [
+    {
+      name: "src",
+      type: "folder",
+      children: [
+        { name: "index.ts", type: "file" },
+        { name: "App.svelte", type: "file" },
+        {
+          name: "components",
+          type: "folder",
+          children: [
+            { name: "Button.svelte", type: "file" },
+            { name: "Dialog.svelte", type: "file" }
+          ]
+        }
+      ]
+    },
+    { name: "package.json", type: "file" },
+    { name: "README.md", type: "file" }
+  ]
+</script>
+
+{#snippet renderTree(items)}
+  {#each items as item}
+    <TreeItem expanded={item.type === "folder"}>
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Icon name={item.type === "folder" ? "Folder" : "Document"} />
+        {item.name}
+      </Stack>
+      {#if item.children}
+        {@render renderTree(item.children)}
+      {/if}
+    </TreeItem>
+  {/each}
+{/snippet}
+
+<Tree>
+  {@render renderTree(files)}
+</Tree>
+
+
+NAVIGATION TREE
+---------------
+<script>
+  function navigateTo(path: string) {
+    goto(path)
+  }
+</script>
+
+<Tree>
+  <TreeItem expanded>
+    <Stack orientation="horizontal" gap="0.5rem" align="center">
+      <Icon name="Home" />
+      Dashboard
+    </Stack>
+  </TreeItem>
+
+  <TreeItem expanded>
+    <Stack orientation="horizontal" gap="0.5rem" align="center">
+      <Icon name="People" />
+      Users
+    </Stack>
+    <TreeItem onclick={() => navigateTo("/users/list")}>
+      User List
+    </TreeItem>
+    <TreeItem onclick={() => navigateTo("/users/add")}>
+      Add User
+    </TreeItem>
+    <TreeItem onclick={() => navigateTo("/users/roles")}>
+      Roles
+    </TreeItem>
+  </TreeItem>
+
+  <TreeItem>
+    <Stack orientation="horizontal" gap="0.5rem" align="center">
+      <Icon name="Settings" />
+      Settings
+    </Stack>
+    <TreeItem onclick={() => navigateTo("/settings/general")}>
+      General
+    </TreeItem>
+    <TreeItem onclick={() => navigateTo("/settings/security")}>
+      Security
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+
+DISABLED ITEMS
+--------------
+<Tree>
+  <TreeItem>Available Section</TreeItem>
+  <TreeItem disabled>Locked Section</TreeItem>
+  <TreeItem>Another Section</TreeItem>
+</Tree>
+
+
+CHECKBOX TREE
+-------------
+<script>
+  let checkedItems = $state<Set<string>>(new Set())
+
+  function toggleItem(id: string) {
+    if (checkedItems.has(id)) {
+      checkedItems.delete(id)
+    } else {
+      checkedItems.add(id)
+    }
+    checkedItems = new Set(checkedItems)
+  }
+</script>
+
+<Tree>
+  <TreeItem expanded>
+    <Stack orientation="horizontal" gap="0.5rem" align="center">
+      <Checkbox
+        checked={checkedItems.has("docs")}
+        onclick={() => toggleItem("docs")}
+      />
+      Documents
+    </Stack>
+    <TreeItem>
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Checkbox
+          checked={checkedItems.has("docs-work")}
+          onclick={() => toggleItem("docs-work")}
+        />
+        Work
+      </Stack>
+    </TreeItem>
+    <TreeItem>
+      <Stack orientation="horizontal" gap="0.5rem" align="center">
+        <Checkbox
+          checked={checkedItems.has("docs-personal")}
+          onclick={() => toggleItem("docs-personal")}
+        />
+        Personal
+      </Stack>
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+
+DYNAMIC TREE
+------------
+<script>
+  let treeData = $state([
+    { id: "1", name: "Root", children: [
+      { id: "1-1", name: "Child 1" },
+      { id: "1-2", name: "Child 2" }
+    ]}
+  ])
+
+  function addChild(parentId: string) {
+    // Add child logic
+  }
+</script>
+
+{#snippet renderNode(node)}
+  <TreeItem>
+    <Stack orientation="horizontal" gap="0.5rem" align="center">
+      {node.name}
+      <Button appearance="stealth" onclick={() => addChild(node.id)}>
+        <Icon name="Add" size="12" />
+      </Button>
+    </Stack>
+    {#if node.children}
+      {#each node.children as child}
+        {@render renderNode(child)}
+      {/each}
+    {/if}
+  </TreeItem>
+{/snippet}
+
+<Tree>
+  {#each treeData as node}
+    {@render renderNode(node)}
+  {/each}
+</Tree>
+
+
+CATEGORY FILTER
+---------------
+<Tree>
+  <TreeItem expanded>
+    Categories
+    <TreeItem>
+      <Checkbox bind:checked={filters.electronics} />
+      Electronics
+      <TreeItem>
+        <Checkbox bind:checked={filters.phones} />
+        Phones
+      </TreeItem>
+      <TreeItem>
+        <Checkbox bind:checked={filters.computers} />
+        Computers
+      </TreeItem>
+    </TreeItem>
+    <TreeItem>
+      <Checkbox bind:checked={filters.clothing} />
+      Clothing
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+
+STYLING
+-------
+Tree uses fluent-tree-view web component.
+
+Override with ::part():
+fluent-tree-view::part(tree) {
+  padding: 0.5rem;
+}
+
+fluent-tree-item::part(content) {
+  padding: 0.5rem 1rem;
+}
+
+fluent-tree-item:hover {
+  background: var(--neutral-fill-secondary-hover);
+}
+
+fluent-tree-item[selected] {
+  background: var(--neutral-fill-secondary-rest);
+}
+
+
+COMMON ISSUES
+-------------
+
+Issue: Nested items not showing
+Solution: Place child TreeItems inside parent TreeItem
+
+Issue: Item not expanding
+Solution: Add expanded prop or click expand icon
+
+Issue: Selected state not visible
+Solution: Add selected prop and onclick handler
+
+Issue: Tree too deep
+Solution: Consider virtualization or lazy loading

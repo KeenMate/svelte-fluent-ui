@@ -1,0 +1,276 @@
+DIALOG COMPONENT
+================
+
+OVERVIEW
+--------
+Modal dialog component wrapping <fluent-dialog>.
+Provides overlays, size presets, and keyboard handling.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Dialog, Button } from "svelte-fluentui"
+  let dialogOpen = $state(false)
+</script>
+
+<Button onclick={() => dialogOpen = true}>Open Dialog</Button>
+
+<Dialog bind:visible={dialogOpen} modal>
+  <h2>Dialog Title</h2>
+  <p>Dialog content goes here.</p>
+</Dialog>
+
+
+PROPS
+-----
+visible: boolean           # Bindable - controls open/close state
+modal: boolean             # Modal mode (blocks background)
+preventClose: boolean      # Hide close button
+dismissable: boolean       # Show dismiss button in footer
+trapFocus: boolean         # Trap focus within dialog
+closeOnEscape: boolean     # Close on Escape key (default: true)
+size: string               # Preset size (see below)
+width: string              # Custom width (overrides size)
+height: string             # Custom height (overrides size)
+style: string              # Additional styles
+ariaLabel: string          # Accessibility label
+ariaLabelledby: string     # ID of labelling element
+ariaDescribedby: string    # ID of describing element
+dismissButtonText: SlotType # Custom dismiss button text
+
+SIZE PRESETS:
+- "small"       - 400px width
+- "medium"      - 600px width (default)
+- "large"       - 800px width
+- "extra-large" - 1000px width
+- "full"        - 90vw x 90vh
+
+SLOTS:
+children: SlotType         # Main dialog content
+actions: SlotType          # Footer action buttons
+dismissButtonText: SlotType # Custom dismiss button text
+
+CALLBACKS:
+onClose: () => void        # Called when dialog closes
+onbeforeclose: () => boolean | void  # Return false to prevent close
+
+
+METHODS (via bind:this)
+-----------------------
+show()   - Open dialog
+hide()   - Close dialog
+toggle() - Toggle open/close
+
+
+EXAMPLES
+--------
+
+SIMPLE MODAL:
+<Dialog bind:visible={open} modal>
+  <h2>Confirm Action</h2>
+  <p>Are you sure you want to proceed?</p>
+</Dialog>
+
+
+WITH ACTIONS:
+<Dialog bind:visible={open} modal>
+  <h2>Save Changes?</h2>
+  <p>You have unsaved changes.</p>
+
+  {#snippet actions()}
+    <Button appearance="accent" onclick={save}>Save</Button>
+    <Button onclick={() => open = false}>Cancel</Button>
+  {/snippet}
+</Dialog>
+
+
+DISMISSABLE:
+<Dialog bind:visible={open} modal dismissable>
+  <h2>Information</h2>
+  <p>This dialog has a dismiss button.</p>
+</Dialog>
+
+
+CUSTOM DISMISS TEXT:
+<Dialog bind:visible={open} modal dismissable>
+  <h2>Information</h2>
+  <p>Close me!</p>
+
+  {#snippet dismissButtonText()}
+    Close Window
+  {/snippet}
+</Dialog>
+
+
+PREVENT CLOSE (No X button):
+<Dialog bind:visible={open} modal preventClose>
+  <h2>Processing...</h2>
+  <p>Please wait while we process your request.</p>
+</Dialog>
+
+
+BEFORE CLOSE VALIDATION:
+<script>
+  let formDirty = $state(false)
+  let dialogOpen = $state(false)
+
+  function handleBeforeClose() {
+    if (formDirty) {
+      return confirm("Discard changes?")
+    }
+    return true
+  }
+</script>
+
+<Dialog
+  bind:visible={dialogOpen}
+  modal
+  onbeforeclose={handleBeforeClose}
+>
+  <!-- Form content -->
+</Dialog>
+
+
+CUSTOM SIZE:
+<Dialog
+  bind:visible={open}
+  modal
+  width="80vw"
+  height="70vh"
+>
+  <h2>Large Custom Dialog</h2>
+</Dialog>
+
+
+PROGRAMMATIC CONTROL:
+<script>
+  let dialogRef: Dialog
+</script>
+
+<Button onclick={() => dialogRef.show()}>Open</Button>
+
+<Dialog bind:this={dialogRef} modal>
+  <h2>Controlled Dialog</h2>
+  <Button onclick={() => dialogRef.hide()}>Close</Button>
+</Dialog>
+
+
+FORM IN DIALOG:
+<script>
+  import { Dialog, TextField, Button, Stack } from "svelte-fluentui"
+
+  let dialogOpen = $state(false)
+  let formData = $state({ name: "", email: "" })
+
+  function handleSubmit() {
+    console.log("Submitted:", formData)
+    dialogOpen = false
+  }
+</script>
+
+<Dialog bind:visible={dialogOpen} modal size="small">
+  <h2>Contact Form</h2>
+
+  <Stack orientation="vertical" gap="1rem">
+    <TextField bind:value={formData.name} placeholder="Name" />
+    <TextField bind:value={formData.email} placeholder="Email" />
+  </Stack>
+
+  {#snippet actions()}
+    <Button appearance="accent" onclick={handleSubmit}>Submit</Button>
+    <Button onclick={() => dialogOpen = false}>Cancel</Button>
+  {/snippet}
+</Dialog>
+
+
+CONFIRMATION DIALOG PATTERN:
+<script>
+  let confirmOpen = $state(false)
+  let itemToDelete = $state(null)
+
+  function requestDelete(item) {
+    itemToDelete = item
+    confirmOpen = true
+  }
+
+  function confirmDelete() {
+    // Perform deletion
+    deleteItem(itemToDelete)
+    confirmOpen = false
+    itemToDelete = null
+  }
+</script>
+
+<Dialog bind:visible={confirmOpen} modal size="small">
+  <h2>Confirm Delete</h2>
+  <p>Delete "{itemToDelete?.name}"? This cannot be undone.</p>
+
+  {#snippet actions()}
+    <Button appearance="accent" onclick={confirmDelete}>Delete</Button>
+    <Button onclick={() => confirmOpen = false}>Cancel</Button>
+  {/snippet}
+</Dialog>
+
+
+Z-INDEX & STACKING
+------------------
+Dialog uses fluent-dialog which manages z-index internally.
+The dialog appears above other content by default.
+
+For nested dialogs or complex z-index scenarios:
+- Each dialog stacks properly by default
+- Use style prop for custom z-index if needed
+
+<Dialog bind:visible={open} modal style="z-index: 2000;">
+  <!-- Content -->
+</Dialog>
+
+
+KEYBOARD HANDLING
+-----------------
+- Escape: Closes dialog (unless preventClose or closeOnEscape=false)
+- Tab: Cycles through focusable elements (if trapFocus=true)
+- Focus automatically moves into dialog when opened
+
+
+ACCESSIBILITY
+-------------
+- Use ariaLabel or ariaLabelledby for dialog title
+- Use ariaDescribedby for dialog description
+- Dialog traps focus when trapFocus is enabled
+- Close button has aria-label="Close dialog"
+
+
+CSS CUSTOMIZATION
+-----------------
+Dialog uses fluent-dialog web component.
+
+Override with ::part() selectors:
+fluent-dialog::part(control) {
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+CSS Variables:
+--dialog-width   - Set by size prop
+--dialog-height  - Set by size prop
+
+
+COMMON ISSUES
+-------------
+
+Issue: Dialog behind other elements
+Solution: Check z-index of parent containers, use style prop if needed
+
+Issue: Cannot close dialog
+Solution: Check preventClose prop, verify onbeforeclose doesn't return false
+
+Issue: Focus not trapped
+Solution: Add trapFocus prop
+
+Issue: Escape key not working
+Solution: Check closeOnEscape prop (default true)
+
+Issue: Dialog closes immediately
+Solution: Don't set visible=false in same handler that opens it

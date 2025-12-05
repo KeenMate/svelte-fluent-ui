@@ -1,0 +1,352 @@
+CALENDAR COMPONENT
+==================
+
+OVERVIEW
+--------
+Custom calendar component for date display and selection.
+Built from scratch with FluentUI styling.
+Supports single, multiple, and range date selection.
+
+
+BASIC USAGE
+-----------
+<script>
+  import { Calendar } from "svelte-fluentui"
+  let selectedDate = $state(new Date())
+</script>
+
+<Calendar
+  value={selectedDate}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+
+PROPS
+-----
+value?: Date                    # Selected date
+selectedDates?: Date[]          # Array for multiple selection
+pickerMonth?: Date              # Bindable - controls displayed month
+view?: CalendarView             # "days" | "months" | "years"
+selectMode?: CalendarSelectMode # "single" | "multiple" | "range"
+culture?: Intl.Locale           # Locale for formatting
+dayFormat?: DayFormat           # Day number format
+readonly?: boolean              # Disable selection
+animatePeriodChanges?: boolean  # Animate month/year changes
+disabledDateFunc?: (date: Date) => boolean  # Disable specific dates
+disabledSelectable?: boolean    # Allow selecting disabled dates
+disabledCheckAllDaysOfMonthYear?: boolean
+checkIfSelectedValueHasChanged?: boolean
+selectDatesHover?: (date: Date) => Date[]  # Preview dates on hover
+
+CALLBACKS:
+onDateSelected?: (date: Date) => void      # Single date selected
+onDatesSelected?: (dates: Date[]) => void  # Multiple dates selected
+
+SLOTS:
+day?: SlotType                  # Custom day rendering
+
+
+CALENDAR VIEWS
+--------------
+view="days"    - Day grid (default)
+view="months"  - Month selector
+view="years"   - Year selector
+
+
+SELECT MODES
+------------
+
+SINGLE (default):
+<Calendar
+  value={selectedDate}
+  selectMode="single"
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+MULTIPLE:
+<script>
+  let selectedDates = $state<Date[]>([])
+</script>
+
+<Calendar
+  selectedDates={selectedDates}
+  selectMode="multiple"
+  onDatesSelected={(dates) => selectedDates = dates}
+/>
+
+RANGE:
+<script>
+  let dateRange = $state<Date[]>([])
+</script>
+
+<Calendar
+  selectedDates={dateRange}
+  selectMode="range"
+  onDatesSelected={(dates) => dateRange = dates}
+/>
+
+
+DISABLING DATES
+---------------
+
+Disable past dates:
+<Calendar
+  value={selectedDate}
+  disabledDateFunc={(date) => date < new Date()}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+Disable weekends:
+<Calendar
+  value={selectedDate}
+  disabledDateFunc={(date) => {
+    const day = date.getDay()
+    return day === 0 || day === 6
+  }}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+Disable specific dates:
+const blockedDates = [
+  new Date(2025, 0, 1),  // Jan 1
+  new Date(2025, 11, 25) // Dec 25
+]
+
+<Calendar
+  disabledDateFunc={(date) =>
+    blockedDates.some(d =>
+      d.getFullYear() === date.getFullYear() &&
+      d.getMonth() === date.getMonth() &&
+      d.getDate() === date.getDate()
+    )
+  }
+/>
+
+
+LOCALE/CULTURE
+--------------
+<script>
+  const germanLocale = new Intl.Locale("de-DE")
+</script>
+
+<Calendar
+  value={selectedDate}
+  culture={germanLocale}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+Defaults to browser locale (window.navigator.language).
+
+
+CONTROLLED MONTH
+----------------
+<script>
+  let displayMonth = $state(new Date())
+</script>
+
+<Calendar
+  value={selectedDate}
+  bind:pickerMonth={displayMonth}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+<button onclick={() => displayMonth = new Date()}>
+  Go to Today
+</button>
+
+
+CUSTOM DAY RENDERING
+--------------------
+Use the day snippet for custom day cells:
+
+{#snippet dayTemplate(dayProps)}
+  <div class="custom-day">
+    {dayProps.dayNumber}
+    {#if hasEvent(dayProps.date)}
+      <span class="event-dot"></span>
+    {/if}
+  </div>
+{/snippet}
+
+<Calendar
+  value={selectedDate}
+  day={dayTemplate}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+
+DAY PROPERTIES (dayProps):
+- dayNumber: number       # Day of month (1-31)
+- dayIdentifier: string   # Unique day ID
+- title: string          # Accessibility title
+- isToday: boolean       # Is current day
+- isSelected: boolean    # Is selected
+- isDisabled: boolean    # Is disabled
+- isInactive: boolean    # Is outside current month
+- isMultiDaySelected: boolean  # Part of multi-selection
+
+
+RANGE SELECTION WITH HOVER PREVIEW
+----------------------------------
+<script>
+  let selectedRange = $state<Date[]>([])
+
+  function getWeekDates(date: Date): Date[] {
+    const start = new Date(date)
+    start.setDate(start.getDate() - start.getDay())
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(start)
+      d.setDate(start.getDate() + i)
+      return d
+    })
+  }
+</script>
+
+<Calendar
+  selectedDates={selectedRange}
+  selectMode="multiple"
+  selectDatesHover={getWeekDates}
+  onDatesSelected={(dates) => selectedRange = dates}
+/>
+
+
+MONTH PICKER
+------------
+<Calendar
+  view="months"
+  value={selectedDate}
+  onDateSelected={(date) => {
+    // date is first day of selected month
+    selectedDate = date
+  }}
+/>
+
+
+YEAR PICKER
+-----------
+<Calendar
+  view="years"
+  value={selectedDate}
+  onDateSelected={(date) => {
+    // date is Jan 1 of selected year
+    selectedDate = date
+  }}
+/>
+
+
+ANIMATION
+---------
+Enable period change animation:
+
+<Calendar
+  value={selectedDate}
+  animatePeriodChanges
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+Animation works best with months and years views.
+
+
+STYLING
+-------
+CSS Classes:
+- .fluent-calendar - Main container
+- .fluent-month - Month view
+- .fluent-year - Year view
+- .title - Month/year header
+- .label - Current period label
+- .previous, .next - Navigation buttons
+- .days - Day grid container
+- .week-days - Weekday header row
+- .week-day - Individual weekday label
+- .week - Week row
+- .day - Individual day cell
+
+Day Attributes (for styling):
+[today] - Current day
+[selected] - Selected day
+[disabled] - Disabled day
+[inactive] - Day outside current month
+[multi-day] - Part of multi-selection
+[multi-day-over] - Hover preview
+[multi-start] - Start of range
+[multi-end] - End of range
+
+
+CUSTOM STYLING:
+.fluent-calendar .day[today] {
+  font-weight: bold;
+  border: 2px solid var(--accent-fill-rest);
+}
+
+.fluent-calendar .day[selected] {
+  background: var(--accent-fill-rest);
+  color: var(--neutral-foreground-on-accent);
+}
+
+
+COMMON PATTERNS
+---------------
+
+BOOKING CALENDAR:
+<script>
+  let bookedDates = $state([/* array of booked dates */])
+  let selectedDate = $state<Date | null>(null)
+
+  function isBooked(date: Date) {
+    return bookedDates.some(d =>
+      d.toDateString() === date.toDateString()
+    )
+  }
+</script>
+
+<Calendar
+  value={selectedDate}
+  disabledDateFunc={isBooked}
+  onDateSelected={(date) => selectedDate = date}
+/>
+
+{#snippet dayTemplate(props)}
+  <div class:booked={isBooked(props.date)}>
+    {props.dayNumber}
+  </div>
+{/snippet}
+
+
+DATE RANGE PICKER:
+<script>
+  let startDate = $state<Date | null>(null)
+  let endDate = $state<Date | null>(null)
+  let rangeDates = $state<Date[]>([])
+</script>
+
+<Calendar
+  selectedDates={rangeDates}
+  selectMode="range"
+  onDatesSelected={(dates) => {
+    rangeDates = dates
+    if (dates.length >= 2) {
+      startDate = dates[0]
+      endDate = dates[dates.length - 1]
+    }
+  }}
+/>
+
+
+COMMON ISSUES
+-------------
+
+Issue: Dates not updating
+Solution: Use callback handlers, not direct binding
+
+Issue: Wrong locale
+Solution: Pass Intl.Locale to culture prop
+
+Issue: Month not changing
+Solution: Bind to pickerMonth for two-way updates
+
+Issue: Disabled dates still selectable
+Solution: Check disabledDateFunc return value
+
+Issue: Range selection not working
+Solution: Set selectMode="range" and use onDatesSelected
