@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button} from "svelte-fluentui"
+	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button, Select, Option} from "svelte-fluentui"
 
 	type Person = {
 		id: number
@@ -533,8 +533,19 @@
 		{id: 3, name: "Item Three", value: 300}
 	])
 
+	// Separate data for the second row actions example
+	let rowActionsData2: SimpleItem[] = $state([
+		{id: 1, name: "Alpha", value: 10},
+		{id: 2, name: "Beta", value: 20},
+		{id: 3, name: "Gamma", value: 30},
+		{id: 4, name: "Delta", value: 40},
+		{id: 5, name: "Epsilon", value: 50}
+	])
+
 	let nextRowId = $state(4)
+	let nextRowId2 = $state(6)
 	let lastRowAction = $state("")
+	let lastRowAction2 = $state("")
 
 	const rowActionsColumns = [
 		{field: "id", title: "ID", width: "80px", align: "center" as const},
@@ -597,6 +608,186 @@
 			rowActionsData[detail.rowIndex] = {...detail.draftRow}
 		}
 	}
+
+	// Handler for second row actions example
+	function handleRowAction2(detail: {action: string; rowIndex: number; row: SimpleItem}) {
+		const { action, rowIndex, row } = detail
+
+		switch (action) {
+			case 'add': {
+				const newRow: SimpleItem = {id: nextRowId2++, name: "", value: 0}
+				rowActionsData2 = [
+					...rowActionsData2.slice(0, rowIndex + 1),
+					newRow,
+					...rowActionsData2.slice(rowIndex + 1)
+				]
+				lastRowAction2 = `Added empty row after row ${rowIndex + 1}`
+				break
+			}
+			case 'delete': {
+				rowActionsData2 = rowActionsData2.filter((_, i) => i !== rowIndex)
+				lastRowAction2 = `Deleted row ${rowIndex + 1}`
+				break
+			}
+			case 'duplicate': {
+				const newRow = {...row, id: nextRowId2++}
+				rowActionsData2 = [
+					...rowActionsData2.slice(0, rowIndex + 1),
+					newRow,
+					...rowActionsData2.slice(rowIndex + 1)
+				]
+				lastRowAction2 = `Duplicated row ${rowIndex + 1}`
+				break
+			}
+			case 'moveUp': {
+				if (rowIndex > 0) {
+					const items = [...rowActionsData2]
+					;[items[rowIndex - 1], items[rowIndex]] = [items[rowIndex], items[rowIndex - 1]]
+					rowActionsData2 = items
+					lastRowAction2 = `Moved row ${rowIndex + 1} up`
+				}
+				break
+			}
+			case 'moveDown': {
+				if (rowIndex < rowActionsData2.length - 1) {
+					const items = [...rowActionsData2]
+					;[items[rowIndex], items[rowIndex + 1]] = [items[rowIndex + 1], items[rowIndex]]
+					rowActionsData2 = items
+					lastRowAction2 = `Moved row ${rowIndex + 1} down`
+				}
+				break
+			}
+		}
+	}
+
+	function handleRowActionsRowChange2(detail: {row: SimpleItem; draftRow: SimpleItem; rowIndex: number; field: string; oldValue: any; newValue: any; isValid: boolean}) {
+		if (detail.isValid) {
+			rowActionsData2[detail.rowIndex] = {...detail.draftRow}
+		}
+	}
+
+	// === Advanced Row Toolbar Demo ===
+	let toolbarData: SimpleItem[] = $state([
+		{id: 1, name: "Project Alpha", value: 1000},
+		{id: 2, name: "Project Beta", value: 2500},
+		{id: 3, name: "Project Gamma", value: 750},
+		{id: 4, name: "Project Delta", value: 3200}
+	])
+
+	let nextToolbarId = $state(5)
+	let lastToolbarAction = $state("")
+	let toolbarAlignment = $state<'center' | 'top'>('center')
+	let toolbarTriggerMode = $state<'hover' | 'click' | 'button'>('hover')
+
+	// Custom async export handler
+	async function handleExportRow(detail: {row: SimpleItem; rowIndex: number}) {
+		lastToolbarAction = `Exporting "${detail.row.name}"...`
+		// Simulate async operation
+		await new Promise(resolve => setTimeout(resolve, 800))
+		lastToolbarAction = `✓ Exported "${detail.row.name}" (ID: ${detail.row.id})`
+	}
+
+	// Custom preview handler
+	function handlePreviewRow(detail: {row: SimpleItem; rowIndex: number}) {
+		lastToolbarAction = `Preview: ${detail.row.name} - Value: $${detail.row.value.toLocaleString()}`
+	}
+
+	// Advanced toolbar with multi-row layout, groups, and custom actions
+	type ToolbarItem = {
+		id: string
+		icon: string
+		title: string
+		label?: string
+		row?: number
+		group?: number
+		type?: 'add' | 'delete' | 'duplicate' | 'moveUp' | 'moveDown'
+		danger?: boolean
+		disabled?: boolean | ((row: SimpleItem, rowIndex: number) => boolean)
+		onclick?: (detail: {row: SimpleItem; rowIndex: number}) => void | Promise<void>
+	}
+
+	const advancedToolbar: (string | ToolbarItem)[] = [
+		// Row 1: Move actions (group 1) | CRUD actions (group 2)
+		{id: 'moveUp', type: 'moveUp', icon: '↑', title: 'Move up', row: 1, group: 1, disabled: (row, idx) => idx === 0},
+		{id: 'moveDown', type: 'moveDown', icon: '↓', title: 'Move down', row: 1, group: 1, disabled: (row, idx) => idx === toolbarData.length - 1},
+		{id: 'add', type: 'add', icon: '+', title: 'Add row below', row: 1, group: 2},
+		{id: 'duplicate', type: 'duplicate', icon: '⧉', title: 'Duplicate', row: 1, group: 2},
+		{id: 'delete', type: 'delete', icon: '−', title: 'Delete', danger: true, row: 1, group: 2},
+
+		// Row 2: Custom actions
+		{id: 'export', icon: '📤', title: 'Export row', row: 2, group: 1, onclick: handleExportRow},
+		{id: 'preview', icon: '👁', title: 'Preview', label: 'View', row: 2, group: 1, onclick: handlePreviewRow},
+		// Test buttons
+		{id: 'test1', icon: '⚡', title: 'Test 1', row: 2, group: 2},
+		{id: 'test2', icon: '🔧', title: 'Test 2', row: 2, group: 2},
+		{id: 'test3', icon: '📋', title: 'Test 3', row: 2, group: 2},
+		{id: 'test4', icon: '🔍', title: 'Test 4', row: 2, group: 2},
+		{id: 'test5', icon: '📊', title: 'Test 5', row: 2, group: 2},
+		{id: 'test6', icon: '⭐', title: 'Test 6', row: 2, group: 3},
+		{id: 'test7', icon: '🎯', title: 'Test 7', row: 2, group: 3},
+		{id: 'test8', icon: '💡', title: 'Test 8', row: 2, group: 3},
+		{id: 'test9', icon: '🔔', title: 'Test 9', row: 2, group: 3},
+		{id: 'test10', icon: '📌', title: 'Test 10', row: 2, group: 3}
+	]
+
+	function handleToolbarClick(detail: {item: ToolbarItem; rowIndex: number; row: SimpleItem}) {
+		const {item, rowIndex, row} = detail
+
+		// Handle predefined types
+		if (item.type) {
+			switch (item.type) {
+				case 'add': {
+					const newRow: SimpleItem = {id: nextToolbarId++, name: "New Project", value: 0}
+					toolbarData = [
+						...toolbarData.slice(0, rowIndex + 1),
+						newRow,
+						...toolbarData.slice(rowIndex + 1)
+					]
+					lastToolbarAction = `Added new row after "${row.name}"`
+					break
+				}
+				case 'delete': {
+					toolbarData = toolbarData.filter((_, i) => i !== rowIndex)
+					lastToolbarAction = `Deleted "${row.name}"`
+					break
+				}
+				case 'duplicate': {
+					const newRow = {...row, id: nextToolbarId++, name: row.name + " (copy)"}
+					toolbarData = [
+						...toolbarData.slice(0, rowIndex + 1),
+						newRow,
+						...toolbarData.slice(rowIndex + 1)
+					]
+					lastToolbarAction = `Duplicated "${row.name}"`
+					break
+				}
+				case 'moveUp': {
+					if (rowIndex > 0) {
+						const items = [...toolbarData]
+						;[items[rowIndex - 1], items[rowIndex]] = [items[rowIndex], items[rowIndex - 1]]
+						toolbarData = items
+						lastToolbarAction = `Moved "${row.name}" up`
+					}
+					break
+				}
+				case 'moveDown': {
+					if (rowIndex < toolbarData.length - 1) {
+						const items = [...toolbarData]
+						;[items[rowIndex], items[rowIndex + 1]] = [items[rowIndex + 1], items[rowIndex]]
+						toolbarData = items
+						lastToolbarAction = `Moved "${row.name}" down`
+					}
+					break
+				}
+			}
+		}
+	}
+
+	function handleToolbarRowChange(detail: {row: SimpleItem; draftRow: SimpleItem; rowIndex: number; field: string; oldValue: any; newValue: any; isValid: boolean}) {
+		if (detail.isValid) {
+			toolbarData[detail.rowIndex] = {...detail.draftRow}
+		}
+	}
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -608,6 +799,8 @@
 			<a href="/components/quickgrid">QuickGrid (Basic)</a>
 			|
 			<span style="color: #999; cursor: not-allowed;" title="Custom component">QuickGrid Editable (Custom)</span>
+			|
+			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
 		</p>
 	</Card>
 
@@ -983,15 +1176,103 @@
 			You can customize which actions appear using the <code>rowActions</code> prop:
 		</p>
 		<QuickGrid
-			items={rowActionsData}
+			items={rowActionsData2}
 			columns={rowActionsColumns}
 			editable
 			editTrigger="dblclick"
 			showRowActions
 			rowActions={['moveUp', 'moveDown', 'duplicate', 'delete']}
-			onrowaction={handleRowAction}
-			onrowchange={handleRowActionsRowChange}
+			onrowaction={handleRowAction2}
+			onrowchange={handleRowActionsRowChange2}
 		/>
+		{#if lastRowAction2}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				{lastRowAction2}
+			</p>
+		{/if}
+	</Card>
+
+	<Card>
+		<h2>Advanced Row Toolbar (Multi-row, Groups, Custom Actions)</h2>
+		<p>
+			The <code>rowToolbar</code> prop supports advanced configurations:
+		</p>
+		<ul style="margin: 0.5rem 0 1rem 1.5rem;">
+			<li><strong>Multi-row layout:</strong> Items can be placed in different rows (<code>row: 1</code> = closest to grid)</li>
+			<li><strong>Groups with dividers:</strong> Items with different <code>group</code> numbers are separated by <code>|</code></li>
+			<li><strong>Custom actions:</strong> Define <code>onclick</code> handlers with async support</li>
+			<li><strong>Dynamic disabled:</strong> Use a function <code>(row, rowIndex) =&gt; boolean</code> to disable conditionally</li>
+			<li><strong>Labels:</strong> Add text labels next to icons with <code>label</code> property</li>
+			<li><strong>Toolbar alignment:</strong> Use <code>toolbarAlign</code> to control vertical alignment (<code>center</code> or <code>top</code>)</li>
+			<li><strong>Toolbar trigger:</strong> Use <code>toolbarTrigger</code> to control how toolbar appears (<code>hover</code>, <code>click</code>, or <code>button</code>)</li>
+		</ul>
+		<div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+			<div style="display: flex; align-items: center; gap: 0.5rem;">
+				<label for="toolbar-align">Alignment:</label>
+				<Select id="toolbar-align" value={toolbarAlignment} onchange={({ value }) => toolbarAlignment = value as 'center' | 'top'}>
+					<Option value="center">Center (default)</Option>
+					<Option value="top">Top (first row aligned)</Option>
+				</Select>
+			</div>
+			<div style="display: flex; align-items: center; gap: 0.5rem;">
+				<label for="toolbar-trigger">Trigger:</label>
+				<Select id="toolbar-trigger" value={toolbarTriggerMode} onchange={({ value }) => toolbarTriggerMode = value as 'hover' | 'click' | 'button'}>
+					<Option value="hover">Hover (default)</Option>
+					<Option value="click">Click on row</Option>
+					<Option value="button">Button in first column</Option>
+				</Select>
+			</div>
+		</div>
+		<QuickGrid
+			items={toolbarData}
+			columns={rowActionsColumns}
+			editable
+			editTrigger="dblclick"
+			showRowToolbar
+			rowToolbar={advancedToolbar}
+			toolbarAlign={toolbarAlignment}
+			toolbarTrigger={toolbarTriggerMode}
+			ontoolbarclick={handleToolbarClick}
+			onrowchange={handleToolbarRowChange}
+		/>
+		{#if lastToolbarAction}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				{lastToolbarAction}
+			</p>
+		{/if}
+	</Card>
+
+	<Card>
+		<h2>Advanced Row Toolbar Code Example</h2>
+		<pre>{`// Define toolbar with multi-row layout, groups, and custom actions
+const advancedToolbar = [
+  // Row 1: Move actions (group 1) | CRUD actions (group 2)
+  { id: 'moveUp', type: 'moveUp', icon: '↑', title: 'Move up', row: 1, group: 1,
+    disabled: (row, idx) => idx === 0 },
+  { id: 'moveDown', type: 'moveDown', icon: '↓', title: 'Move down', row: 1, group: 1,
+    disabled: (row, idx) => idx === items.length - 1 },
+  { id: 'add', type: 'add', icon: '+', title: 'Add', row: 1, group: 2 },
+  { id: 'duplicate', type: 'duplicate', icon: '⧉', title: 'Duplicate', row: 1, group: 2 },
+  { id: 'delete', type: 'delete', icon: '−', title: 'Delete', danger: true, row: 1, group: 2 },
+
+  // Row 2: Custom actions with async onclick
+  { id: 'export', icon: '📤', title: 'Export', row: 2, group: 1,
+    onclick: async ({ row }) => {
+      await exportToCSV(row)
+    }
+  },
+  { id: 'preview', icon: '👁', title: 'Preview', label: 'View', row: 2, group: 1,
+    onclick: ({ row }) => showPreviewDialog(row)
+  }
+]
+
+<QuickGrid
+  {items}
+  {columns}
+  showRowToolbar
+  rowToolbar={advancedToolbar}
+  ontoolbarclick={handleToolbarClick}
+/>`}</pre>
 	</Card>
 
 	<Card>

@@ -2,11 +2,16 @@
 	import { onMount, tick } from 'svelte'
 	import type {SlotType} from "../types/index.js"
 
+	type PositionType = "bottom" | "left" | "right" | "top"
+	type AlignType = "center" | "top"
+
 	type Props = {
 		anchor?: HTMLElement
 		visible?: boolean
 		style?: string
 		title?: string
+		position?: PositionType
+		align?: AlignType  // Vertical alignment for left/right positions
 		children?: SlotType
 	}
 
@@ -15,13 +20,14 @@
 		visible = false,
 		style = '',
 		title = undefined,
+		position: positionProp = "bottom",
+		align: alignProp = "center",
 		children = undefined
 	}: Props = $props()
 
 	// svelte-ignore non_reactive_update
 	let overlayElement: HTMLDivElement | undefined = undefined
-	let position = $state({ top: 0, left: 0, width: 0 })
-	let wasVisible = $state(false)
+	let coords = $state({ top: 0, left: 0, width: 0 })
 
 	// Update position - synchronous calculation
 	function updatePosition() {
@@ -30,28 +36,93 @@
 		const anchorRect = anchor.getBoundingClientRect()
 		const overlayRect = overlayElement.getBoundingClientRect()
 		const viewportHeight = window.innerHeight
+		const viewportWidth = window.innerWidth
 
-		// Position below the anchor by default
-		// Using viewport-relative coordinates (no scroll offsets needed for fixed positioning)
-		let top = anchorRect.bottom
-		const left = anchorRect.left
-		const width = anchorRect.width
+		let top = 0
+		let left = 0
+		let width = anchorRect.width
 
-		// If dropdown would go off bottom of viewport, position above instead
-		if (anchorRect.bottom + overlayRect.height > viewportHeight) {
+		if (positionProp === "left") {
+			// Position to the left of the anchor
+			if (alignProp === "top") {
+				top = anchorRect.bottom - overlayRect.height
+			} else {
+				top = anchorRect.top + (anchorRect.height / 2) - (overlayRect.height / 2)
+			}
+			left = anchorRect.left - overlayRect.width
+			width = overlayRect.width
+
+			// Cascade: left → right → top
+			if (left < 0) {
+				// Try right side
+				left = anchorRect.right
+				if (left + overlayRect.width > viewportWidth) {
+					// Neither side fits, use top
+					top = anchorRect.top - overlayRect.height
+					left = anchorRect.left
+					width = overlayRect.width
+					// If would go off top, position below
+					if (top < 0) {
+						top = anchorRect.bottom
+					}
+				}
+			}
+		} else if (positionProp === "right") {
+			// Position to the right of the anchor
+			if (alignProp === "top") {
+				top = anchorRect.bottom - overlayRect.height
+			} else {
+				top = anchorRect.top + (anchorRect.height / 2) - (overlayRect.height / 2)
+			}
+			left = anchorRect.right
+			width = overlayRect.width
+
+			// Cascade: right → left → top
+			if (left + overlayRect.width > viewportWidth) {
+				// Try left side
+				left = anchorRect.left - overlayRect.width
+				if (left < 0) {
+					// Neither side fits, use top
+					top = anchorRect.top - overlayRect.height
+					left = anchorRect.left
+					width = overlayRect.width
+					// If would go off top, position below
+					if (top < 0) {
+						top = anchorRect.bottom
+					}
+				}
+			}
+		} else if (positionProp === "top") {
+			// Position above the anchor
 			top = anchorRect.top - overlayRect.height
+			left = anchorRect.left
+			width = anchorRect.width
+
+			// If would go off top, position below instead
+			if (top < 0) {
+				top = anchorRect.bottom
+			}
+		} else {
+			// Default: position below the anchor
+			top = anchorRect.bottom
+			left = anchorRect.left
+			width = anchorRect.width
+
+			// If dropdown would go off bottom of viewport, position above instead
+			if (anchorRect.bottom + overlayRect.height > viewportHeight) {
+				top = anchorRect.top - overlayRect.height
+			}
 		}
 
-		position = { top, left, width }
+		coords = { top, left, width }
 	}
 
-	// Only update position when dropdown opens (visible becomes true), not on every re-render
+	// Update position when visible or anchor changes
 	$effect(() => {
-		if (visible && anchor && !wasVisible) {
+		if (visible && anchor) {
 			// Use tick to ensure element is mounted before calculating position
 			tick().then(() => updatePosition())
 		}
-		wasVisible = visible
 	})
 
 	onMount(() => {
@@ -70,9 +141,9 @@
 			{title}
 			style="
 				position: fixed;
-				top: {position.top}px;
-				left: {position.left}px;
-				width: {position.width}px;
+				top: {coords.top}px;
+				left: {coords.left}px;
+				width: {coords.width}px;
 				{style}
 			"
 		>

@@ -246,6 +246,7 @@
 				{label: "Listbox", href: "/components/listbox"},
 				{label: "NumberField", href: "/components/forms/number-field"},
 				{label: "Radio", href: "/components/forms/radio"},
+				{label: "RadioGroup", href: "/components/forms/radiogroup"},
 				{label: "Search", href: "/components/forms/search"},
 				{label: "Select", href: "/components/forms/select"},
 				{label: "Switch", href: "/components/forms/switch"},
@@ -313,6 +314,7 @@
 				{label: "Paginator", href: "/components/paginator"},
 				{label: "QuickGrid", href: "/components/quickgrid"},
 				{label: "QuickGrid Editable", href: "/components/quickgrid-editable"},
+				{label: "QuickGrid Context Menu", href: "/components/quickgrid-contextmenu"},
 				{label: "Toolbar", href: "/components/toolbar"}
 			]
 		}
@@ -322,7 +324,10 @@
 <Layout orientation="vertical" style="min-height: 100vh;">
 	<!-- Top Navigation Bar -->
 	<div class="topnav">
-		<a href="/" class="topnav-brand">Svelte FluentUI</a>
+		<div class="topnav-brand-group">
+			<a href="/" class="topnav-brand">Svelte FluentUI</a>
+			<span class="topnav-version">v{__SVELTE_FLUENTUI_VERSION__}</span>
+		</div>
 		<div class="topnav-actions">
 			<Button appearance="stealth" onclick={toggleTheme}>
 				{#if effectiveTheme === "light"}
@@ -418,11 +423,26 @@
 		height: 60px;
 	}
 
+	.topnav-brand-group {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
 	.topnav-brand {
 		text-decoration: none;
 		color: inherit;
 		font-size: 1.25rem;
 		font-weight: 600;
+	}
+
+	.topnav-version {
+		font-size: 0.875rem;
+		color: var(--neutral-foreground-hint, #666);
+		background: var(--neutral-layer-3, #f0f0f0);
+		padding: 0.25rem 0.625rem;
+		border-radius: 4px;
+		font-weight: 500;
 	}
 
 	.topnav-actions {

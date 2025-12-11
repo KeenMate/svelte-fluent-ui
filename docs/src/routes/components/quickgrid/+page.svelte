@@ -90,6 +90,8 @@
 			<a href="https://aspnet.github.io/quickgridsamples/" target="_blank" rel="noopener noreferrer">ASP.NET QuickGrid (Inspiration)</a>
 			|
 			<a href="/components/quickgrid-editable">QuickGrid Editable</a>
+			|
+			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
 		</p>
 	</Card>
 

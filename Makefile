@@ -2,8 +2,11 @@
 # Development and build commands for the FluentUI wrapper library (workspace version)
 
 # === Configuration ===
-# Force bash shell for Windows compatibility
-SHELL := /bin/bash
+# Use cmd.exe on Windows to avoid path mangling issues with npm
+ifeq ($(OS),Windows_NT)
+SHELL := cmd.exe
+.SHELLFLAGS := /c
+endif
 
 # Docker image settings
 DOCKER_IMAGE_NAME = registry.km8.es/svelte-fluentui-showcase
@@ -94,8 +97,15 @@ publish-dry: package
 
 clean:
 	@echo Cleaning build artifacts...
+ifeq ($(OS),Windows_NT)
+	-rd /s /q packages\svelte-fluentui\dist 2>nul
+	-rd /s /q packages\svelte-fluentui\node_modules\.vite 2>nul
+	-rd /s /q docs\.svelte-kit 2>nul
+	-rd /s /q docs\build 2>nul
+else
 	rm -rf packages/svelte-fluentui/dist packages/svelte-fluentui/node_modules/.vite
 	rm -rf docs/.svelte-kit docs/build
+endif
 	@echo Cleaned build artifacts
 
 # Docker commands for documentation site

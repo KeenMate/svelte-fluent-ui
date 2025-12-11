@@ -8,24 +8,43 @@
 	)
 
 	type Props = {
-		value: string | null | undefined
-		name: string
-		orientation?: string
+		value?: string | null
+		name?: string
+		label?: string
+		labelTemplate?: SlotType
+		ariaLabel?: string
+		orientation?: "horizontal" | "vertical"
 		readonly?: boolean
 		disabled?: boolean
+		required?: boolean
+		autofocus?: boolean
+		placeholder?: string
+		class?: string
+		style?: string
 		children?: SlotType
+		onchange?: (value: string) => void
 	}
 
 	let {
 		value = $bindable(),
-		name,
+		name = undefined,
+		label = undefined,
+		labelTemplate = undefined,
+		ariaLabel = undefined,
+		orientation = undefined,
 		readonly = undefined,
 		disabled = undefined,
-		children = undefined
-	    }: Props = $props()
+		required = undefined,
+		autofocus = undefined,
+		placeholder = undefined,
+		class: className = undefined,
+		style = undefined,
+		children = undefined,
+		onchange = undefined
+	}: Props = $props()
 
 	const ctx = $state({
-		value,
+		get value() { return value },
 		setValue
 	})
 
@@ -37,14 +56,33 @@
 		}
 
 		value = newValue
+		onchange?.(newValue)
 	}
 </script>
 
+{#if label || labelTemplate}
+	<label class="fluent-label">
+		{#if label}
+			{label}
+		{/if}
+		{#if labelTemplate}
+			{@render labelTemplate?.()}
+		{/if}
+	</label>
+{/if}
+
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-radio-group
-	{value}
-	{name}
-	{readonly}
-	{disabled}
+	{...(value ? { value } : {})}
+	{...(name ? { name } : {})}
+	{...(orientation ? { orientation } : {})}
+	{...(readonly ? { readonly } : {})}
+	{...(disabled ? { disabled } : {})}
+	{...(autofocus ? { autofocus } : {})}
+	{...(placeholder ? { placeholder } : {})}
+	{...(ariaLabel ? { "aria-label": ariaLabel } : {})}
+	{...(className ? { class: className } : {})}
+	{...(style ? { style } : {})}
 >
 	{@render children?.()}
 </fluent-radio-group>

@@ -21,7 +21,7 @@
 		{group: "Forms & Inputs", name: "NumberField", description: "Numeric input with step controls", href: "/components/forms/number-field"},
 		{group: "Forms & Inputs", name: "Option", description: "Option item for listbox and select", href: "/components/option"},
 		{group: "Forms & Inputs", name: "Radio", description: "Radio button for single selection", href: "/components/forms/radio"},
-		{group: "Forms & Inputs", name: "RadioGroup", description: "Radio button group container", href: "/components/forms/radio"},
+		{group: "Forms & Inputs", name: "RadioGroup", description: "Radio button group container", href: "/components/forms/radiogroup"},
 		{group: "Forms & Inputs", name: "Search", description: "Search input field", href: "/components/forms/search"},
 		{group: "Forms & Inputs", name: "Select", description: "Dropdown select field", href: "/components/forms/select"},
 		{group: "Forms & Inputs", name: "Switch", description: "Toggle switch", href: "/components/forms/switch"},

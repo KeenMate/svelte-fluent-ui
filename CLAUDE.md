@@ -59,6 +59,7 @@ This is a Svelte wrapper library for FluentUI web components (version 2.6.x). Th
 ## Development Notes
 
 - This project wraps FluentUI web components rather than reimplementing them
+- **IMPORTANT**: Do NOT use WebFetch to access fluentui-blazor.net - it always fails. The user will provide screenshots of the Blazor documentation pages instead.
 - Demo pages in `src/routes/components/` show component usage
 - Library components should follow existing naming and export patterns
 - TypeScript checking is required before commits

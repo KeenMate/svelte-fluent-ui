@@ -8,6 +8,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Select Component** - Enhanced props and functionality to match FluentUI Blazor API
+  - New props: `title`, `width`, `height`, `maxVisibleOptions`, `indicatorTemplate`
+  - `width`/`height` props for dimension control via inline styles
+  - `maxVisibleOptions` prop for opt-in height constraint in `multiple` select mode
+    - When explicitly set, limits visible options and enables scrolling
+    - Uses scroll container wrapper to preserve FluentUI borders
+    - Automatically measures option row height and sets container height
+    - Default behavior: show all options with auto-calculated height (no constraint)
+  - `indicatorTemplate` slot for custom dropdown indicator/arrow
+  - `onchange` callback now returns `selectedOption` (display text) in addition to `value` and `data`
+  - Comprehensive docs page with 12 examples:
+    - Multiple select: all visible, with maxVisibleOptions, with selected/disabled options
+    - Single select (default dropdown)
+    - Appearances (outline, filled)
+    - Disabled states (disabled select, disabled option)
+    - Forced position (above/below)
+    - Width control (full width, fixed width)
+    - Long list with built-in scrolling
+    - Two-way binding with `bind:value`
+    - Data binding with `onchange` and Option `data` prop
+    - Dynamic options from array using `#each`
+  - API reference tables for Select props, Option props, callbacks, and slots
+
+- **Option Component** - Enhanced props to match FluentUI Blazor API
+  - New props: `class`, `style`, `icon` (slot)
+  - `icon` slot renders before option text for icon support in dropdowns
+  - Removed console.log debug statement
+
 - **QuickGrid Native Dropdown Editors** - Built-in Select, Combobox, and Autocomplete editors for grid cells
   - **Native Select**: Click/Enter opens dropdown, arrow keys navigate, letter keys jump to matching option
   - **Native Combobox**: Type to filter static options, arrow keys navigate filtered list
@@ -39,6 +67,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents stale results from appearing (e.g., typing "cz" won't show "c" results)
   - Proper cleanup when dropdown closes
 
+- **QuickGrid Row Toolbar** - Enhanced floating toolbar with custom actions and multi-row layout
+  - Renamed from `rowActions` to `rowToolbar` (backwards compatible aliases maintained)
+  - New props: `showRowToolbar`, `rowToolbar`, `ontoolbarclick`
+  - Custom toolbar items with: `id`, `icon`, `title`, `label`, `row`, `group`, `danger`, `disabled`, `onclick`
+  - Multi-row layout: items can be assigned to different rows (`row: 1` closest to grid row)
+  - Groups with dividers: items with different `group` numbers separated by `|` divider
+  - Async onclick support: custom handlers can be async functions
+  - Predefined types still work: `'add'`, `'delete'`, `'duplicate'`, `'moveUp'`, `'moveDown'`
+  - Backwards compatible: string shorthand (`['add', 'delete']`) still works
+  - RTL support for mirrored layouts
+
+- **QuickGrid Toolbar Trigger Modes** - Control how row toolbar is shown
+  - New `toolbarTrigger` prop with three modes: `'hover'` (default), `'click'`, `'button'`
+  - **Hover mode**: Show on mouse hover, hide on mouse leave (existing behavior)
+  - **Click mode**: Show/hide by clicking on the row (toggle)
+  - **Button mode**: Adds dedicated actions column with ⋮ button to show/hide toolbar
+  - Toolbar auto-hides on scroll in hover mode
+
+- **QuickGrid Toolbar Alignment** - Vertical alignment option for row toolbar
+  - New `toolbarAlign` prop: `'center'` (default) or `'top'`
+  - `'top'` aligns first toolbar row with the grid row for consistent visual appearance
+
+- **QuickGrid Context Menu** - Right-click context menu with cell/row awareness
+  - New `contextMenu` prop accepts array of menu item configurations
+  - New `oncontextmenuopen` callback fired when menu opens with full context
+  - Uses FluentUI `fluent-menu` / `fluent-menu-item` components for native styling
+  - Menu items support:
+    - `label`: Static string or dynamic function `(context) => string`
+    - `icon`: Optional emoji or icon string
+    - `disabled`: Boolean or function `(context) => boolean`
+    - `visible`: Boolean or function `(context) => boolean`
+    - `danger`: Red styling for destructive actions
+    - `dividerBefore`: Add divider line before item
+    - `onclick`: Handler receives full context (row, rowIndex, colIndex, column, cellValue)
+  - Auto-repositions to stay within viewport boundaries
+  - Closes on: click outside, Escape key, scroll
+
+- **Radio/RadioGroup Components** - Enhanced props to match FluentUI Blazor API
+  - **RadioGroup** new props: `label`, `labelTemplate`, `ariaLabel`, `orientation`, `required`, `autofocus`, `placeholder`, `class`, `style`, `onchange`
+  - **Radio** new props: `label`, `labelTemplate`, `ariaLabel`, `name`, `readonly`, `disabled`, `required`, `checked`, `autofocus`, `class`, `style`
+  - Context-based communication between RadioGroup and Radio for proper state management
+  - Uses spread pattern for all optional attributes to prevent `null`/`undefined` values causing issues
+  - Separate demo pages: `/components/forms/radio` and `/components/forms/radiogroup`
+  - RadioGroup page includes: Default, In a toolbar, States (readonly/disabled), Label outside group, With preset examples
+
+- **Search Component** - Enhanced props and functionality to match FluentUI Blazor API
+  - New props: `immediate`, `immediateDelay`, `dataList`, `displayName`, `width`, `height`, `title`
+  - New slot props: `start` and `end` for custom icons inside the search field
+  - `immediate` mode with optional `immediateDelay` for debounced search callbacks
+  - `focusAsync(preventScroll?)` method exposed for programmatic focus
+  - Default `appearance="outline"` for proper bordered input styling
+  - Uses spread pattern for all optional attributes to prevent `null` values causing issues
+  - Comprehensive docs page with examples:
+    - Basic (with/without label), Interactive search with results
+    - Interactive with debounce (500ms delay example)
+    - Immediate mode toggle with/without delay
+    - States: Full Width, Placeholder, Required, Disabled, Read only
+    - Icons: start/end slot support
+    - Focus: Autofocus and FocusAsync button example
+    - Filled style variants
+    - Miscellaneous: minlength/maxlength validation
+    - Placeholders and autofill prevention reference table
+
 ### Changed
 - **GridCellEditor Refactored** - Replaced external `Autocomplete` component with native implementations
   - Removed dependency on `Autocomplete.svelte` for grid editing
@@ -67,6 +158,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Autocomplete Debounce** - Proper 300ms debounce for async search
   - Initial options not shown when user starts editing by typing
   - Search only triggered after debounce delay
+- **QuickGrid Row Action Connector Arrow** - Improved bracket-shaped connector for row action popup
+  - Changed from L-shape to `[` bracket shape pointing to row's left side (middle height)
+  - Arrow stays visible once row has moved (persists when returning to original position)
+  - Back-loop arrow (75% to 25% height) shown when popup overlaps the target row
+  - Proper horizontal spacing for arrow head (no overlap with vertical line)
+  - RTL support with mirrored `]` bracket shape
 
 ## [1.0.0-rc05] - 2025-11-24 - PUBLISHED
 

@@ -1,76 +1,87 @@
 <script lang="ts">
 	import {Select, Option, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui";
 
-	let selectedFruit = "apple";
+	// Two-way binding example
+	let selectedFruit = $state("apple");
 
-	// Example: Languages with full object data
+	// Data binding example
 	type Language = {
-		id: number
-		name: string
-		code: string
-		native: string
-	}
+		id: number;
+		name: string;
+		code: string;
+		native: string;
+	};
 
 	const languages: Language[] = [
 		{ id: 1, name: "English", code: "en", native: "English" },
 		{ id: 2, name: "Czech", code: "cs", native: "Čeština" },
 		{ id: 3, name: "German", code: "de", native: "Deutsch" },
 		{ id: 4, name: "Spanish", code: "es", native: "Español" }
-	]
+	];
 
-	let selectedLanguageValue = "1"
-	let selectedLanguage: Language | undefined = languages[0]
+	let selectedLanguageValue = $state("1");
+	let selectedLanguage: Language | undefined = $state(languages[0]);
 
 	function handleLanguageChange(detail: { value: string, data?: Record<string, unknown> }) {
-		selectedLanguageValue = detail.value
-		selectedLanguage = detail.data as Language | undefined
+		selectedLanguageValue = detail.value;
+		selectedLanguage = detail.data as Language | undefined;
 	}
 
+	// Properties documentation
 	type Property = {
-		name: string
-		type: string
-		default: string
-		description: string
-	}
+		name: string;
+		type: string;
+		default: string;
+		description: string;
+	};
 
-	const properties: Property[] = [
-		{name: "label", type: "string", default: "undefined", description: "Visible label"},
+	const selectProperties: Property[] = [
+		{name: "appearance", type: '"outline" | "filled"', default: "undefined", description: "Visual appearance style"},
+		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Focus on first render"},
+		{name: "class", type: "string", default: '""', description: "CSS class(es)"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the select"},
+		{name: "height", type: "string", default: "undefined", description: "Height (e.g., '200px')"},
 		{name: "id", type: "string", default: "undefined", description: "Element ID"},
-		{name: "name", type: "string", default: "undefined", description: "Form field name"},
-		{name: "value", type: "string", default: "undefined", description: "Selected value (bindable)"},
-		{name: "required", type: "boolean", default: "undefined", description: "Form required validation"},
-		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the control"},
-		{name: "appearance", type: "\"outline\" | \"filled\"", default: "undefined", description: "Visual style"},
-		{name: "open", type: "boolean", default: "undefined", description: "Controls dropdown open state"},
-		{name: "position", type: "\"above\" | \"below\"", default: "undefined", description: "Dropdown position"},
+		{name: "label", type: "string", default: "undefined", description: "Visible label"},
+		{name: "maxVisibleOptions", type: "number", default: "undefined", description: "Limits visible options in multiple select, enables scrolling"},
 		{name: "multiple", type: "boolean", default: "false", description: "Allow multiple selections"},
-		{name: "autofocus", type: "boolean", default: "undefined", description: "Focus on mount"},
-		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"}
-	]
+		{name: "name", type: "string", default: "undefined", description: "Form field name"},
+		{name: "open", type: "boolean", default: "undefined", description: "Controls dropdown open state"},
+		{name: "position", type: '"above" | "below"', default: "undefined", description: "Forces dropdown position"},
+		{name: "required", type: "boolean", default: "undefined", description: "Required for form validation"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"},
+		{name: "title", type: "string", default: "undefined", description: "Tooltip text"},
+		{name: "value", type: "string", default: "undefined", description: "Selected value (bindable)"},
+		{name: "width", type: "string", default: "undefined", description: "Width (e.g., '200px', '100%')"}
+	];
 
 	const optionProperties: Property[] = [
 		{name: "value", type: "string", default: "required", description: "Option value"},
-		{name: "label", type: "string", default: "undefined", description: "Option label (for accessibility)"},
+		{name: "class", type: "string", default: "undefined", description: "CSS class(es)"},
+		{name: "data", type: "Record<string, unknown>", default: "undefined", description: "Arbitrary data returned in onchange"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disables the option"},
+		{name: "label", type: "string", default: "undefined", description: "Accessibility label"},
 		{name: "selected", type: "boolean", default: "undefined", description: "Pre-select this option"},
-		{name: "data", type: "Record<string, unknown>", default: "undefined", description: "Arbitrary context data returned in onchange"}
-	]
+		{name: "style", type: "string", default: "undefined", description: "Inline styles"}
+	];
 
 	const callbacks: Property[] = [
-		{name: "onchange", type: "(detail: { value: string, data?: Record<string, unknown> }) => void", default: "undefined", description: "Triggered when selection changes. Returns value and optional data from selected Option."}
-	]
+		{name: "onchange", type: "(detail: { value, selectedOption?, data? }) => void", default: "undefined", description: "Triggered when selection changes"}
+	];
 
 	const slots: Property[] = [
-		{name: "children", type: "SlotType", default: "undefined", description: "Option components"},
-		{name: "labelTemplate", type: "SlotType", default: "undefined", description: "Custom label template"}
-	]
+		{name: "children", type: "Snippet", default: "undefined", description: "Option components"},
+		{name: "indicatorTemplate", type: "Snippet", default: "undefined", description: "Custom dropdown indicator"},
+		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label template"}
+	];
 
 	const propertyColumns = [
 		{field: "name", title: "Name", sortable: true, filterable: true},
-		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true},
 		{field: "default", title: "Default", sortable: true},
 		{field: "description", title: "Description", filterable: true}
-	]
+	];
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -78,131 +89,279 @@
 
 	<Card>
 		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-dropdown--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Select" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+			An implementation of an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select" target="_blank" rel="noopener noreferrer">HTML select element</a> as a component supporting the Fluent UI design system.
 		</p>
 	</Card>
 
+	<h2>Multiple Select Examples</h2>
+
 	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<!-- Multiple items (all visible - default behavior) -->
+		<GridItem xs={12} md={6} lg={4}>
 			<Card>
-				<h2>Select Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+				<h3>Multiple (all visible)</h3>
+				<p>Default behavior: all options shown, height auto-calculated to fit all.</p>
+				<Select label="Items" multiple>
+					{#snippet children()}
+						<Option value="apple">Apple</Option>
+						<Option value="grape">Grape</Option>
+						<Option value="strawberry">Strawberry</Option>
+						<Option value="cherry">Cherry</Option>
+						<Option value="banana">Banana</Option>
+					{/snippet}
+				</Select>
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
+
+		<!-- Multiple items with maxVisibleOptions -->
+		<GridItem xs={12} md={6} lg={4}>
 			<Card>
-				<h2>Option Properties</h2>
-				<QuickGrid items={optionProperties} columns={propertyColumns} sortable filterable striped />
+				<h3>Multiple with maxVisibleOptions</h3>
+				<p>Use <code>maxVisibleOptions={4}</code> to limit visible items and enable scrolling.</p>
+				<Select label="Items" multiple maxVisibleOptions={4}>
+					{#snippet children()}
+						<Option value="apple">Apple</Option>
+						<Option value="grape">Grape</Option>
+						<Option value="strawberry">Strawberry</Option>
+						<Option value="cherry">Cherry</Option>
+						<Option value="banana">Banana</Option>
+						<Option value="watermelon">Watermelon</Option>
+						<Option value="persimmon">Persimmon</Option>
+						<Option value="grapefruit">Grapefruit</Option>
+					{/snippet}
+				</Select>
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-				<Card>
-					<h2>Slots</h2>
-					<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
+
+		<!-- Multiple items with selected and disabled -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Multiple with selected/disabled</h3>
+				<p>Options can be pre-selected or disabled.</p>
+				<Select label="Items" multiple>
+					{#snippet children()}
+						<Option value="option1" selected>Selected 1</Option>
+						<Option value="option2" selected>Selected 2</Option>
+						<Option value="disabled1" disabled>Disabled 1</Option>
+						<Option value="disabled2" disabled>Disabled 2</Option>
+						<Option value="option3">Option 3</Option>
+						<Option value="option4">Option 4</Option>
+					{/snippet}
+				</Select>
+			</Card>
+		</GridItem>
+
+		<!-- Single select default -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Single select (default)</h3>
+				<p>Standard dropdown select.</p>
+				<Select label="Choose a fruit">
+					{#snippet children()}
+						<Option value="">Select...</Option>
+						<Option value="apple">Apple</Option>
+						<Option value="banana">Banana</Option>
+						<Option value="cherry">Cherry</Option>
+					{/snippet}
+				</Select>
+			</Card>
+		</GridItem>
+
+		<!-- Appearances -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Appearances</h3>
+				<Stack orientation="vertical" gap="0.5rem">
+					<div>
+						<strong>Outline</strong>
+						<Select appearance="outline">
+							{#snippet children()}
+								<Option value="1">Option 1</Option>
+								<Option value="2">Option 2</Option>
+							{/snippet}
+						</Select>
+					</div>
+					<div>
+						<strong>Filled</strong>
+						<Select appearance="filled">
+							{#snippet children()}
+								<Option value="1">Option 1</Option>
+								<Option value="2">Option 2</Option>
+							{/snippet}
+						</Select>
+					</div>
+				</Stack>
+			</Card>
+		</GridItem>
+
+		<!-- Disabled states -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Disabled states</h3>
+				<Stack orientation="vertical" gap="0.5rem">
+					<div>
+						<strong>Disabled Select</strong>
+						<Select label="Items" disabled>
+							{#snippet children()}
+								<Option value="1">Cannot interact</Option>
+							{/snippet}
+						</Select>
+					</div>
+					<div>
+						<strong>Disabled Option</strong>
+						<Select label="Items">
+							{#snippet children()}
+								<Option value="1">Enabled</Option>
+								<Option value="2" disabled>Disabled option</Option>
+								<Option value="3">Enabled</Option>
+							{/snippet}
+						</Select>
+					</div>
+				</Stack>
+			</Card>
+		</GridItem>
+
+		<!-- Position above/below -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Forced position</h3>
+				<Stack orientation="vertical" gap="0.5rem">
+					<div>
+						<strong>Position above</strong>
+						<Select label="Items" position="above">
+							{#snippet children()}
+								<Option value="1">Opens above</Option>
+								<Option value="2">Option 2</Option>
+								<Option value="3">Option 3</Option>
+							{/snippet}
+						</Select>
+					</div>
+					<div>
+						<strong>Position below</strong>
+						<Select label="Items" position="below">
+							{#snippet children()}
+								<Option value="1">Opens below</Option>
+								<Option value="2">Option 2</Option>
+								<Option value="3">Option 3</Option>
+							{/snippet}
+						</Select>
+					</div>
+				</Stack>
+			</Card>
+		</GridItem>
+
+		<!-- Width control -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Width control</h3>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Select label="Full width" width="100%">
+						{#snippet children()}
+							<Option value="1">Full width select</Option>
+							<Option value="2">Option 2</Option>
+						{/snippet}
+					</Select>
+					<Select label="Fixed width" width="150px">
+						{#snippet children()}
+							<Option value="1">150px width</Option>
+							<Option value="2">Option 2</Option>
+						{/snippet}
+					</Select>
+				</Stack>
+			</Card>
+		</GridItem>
+
+		<!-- Long list -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Long list</h3>
+				<p>FluentUI handles long lists with built-in scrolling.</p>
+				<Select label="Countries">
+					{#snippet children()}
+						<Option value="">Select a country...</Option>
+						<Option value="us">United States</Option>
+						<Option value="uk">United Kingdom</Option>
+						<Option value="ca">Canada</Option>
+						<Option value="au">Australia</Option>
+						<Option value="de">Germany</Option>
+						<Option value="fr">France</Option>
+						<Option value="jp">Japan</Option>
+						<Option value="cn">China</Option>
+						<Option value="in">India</Option>
+						<Option value="br">Brazil</Option>
+					{/snippet}
+				</Select>
+			</Card>
+		</GridItem>
+
+		<!-- Two-way binding -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Two-way binding</h3>
+				<p>Use <code>bind:value</code> for reactive binding.</p>
+				<Select label="Fruit" bind:value={selectedFruit}>
+					{#snippet children()}
+						<Option value="apple">Apple</Option>
+						<Option value="banana">Banana</Option>
+						<Option value="cherry">Cherry</Option>
+					{/snippet}
+				</Select>
+				<p>Selected: <code>{selectedFruit}</code></p>
+			</Card>
+		</GridItem>
+
+		<!-- Data binding with onchange -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>Data binding</h3>
+				<p>Use <code>data</code> prop on Option to pass object data.</p>
+				<Select label="Language" value={selectedLanguageValue} onchange={handleLanguageChange}>
+					{#snippet children()}
+						{#each languages as lang}
+							<Option value={String(lang.id)} data={lang}>{lang.name} ({lang.native})</Option>
+						{/each}
+					{/snippet}
+				</Select>
+				<p>Value: <code>{selectedLanguageValue}</code></p>
+				<p>Data: <code>{selectedLanguage?.name}</code></p>
+			</Card>
+		</GridItem>
+
+		<!-- From array -->
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
+				<h3>From array</h3>
+				<p>Generate options from an array using <code>#each</code>.</p>
+				<Select label="Numbers">
+					{#snippet children()}
+						{#each Array.from({length: 5}, (_, i) => i + 1) as num}
+							<Option value={String(num)}>Option {num}</Option>
+						{/each}
+					{/snippet}
+				</Select>
+			</Card>
 		</GridItem>
 	</Grid>
 
+	<h2>API Reference</h2>
+
 	<Card>
-		<h2>Examples</h2>
-
-		<h3>Basic Select</h3>
-		<p>
-			<Select label="Fruits" name="fruit">
-				{#snippet children()}
-					<Option value="apple">Apple</Option>
-					<Option value="banana">Banana</Option>
-					<Option value="cherry">Cherry</Option>
-				{/snippet}
-			</Select>
-		</p>
-
-		<h3>Disabled Select</h3>
-		<p>
-			<Select label="Disabled" disabled={true}>
-				{#snippet children()}
-					<Option value="apple">Apple</Option>
-					<Option value="banana">Banana</Option>
-				{/snippet}
-			</Select>
-		</p>
-
-		<h3>Controlled Select with Two-Way Binding</h3>
-		<p>
-			<Select label="Controlled" bind:value={selectedFruit} name="fruit">
-				{#snippet children()}
-					<Option value="apple">Apple</Option>
-					<Option value="banana">Banana</Option>
-					<Option value="cherry">Cherry</Option>
-				{/snippet}
-			</Select>
-			<br/>
-			Selected value: <code>{selectedFruit}</code>
-		</p>
+		<h3>Select Properties</h3>
+		<QuickGrid items={selectProperties} columns={propertyColumns} sortable filterable striped />
 	</Card>
 
 	<Card>
-		<h2>Select with Item Data</h2>
-		<p>
-			Use the <code>data</code> prop on <code>Option</code> to pass arbitrary context data.
-			When the selection changes, <code>onchange</code> returns both the <code>value</code> and the full <code>data</code> object.
-		</p>
-		<p>
-			<Select label="Language" value={selectedLanguageValue} onchange={handleLanguageChange}>
-				{#snippet children()}
-					{#each languages as lang}
-						<Option value={String(lang.id)} data={lang}>{lang.name} ({lang.native})</Option>
-					{/each}
-				{/snippet}
-			</Select>
-		</p>
-		<p>
-			Selected value: <code>{selectedLanguageValue}</code><br/>
-			Selected data: <code>{JSON.stringify(selectedLanguage)}</code>
-		</p>
+		<h3>Option Properties</h3>
+		<QuickGrid items={optionProperties} columns={propertyColumns} sortable filterable striped />
+	</Card>
 
-		<h4>Code</h4>
-		<pre>{`<script lang="ts">
-  type Language = {
-    id: number
-    name: string
-    code: string
-    native: string
-  }
+	<Card>
+		<h3>Callbacks</h3>
+		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+	</Card>
 
-  const languages: Language[] = [
-    { id: 1, name: "English", code: "en", native: "English" },
-    { id: 2, name: "Czech", code: "cs", native: "Čeština" },
-    { id: 3, name: "German", code: "de", native: "Deutsch" },
-    { id: 4, name: "Spanish", code: "es", native: "Español" }
-  ]
-
-  let selectedLanguageValue = "1"
-  let selectedLanguage: Language | undefined = languages[0]
-
-  function handleLanguageChange(detail: { value: string, data?: Record<string, unknown> }) {
-    selectedLanguageValue = detail.value
-    selectedLanguage = detail.data as Language | undefined
-  }
-</script>
-
-<Select label="Language" value={selectedLanguageValue} onchange={handleLanguageChange}>
-  {#snippet children()}
-    {#each languages as lang}
-      <Option value={String(lang.id)} data={lang}>
-        {lang.name} ({lang.native})
-      </Option>
-    {/each}
-  {/snippet}
-</Select>`}</pre>
+	<Card>
+		<h3>Slots</h3>
+		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 	</Card>
 </Stack>
