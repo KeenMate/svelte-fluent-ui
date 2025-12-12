@@ -9,16 +9,13 @@
 	}
 
 	const properties: Property[] = [
-		{name: "anchor", type: "string", default: "undefined", description: "ID of anchor element"},
-		{name: "autoUpdateMode", type: "string", default: "undefined", description: "Auto update mode"},
+		{name: "anchor", type: "string", default: "undefined", description: "HTML ID of the element the tooltip is positioned relative to"},
 		{name: "class", type: "string", default: '""', description: "CSS classes"},
-		{name: "delay", type: "number", default: "undefined", description: "Show delay"},
-		{name: "horizontalViewportLock", type: "boolean", default: "undefined", description: "Lock to horizontal viewport"},
-		{name: "maxWidth", type: "string", default: "undefined", description: "Maximum width"},
-		{name: "position", type: "string", default: "undefined", description: "Tooltip position"},
+		{name: "delay", type: "number", default: "250", description: "Delay in milliseconds before showing tooltip after hover"},
+		{name: "maxWidth", type: "string", default: "undefined", description: "Maximum width for wrapping long content"},
+		{name: "position", type: '"top" | "bottom" | "left" | "right"', default: '"top"', description: "Position relative to anchor element"},
 		{name: "style", type: "string", default: '""', description: "Inline styles"},
-		{name: "verticalViewportLock", type: "boolean", default: "undefined", description: "Lock to vertical viewport"},
-		{name: "visible", type: "boolean", default: "undefined", description: "Force visibility"}
+		{name: "visible", type: "boolean", default: "undefined", description: "Forces tooltip to be visible (default: shows on hover)"}
 	]
 
 	const actions: Property[] = []
@@ -68,35 +65,54 @@
 		<h2 class="content-subhead">Examples</h2>
 
 		<h3>Tooltip on hover</h3>
+		<Stack orientation="horizontal" gap="2rem" style="flex-wrap: wrap; margin-bottom: 1rem;">
+			<span id="hover-target" style="cursor: pointer; text-decoration: underline;">Hover me (top)</span>
+			<Tooltip anchor="hover-target">
+				{#snippet children()}
+					Tooltip on top (default)
+				{/snippet}
+			</Tooltip>
+
+			<span id="hover-target2" style="cursor: pointer; text-decoration: underline;">Hover me (right)</span>
+			<Tooltip anchor="hover-target2" position="right">
+				{#snippet children()}
+					Tooltip on the right
+				{/snippet}
+			</Tooltip>
+
+			<span id="hover-target3" style="cursor: pointer; text-decoration: underline;">Hover me (bottom)</span>
+			<Tooltip anchor="hover-target3" position="bottom">
+				{#snippet children()}
+					Tooltip on the bottom
+				{/snippet}
+			</Tooltip>
+
+			<span id="hover-target4" style="cursor: pointer; text-decoration: underline;">Hover me (left)</span>
+			<Tooltip anchor="hover-target4" position="left">
+				{#snippet children()}
+					Tooltip on the left
+				{/snippet}
+			</Tooltip>
+		</Stack>
+
+		<h3>Always visible tooltip</h3>
 		<p>
-		<span
-			id="hover-target">
-			Top tooltip
-		</span>
+			<span id="always-visible">Always visible</span>
+			<Tooltip anchor="always-visible" position="right" visible={true}>
+				{#snippet children()}
+					This tooltip is always shown
+				{/snippet}
+			</Tooltip>
+		</p>
 
-		<Tooltip anchor="hover-target" autoUpdateMode="auto"
-			>Test text</Tooltip
-		>
-	</p>
-	<p>
-		<span
-			id="hover-target2">
-			Right tooltip
-		</span>
-
-		<Tooltip anchor="hover-target2" autoUpdateMode="auto" position="end"
-			>Test text</Tooltip
-		>
-	</p>
-	<p>
-		<span
-			id="hover-target3">
-			Always active
-		</span>
-
-		<Tooltip anchor="hover-target3" autoUpdateMode="anchor" position="end" visible={true}
-			><bold> This text is different and bold doesn't work</bold></Tooltip
-		>
-</p>
+		<h3>With delay</h3>
+		<p>
+			<span id="delayed" style="cursor: pointer; text-decoration: underline;">Hover me (500ms delay)</span>
+			<Tooltip anchor="delayed" delay={500}>
+				{#snippet children()}
+					This tooltip has a 500ms delay
+				{/snippet}
+			</Tooltip>
+		</p>
 	</Card>
 </Stack>
