@@ -126,6 +126,11 @@
 	}
 </script>
 
+{#if visible}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="dialog-overlay" onkeydown={handleKeyDown} onclick={!preventClose ? handleClose : undefined}></div>
+{/if}
+
 <fluent-dialog
 	bind:this={element}
 	{modal}
@@ -134,6 +139,7 @@
 	{ariaDescribedby}
 	{ariaLabelledby}
 	{ariaLabel}
+	class="dialog-positioned"
 	style={dialogStyle + (style ? ` ${style}` : '')}
 	onkeydown={handleKeyDown}
 >
@@ -176,6 +182,18 @@
 </fluent-dialog>
 
 <style>
+	.dialog-overlay {
+		position: fixed;
+		inset: 0;
+		background-color: rgba(0, 0, 0, 0.4);
+		z-index: 1049;
+	}
+
+	.dialog-positioned {
+		position: fixed;
+		z-index: 1050;
+	}
+
 	fluent-dialog::part(control) {
 		padding: 1rem;
 	}

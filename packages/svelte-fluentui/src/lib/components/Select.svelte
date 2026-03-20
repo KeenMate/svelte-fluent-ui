@@ -64,6 +64,27 @@
 	let selectElement: HTMLElement | undefined = $state();
 	let calculatedHeight: string | undefined = $state();
 
+	// Re-apply value when options are added asynchronously
+	// The fluent-select web component only evaluates current-value at init,
+	// so if options arrive later (async), the selection is lost.
+	$effect(() => {
+		if (!selectElement || value === undefined || value === null) return;
+
+		const observer = new MutationObserver(() => {
+			if (value !== undefined && value !== null) {
+				// Force fluent-select to re-evaluate the value
+				const el = selectElement as any;
+				if (el && el.value !== value) {
+					el.value = value;
+				}
+			}
+		});
+
+		observer.observe(selectElement, { childList: true, subtree: true });
+
+		return () => observer.disconnect();
+	});
+
 	// Auto-calculate height for multiple select
 	$effect(() => {
 		if (multiple && selectElement && !height) {

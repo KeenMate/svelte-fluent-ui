@@ -138,6 +138,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - No flash of initial options when entering edit mode by typing (FOAC fix)
 
 ### Fixed
+- **Select/Combobox Async Options** - Value not applied when options load asynchronously
+  - `fluent-select` and `fluent-combobox` web components only evaluate `current-value` at init
+  - If options are rendered after mount (e.g., from API call), the value prop was ignored
+  - Added `MutationObserver` to detect when child options are added and re-apply the value
+  - Consumers no longer need `{#key}` workaround to force re-render after async data loads
+  - Autocomplete not affected (pure Svelte component, no web component value-matching issue)
+
+- **Tooltip Component** - Complete rewrite to pure Svelte implementation
+  - Removed `fluent-tooltip` web component dependency
+  - Uses FluentUI design tokens (`--elevation-shadow-tooltip`, `--control-corner-radius`, etc.)
+  - Added fade in/out animation (opacity + scale transition)
+  - **Auto-positioning with flip logic** (Floating UI style):
+    - Automatically flips to opposite side when preferred position doesn't fit viewport
+    - Priority: preferred → opposite → whichever has more space
+    - Arrow tracks anchor position when tooltip is shifted
+  - **Scroll/resize tracking**: Tooltip repositions on scroll and window resize
+  - **Anchor visibility detection**: Tooltip fades out when anchor scrolls out of viewport
+  - Fixed demo page: removed bold text, corrected position type documentation
+
+- **QuickGrid Text Editor Arrow Keys** - ArrowLeft/ArrowRight now only move cursor in text inputs
+  - TextField, NumberField, Textarea: Arrow keys move text cursor, never navigate cells
+  - User must use Tab/Enter to leave cell (prevents accidental navigation)
+  - Select/Combobox/Checkbox: Arrow keys still navigate cells immediately
+  - ArrowUp/ArrowDown: Still navigate rows for all editor types
+
 - **QuickGrid Arrow Key Navigation** - Arrow keys no longer move grid focus when dropdown is open
   - Added `e.stopPropagation()` to prevent event bubbling to grid
   - QuickGrid's `handleEditorKeyDownInNavigateMode` now skips arrow key handling for dropdown editors
@@ -164,6 +189,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Back-loop arrow (75% to 25% height) shown when popup overlaps the target row
   - Proper horizontal spacing for arrow head (no overlap with vertical line)
   - RTL support with mirrored `]` bracket shape
+
+- **Dialog Overlay** - Dialog no longer allows interaction with elements behind it
+  - Added a proper overlay `<div>` that covers the entire viewport when dialog is visible
+  - Blocks pointer events on sidebar, tabs, and all background content
+  - Clicking the overlay closes the dialog (unless `preventClose` is set)
+  - Replaced unreliable CSS `::before` pseudo-element approach that didn't block clicks through web component shadow DOM
 
 ## [1.0.0-rc05] - 2025-11-24 - PUBLISHED
 

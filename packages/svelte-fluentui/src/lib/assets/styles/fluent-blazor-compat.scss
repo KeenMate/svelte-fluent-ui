@@ -265,15 +265,6 @@ fluent-dialog {
 	z-index: 1050;
 }
 
-// Modal backdrop - blocks interaction with content behind the dialog
-fluent-dialog[modal]:not([hidden])::before {
-	content: "";
-	position: fixed;
-	inset: 0;
-	background-color: rgba(0, 0, 0, 0.4);
-	z-index: -1;
-}
-
 fluent-dialog::part(control) {
 	--dialog-padding: calc(var(--design-unit) * 6 * 1px);
 	position: relative;

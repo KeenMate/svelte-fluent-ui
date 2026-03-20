@@ -1026,13 +1026,21 @@
 			// when dropdown is OPEN (via stopPropagation). When dropdown is CLOSED, events bubble
 			// here for cell navigation, allowing users to navigate away with arrow keys.
 
+			const input = e.target as HTMLInputElement
+			const isTextEditor = column.editor === "text" || column.editor === "number" || column.editor === "textarea"
+
+			// For text-based editors, ArrowLeft/ArrowRight only move cursor, never navigate cells
+			// User must use Tab/Enter to leave cell (prevents accidental navigation)
+			if (isTextEditor && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+				return // Let browser handle cursor movement
+			}
+
 			// Arrow keys navigate while editing - commit current value and move
 			e.preventDefault()
 			e.stopPropagation()
 			isCommittingFromKeyboard = true
 
 			// Commit current edit first (or just exit for dropdown editors with closed dropdown)
-			const input = e.target as HTMLInputElement
 			const isDropdownEditor = column.editor === "select" || column.editor === "combobox" || column.editor === "autocomplete"
 			if (column.editor === "checkbox") {
 				editingCell = null

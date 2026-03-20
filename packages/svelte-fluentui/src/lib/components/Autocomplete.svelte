@@ -604,7 +604,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 4px;
-		min-height: 32px;
+		min-height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
 		padding: 4px 8px;
 		background: var(--neutral-fill-input-rest, #ffffff);
 		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
@@ -717,7 +717,9 @@
 
 	/* Non-inline mode: make input full width */
 	.autocomplete-input-container:not(.inline-mode) .autocomplete-native-input {
-		padding: 6px 8px;
+		padding: 4px 8px;
+		height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
+		box-sizing: border-box;
 		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
 		background: var(--neutral-fill-input-rest, #ffffff);

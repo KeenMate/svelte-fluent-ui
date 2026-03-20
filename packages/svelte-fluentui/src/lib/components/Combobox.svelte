@@ -84,22 +84,40 @@
 	    })
 		    | undefined = undefined
 
-	// Initialize display value when element is mounted and has a preselected value
+	// Re-apply value when options are added asynchronously
+	// The fluent-combobox web component only evaluates the value at init,
+	// so if options arrive later (async), the selection is lost.
 	$effect(() => {
-		if (element && value?.[0] && options) {
-			// Use setTimeout to wait for fluent-option elements to be registered
-			setTimeout(() => {
-				if (element && element.options?.length > 0) {
-					const selectedOptionElement = element.options.find(
-						(x: HTMLOptionElement) => x.value === value?.[0],
-					)
-					if (selectedOptionElement) {
-						element.value = selectedOptionElement.dataset.optionLabel ||
-							selectedOptionElement.innerText.trim()
+		if (!element || !value?.[0]) return
+
+		// Try to apply value immediately (handles options prop changes)
+		function applyValue() {
+			if (element && element.options?.length > 0 && value?.[0]) {
+				const selectedOptionElement = element.options.find(
+					(x: HTMLOptionElement) => x.value === value?.[0],
+				)
+				if (selectedOptionElement) {
+					const displayText = selectedOptionElement.dataset.optionLabel ||
+						selectedOptionElement.innerText.trim()
+					if (element.value !== displayText) {
+						element.value = displayText
+						const idx = element.options.findIndex(
+							(x: HTMLOptionElement) => x.value === value?.[0],
+						)
+						if (idx >= 0) element.selectedIndex = idx
 					}
 				}
-			}, 0)
+			}
 		}
+
+		// Initial apply after options render
+		setTimeout(applyValue, 0)
+
+		// Watch for dynamically added options (children path)
+		const observer = new MutationObserver(() => applyValue())
+		observer.observe(element, { childList: true, subtree: true })
+
+		return () => observer.disconnect()
 	})
 
 	// $inspect(id, "combobox selected options", selectedOptions.value)
@@ -187,8 +205,6 @@
 
 	// Conditional props for web component (to avoid rendering "undefined" or "null" as string values)
 	let titleProps = $derived(title ? { title } : {})
-
-	console.log("Combobox", { id, position })
 
 	// Set position property on element (web components need property, not just attribute)
 	$effect(() => {
