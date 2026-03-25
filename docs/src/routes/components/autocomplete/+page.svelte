@@ -548,7 +548,7 @@
 					>
 						{#snippet optionTemplate(option)}
 							<div style="display: flex; align-items: center; gap: 0.5rem;">
-								<Icon name="Person" size={16} />
+								<Icon name="person" size={16} />
 								<div>
 									<div>{option.text}</div>
 									<small style="color: var(--neutral-foreground-hint);">{(option as any).email}</small>
@@ -707,7 +707,7 @@
 >
   {#snippet optionTemplate(option)}
     <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <Icon name="Person" size={16} />
+      <Icon name="person" size={16} />
       <span>{option.text}</span>
     </div>
   {/snippet}

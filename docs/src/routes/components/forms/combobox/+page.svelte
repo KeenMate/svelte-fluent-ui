@@ -339,7 +339,7 @@
 						{#each people as person (person.value)}
 							<Option value={person.value} label={`${person.firstName} (${person.lastName})`}>
 								<span class="person-option">
-									<Icon name="Person" size="16" />
+									<Icon name="person" size={16} />
 									<span>{person.firstName} ({person.lastName})</span>
 								</span>
 							</Option>

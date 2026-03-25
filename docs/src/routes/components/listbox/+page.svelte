@@ -255,7 +255,7 @@
 					{#each templatePeople as person}
 						<Option value={person.value}>
 							<span class="person-option">
-								<Icon name="Person" size="16" />
+								<Icon name="person" size={16} />
 								<span>{person.firstName} ({person.lastName})</span>
 								{#if person.age > 0}
 									<span class="age-badge">{person.age}</span>

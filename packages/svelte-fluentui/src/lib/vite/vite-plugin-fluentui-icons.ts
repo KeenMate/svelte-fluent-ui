@@ -163,13 +163,11 @@ function extractIconNames(code: string): Set<string> {
 		icons.add(match[1]);
 	}
 
-	// Match name: "..." in objects (for programmatic usage)
-	const objectPattern = /name:\s*["']([a-z_]+)["']/g;
+	// Match icon-related properties in objects (for programmatic usage)
+	// Covers patterns like: name: "home", icon: "settings", iconName: "person"
+	const objectPattern = /(?:icon(?:Name)?|name):\s*["']([a-z][a-z_]*)["']/g;
 	while ((match = objectPattern.exec(code)) !== null) {
-		// Only add if it looks like an icon name (lowercase with underscores)
-		if (/^[a-z][a-z_]*$/.test(match[1])) {
-			icons.add(match[1]);
-		}
+		icons.add(match[1]);
 	}
 
 	return icons;

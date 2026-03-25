@@ -293,7 +293,7 @@
 					<strong>With start</strong>
 					<Search placeholder="Search...">
 						{#snippet start()}
-							<Icon name="Globe" />
+							<Icon name="globe" />
 						{/snippet}
 					</Search>
 				</Stack>
@@ -303,7 +303,7 @@
 					<strong>With end</strong>
 					<Search placeholder="Search...">
 						{#snippet end()}
-							<Icon name="Globe" />
+							<Icon name="globe" />
 						{/snippet}
 					</Search>
 				</Stack>

@@ -288,7 +288,7 @@
 					<strong>Start icon</strong>
 					<NumberField bind:value={startIconValue} label="With start">
 						{#snippet start()}
-							<Icon name="Money" size="16" />
+							<Icon name="money" size={16} />
 						{/snippet}
 					</NumberField>
 				</Stack>
@@ -298,7 +298,7 @@
 					<strong>End icon</strong>
 					<NumberField bind:value={endIconValue} label="With end">
 						{#snippet end()}
-							<Icon name="Calculator" size="16" />
+							<Icon name="calculator" size={16} />
 						{/snippet}
 					</NumberField>
 				</Stack>
@@ -308,10 +308,10 @@
 					<strong>Both icons</strong>
 					<NumberField bind:value={bothIconsValue} label="Both">
 						{#snippet start()}
-							<Icon name="Money" size="16" />
+							<Icon name="money" size={16} />
 						{/snippet}
 						{#snippet end()}
-							<Icon name="Calculator" size="16" />
+							<Icon name="calculator" size={16} />
 						{/snippet}
 					</NumberField>
 				</Stack>

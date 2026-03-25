@@ -131,6 +131,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Placeholders and autofill prevention reference table
 
 ### Changed
+- **Replaced `live-server` with `five-server`** - Maintained fork with modern dependencies
+  - Eliminates 6 vulnerabilities from outdated `braces`/`chokidar`/`micromatch` in `live-server`
+  - Upgraded `@sveltejs/adapter-auto` from `^6.1.1` to `^7.0.0` to unblock `npm audit fix`
+  - Reduced total vulnerabilities from 24 to 4 (remaining 4 are upstream `@sveltejs/kit` → `cookie` issue)
+
 - **GridCellEditor Refactored** - Replaced external `Autocomplete` component with native implementations
   - Removed dependency on `Autocomplete.svelte` for grid editing
   - Cell editors now feel native to the grid with consistent styling
