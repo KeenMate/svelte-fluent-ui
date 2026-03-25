@@ -7,7 +7,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Copy workspace root and package files
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json README.md ./
 COPY packages/svelte-fluentui/package.json ./packages/svelte-fluentui/
 COPY docs/package.json ./docs/
 
