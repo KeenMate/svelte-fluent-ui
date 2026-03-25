@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Vite plugin icon detection** - `extractIconNames` now matches `icon:` and `iconName:` object properties in addition to `name:`, fixing sidebar icons not being copied to production builds
 - **Dockerfile** - Added missing `README.md` to root COPY step, fixing `post-package.js` build failure
 
+### Documentation
+- **References section** - Added missing References links to Button, Select, and Icon demo pages
+- **API documentation audit** - Added Properties, Callbacks, and Slots tables to all component demo pages that were missing them:
+  - Pages missing all three: Button, DatePicker, TimePicker, Toast Service, QuickGrid, QuickGrid Editable, QuickGrid Context Menu, NumberField, Radio, RadioGroup, Search, Grid, MultiSplitter
+  - Pages missing Callbacks and/or Slots: Autocomplete, Checkbox, Icon, InputFile, Listbox, Combobox, Card, Tabs, Toast, Toolbar, Tooltip, AppBar, Navigation, BodyContent, Layout, Spacer
+
 ### Added
 - **Select Component** - Enhanced props and functionality to match FluentUI Blazor API
   - New props: `title`, `width`, `height`, `maxVisibleOptions`, `indicatorTemplate`
