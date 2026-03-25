@@ -187,6 +187,43 @@
 		{field: "default", title: "Default", sortable: true},
 		{field: "description", title: "Description", filterable: true}
 	]
+
+	type Callback = {
+		name: string
+		signature: string
+		description: string
+	}
+
+	const callbacks: Callback[] = [
+		{name: "onoptionssearch", signature: "(searchText: string) => Promise<OptionItem[]> | OptionItem[]", description: "Called when user types to search. Return filtered options (sync or async). If omitted, built-in case-insensitive contains filter is used."},
+		{name: "onselectedoptionschange", signature: "(selected: T[]) => void", description: "Called when the selected options array changes (item added or removed)."},
+		{name: "ondismissed", signature: "() => void", description: "Called when the dropdown closes."}
+	]
+
+	const callbackColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "signature", title: "Signature", sortable: false, filterable: false},
+		{field: "description", title: "Description", filterable: true}
+	]
+
+	type SlotItem = {
+		name: string
+		type: string
+		description: string
+	}
+
+	const slots: SlotItem[] = [
+		{name: "labelTemplate", type: "Snippet", description: "Custom label content rendered above the input. Replaces the plain text label prop when provided."},
+		{name: "optionTemplate", type: "Snippet<[OptionItem]>", description: "Custom rendering for each option in the dropdown list. Receives the OptionItem as a parameter."},
+		{name: "headerContent", type: "Snippet", description: "Custom content rendered at the top of the dropdown overlay, above the option list."},
+		{name: "footerContent", type: "Snippet", description: "Custom content rendered at the bottom of the dropdown overlay, below the option list."}
+	]
+
+	const slotColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -208,10 +245,26 @@
 
 	<h2>API</h2>
 
-	<Card>
-		<h3>Properties</h3>
-		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-	</Card>
+	<Grid columns={1} gap="1rem">
+		<GridItem>
+			<Card>
+				<h3>Properties</h3>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem>
+			<Card>
+				<h3>Callbacks</h3>
+				<QuickGrid items={callbacks} columns={callbackColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem>
+			<Card>
+				<h3>Slots</h3>
+				<QuickGrid items={slots} columns={slotColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Card>
 		<h3>OptionItem Type</h3>

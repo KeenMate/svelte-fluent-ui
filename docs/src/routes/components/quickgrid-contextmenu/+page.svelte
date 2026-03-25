@@ -1,6 +1,78 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button} from "svelte-fluentui"
 
+	type PropertyRow = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const propertyColumns = [
+		{field: "name", title: "Property", width: "180px", sortable: true},
+		{field: "type", title: "Type", width: "220px"},
+		{field: "default", title: "Default", width: "100px"},
+		{field: "description", title: "Description"}
+	]
+
+	const properties: PropertyRow[] = [
+		{name: "contextMenu", type: "ContextMenuItem[]", default: "undefined", description: "Array of context menu item configurations shown on right-click"},
+		{name: "oncontextmenuopen", type: "(context: ContextMenuContext) => void", default: "undefined", description: "Callback fired when the context menu opens, receives the click context"}
+	]
+
+	const callbacks: PropertyRow[] = [
+		{name: "oncontextmenuopen", type: "(context: ContextMenuContext) => void", default: "—", description: "Fired when context menu opens. Receives row, rowIndex, colIndex, column, and cellValue"}
+	]
+
+	const slots: PropertyRow[] = [
+		{name: "cellTemplate", type: "Snippet", default: "—", description: "Custom cell rendering snippet, available on the column definition via column.snippet"}
+	]
+
+	type ContextMenuItemRow = {
+		name: string
+		type: string
+		required: string
+		description: string
+	}
+
+	const contextMenuItemColumns = [
+		{field: "name", title: "Property", width: "160px", sortable: true},
+		{field: "type", title: "Type", width: "260px"},
+		{field: "required", title: "Required", width: "90px", align: "center" as const},
+		{field: "description", title: "Description"}
+	]
+
+	const contextMenuItems: ContextMenuItemRow[] = [
+		{name: "id", type: "string", required: "yes", description: "Unique identifier for the menu item"},
+		{name: "label", type: "string | (context) => string", required: "yes", description: "Display text — can be a static string or a function for dynamic labels based on context"},
+		{name: "icon", type: "string", required: "no", description: "Optional icon displayed before the label (emoji or text)"},
+		{name: "disabled", type: "boolean | (context) => boolean", required: "no", description: "Disables the item; accepts a static boolean or a function evaluated per-click"},
+		{name: "visible", type: "boolean | (context) => boolean", required: "no", description: "Hides the item when false; accepts a static boolean or a function evaluated per-click"},
+		{name: "danger", type: "boolean", required: "no", description: "Applies red/destructive styling to the item"},
+		{name: "dividerBefore", type: "boolean", required: "no", description: "Renders a divider line above this item"},
+		{name: "onclick", type: "(context) => void | Promise<void>", required: "no", description: "Click handler receiving the full ContextMenuContext"}
+	]
+
+	type ContextMenuContextRow = {
+		name: string
+		type: string
+		description: string
+	}
+
+	const contextMenuContextColumns = [
+		{field: "name", title: "Property", width: "140px", sortable: true},
+		{field: "type", title: "Type", width: "160px"},
+		{field: "description", title: "Description"}
+	]
+
+	const contextMenuContext: ContextMenuContextRow[] = [
+		{name: "row", type: "T", description: "The full data object for the right-clicked row"},
+		{name: "rowIndex", type: "number", description: "Zero-based index of the row in the currently displayed items"},
+		{name: "colIndex", type: "number", description: "Zero-based index of the clicked column"},
+		{name: "column", type: "Column<T>", description: "The column definition object for the clicked cell"},
+		{name: "cellValue", type: "unknown", description: "The raw value of the clicked cell"}
+	]
+
 	type Product = {
 		id: number
 		name: string
@@ -276,124 +348,43 @@
 			</Card>
 		</GridItem>
 
-		<!-- API Documentation -->
+		<!-- API Documentation: QuickGrid props -->
+		<GridItem span={12}>
+			<Grid spacing={3}>
+				<GridItem xs={12} xl={6} xxl={4}>
+					<Card>
+						<h3>Properties</h3>
+						<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+					</Card>
+				</GridItem>
+				<GridItem xs={12} xl={6} xxl={4}>
+					<Card>
+						<h3>Callbacks</h3>
+						<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+					</Card>
+				</GridItem>
+				<GridItem xs={12} xl={6} xxl={4}>
+					<Card>
+						<h3>Slots</h3>
+						<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+					</Card>
+				</GridItem>
+			</Grid>
+		</GridItem>
+
+		<!-- API Documentation: ContextMenuItem type -->
 		<GridItem span={12}>
 			<Card>
-				<h3>Context Menu API</h3>
+				<h3>ContextMenuItem Properties</h3>
+				<QuickGrid items={contextMenuItems} columns={contextMenuItemColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
 
-				<h4 style="margin-top: 1rem;">Props</h4>
-				<table class="api-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><code>contextMenu</code></td>
-							<td><code>ContextMenuItem[]</code></td>
-							<td>Array of menu item configurations</td>
-						</tr>
-						<tr>
-							<td><code>oncontextmenuopen</code></td>
-							<td><code>(context) =&gt; void</code></td>
-							<td>Callback fired when context menu opens</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<h4 style="margin-top: 1.5rem;">ContextMenuItem Properties</h4>
-				<table class="api-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><code>id</code></td>
-							<td><code>string</code></td>
-							<td>Unique identifier for the menu item</td>
-						</tr>
-						<tr>
-							<td><code>label</code></td>
-							<td><code>string | (context) =&gt; string</code></td>
-							<td>Display text (can be dynamic based on context)</td>
-						</tr>
-						<tr>
-							<td><code>icon</code></td>
-							<td><code>string</code></td>
-							<td>Optional icon (emoji or text)</td>
-						</tr>
-						<tr>
-							<td><code>disabled</code></td>
-							<td><code>boolean | (context) =&gt; boolean</code></td>
-							<td>Whether the item is disabled</td>
-						</tr>
-						<tr>
-							<td><code>visible</code></td>
-							<td><code>boolean | (context) =&gt; boolean</code></td>
-							<td>Whether the item is visible</td>
-						</tr>
-						<tr>
-							<td><code>danger</code></td>
-							<td><code>boolean</code></td>
-							<td>Red styling for destructive actions</td>
-						</tr>
-						<tr>
-							<td><code>dividerBefore</code></td>
-							<td><code>boolean</code></td>
-							<td>Add a divider line before this item</td>
-						</tr>
-						<tr>
-							<td><code>onclick</code></td>
-							<td><code>(context) =&gt; void</code></td>
-							<td>Click handler receiving the context</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<h4 style="margin-top: 1.5rem;">ContextMenuContext Properties</h4>
-				<table class="api-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><code>row</code></td>
-							<td><code>T</code></td>
-							<td>The row data object</td>
-						</tr>
-						<tr>
-							<td><code>rowIndex</code></td>
-							<td><code>number</code></td>
-							<td>Index of the row in displayed items</td>
-						</tr>
-						<tr>
-							<td><code>colIndex</code></td>
-							<td><code>number</code></td>
-							<td>Index of the column</td>
-						</tr>
-						<tr>
-							<td><code>column</code></td>
-							<td><code>Column&lt;T&gt;</code></td>
-							<td>The column definition</td>
-						</tr>
-						<tr>
-							<td><code>cellValue</code></td>
-							<td><code>unknown</code></td>
-							<td>The value of the clicked cell</td>
-						</tr>
-					</tbody>
-				</table>
+		<!-- API Documentation: ContextMenuContext type -->
+		<GridItem span={12}>
+			<Card>
+				<h3>ContextMenuContext Properties</h3>
+				<QuickGrid items={contextMenuContext} columns={contextMenuContextColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 
@@ -504,30 +495,6 @@
 		background: var(--neutral-layer-2, #2b2b2b);
 	}
 
-	.api-table {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 0.5rem;
-	}
-
-	.api-table th,
-	.api-table td {
-		padding: 8px 12px;
-		text-align: left;
-		border-bottom: 1px solid var(--neutral-stroke-rest, #e0e0e0);
-	}
-
-	.api-table th {
-		background: var(--neutral-layer-2, #f5f5f5);
-		font-weight: 600;
-	}
-
-	.api-table code {
-		background: var(--neutral-layer-3, #ebebeb);
-		padding: 2px 6px;
-		border-radius: 4px;
-		font-size: 13px;
-	}
 
 	pre {
 		background: var(--neutral-layer-2, #f5f5f5);
@@ -539,14 +506,6 @@
 	pre code {
 		background: none;
 		padding: 0;
-	}
-
-	[data-theme="dark"] .api-table th {
-		background: var(--neutral-layer-2, #2b2b2b);
-	}
-
-	[data-theme="dark"] .api-table code {
-		background: var(--neutral-layer-3, #333);
 	}
 
 	[data-theme="dark"] pre {

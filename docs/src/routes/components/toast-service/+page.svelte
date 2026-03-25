@@ -80,6 +80,87 @@
 		description: string
 	}
 
+	const properties: Property[] = [
+		{
+			name: "id",
+			type: "string",
+			default: "undefined",
+			description: "Optional HTML id attribute for the toast element"
+		},
+		{
+			name: "title",
+			type: "string",
+			default: "undefined",
+			description: "Toast title displayed in the header"
+		},
+		{
+			name: "timestamp",
+			type: "Date",
+			default: "undefined",
+			description: "Timestamp shown when topCTAType is set to \"timestamp\""
+		},
+		{
+			name: "topCTAType",
+			type: '"dismiss" | "timestamp" | "action"',
+			default: "undefined",
+			description: "Controls the top-right action area: dismiss button, timestamp display, or a custom action link"
+		},
+		{
+			name: "topAction",
+			type: "string",
+			default: "undefined",
+			description: "Label for the top action link (used when topCTAType is \"action\")"
+		},
+		{
+			name: "primaryAction",
+			type: "string",
+			default: "undefined",
+			description: "Label for the primary action link shown in the footer area"
+		},
+		{
+			name: "secondaryAction",
+			type: "string",
+			default: "undefined",
+			description: "Label for the secondary action link shown in the footer area"
+		}
+	]
+
+	const callbacks: Property[] = [
+		{
+			name: "ondismiss",
+			type: "() => void",
+			default: "undefined",
+			description: "Called when the dismiss button is clicked (topCTAType=\"dismiss\")"
+		},
+		{
+			name: "ontopactionclick",
+			type: "() => void",
+			default: "undefined",
+			description: "Called when the top action link is clicked (topCTAType=\"action\")"
+		},
+		{
+			name: "onprimaryactionclick",
+			type: "() => void",
+			default: "undefined",
+			description: "Called when the primary action link is clicked"
+		},
+		{
+			name: "onsecondaryactionclick",
+			type: "() => void",
+			default: "undefined",
+			description: "Called when the secondary action link is clicked"
+		}
+	]
+
+	const slots: Property[] = [
+		{
+			name: "children",
+			type: "Snippet",
+			default: "undefined",
+			description: "Default slot — renders the toast body content between the header and action links"
+		}
+	]
+
 	const storeMethodsData: Property[] = [
 		{
 			name: "toast.success(message, options?)",
@@ -191,6 +272,27 @@
 			Add <code>&lt;ToastContainer /&gt;</code> once in your layout, then call <code>toast.success()</code> from anywhere.
 		</p>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6}>

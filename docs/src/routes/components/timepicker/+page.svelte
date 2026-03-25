@@ -1,5 +1,44 @@
 <script lang="ts">
-	import {TimePicker, Card, Stack} from "svelte-fluentui"
+	import {TimePicker, Card, Stack, Grid, GridItem, QuickGrid} from "svelte-fluentui"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "string | null", default: "null", description: "The selected time value in HH:mm or HH:mm:ss format. Bindable."},
+		{name: "placeholder", type: "string", default: '"Select time"', description: "Placeholder text shown in the input when no time is selected."},
+		{name: "disabled", type: "boolean", default: "false", description: "Disables the time picker, preventing user interaction."},
+		{name: "readonly", type: "boolean", default: "false", description: "Makes the time picker read-only; the popup cannot be opened."},
+		{name: "required", type: "boolean", default: "false", description: "Marks the field as required, showing a * indicator next to the label."},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Automatically focuses the input on mount."},
+		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the time picker input."},
+		{name: "appearance", type: "string", default: "undefined", description: "Visual appearance of the underlying TextField (e.g. 'outline', 'filled-lighter')."},
+		{name: "use24Hours", type: "boolean", default: "true", description: "When true, uses 24-hour format. When false, uses 12-hour format with AM/PM selector."},
+		{name: "showSeconds", type: "boolean", default: "false", description: "When true, shows a seconds column in the time picker popup."},
+		{name: "minuteStep", type: "number", default: "1", description: "Step interval for the minutes column (e.g. 15 shows 00, 15, 30, 45)."},
+		{name: "hourStep", type: "number", default: "1", description: "Step interval for the hours column."},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the root element."},
+		{name: "style", type: "string", default: '""', description: "Inline styles applied to the root element."}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onValueChange", type: "(value: string | null) => void", default: "undefined", description: "Called when the user confirms a time selection or clears the value. Receives the new time string (HH:mm or HH:mm:ss) or null if cleared."}
+	]
+
+	const slots: Property[] = [
+		{name: "(none)", type: "-", default: "-", description: "TimePicker has no public slots. Internal slots are used for the clock icon and clear button inside the TextField."}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 
 	let basicTime = $state<string | null>("14:30")
 	let time12Hour = $state<string | null>("02:30")
@@ -22,6 +61,29 @@
 		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/TimePicker" target="_blank" rel="noopener noreferrer">FluentTimePicker</a>
 	</p>
 </Card>
+
+<h2>API</h2>
+
+<Grid spacing={3}>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h3>Properties</h3>
+			<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h3>Callbacks</h3>
+			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h3>Slots</h3>
+			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+</Grid>
 
 <h2>Examples</h2>
 

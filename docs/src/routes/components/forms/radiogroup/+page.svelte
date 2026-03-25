@@ -33,11 +33,20 @@
 		{name: "onchange", type: "(value: string) => void", default: "undefined", description: "Callback when selection changes"}
 	]
 
+	const radioGroupCallbacks: Property[] = [
+		{name: "onchange", type: "(value: string) => void", default: "undefined", description: "Fires when the selected radio value changes"}
+	]
+
+	const radioGroupSlots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Radio button elements inside the group"},
+		{name: "labelTemplate", type: "SlotType", default: "undefined", description: "Custom label content rendered above the group"}
+	]
+
 	const propertyColumns = [
-		{field: "name", title: "Name", width: "140px"},
-		{field: "type", title: "Type", width: "200px"},
-		{field: "default", title: "Default", width: "100px"},
-		{field: "description", title: "Description"}
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
 	]
 </script>
 
@@ -165,10 +174,17 @@
 
 	<h2>Documentation</h2>
 
-	<Card>
-		<h3>RadioGroup Properties</h3>
-		<QuickGrid items={radioGroupProperties} columns={propertyColumns} striped />
-	</Card>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Properties</h2><QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Callbacks</h2><QuickGrid items={radioGroupCallbacks} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Slots</h2><QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

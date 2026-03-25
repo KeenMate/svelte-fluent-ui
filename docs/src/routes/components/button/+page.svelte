@@ -1,8 +1,48 @@
 <script lang="ts">
-	import {Button, Stack, Card} from "svelte-fluentui"
+	import {Button, Stack, Card, Grid, GridItem, QuickGrid} from "svelte-fluentui"
 
 	let loading1 = $state(false)
 	let loading2 = $state(false)
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "appearance", type: "string", default: "undefined", description: "Visual appearance of the button. Options: 'accent', 'lightweight', 'outline', 'stealth'."},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Automatically focuses the button when the page loads."},
+		{name: "disabled", type: "string", default: "undefined", description: "Disables the button when set."},
+		{name: "form", type: "string", default: "undefined", description: "Associates the button with a form element by its id."},
+		{name: "formaction", type: "string", default: "undefined", description: "URL to use for form submission when this button is used."},
+		{name: "formenctype", type: "string", default: "undefined", description: "Encoding type to use for form submission."},
+		{name: "formmethod", type: "string", default: "undefined", description: "HTTP method to use for form submission ('get' or 'post')."},
+		{name: "formnovalidate", type: "string", default: "undefined", description: "Bypasses form validation when submitting via this button."},
+		{name: "formtarget", type: "string", default: "undefined", description: "Browsing context in which to display the form submission response."},
+		{name: "name", type: "string", default: "undefined", description: "Name of the button, submitted as part of form data."},
+		{name: "type", type: "string", default: "undefined", description: "Button type: 'button', 'submit', or 'reset'."},
+		{name: "value", type: "string", default: "undefined", description: "Value submitted with the form when the button is clicked."},
+		{name: "style", type: "string", default: "\"\"", description: "Inline CSS styles to apply to the button element."},
+	]
+
+	const callbacks: Property[] = [
+		{name: "onclick", type: "(ev: MouseEvent) => void", default: "undefined", description: "Called when the button is clicked."},
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "Default slot for button label or content."},
+		{name: "start", type: "Snippet", default: "undefined", description: "Content rendered before the button label (e.g. an icon)."},
+		{name: "end", type: "Snippet", default: "undefined", description: "Content rendered after the button label (e.g. an icon)."},
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 
 	async function handleRefresh(loadingVar: 'loading1' | 'loading2') {
 		if (loadingVar === 'loading1') {
@@ -24,6 +64,36 @@
 </script>
 
 <h1>Button</h1>
+
+<Card>
+	<p>
+		<strong>References:</strong>
+		<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-button--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+		|
+		<a href="https://www.fluentui-blazor.net/Button" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+	</p>
+</Card>
+
+<Grid spacing={3}>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h2>Properties</h2>
+			<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h2>Callbacks</h2>
+			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h2>Slots</h2>
+			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+</Grid>
 
 <h2>Example</h2>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {DatePicker, Card, Stack, Button} from "svelte-fluentui"
+	import {DatePicker, Card, Stack, Button, Grid, GridItem, QuickGrid} from "svelte-fluentui"
 
 	let basicDate = $state<Date | null>(new Date())
 	let minMaxDate = $state<Date | null>(null)
@@ -12,6 +12,45 @@
 	minDate.setDate(today.getDate() - 30)
 	const maxDate = new Date(today)
 	maxDate.setDate(today.getDate() + 30)
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "value", type: "Date | null", default: "null", description: "The currently selected date. Supports two-way binding with bind:value."},
+		{name: "placeholder", type: "string", default: '"Select a date"', description: "Placeholder text shown in the text field when no date is selected."},
+		{name: "disabled", type: "boolean", default: "false", description: "Disables the date picker, preventing interaction."},
+		{name: "readonly", type: "boolean", default: "false", description: "Makes the date picker read-only; calendar cannot be opened."},
+		{name: "required", type: "boolean", default: "false", description: "Marks the field as required, showing a * indicator next to the label."},
+		{name: "autofocus", type: "boolean", default: "undefined", description: "Automatically focuses the input on mount."},
+		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the input field."},
+		{name: "appearance", type: "string", default: "undefined", description: "Visual appearance of the text field (e.g. 'outline', 'filled-darker')."},
+		{name: "culture", type: "Intl.Locale", default: "navigator.language", description: "Locale used for date formatting and calendar display."},
+		{name: "dateFormat", type: "Intl.DateTimeFormatOptions", default: '{ year: "numeric", month: "long", day: "numeric" }', description: "Format options passed to Intl.DateTimeFormat to control how the selected date is displayed."},
+		{name: "minDate", type: "Date", default: "undefined", description: "Minimum selectable date. Dates before this are disabled in the calendar."},
+		{name: "maxDate", type: "Date", default: "undefined", description: "Maximum selectable date. Dates after this are disabled in the calendar."},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the root element."},
+		{name: "style", type: "string", default: '""', description: "Inline styles applied to the root element."},
+	]
+
+	const callbacks: Property[] = [
+		{name: "onValueChange", type: "(value: Date | null) => void", default: "undefined", description: "Called when the selected date changes, either by calendar selection or manual text entry. Receives the new Date value or null when cleared."},
+	]
+
+	const slots: Property[] = [
+		{name: "(none)", type: "-", default: "-", description: "DatePicker does not expose any slots."},
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true},
+	]
 </script>
 
 <h1>DatePicker</h1>
@@ -28,6 +67,29 @@
 		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/DatePicker" target="_blank" rel="noopener noreferrer">FluentDatePicker</a>
 	</p>
 </Card>
+
+<h2>API</h2>
+
+<Grid spacing={3}>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h3>Properties</h3>
+			<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h3>Callbacks</h3>
+			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem xs={12} xl={6} xxl={4}>
+		<Card>
+			<h3>Slots</h3>
+			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+</Grid>
 
 <h2>Examples</h2>
 

@@ -1,8 +1,51 @@
 <script lang="ts">
-	import { Icon, Stack, Card } from 'svelte-fluentui';
+	import { Icon, Stack, Card, QuickGrid, Grid, GridItem } from 'svelte-fluentui';
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "name", type: "string", default: "required", description: "Icon name (e.g., \"home\", \"settings\", \"checkmark_circle\")"},
+		{name: "size", type: "16 | 20 | 24 | 28 | 32 | 48", default: "24", description: "Icon size in pixels"},
+		{name: "variant", type: "'regular' | 'filled'", default: "'regular'", description: "Icon variant style"},
+		{name: "color", type: "'neutral' | 'accent' | 'warning' | 'info' | 'error' | 'success' | 'fill' | 'fill-inverse' | 'lightweight' | 'disabled' | 'custom'", default: "undefined", description: "Color enum mapping to FluentUI CSS variables"},
+		{name: "customColor", type: "string", default: "undefined", description: "Custom color value (hex, rgb, CSS variable). Only used when color=\"custom\""},
+		{name: "primaryFill", type: "string", default: "'currentColor'", description: "Legacy: Icon fill color. Use color instead"},
+		{name: "hoverEffect", type: "boolean", default: "false", description: "Switch to filled variant on hover"},
+		{name: "width", type: "string", default: "undefined", description: "Custom width (overrides size-based width)"},
+		{name: "title", type: "string", default: "undefined", description: "Accessible title for the icon"},
+		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"}
+	]
+
+	const callbacks: Property[] = []
+
+	const slots: Property[] = []
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 </script>
 
 <h1>Icon</h1>
+
+<Card>
+	<p>
+		<strong>References:</strong>
+		<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+		|
+		<a href="https://www.fluentui-blazor.net/Icon" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		|
+		<a href="https://github.com/microsoft/fluentui-system-icons" target="_blank" rel="noopener noreferrer">FluentUI System Icons</a>
+	</p>
+</Card>
 
 <p class="description">
 	The Icon component renders SVG icons from the <a href="https://github.com/microsoft/fluentui-system-icons" target="_blank" rel="noopener">@fluentui/svg-icons</a> package.
@@ -367,87 +410,24 @@ const icons = [
 <h2>API Reference</h2>
 
 <Card>
-	<div class="table-wrapper">
-		<table>
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Default</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><code>name</code></td>
-					<td><code>string</code></td>
-					<td>required</td>
-					<td>Icon name (e.g., "home", "settings", "checkmark_circle")</td>
-				</tr>
-				<tr>
-					<td><code>size</code></td>
-					<td><code>16 | 20 | 24 | 28 | 32 | 48</code></td>
-					<td><code>24</code></td>
-					<td>Icon size in pixels</td>
-				</tr>
-				<tr>
-					<td><code>variant</code></td>
-					<td><code>'regular' | 'filled'</code></td>
-					<td><code>'regular'</code></td>
-					<td>Icon variant style</td>
-				</tr>
-				<tr>
-					<td><code>color</code></td>
-					<td><code>'neutral' | 'accent' | 'warning' | 'info' | 'error' | 'success' | 'fill' | 'fill-inverse' | 'lightweight' | 'disabled' | 'custom'</code></td>
-					<td><code>undefined</code></td>
-					<td>Color enum mapping to FluentUI CSS variables. Defaults to Accent.</td>
-				</tr>
-				<tr>
-					<td><code>customColor</code></td>
-					<td><code>string</code></td>
-					<td><code>undefined</code></td>
-					<td>Custom color value (hex, rgb, CSS variable). Only used when <code>color="custom"</code>.</td>
-				</tr>
-				<tr>
-					<td><code>primaryFill</code></td>
-					<td><code>string</code></td>
-					<td><code>'currentColor'</code></td>
-					<td>Legacy: Icon fill color. Use <code>color</code> instead.</td>
-				</tr>
-				<tr>
-					<td><code>hoverEffect</code></td>
-					<td><code>boolean</code></td>
-					<td><code>false</code></td>
-					<td>Switch to filled variant on hover</td>
-				</tr>
-				<tr>
-					<td><code>width</code></td>
-					<td><code>string</code></td>
-					<td><code>undefined</code></td>
-					<td>Custom width (overrides size-based width)</td>
-				</tr>
-				<tr>
-					<td><code>class</code></td>
-					<td><code>string</code></td>
-					<td><code>''</code></td>
-					<td>Additional CSS classes</td>
-				</tr>
-				<tr>
-					<td><code>style</code></td>
-					<td><code>string</code></td>
-					<td><code>''</code></td>
-					<td>Inline styles</td>
-				</tr>
-				<tr>
-					<td><code>title</code></td>
-					<td><code>string</code></td>
-					<td><code>undefined</code></td>
-					<td>Accessible title for the icon</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<h3>Properties</h3>
+	<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 </Card>
+
+<Grid columns={2} gap="1rem">
+	<GridItem>
+		<Card>
+			<h3>Callbacks</h3>
+			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem>
+		<Card>
+			<h3>Slots</h3>
+			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+</Grid>
 
 <h2>Finding Icon Names</h2>
 

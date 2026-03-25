@@ -1,6 +1,41 @@
 <script lang="ts">
-	import {InputFile, Card, Stack} from "svelte-fluentui"
+	import {InputFile, Card, Stack, QuickGrid, Grid, GridItem} from "svelte-fluentui"
 	import type {FileUploadHandler} from "svelte-fluentui"
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "accept", type: "string", default: "undefined", description: "File types to accept (e.g., \".jpg,.png\" or \"image/*\")"},
+		{name: "multiple", type: "boolean", default: "false", description: "Allow multiple file selection"},
+		{name: "disabled", type: "boolean", default: "false", description: "Disable the component"},
+		{name: "maxFileSize", type: "number", default: "10485760", description: "Maximum file size in bytes (default 10MB)"},
+		{name: "maxFileCount", type: "number", default: "10", description: "Maximum number of files when multiple is true"},
+		{name: "showDragDropZone", type: "boolean", default: "true", description: "Show drag and drop zone"},
+		{name: "uploadFileCallback", type: "FileUploadHandler", default: "undefined", description: "Async function to handle file upload with progress"},
+		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
+		{name: "style", type: "string", default: '""', description: "Inline styles"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onFileSelected", type: "(files: File[]) => void", default: "undefined", description: "Called when files are selected"},
+		{name: "onFileUploaded", type: "(file: File) => void", default: "undefined", description: "Called when a file upload completes successfully"},
+		{name: "onFileError", type: "(file: File, error: string) => void", default: "undefined", description: "Called when file validation or upload fails"},
+		{name: "onCompleted", type: "() => void", default: "undefined", description: "Called when all file uploads complete"}
+	]
+
+	const slots: Property[] = []
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
 
 	// Simulate upload with progress
 	const simulateUpload: FileUploadHandler = async (file, onProgress) => {
@@ -164,94 +199,25 @@
 
 <Card>
 	<h3>Properties</h3>
-	<table class="api-table">
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>accept</code></td>
-				<td><code>string</code></td>
-				<td><code>undefined</code></td>
-				<td>File types to accept (e.g., ".jpg,.png" or "image/*")</td>
-			</tr>
-			<tr>
-				<td><code>multiple</code></td>
-				<td><code>boolean</code></td>
-				<td><code>false</code></td>
-				<td>Allow multiple file selection</td>
-			</tr>
-			<tr>
-				<td><code>disabled</code></td>
-				<td><code>boolean</code></td>
-				<td><code>false</code></td>
-				<td>Disable the component</td>
-			</tr>
-			<tr>
-				<td><code>maxFileSize</code></td>
-				<td><code>number</code></td>
-				<td><code>10485760</code></td>
-				<td>Maximum file size in bytes (default 10MB)</td>
-			</tr>
-			<tr>
-				<td><code>maxFileCount</code></td>
-				<td><code>number</code></td>
-				<td><code>10</code></td>
-				<td>Maximum number of files when multiple is true</td>
-			</tr>
-			<tr>
-				<td><code>showDragDropZone</code></td>
-				<td><code>boolean</code></td>
-				<td><code>true</code></td>
-				<td>Show drag and drop zone</td>
-			</tr>
-			<tr>
-				<td><code>uploadFileCallback</code></td>
-				<td><code>FileUploadHandler</code></td>
-				<td><code>undefined</code></td>
-				<td>Async function to handle file upload with progress</td>
-			</tr>
-		</tbody>
-	</table>
+	<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+</Card>
 
-	<h3>Events</h3>
-	<table class="api-table">
-		<thead>
-			<tr>
-				<th>Event</th>
-				<th>Type</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>onFileSelected</code></td>
-				<td><code>(files: File[]) => void</code></td>
-				<td>Called when files are selected</td>
-			</tr>
-			<tr>
-				<td><code>onFileUploaded</code></td>
-				<td><code>(file: File) => void</code></td>
-				<td>Called when a file upload completes successfully</td>
-			</tr>
-			<tr>
-				<td><code>onFileError</code></td>
-				<td><code>(file: File, error: string) => void</code></td>
-				<td>Called when file validation or upload fails</td>
-			</tr>
-			<tr>
-				<td><code>onCompleted</code></td>
-				<td><code>() => void</code></td>
-				<td>Called when all file uploads complete</td>
-			</tr>
-		</tbody>
-	</table>
+<Grid columns={2} gap="1rem">
+	<GridItem>
+		<Card>
+			<h3>Callbacks</h3>
+			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+	<GridItem>
+		<Card>
+			<h3>Slots</h3>
+			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+		</Card>
+	</GridItem>
+</Grid>
 
+<Card>
 	<h3>FileUploadHandler Type</h3>
 	<pre><code>type FileUploadHandler = (
   file: File,

@@ -18,14 +18,37 @@
 		{name: "spacing", type: "number (1-10)", default: "3", description: "Spacing between grid items"},
 		{name: "justify", type: "JustifyContent", default: "flex-start", description: "Horizontal alignment of items"},
 		{name: "adaptiveRendering", type: "boolean", default: "false", description: "Only render items for current breakpoint"},
-		{name: "onBreakpointEnter", type: "function", default: "undefined", description: "Callback when breakpoint changes"}
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS styles"}
+	]
+
+	const gridCallbacks: Property[] = [
+		{name: "onBreakpointEnter", type: "(size: GridItemSize) => void", default: "undefined", description: "Called when the grid container crosses a responsive breakpoint. Size is one of: xs, sm, md, lg, xl, xxl"}
+	]
+
+	const gridSlots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "GridItem components and other content to render inside the grid"}
 	]
 
 	const gridItemProperties: Property[] = [
-		{name: "xs, sm, md, lg, xl, xxl", type: "number (0-12)", default: "undefined", description: "Number of columns to span at each breakpoint"},
-		{name: "justify", type: "JustifyContent", default: "undefined", description: "Override grid justify for this item"},
-		{name: "gap", type: "string", default: "undefined", description: "Gap between child elements"},
-		{name: "hiddenWhen", type: "GridItemHidden", default: "undefined", description: "Hide item at specific breakpoints"}
+		{name: "xs", type: "number (0-12)", default: "undefined", description: "Columns to span at xs breakpoint (< 600px). 0 means auto/grow."},
+		{name: "sm", type: "number (0-12)", default: "undefined", description: "Columns to span at sm breakpoint (600px+)"},
+		{name: "md", type: "number (0-12)", default: "undefined", description: "Columns to span at md breakpoint (960px+)"},
+		{name: "lg", type: "number (0-12)", default: "undefined", description: "Columns to span at lg breakpoint (1280px+)"},
+		{name: "xl", type: "number (0-12)", default: "undefined", description: "Columns to span at xl breakpoint (1920px+)"},
+		{name: "xxl", type: "number (0-12)", default: "undefined", description: "Columns to span at xxl breakpoint (2560px+)"},
+		{name: "justify", type: "JustifyContent", default: "undefined", description: "Override horizontal alignment for this item's inner content"},
+		{name: "gap", type: "string", default: "undefined", description: "Gap between child elements (sets display:flex automatically)"},
+		{name: "adaptiveRendering", type: "boolean", default: "undefined", description: "Override parent Grid adaptiveRendering for this item"},
+		{name: "hiddenWhen", type: "GridItemHidden", default: "undefined", description: 'Hide item at a breakpoint. Supports exact (e.g. "xs"), "-up" (e.g. "md-up"), or "-down" (e.g. "lg-down") suffixes'},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS styles"}
+	]
+
+	const gridItemCallbacks: Property[] = []
+
+	const gridItemSlots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "Content to render inside the grid item"}
 	]
 
 	const propertyColumns = [
@@ -198,17 +221,48 @@
 	</Grid>
 	</Card>
 
+	<h2>Grid API</h2>
+
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Grid Component</h2>
+				<h2>Properties</h2>
 				<QuickGrid items={gridProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>GridItem Component</h2>
+				<h2>Callbacks</h2>
+				<QuickGrid items={gridCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={gridSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<h2>GridItem API</h2>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
 				<QuickGrid items={gridItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={gridItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={gridItemSlots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

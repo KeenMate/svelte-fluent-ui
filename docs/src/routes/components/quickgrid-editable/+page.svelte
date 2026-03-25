@@ -1,6 +1,43 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button, Select, Option} from "svelte-fluentui"
 
+	// === API Documentation ===
+
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const editableProperties: Property[] = [
+		{name: "editable", type: "boolean", default: "false", description: "Enable inline editing mode for the grid"},
+		{name: "editTrigger", type: "'click' | 'dblclick' | 'button' | 'always' | 'navigate'", default: "'dblclick'", description: "How to trigger cell editing at the grid level (can be overridden per column)"},
+		{name: "dropdownShowOnFocus", type: "boolean", default: "true", description: "Auto-show editor for dropdown types (select, combobox, autocomplete) when cell is focused in navigate mode"},
+		{name: "checkboxAlwaysEditable", type: "boolean", default: "false", description: "Make checkboxes always interactive, even when editTrigger is 'navigate'"},
+		{name: "invalidCells", type: "CellValidationState[]", default: "[]", description: "Bindable array of invalid cells; each entry has rowIndex, field, and error"}
+	]
+
+	const editableCallbacks: Property[] = [
+		{name: "onrowchange", type: "(detail: RowChangeDetail) => void", default: "undefined", description: "Called when a cell value is committed; detail includes row, draftRow, rowIndex, field, oldValue, newValue, isValid, validationError"},
+		{name: "onroweditstart", type: "(detail: { row, rowIndex, field }) => void", default: "undefined", description: "Called when a cell enters edit mode"},
+		{name: "onroweditcancel", type: "(detail: { row, rowIndex, field }) => void", default: "undefined", description: "Called when editing is cancelled (e.g. Escape key)"},
+		{name: "onvalidationerror", type: "(detail: { row, rowIndex, field, error }) => void", default: "undefined", description: "Called when a value fails validation"}
+	]
+
+	const editableSlots: Property[] = [
+		{name: "cellTemplate", type: "SlotType", default: "undefined", description: "Custom cell template for rendering cell content (applies to all columns unless overridden by column.snippet)"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
+
+	// === Data ===
+
 	type Person = {
 		id: number
 		name: string
@@ -807,6 +844,18 @@
 	<p>
 		QuickGrid supports inline editing with multiple editor types, edit triggers, validation, and advanced callbacks. This page covers all editable features.
 	</p>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Properties</h2><QuickGrid items={editableProperties} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Callbacks</h2><QuickGrid items={editableCallbacks} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Slots</h2><QuickGrid items={editableSlots} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+	</Grid>
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6}>

@@ -89,6 +89,12 @@
 
 	<Card>
 		<p>
+			<strong>References:</strong>
+			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-select--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
+			|
+			<a href="https://www.fluentui-blazor.net/Select" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+		<p>
 			An implementation of an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select" target="_blank" rel="noopener noreferrer">HTML select element</a> as a component supporting the Fluent UI design system.
 		</p>
 	</Card>

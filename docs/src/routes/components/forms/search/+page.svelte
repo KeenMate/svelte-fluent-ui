@@ -92,8 +92,14 @@
 	]
 
 	const methods: Property[] = [
-		{name: "focusAsync", type: "void", default: "-", description: "Exposes the elements FocusAsync(bool preventScroll) method"},
-		{name: "focusAsync(preventScroll)", type: "bool preventScroll", default: "-", description: "Exposes the elements FocusAsync method with preventScroll parameter"}
+		{name: "focusAsync", type: "() => void", default: "-", description: "Focuses the search input, with optional preventScroll parameter"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Default slot content"},
+		{name: "start", type: "SlotType", default: "undefined", description: "Content/icon placed before the search input"},
+		{name: "end", type: "SlotType", default: "undefined", description: "Content/icon placed after the search input"},
+		{name: "labelTemplate", type: "SlotType", default: "undefined", description: "Custom label content rendered above the input"}
 	]
 
 	const propertyColumns = [
@@ -395,25 +401,23 @@
 
 	<h2>Documentation</h2>
 
-	<!-- FluentSearch Class -->
-	<Card>
-		<h3>FluentSearch Class</h3>
-		<p class="hint">Inherits from <a href="https://www.fluentui-blazor.net/InputBase" target="_blank" rel="noopener noreferrer">FluentInputBase&lt;string&gt;</a></p>
-		<p class="hint" style="margin-bottom: 1rem;">These might be parameters and/or methods shared from that component's base type but are not applicable to this component.</p>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Properties</h2><QuickGrid items={properties} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Callbacks</h2><QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Slots</h2><QuickGrid items={slots} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+	</Grid>
 
-		<h4>Parameters</h4>
-		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h4>Event Callbacks</h4>
-		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h4>Methods</h4>
-		<QuickGrid items={methods} columns={propertyColumns} sortable filterable striped />
-	</Card>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Methods</h2><QuickGrid items={methods} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+	</Grid>
 
 	<!-- Placeholders and Autofill -->
 	<Card>

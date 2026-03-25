@@ -28,21 +28,38 @@
 	}
 
 	const multiSplitterProperties: Property[] = [
-		{name: "orientation", type: '"horizontal" | "vertical"', default: "horizontal", description: "Direction of the splitter"},
-		{name: "barSize", type: "string", default: "6px", description: "Size of the resize bar"},
-		{name: "width", type: "string", default: "undefined", description: "Width of the splitter container"},
-		{name: "height", type: "string", default: "undefined", description: "Height of the splitter container"},
-		{name: "onCollapse", type: "function", default: "undefined", description: "Callback when a pane is collapsed"},
-		{name: "onExpand", type: "function", default: "undefined", description: "Callback when a pane is expanded"},
-		{name: "onResize", type: "function", default: "undefined", description: "Callback when a pane is resized"}
+		{name: "orientation", type: '"horizontal" | "vertical"', default: "horizontal", description: "Direction of the splitter layout. Horizontal arranges panes side by side; vertical stacks them."},
+		{name: "barSize", type: "string", default: "6px", description: "Width (horizontal) or height (vertical) of the resize drag bar between panes"},
+		{name: "width", type: "string", default: "undefined", description: "Explicit width of the splitter container. Any CSS length value (e.g. '800px', '100%')."},
+		{name: "height", type: "string", default: "undefined", description: "Explicit height of the splitter container. Any CSS length value (e.g. '400px', '100vh')."},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the container element"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS styles applied to the container element"}
+	]
+
+	const multiSplitterCallbacks: Property[] = [
+		{name: "onCollapse", type: "(args: MultiSplitterEventArgs) => void", default: "undefined", description: "Called when a pane is collapsed. Args: { index: number, pane: HTMLElement }"},
+		{name: "onExpand", type: "(args: MultiSplitterEventArgs) => void", default: "undefined", description: "Called when a collapsed pane is expanded. Args: { index: number, pane: HTMLElement }"},
+		{name: "onResize", type: "(args: MultiSplitterResizeEventArgs) => void", default: "undefined", description: "Called continuously while a pane is being resized. Args: { index: number, pane: HTMLElement, size: number }"}
+	]
+
+	const multiSplitterSlots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "MultiSplitterPane components to render as panels inside the splitter"}
 	]
 
 	const multiSplitterPaneProperties: Property[] = [
-		{name: "size", type: "string", default: "undefined", description: "Initial size (width/height based on orientation)"},
-		{name: "minSize", type: "string", default: "undefined", description: "Minimum size constraint"},
-		{name: "maxSize", type: "string", default: "undefined", description: "Maximum size constraint"},
-		{name: "resizable", type: "boolean", default: "true", description: "Whether the pane can be resized"},
-		{name: "collapsible", type: "boolean", default: "false", description: "Whether the pane can be collapsed"}
+		{name: "size", type: "string", default: "undefined", description: "Initial size of the pane. Sets width in horizontal mode, height in vertical mode. Any CSS length (e.g. '250px')."},
+		{name: "minSize", type: "string", default: "undefined", description: "Minimum size constraint during resizing. Any CSS length (e.g. '150px')."},
+		{name: "maxSize", type: "string", default: "undefined", description: "Maximum size constraint during resizing. Any CSS length (e.g. '400px')."},
+		{name: "resizable", type: "boolean", default: "true", description: "Whether the user can drag the bar to resize this pane"},
+		{name: "collapsible", type: "boolean", default: "false", description: "Whether the pane can be collapsed to zero size via the collapse button on the bar"},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the pane element"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS styles applied to the pane element"}
+	]
+
+	const multiSplitterPaneCallbacks: Property[] = []
+
+	const multiSplitterPaneSlots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "Content to render inside the pane"}
 	]
 
 	const propertyColumns = [
@@ -187,17 +204,48 @@ function hello() {
 	</div>
 	</Card>
 
+	<h2>MultiSplitter API</h2>
+
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>MultiSplitter Component</h2>
+				<h2>Properties</h2>
 				<QuickGrid items={multiSplitterProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>MultiSplitterPane Component</h2>
+				<h2>Callbacks</h2>
+				<QuickGrid items={multiSplitterCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={multiSplitterSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<h2>MultiSplitterPane API</h2>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
 				<QuickGrid items={multiSplitterPaneProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={multiSplitterPaneCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={multiSplitterPaneSlots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

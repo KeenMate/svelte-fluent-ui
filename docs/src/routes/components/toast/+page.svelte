@@ -33,11 +33,11 @@
 		{name: "secondaryAction", type: "string", default: "undefined", description: "Secondary button at bottom"}
 	]
 
-	const actions: Property[] = [
-		{name: "onDismiss", type: "() => void", default: "undefined", description: "Fired when dismiss button is clicked"},
-		{name: "onTopActionClick", type: "() => void", default: "undefined", description: "Fired when top right action is clicked"},
-		{name: "onPrimaryActionClick", type: "() => void", default: "undefined", description: "Fired when primary action is clicked"},
-		{name: "onSecondaryActionClick", type: "() => void", default: "undefined", description: "Fired when secondary action is clicked"}
+	const callbacks: Property[] = [
+		{name: "ondismiss", type: "() => void", default: "undefined", description: "Fired when dismiss button is clicked"},
+		{name: "ontopactionclick", type: "() => void", default: "undefined", description: "Fired when top right action is clicked"},
+		{name: "onprimaryactionclick", type: "() => void", default: "undefined", description: "Fired when primary action is clicked"},
+		{name: "onsecondaryactionclick", type: "() => void", default: "undefined", description: "Fired when secondary action is clicked"}
 	]
 
 	const slots: Property[] = [
@@ -77,17 +77,15 @@
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Actions</h2>
-					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>Slots</h2>
 				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

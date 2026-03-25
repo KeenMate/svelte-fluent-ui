@@ -63,6 +63,13 @@
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
+				<h2>Callbacks</h2>
+				<p>(of NavMenu)</p>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
 				<h2>Slots</h2>
 				<p>(of NavMenu)</p>
 				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />

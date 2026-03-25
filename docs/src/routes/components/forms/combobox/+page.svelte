@@ -94,7 +94,6 @@
 		{name: "value", type: "string[]", default: "[]", description: "Selected value(s) (bindable)"},
 		{name: "options", type: "OptionItem[]", default: "undefined", description: "Array of option items"},
 		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the combobox"},
-		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label content"},
 		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
 		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
 		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
@@ -110,8 +109,16 @@
 		{name: "width", type: "string", default: "undefined", description: "Component width (e.g., '300px', '100%')"},
 		{name: "height", type: "string", default: "undefined", description: "Component height"},
 		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
-		{name: "style", type: "string", default: '""', description: "Inline styles"},
-		{name: "onchange", type: "Function", default: "undefined", description: "Called when selection changes"}
+		{name: "style", type: "string", default: '""', description: "Inline styles"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onchange", type: "(value: string[]) => void", default: "undefined", description: "Called when selection changes"}
+	]
+
+	const slots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "Option components (alternative to the options prop)"},
+		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label content rendered above the combobox"}
 	]
 
 	const propertyColumns = [
@@ -144,6 +151,16 @@
 	<Card>
 		<h3>Properties</h3>
 		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h3>Callbacks</h3>
+		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h3>Slots</h3>
+		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 	</Card>
 
 	<Card>

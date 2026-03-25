@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Icon names** - Fixed PascalCase icon names that should be lowercase (icons rendered as ⚠️)
+  - `"Person"` → `"person"` in Autocomplete, Listbox, and Combobox demo pages
+  - `"Money"` → `"money"` and `"Calculator"` → `"calculator"` in NumberField demo page
+  - `"Globe"` → `"globe"` in Search demo page
+  - Also fixed string `size="16"` to numeric `size={16}` in affected usages
+- **Vite plugin icon detection** - `extractIconNames` now matches `icon:` and `iconName:` object properties in addition to `name:`, fixing sidebar icons not being copied to production builds
+- **Dockerfile** - Added missing `README.md` to root COPY step, fixing `post-package.js` build failure
+
 ### Added
 - **Select Component** - Enhanced props and functionality to match FluentUI Blazor API
   - New props: `title`, `width`, `height`, `maxVisibleOptions`, `indicatorTemplate`

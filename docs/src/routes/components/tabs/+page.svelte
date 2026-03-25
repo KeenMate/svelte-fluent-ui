@@ -25,8 +25,9 @@
 		{name: "visible", type: "boolean", default: "true", description: "Controls whether tab is rendered"}
 	]
 
-	const actions: Property[] = [
-		{name: "onCloseClick", type: "function", default: "undefined", description: "Fires when close button is clicked"}
+	const callbacks: Property[] = [
+		{name: "ontabchange", type: "(detail: { tabId: string; data?: Record<string, unknown> }) => void", default: "undefined", description: "Fired on Tabs when the active tab changes"},
+		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired on Tab when the close button is clicked"}
 	]
 
 	const slots: Property[] = [
@@ -65,17 +66,15 @@
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Actions</h2>
-					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>Slots</h2>
 				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>

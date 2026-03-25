@@ -1,6 +1,56 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
 
+	type Property = {
+		name: string
+		type: string
+		default: string
+		description: string
+	}
+
+	const properties: Property[] = [
+		{name: "items", type: "T[]", default: "[]", description: "Array of data items to display"},
+		{name: "columns", type: "Column<T>[]", default: "[]", description: "Column definitions"},
+		{name: "sortable", type: "boolean", default: "false", description: "Enable sorting globally for all columns"},
+		{name: "filterable", type: "boolean", default: "false", description: "Enable filtering globally for all columns"},
+		{name: "pageable", type: "boolean", default: "false", description: "Enable pagination"},
+		{name: "pageSize", type: "number", default: "10", description: "Number of items per page"},
+		{name: "striped", type: "boolean", default: "true", description: "Alternate row background colors"},
+		{name: "hoverable", type: "boolean", default: "true", description: "Highlight rows on mouse hover"},
+		{name: "editable", type: "boolean", default: "false", description: "Enable inline cell editing"},
+		{name: "editTrigger", type: '"click" | "dblclick" | "button" | "always" | "navigate"', default: '"dblclick"', description: "How to trigger cell editing"},
+		{name: "dropdownShowOnFocus", type: "boolean", default: "true", description: "Auto-show dropdown editor when cell is focused (navigate mode)"},
+		{name: "checkboxAlwaysEditable", type: "boolean", default: "false", description: "Make checkbox cells always interactive regardless of edit trigger"},
+		{name: "invalidCells", type: "CellValidationState[]", default: "[]", description: "Bindable array of cells with validation errors"},
+		{name: "showRowToolbar", type: "boolean", default: "false", description: "Show floating row toolbar with action buttons"},
+		{name: "rowToolbar", type: "RowToolbarConfig<T>[]", default: "undefined", description: 'Toolbar items — predefined strings ("add", "delete", "duplicate", "moveUp", "moveDown") or custom objects'},
+		{name: "toolbarAlign", type: '"center" | "top"', default: '"center"', description: "Vertical alignment of the row toolbar"},
+		{name: "toolbarTrigger", type: '"hover" | "click" | "button"', default: '"hover"', description: "How to reveal the row toolbar"},
+		{name: "contextMenu", type: "ContextMenuItem<T>[]", default: "undefined", description: "Context menu items shown on right-click"},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class applied to the grid wrapper"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS style applied to the grid wrapper"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onrowchange", type: "(detail: RowChangeDetail<T>) => void", default: "undefined", description: "Fired when a cell value is committed during inline editing. Detail includes row, draftRow, rowIndex, field, oldValue, newValue, isValid, validationError"},
+		{name: "onroweditstart", type: "(detail: { row, rowIndex, field }) => void", default: "undefined", description: "Fired when a cell enters edit mode"},
+		{name: "onroweditcancel", type: "(detail: { row, rowIndex, field }) => void", default: "undefined", description: "Fired when editing is cancelled (e.g. Escape key)"},
+		{name: "onvalidationerror", type: "(detail: { row, rowIndex, field, error }) => void", default: "undefined", description: "Fired when a commit is blocked by a validation error"},
+		{name: "ontoolbarclick", type: "(detail: ToolbarClickDetail<T>) => void", default: "undefined", description: "Fired when a row toolbar button is clicked. Detail includes item, rowIndex, row"},
+		{name: "oncontextmenuopen", type: "(context: ContextMenuContext<T>) => void", default: "undefined", description: "Fired when the context menu is opened. Receives row, rowIndex, colIndex, column, cellValue"}
+	]
+
+	const slots: Property[] = [
+		{name: "cellTemplate", type: "Snippet", default: "undefined", description: "Custom cell content snippet. Replaces default cell rendering for all cells. Receives the current row as argument via Column.snippet per column"}
+	]
+
+	const propertyColumns = [
+		{field: "name", title: "Name", sortable: true, filterable: true},
+		{field: "type", title: "Type", sortable: true, filterable: true},
+		{field: "default", title: "Default", sortable: true},
+		{field: "description", title: "Description", filterable: true}
+	]
+
 	type Person = {
 		id: number
 		name: string
@@ -98,6 +148,27 @@
 	<p>
 		A lightweight, flexible data grid component with sorting, filtering, and pagination support. Inspired by ASP.NET QuickGrid.
 	</p>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6}>

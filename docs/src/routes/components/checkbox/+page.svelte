@@ -89,6 +89,10 @@
 		{name: "onclick", type: "(ev: PointerEvent, previousValue: boolean | null) => void", default: "undefined", description: "Called on click with the previous checked value"}
 	]
 
+	const slots: Property[] = [
+		{name: "children", type: "Snippet", default: "undefined", description: "Label content rendered inside the checkbox. Takes precedence over the label prop when both are provided"}
+	]
+
 	const propertyColumns = [
 		{field: "name", title: "Name", sortable: true, filterable: true},
 		{field: "type", title: "Type", sortable: true, filterable: true},
@@ -124,6 +128,11 @@
 	<Card>
 		<h3>Callbacks</h3>
 		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h3>Slots</h3>
+		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 	</Card>
 
 	<h2>Examples</h2>
