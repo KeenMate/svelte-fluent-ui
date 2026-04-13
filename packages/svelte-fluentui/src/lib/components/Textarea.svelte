@@ -84,7 +84,7 @@
 </script>
 
 {#if label || labelTemplate}
-	<label for={id}>
+	<label for={id} class="fluent-label">
 		{label}
 		{#if labelTemplate}
 			{@render labelTemplate?.()}

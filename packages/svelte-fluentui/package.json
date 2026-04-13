@@ -1,6 +1,6 @@
 {
 	"name": "svelte-fluentui",
-	"version": "1.0.0-rc07",
+	"version": "1.0.0-rc08",
 	"description": "A Svelte wrapper library for Microsoft FluentUI web components",
 	"license": "MIT",
 	"author": "KeenMate",
@@ -14,7 +14,8 @@
 	"homepage": "https://github.com/KeenMate/svelte-fluentui#readme",
 	"scripts": {
 		"dev": "svelte-package --watch",
-		"package": "svelte-kit sync && svelte-package && npm run package:post-build && publint",
+		"package": "npm run package:pre-build && svelte-kit sync && svelte-package && npm run package:post-build && publint",
+		"package:pre-build": "node scripts/pre-package.js",
 		"package:post-build": "node scripts/post-package.js",
 		"prepublishOnly": "npm run package",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

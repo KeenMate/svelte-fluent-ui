@@ -18,10 +18,14 @@
 		selectedDates?: Date[]
 		pickerMonth?: Date
 		culture?: Intl.Locale
+		/** First day of the week (0=Sunday, 1=Monday, …, 6=Saturday). Overrides culture's default when set. */
+		firstDayOfWeek?: number | null
 		view?: CalendarView
 		selectMode?: CalendarSelectMode
 		checkIfSelectedValueHasChanged?: boolean
 		disabledDateFunc?: (date: Date) => boolean
+		/** Inverse of disabledDateFunc — return true to allow a date. When both are set, disabledDateFunc wins. */
+		selectableDates?: (date: Date) => boolean
 		disabledCheckAllDaysOfMonthYear?: boolean
 		animatePeriodChanges?: boolean
 		disabledSelectable?: boolean
@@ -30,6 +34,8 @@
 		selectDatesHover?: ((date: Date) => Date[]) | null | undefined
 		onDatesSelected?: (values: Date[]) => void
 		onDateSelected?: (value: Date) => void
+		/** Fires when the user navigates months/years (prev/next buttons). */
+		onPickerMonthChange?: (month: Date) => void
 		day?: SlotType
 	}
 
@@ -39,6 +45,7 @@
 		    pickerMonth                     = $bindable(new Date()),
 		    view                            = "days",
 		    culture                         = new Intl.Locale(window.navigator.language),
+		    firstDayOfWeek                  = undefined,
 		    disabledCheckAllDaysOfMonthYear = undefined,
 		    animatePeriodChanges            = undefined,
 		    disabledSelectable              = undefined,
@@ -47,9 +54,11 @@
 		    checkIfSelectedValueHasChanged  = undefined,
 		    dayFormat                       = undefined,
 		    disabledDateFunc                = undefined,
+		    selectableDates                 = undefined,
 		    selectDatesHover                = undefined,
-		    onDatesSelected          = undefined,
+		    onDatesSelected                 = undefined,
 		    onDateSelected                  = undefined,
+		    onPickerMonthChange             = undefined,
 		    day: daySnippet                 = undefined,
 		    ...  restProps
 	    }: Props = $props()
@@ -61,7 +70,13 @@
 	let _animationRunning: CalendarVerticalPosition = $state(CalendarVerticalPosition.Unset)
 
 	const canBeAnimated             = $derived(animatePeriodChanges ?? (view !== "days" && view !== "years"))
-	const calendarExtended          = $derived((value, new CalendarExtended(culture, pickerMonth)))
+	const calendarExtended          = $derived((value, new CalendarExtended(culture, pickerMonth, firstDayOfWeek ?? undefined)))
+	// Merge disabledDateFunc with the inverse of selectableDates so the existing logic stays simple.
+	const effectiveDisabledFunc = $derived<(date: Date) => boolean>((date) => {
+		if (disabledDateFunc?.(date)) return true
+		if (selectableDates && !selectableDates(date)) return true
+		return false
+	})
 	const calendar: IFluentCalendar = $derived({
 		view,
 		calendarExtended,
@@ -74,7 +89,7 @@
 		value:                           value,
 		selectedDates:                   selectedDates,
 		allDaysAreDisabled,
-		disabledDateFunc:                disabledDateFunc || ((_d: Date) => false)
+		disabledDateFunc:                effectiveDisabledFunc
 	})
 	const titles                    = $derived(new CalendarTitles(calendar))
 	const multipleSelection         = $derived(getMultipleSelection())
@@ -156,6 +171,7 @@
 				break
 		}
 		pickerMonth = new Date(pickerMonth)
+		onPickerMonthChange?.(pickerMonth)
 	}
 
 	async function onNextButtonHandlerAsync(e: MouseEvent) {
@@ -175,6 +191,7 @@
 				break
 		}
 		pickerMonth = new Date(pickerMonth)
+		onPickerMonthChange?.(pickerMonth)
 	}
 
 	async function onSelectDayHandlerAsync(value_: Date, dayDisabled: boolean) {
@@ -287,12 +304,12 @@
 	}
 
 	function allDaysAreDisabled(start: Date, end: Date) {
-		if (!disabledDateFunc) {
+		if (!disabledDateFunc && !selectableDates) {
 			return false
 		}
 
 		for (let day = start; day <= end; day.setDate(day.getDate() + 1)) {
-			if (!disabledDateFunc(day)) {
+			if (!effectiveDisabledFunc(day)) {
 				return false
 			}
 		}

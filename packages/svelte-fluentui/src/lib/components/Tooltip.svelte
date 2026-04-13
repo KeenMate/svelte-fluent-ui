@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SlotType } from "../types/index.js";
 	import { onMount, onDestroy } from "svelte";
+	import {portal} from "../actions/portal.js";
 
 	type Position = "top" | "bottom" | "left" | "right";
 
@@ -360,6 +361,7 @@
 
 {#if isRendered || shouldShow}
 	<div
+		use:portal
 		bind:this={tooltipElement}
 		class="fluent-tooltip {actualPosition} {className}"
 		class:visible={shouldShow && anchorInView}
@@ -383,7 +385,7 @@
 <style>
 	.fluent-tooltip {
 		position: fixed;
-		z-index: 10000;
+		z-index: var(--fluent-z-tooltip);
 		box-sizing: border-box;
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
 		border: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);

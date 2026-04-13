@@ -7,7 +7,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc08] - 2026-04-13
+
+### Added
+- **Applications section** - New top-level docs section with real-life UI pattern examples
+  - New sidebar group "Applications" with overview page at `/applications`
+  - **Filter Card** (`/applications/filter-card`) - combines TextField (search), Select (category), and Autocomplete (multi-tag) filters in one card row driving a reactive QuickGrid
+  - **Order Form** (`/applications/order-form`) - cascading hardware/software order form. Selecting an order type (mobile / hardware / software) reveals a different branch of fields; some branches cascade further (e.g. Hardware → Computer reveals OS/RAM/storage/budget). Exercises nearly every form component: TextField, Textarea, Select, Option, Combobox, Autocomplete, NumberField, DatePicker, TimePicker, RadioGroup, Radio, Checkbox, Switch, InputFile, Button, Badge, Divider, Icon, Accordion, and the Toast service
+- **Autocomplete Ctrl+Space shortcut** - Open dropdown with all available options
+  - Press `Ctrl+Space` (or `⌘+Space` on Mac) in an Autocomplete input to force-open the dropdown showing all options minus already-selected ones
+  - Works in both synchronous (`options`) and async (`onoptionssearch`) modes
+  - New internal `showAllOptions()` helper usable for programmatic open
+- **TextField** - New `id` and `labelTemplate` props to match `Select` / `Autocomplete`
+- **Calendar** - Additional props from FluentUI Blazor FluentCalendar API
+  - `firstDayOfWeek` (0=Sunday…6=Saturday) overrides the culture's default week start
+  - `selectableDates` — inverse of `disabledDateFunc` (return `true` to allow); composes with `disabledDateFunc`
+  - `onPickerMonthChange` callback fires when the user navigates months/years via prev/next
+- **DatePicker** - Additional props from FluentUI Blazor FluentDatePicker API
+  - `disabledDateFunc` — pass-through to inner Calendar (composes with `minDate`/`maxDate`)
+  - `firstDayOfWeek` — pass-through to inner Calendar
+  - `autoClose` (default `true`) — close the popup on date select
+  - Bindable `open` + `onOpenChange` callback for controlled popup state
+  - `id` — so the `<label for="…">` associates with the text field
+  - `labelTemplate` snippet
+  - `openCalendarIconAriaLabel`, `title`
+  - Label now uses the shared `.fluent-label` class (consistent with TextField/Select/Autocomplete)
+- **TimePicker** - Additional props from FluentUI Blazor FluentTimePicker API
+  - `minTime` / `maxTime` (`HH:mm` or `HH:mm:ss`) — clamp valid times; apply is no-op when out of range
+  - `useAmPm` (nullable) — overrides `use24Hours` when explicitly set
+  - `secondStep` — increment for the seconds column
+  - `autoClose` (default `true`)
+  - Bindable `open` + `onOpenChange` callback for controlled popup state
+  - `id`, `labelTemplate`, `title`, `openClockIconAriaLabel`
+  - Label now uses the shared `.fluent-label` class
+- **Slider component** - Proper wrapper implementation (was previously a TODO stub with no props)
+  - Props: `id`, `value` (bindable number), `min`, `max`, `step`, `orientation`, `disabled`, `readonly`, `required`, `name`, `label`, `labelTemplate`, `ariaLabel`, `class`, `style`
+  - Callbacks: `onchange`, `oninput` (both receive numeric value)
+  - Two-way binding via `bind:value`, label uses shared `.fluent-label` class
+  - Keeps web component's string value in sync via element-property assignment
+- **Dialog** - Header / footer / action props to match FluentUI Blazor's FluentDialog visual layout
+  - `title` prop renders a heading (left side) alongside the close button (right side) in a header row
+  - `header` snippet for fully custom header content
+  - `footer` snippet for fully custom footer content
+  - `primaryAction` / `secondaryAction` props — `{label, appearance?, disabled?, onClick?}` shorthand for the common "OK / Cancel" pattern. `onClick` may return `false` to keep the dialog open after the click
+  - Footer alignment changed from split (`space-between`) to right-aligned (`flex-end`) to match Fluent visual conventions
+  - Existing `actions` snippet, `dismissable`/`dismissButtonText` still work; they now sit in the right-aligned footer alongside `primaryAction`/`secondaryAction`
+  - When `title`/`header` is omitted, the close X reverts to a floating top-right button (matching legacy behavior) instead of reserving an empty header strip — so old dialogs with their own `<h3>` in the body still look right
+- **Global runtime API** - Package now registers `window.components["svelte-fluentui"]` on import (browser only), exposing `version()` so non-Svelte / console code can introspect the loaded version. Mirrors the pattern used by sister packages (e.g. `web-multiselect`)
+  - Also exported as `VERSION` from `svelte-fluentui` for direct import
+  - Auto-generated `src/lib/version.ts` is rewritten on each build by the new `scripts/pre-package.js` to keep it in sync with `package.json`
+- **`portal` action** - New public export (`import {portal} from "svelte-fluentui"`)
+  - Moves an element out of its current DOM position into another container (defaults to `document.body`) for the lifetime of the action
+  - Useful for any consumer-built overlay (custom dropdowns, popovers) that needs to escape ancestor stacking contexts
+  - Used internally by `Dialog`, `PositioningRegion`, and `Tooltip`
+
+### Changed
+- **Centralized z-index scale + portal-based overlays** - Replaced ad-hoc / hardcoded `z-index` values across components with the long-defined token scale, and routed all overlays (modal, popovers, tooltips) through `document.body` so the scale is honored regardless of where the consumer renders them
+  - New CSS variables exposed at `:root` (mirroring `$z-index-*` tokens): `--fluent-z-dropdown` (1000), `--fluent-z-sticky` (1020), `--fluent-z-fixed` (1030), `--fluent-z-modal-backdrop` (1040), `--fluent-z-modal` (1050), `--fluent-z-popover` (1060), `--fluent-z-tooltip` (1070), `--fluent-z-toast` (1080)
+  - New `portal` action exported from `svelte-fluentui` — moves an element to `document.body` (or any selector/element) for its lifetime, escaping ancestor stacking contexts
+  - `Dialog` overlay + `<fluent-dialog>` now portal to `<body>` and use `--fluent-z-modal-backdrop` / `--fluent-z-modal`
+  - `PositioningRegion` overlay portals to `<body>` and uses `--fluent-z-popover` (so dropdowns from inside a modal correctly render above it)
+  - `Tooltip` portals and uses `--fluent-z-tooltip`
+  - `Autocomplete`, `DatePicker`, `TimePicker`, `GridCellEditor`, `QuickGrid` (context menu, row connector) now consume `--fluent-z-popover` / `--fluent-z-dropdown`
+  - `TopNav` brand / mobile toggle / mobile sidebar use `--fluent-z-sticky` / `--fluent-z-fixed`
+  - `SiteSettings` Dialog no longer needs the `style="z-index: 10000"` workaround
+- **Selected fluent-tab z-index neutralized** - Blazor's `fluent-components.scss` ships `fluent-tab[aria-selected="true"] { z-index: 1 }`. Combined with parent stacking contexts that could elevate the tab above modals, this caused selected tabs to "shine through" dialogs. Overridden to `z-index: auto` in `fluent-blazor-compat.scss`; selected state remains visually obvious through font-weight/color
+- **Unified form label styling** - TextField, Select, Autocomplete, Radio, and RadioGroup now share a single canonical `.fluent-label` class
+  - New global `.fluent-label` style in `components.scss` (0.875rem / weight 600 / neutral foreground / 0.25rem bottom margin)
+  - `TextField` now renders its own `<label class="fluent-label" for={id}>` above `<fluent-text-field>` instead of slot-delegating the label text to the web component's internal label
+  - `Autocomplete` label class renamed from `.autocomplete-label` to `.fluent-label`; local styles removed
+  - `Textarea` label now uses `.fluent-label` class for consistency
+  - Result: all form fields now have visually identical labels
+- **Autocomplete height parity with fluent-text-field / fluent-select**
+  - Outer `.autocomplete-input-container` pinned to `min-height` using FluentUI `--base-height-multiplier × --design-unit` tokens (32px default), with `box-sizing: border-box`
+  - Inline-mode container padding reduced from `4px 8px` to `0 8px` to avoid stacking with inner input padding
+  - Native input vertical padding removed (`4px 0` → `0`); non-inline override still provides `4px 8px`
+  - Inline-mode input stretches to container height via `align-self: stretch`
+  - Net effect: autocomplete total height is now exactly 32px (was ~37.33px), matching FluentUI text field and select
+- **Autocomplete label spacing** - Removed redundant `gap: 0.5rem` on `.fluent-autocomplete` wrapper; label-to-input spacing now comes solely from the shared `.fluent-label` margin, matching the other form components
+
 ### Fixed
+- **DatePicker / TimePicker popup positioning** - Calendar/time popup no longer renders in the top-left corner of the viewport
+  - Root cause: `bind:this` on a `<TextField>` Svelte component returned the component instance, not a DOM element, so `PositioningRegion` couldn't compute anchor coordinates
+  - Both pickers now bind `PositioningRegion`'s `anchor` to their own `<div class="*-wrapper">` DOM element
+- **DatePicker / TimePicker popup width** - Popup now sizes to its content instead of stretching to the input's width
+  - `PositioningRegion` gained a `matchWidth?: boolean` prop (default `true`, preserving existing behavior for combobox/select dropdowns)
+  - DatePicker and TimePicker pass `matchWidth={false}` so the calendar / clock panels use their natural width
+- **DatePicker / TimePicker outside-click and Escape dismiss** - Popups now close when clicking outside the field/popup or pressing `Escape`
+- **DatePicker / TimePicker end-slot button layout** - Calendar/clock icon and clear (×) button were stacking vertically, making the × button spill below the input
+  - Wrapped both buttons in a `.end-buttons` inline-flex container with `gap: 0.25rem`
 - **Icon names** - Fixed PascalCase icon names that should be lowercase (icons rendered as ⚠️)
   - `"Person"` → `"person"` in Autocomplete, Listbox, and Combobox demo pages
   - `"Money"` → `"money"` and `"Calculator"` → `"calculator"` in NumberField demo page

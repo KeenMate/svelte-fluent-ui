@@ -233,8 +233,30 @@
 		}
 	}
 
+	// Show all available options (minus already-selected) in the dropdown.
+	// Used by Ctrl+Space and any caller that wants to force-open the list.
+	function showAllOptions() {
+		if (disabled || readonly) return
+		if (onoptionssearch) {
+			// Async mode: trigger a search with the current text (or empty)
+			performSearch(searchText)
+			return
+		}
+		const available = options.filter(opt => !isSelected(opt.value))
+		filteredOptions = available.slice(0, maxOptionsSearch)
+		highlightedIndex = filteredOptions.length > 0 ? 0 : -1
+		isOpen = filteredOptions.length > 0 || showOverlayOnEmptyResults
+	}
+
 	// Handle keyboard navigation
 	function handleKeyDown(event: KeyboardEvent) {
+		// Ctrl+Space: open dropdown and show all available options
+		if (event.key === " " && (event.ctrlKey || event.metaKey)) {
+			event.preventDefault()
+			showAllOptions()
+			return
+		}
+
 		// Handle backspace to remove last chip when input is empty
 		if (event.key === "Backspace" && searchText === "" && effectiveMultiple && selectedOptions.length > 0) {
 			const lastValue = selectedOptions[selectedOptions.length - 1]
@@ -380,7 +402,7 @@
 	{#if labelTemplate}
 		{@render labelTemplate()}
 	{:else if label}
-		<label class="autocomplete-label">
+		<label class="fluent-label">
 			{label}
 			{#if required}<span class="required-indicator">*</span>{/if}
 		</label>
@@ -520,7 +542,7 @@
 			<PositioningRegion
 				anchor={containerElement}
 				visible={isOpen}
-				style="z-index: 1000; background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto;"
+				style="z-index: var(--fluent-z-popover); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto;"
 			>
 				<div class="options-list">
 					{#if headerContent}
@@ -570,13 +592,6 @@
 	.fluent-autocomplete {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.autocomplete-label {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: var(--neutral-foreground-rest);
 	}
 
 	.required-indicator {
@@ -591,11 +606,13 @@
 		position: relative;
 	}
 
-	/* ===== Input Container (base styles for non-inline mode) ===== */
+	/* ===== Input Container (base styles) ===== */
 	.autocomplete-input-container {
 		display: flex;
 		align-items: center;
 		position: relative;
+		box-sizing: border-box;
+		min-height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
 	}
 
 	/* ===== Input Container: Inline Mode (mimics fluent-text-field) ===== */
@@ -605,7 +622,8 @@
 		align-items: center;
 		gap: 4px;
 		min-height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
-		padding: 4px 8px;
+		box-sizing: border-box;
+		padding: 0 8px;
 		background: var(--neutral-fill-input-rest, #ffffff);
 		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
@@ -704,7 +722,11 @@
 		font-size: 14px;
 		line-height: 20px;
 		color: var(--neutral-foreground-rest, #242424);
-		padding: 4px 0;
+		padding: 0;
+	}
+
+	.autocomplete-input-container.inline-mode .autocomplete-native-input {
+		align-self: stretch;
 	}
 
 	.autocomplete-native-input::placeholder {

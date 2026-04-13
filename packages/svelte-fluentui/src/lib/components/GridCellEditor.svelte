@@ -949,7 +949,7 @@
 		overflow-y: auto;
 		width: 100%;
 		box-sizing: border-box;
-		z-index: 1000;
+		z-index: var(--fluent-z-popover);
 	}
 
 	.cell-dropdown-option {

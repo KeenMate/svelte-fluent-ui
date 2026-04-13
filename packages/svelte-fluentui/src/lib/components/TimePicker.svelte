@@ -13,6 +13,7 @@
 	import type {SlotType} from "../types/index.js"
 
 	type Props = {
+		id?: string
 		value?: string | null // HH:mm:ss or HH:mm format
 		placeholder?: string
 		disabled?: boolean
@@ -20,17 +21,33 @@
 		required?: boolean
 		autofocus?: boolean
 		label?: string
+		labelTemplate?: SlotType
 		appearance?: string
 		use24Hours?: boolean
+		/** When set, forces AM/PM on (true) or off (false). Overrides `use24Hours`. Null/undefined = use `use24Hours`. */
+		useAmPm?: boolean | null
 		showSeconds?: boolean
 		minuteStep?: number
 		hourStep?: number
+		secondStep?: number
+		/** Minimum allowed time in HH:mm or HH:mm:ss format. */
+		minTime?: string
+		/** Maximum allowed time in HH:mm or HH:mm:ss format. */
+		maxTime?: string
+		/** When true (default), the popup closes when the user clicks OK. */
+		autoClose?: boolean
+		/** Bindable popup open state. */
+		open?: boolean
+		openClockIconAriaLabel?: string
+		title?: string
 		class?: string
 		style?: string
 		onValueChange?: (value: string | null) => void
+		onOpenChange?: (open: boolean) => void
 	}
 
 	let {
+		id = undefined,
 		value = $bindable(null),
 		placeholder = "Select time",
 		disabled = false,
@@ -38,18 +55,83 @@
 		required = false,
 		autofocus = undefined,
 		label = undefined,
+		labelTemplate = undefined,
 		appearance = undefined,
 		use24Hours = true,
+		useAmPm = undefined,
 		showSeconds = false,
 		minuteStep = 1,
 		hourStep = 1,
+		secondStep = 1,
+		minTime = undefined,
+		maxTime = undefined,
+		autoClose = true,
+		open = $bindable(false),
+		openClockIconAriaLabel = "Open time picker",
+		title = undefined,
 		class: className = "",
 		style = "",
-		onValueChange = undefined
+		onValueChange = undefined,
+		onOpenChange = undefined
 	}: Props = $props()
 
-	let isOpen = $state(false)
-	let textFieldElement: HTMLElement | undefined
+	// Effective 24h mode: if `useAmPm` is set, it wins; otherwise fall back to `use24Hours`.
+	const effective24h = $derived(useAmPm == null ? use24Hours : !useAmPm)
+
+	let wrapperElement = $state<HTMLElement | undefined>(undefined)
+	let popupElement = $state<HTMLElement | undefined>(undefined)
+	let isOpen = $derived(open)
+	function setOpen(next: boolean) {
+		if (open === next) return
+		open = next
+		onOpenChange?.(next)
+	}
+
+	// Parse min/max time into total minutes for easy comparison.
+	function toTotalSeconds(s?: string): number | null {
+		if (!s) return null
+		const [h = "0", m = "0", sec = "0"] = s.split(":")
+		const hh = parseInt(h, 10)
+		const mm = parseInt(m, 10)
+		const ss = parseInt(sec, 10)
+		if (Number.isNaN(hh) || Number.isNaN(mm)) return null
+		return hh * 3600 + mm * 60 + (Number.isNaN(ss) ? 0 : ss)
+	}
+	const minTotal = $derived(toTotalSeconds(minTime))
+	const maxTotal = $derived(toTotalSeconds(maxTime))
+	function isTimeDisabled(h: number, m: number, s: number): boolean {
+		const total = h * 3600 + m * 60 + s
+		if (minTotal != null && total < minTotal) return true
+		if (maxTotal != null && total > maxTotal) return true
+		return false
+	}
+
+	// Close on outside click / Escape
+	$effect(() => {
+		if (!isOpen) return
+
+		function handlePointerDown(event: PointerEvent) {
+			const target = event.target as Node | null
+			if (!target) return
+			if (wrapperElement?.contains(target)) return
+			if (popupElement?.contains(target)) return
+			setOpen(false)
+		}
+
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === "Escape") {
+				event.stopPropagation()
+				setOpen(false)
+			}
+		}
+
+		document.addEventListener("pointerdown", handlePointerDown, true)
+		document.addEventListener("keydown", handleKeyDown, true)
+		return () => {
+			document.removeEventListener("pointerdown", handlePointerDown, true)
+			document.removeEventListener("keydown", handleKeyDown, true)
+		}
+	})
 	let selectedHour = $state(12)
 	let selectedMinute = $state(0)
 	let selectedSecond = $state(0)
@@ -65,7 +147,7 @@
 			const minute = parseInt(parts[1])
 			const second = parts.length > 2 ? parseInt(parts[2]) : 0
 
-			if (!use24Hours) {
+			if (!effective24h) {
 				selectedPeriod = hour >= 12 ? "PM" : "AM"
 				hour = hour % 12 || 12
 			}
@@ -82,7 +164,7 @@
 
 		let displayHour = selectedHour
 
-		if (!use24Hours) {
+		if (!effective24h) {
 			displayHour = selectedHour % 12 || 12
 		}
 
@@ -94,7 +176,7 @@
 		if (showSeconds) {
 			formatted += `:${secondStr}`
 		}
-		if (!use24Hours) {
+		if (!effective24h) {
 			formatted += ` ${selectedPeriod}`
 		}
 
@@ -105,7 +187,7 @@
 	function generateTimeValue(): string {
 		let hour = selectedHour
 
-		if (!use24Hours) {
+		if (!effective24h) {
 			if (selectedPeriod === "PM" && hour !== 12) {
 				hour += 12
 			} else if (selectedPeriod === "AM" && hour === 12) {
@@ -130,7 +212,7 @@
 	// Handle input click
 	function handleInputClick(e: MouseEvent) {
 		if (!disabled && !readonly) {
-			isOpen = !isOpen
+			setOpen(!isOpen)
 		}
 	}
 
@@ -141,22 +223,29 @@
 
 	// Handle time selection
 	function handleApply() {
+		// Respect min/max — compute in 24h terms so AM/PM mode still works.
+		let h = selectedHour
+		if (!effective24h) {
+			if (selectedPeriod === "PM" && h !== 12) h += 12
+			else if (selectedPeriod === "AM" && h === 12) h = 0
+		}
+		if (isTimeDisabled(h, selectedMinute, showSeconds ? selectedSecond : 0)) return
 		value = generateTimeValue()
-		isOpen = false
+		if (autoClose) setOpen(false)
 		onValueChange?.(value)
 	}
 
 	// Handle clear
 	function handleClear() {
 		value = null
-		isOpen = false
+		setOpen(false)
 		onValueChange?.(null)
 	}
 
 	// Generate hour options
 	const hours = $derived.by(() => {
-		const max = use24Hours ? 23 : 12
-		const start = use24Hours ? 0 : 1
+		const max = effective24h ? 23 : 12
+		const start = effective24h ? 0 : 1
 		const result: number[] = []
 		for (let i = start; i <= max; i += hourStep) {
 			result.push(i)
@@ -176,7 +265,7 @@
 	// Generate second options
 	const seconds = $derived.by(() => {
 		const result: number[] = []
-		for (let i = 0; i < 60; i++) {
+		for (let i = 0; i < 60; i += secondStep) {
 			result.push(i)
 		}
 		return result
@@ -184,17 +273,18 @@
 </script>
 
 <div class="fluent-timepicker {className}" style={style}>
-	{#if label}
-		<label class="timepicker-label">
-			{label}
+	{#if label || labelTemplate}
+		<label for={id} class="fluent-label">
+			{#if label}{label}{/if}
+			{#if labelTemplate}{@render labelTemplate?.()}{/if}
 			{#if required}<span class="required-indicator">*</span>{/if}
 		</label>
 	{/if}
 
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<div class="timepicker-wrapper" onclick={handleInputClick} style="cursor: pointer;">
+	<div class="timepicker-wrapper" bind:this={wrapperElement} onclick={handleInputClick} style="cursor: pointer;">
 		<TextField
-			bind:this={textFieldElement}
+			{id}
 			value={displayValue}
 			{placeholder}
 			{disabled}
@@ -202,16 +292,18 @@
 			{required}
 			{autofocus}
 			{appearance}
+			{title}
 			style="width: 100%;"
 		>
 			{#snippet end()}
+				<span class="end-buttons">
 				<!-- Clock icon -->
 				<button
 					type="button"
 					class="clock-button"
 					onclick={handleInputClick}
 					disabled={disabled}
-					aria-label="Open time picker"
+					aria-label={openClockIconAriaLabel}
 				>
 					<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
 						<path d="M10 2a8 8 0 110 16 8 8 0 010-16zm0 1a7 7 0 100 14 7 7 0 000-14zm.5 2a.5.5 0 01.5.5V10h3a.5.5 0 010 1h-3.5a.5.5 0 01-.5-.5v-5a.5.5 0 01.5-.5z"/>
@@ -231,17 +323,19 @@
 						</svg>
 					</button>
 				{/if}
+				</span>
 			{/snippet}
 		</TextField>
 
-		{#if isOpen && textFieldElement}
+		{#if isOpen && wrapperElement}
 			<PositioningRegion
-				anchor={textFieldElement}
+				anchor={wrapperElement}
 				visible={isOpen}
-				style="z-index: 1000; background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); min-width: 280px;"
+				matchWidth={false}
+				style="z-index: var(--fluent-z-popover); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); min-width: 280px;"
 			>
 				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-				<div class="time-picker-panel" onclick={handlePopupClick}>
+				<div class="time-picker-panel" bind:this={popupElement} onclick={handlePopupClick}>
 					<div class="time-selectors">
 						<!-- Hour selector -->
 						<div class="time-column">
@@ -297,7 +391,7 @@
 						{/if}
 
 						<!-- AM/PM selector (12-hour format) -->
-						{#if !use24Hours}
+						{#if !effective24h}
 							<div class="time-column period-column">
 								<div class="column-label">Period</div>
 								<div class="time-list">
@@ -340,12 +434,6 @@
 		gap: 0.5rem;
 	}
 
-	.timepicker-label {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: var(--neutral-foreground-rest);
-	}
-
 	.required-indicator {
 		color: var(--error-foreground-rest, #d13438);
 		margin-left: 0.25rem;
@@ -353,6 +441,12 @@
 
 	.timepicker-wrapper {
 		position: relative;
+	}
+
+	.end-buttons {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
 	}
 
 	.clock-button,

@@ -10,10 +10,19 @@
 	import {fluentDialog, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {SlotType} from "../types/index.js"
 	import Button from "./Button.svelte"
+	import {portal} from "../actions/portal.js"
 
 	provideFluentDesignSystem().register(
 		fluentDialog()
 	)
+
+	export type DialogAction = {
+		label: string
+		appearance?: "accent" | "neutral" | "outline" | "stealth" | "lightweight"
+		disabled?: boolean
+		/** Return `false` to prevent the dialog from closing after the click. */
+		onClick?: () => boolean | void | Promise<boolean | void>
+	}
 
 	type Props = {
 		modal?: boolean
@@ -24,7 +33,18 @@
 		ariaDescribedby?: string
 		ariaLabelledby?: string
 		ariaLabel?: string
+		/** Title text shown in the header row (left side). Ignored when `header` snippet is provided. */
+		title?: string
+		/** Fully custom header content (replaces the default title + close button row). */
+		header?: SlotType
+		/** Default slot — body content. */
 		children?: SlotType
+		/** Fully custom footer content (replaces primary/secondary action buttons and the legacy `actions` slot). */
+		footer?: SlotType
+		/** Convenience action — renders as a styled button (default `appearance="accent"`) on the right side of the footer. */
+		primaryAction?: DialogAction
+		/** Convenience action — renders as a styled button (default `appearance="neutral"`) next to the primary action. */
+		secondaryAction?: DialogAction
 		actions?: SlotType
 		dismissButtonText?: SlotType
 		onClose?: () => void
@@ -45,7 +65,12 @@
 		    ariaLabel = undefined,
 		    preventClose = false,
 		    dismissable = false,
+		    title = undefined,
+		    header = undefined,
 		    children = undefined,
+		    footer = undefined,
+		    primaryAction = undefined,
+		    secondaryAction = undefined,
 		    actions = undefined,
 		    dismissButtonText = undefined,
 		    onClose = undefined,
@@ -124,14 +149,31 @@
 			hide()
 		}
 	}
+
+	async function runAction(action: DialogAction) {
+		const result = await action.onClick?.()
+		if (result !== false) {
+			hide()
+		}
+	}
+
+	const hasFooterContent = $derived(
+		!!footer || !!actions || dismissable || !!primaryAction || !!secondaryAction
+	)
+	// A dedicated header row is rendered only when there's an actual title or custom
+	// header snippet — otherwise the close X floats in the top-right corner so legacy
+	// dialogs that put their own heading in the body don't get an empty strip on top.
+	const hasHeaderRow = $derived(!!header || !!title)
+	const showFloatingClose = $derived(!hasHeaderRow && !preventClose)
 </script>
 
 {#if visible}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="dialog-overlay" onkeydown={handleKeyDown} onclick={!preventClose ? handleClose : undefined}></div>
+	<div use:portal class="dialog-overlay" onkeydown={handleKeyDown} onclick={!preventClose ? handleClose : undefined}></div>
 {/if}
 
 <fluent-dialog
+	use:portal
 	bind:this={element}
 	{modal}
 	hidden={!visible}
@@ -144,24 +186,49 @@
 	onkeydown={handleKeyDown}
 >
 	<div class="dialog-container">
-		{#if !preventClose}
-			<div class="close-button-wrapper">
-				<Button appearance="stealth" onclick={handleClose} aria-label="Close dialog">
-					<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-						<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
-					</svg>
-				</Button>
+		{#if hasHeaderRow}
+			<div class="dialog-header">
+				{#if header}
+					{@render header()}
+				{:else}
+					<div class="dialog-title">{title}</div>
+					{#if !preventClose}
+						<Button appearance="stealth" onclick={handleClose} aria-label="Close dialog">
+							<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+								<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
+							</svg>
+						</Button>
+					{/if}
+				{/if}
 			</div>
+		{:else if showFloatingClose}
+			<button
+				type="button"
+				class="dialog-close-floating"
+				onclick={handleClose}
+				aria-label="Close dialog"
+			>
+				<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+					<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
+				</svg>
+			</button>
 		{/if}
 
 		<div class="dialog-content">
 			{@render children?.()}
 		</div>
 
-		{#if dismissable || actions}
+		{#if hasFooterContent}
 			<div class="dialog-footer">
-				{#if dismissable}
-					<div class="dismiss-button-wrapper">
+				{#if footer}
+					{@render footer()}
+				{:else}
+					{#if actions}
+						<div class="dialog-actions">
+							{@render actions()}
+						</div>
+					{/if}
+					{#if dismissable}
 						<Button onclick={hide}>
 							{#if dismissButtonText}
 								{@render dismissButtonText()}
@@ -169,12 +236,25 @@
 								Dismiss
 							{/if}
 						</Button>
-					</div>
-				{/if}
-				{#if actions}
-					<div class="dialog-actions">
-						{@render actions()}
-					</div>
+					{/if}
+					{#if primaryAction}
+						<Button
+							appearance={primaryAction.appearance ?? "accent"}
+							disabled={primaryAction.disabled}
+							onclick={() => runAction(primaryAction)}
+						>
+							{primaryAction.label}
+						</Button>
+					{/if}
+					{#if secondaryAction}
+						<Button
+							appearance={secondaryAction.appearance ?? "neutral"}
+							disabled={secondaryAction.disabled}
+							onclick={() => runAction(secondaryAction)}
+						>
+							{secondaryAction.label}
+						</Button>
+					{/if}
 				{/if}
 			</div>
 		{/if}
@@ -186,12 +266,12 @@
 		position: fixed;
 		inset: 0;
 		background-color: rgba(0, 0, 0, 0.4);
-		z-index: 1049;
+		z-index: var(--fluent-z-modal-backdrop);
 	}
 
 	.dialog-positioned {
 		position: fixed;
-		z-index: 1050;
+		z-index: var(--fluent-z-modal);
 	}
 
 	fluent-dialog::part(control) {
@@ -202,38 +282,64 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		gap: 1rem;
+		position: relative;
 	}
 
-	.close-button-wrapper {
-		align-self: flex-end;
+	.dialog-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
 		flex: none;
-		margin-top: 0.25rem;
-		margin-right: 0.25rem;
+	}
+
+	.dialog-title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--neutral-foreground-rest);
+		flex: 1;
+		min-width: 0;
+	}
+
+	/* Used when no title/header is provided — keeps legacy "X in the corner" look. */
+	.dialog-close-floating {
+		position: absolute;
+		top: 0;
+		right: 0;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0.5rem;
+		color: var(--neutral-foreground-rest);
+		border-radius: 4px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.dialog-close-floating:hover {
+		background: var(--neutral-fill-stealth-hover, rgba(0, 0, 0, 0.05));
 	}
 
 	.dialog-content {
 		flex: 1;
+		min-height: 0;
 	}
 
 	.dialog-footer {
 		flex: none;
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
+		align-items: center;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	.dismiss-button-wrapper {
-		display: flex;
-		justify-content: flex-end;
-		flex: none;
-	}
-
 	.dialog-actions {
-		flex: 1;
 		display: flex;
-		align-items: baseline;
-		gap: 0.25rem;
+		align-items: center;
+		gap: 0.5rem;
 	}
 </style>
 

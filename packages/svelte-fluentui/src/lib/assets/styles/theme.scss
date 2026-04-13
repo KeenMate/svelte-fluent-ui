@@ -3,6 +3,7 @@
  * Converts SCSS variables to CSS custom properties for runtime theme switching
  */
 
+@use 'tokens' as *;
 @use 'variables' as *;
 
 // Generate CSS custom properties from SCSS variables
@@ -72,6 +73,19 @@
 
 	// Transitions
 	--fluent-transition: #{$component-transition};
+
+	// Z-index scale (theme-independent — kept here so authors can use var() in any component).
+	// Order matters: dropdown < sticky < fixed < modal-backdrop < modal < popover < tooltip < toast.
+	// "popover" is intentionally above modal so dropdowns/calendars opened from inside a modal
+	// render on top of the modal.
+	--fluent-z-dropdown:        #{$z-index-dropdown};
+	--fluent-z-sticky:          #{$z-index-sticky};
+	--fluent-z-fixed:           #{$z-index-fixed};
+	--fluent-z-modal-backdrop:  #{$z-index-modal-backdrop};
+	--fluent-z-modal:           #{$z-index-modal};
+	--fluent-z-popover:         #{$z-index-popover};
+	--fluent-z-tooltip:         #{$z-index-tooltip};
+	--fluent-z-toast:           #{$z-index-toast};
 }
 
 [data-theme="dark"] {

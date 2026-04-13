@@ -8,14 +8,17 @@ export class CalendarExtended {
 	readonly weekInfo: WeekInfo
 	date: Date
 
-	constructor(culture: Intl.Locale, currentDate: Date) {
+	constructor(culture: Intl.Locale, currentDate: Date, firstDayOfWeek?: number) {
 		this.culture = culture
 		/*this.weekInfo = (culture as any).getWeekInfo() // any, because WebStorm does not recognize getWeekInfo() method of Locale*/
 		const locale = culture as any
-		this.weekInfo = locale.weekInfo ?? {
+		const baseInfo = locale.weekInfo ?? {
 			firstDay: 1,
 			weekend: [6, 0]
 		}
+		this.weekInfo = firstDayOfWeek !== undefined && firstDayOfWeek !== null
+			? {...baseInfo, firstDay: firstDayOfWeek}
+			: baseInfo
 		this.date = currentDate
 	}
 

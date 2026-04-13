@@ -234,6 +234,15 @@
 			]
 		},
 		{
+			title: "Applications",
+			icon: "apps",
+			items: [
+				{label: "Overview", href: "/applications"},
+				{label: "Filter Card", href: "/applications/filter-card"},
+				{label: "Order Form", href: "/applications/order-form"}
+			]
+		},
+		{
 			title: "Forms & Inputs",
 			icon: "textbox",
 			items: [

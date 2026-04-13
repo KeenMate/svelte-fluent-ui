@@ -42,7 +42,7 @@
 	}
 </script>
 
-<Dialog visible={open} modal={true} onClose={onClose} size="small" style="z-index: 10000;">
+<Dialog visible={open} modal={true} onClose={onClose} size="small">
 	<h4 style="margin: 0 0 1.5rem 0;">Site settings</h4>
 
 	<Stack orientation="vertical" gap="1rem">

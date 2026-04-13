@@ -1563,7 +1563,7 @@
 		</PositioningRegion>
 		<!-- L-shaped connector line when row has moved -->
 		{#if connectorPath && connectorArrowPos}
-			<svg class="row-connector" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999;">
+			<svg class="row-connector" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: var(--fluent-z-dropdown);">
 				<path
 					d={connectorPath}
 					stroke="var(--accent-fill-rest, #0078d4)"
@@ -2402,7 +2402,7 @@
 
 	/* Context menu styles */
 	.context-menu {
-		z-index: 1001;
+		z-index: var(--fluent-z-popover);
 	}
 
 	.context-menu fluent-menu {

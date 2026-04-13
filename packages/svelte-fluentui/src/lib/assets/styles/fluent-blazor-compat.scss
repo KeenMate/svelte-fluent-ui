@@ -681,3 +681,16 @@ div[dragged-over] {
 		outline-width: var(--focus-stroke-width);
 	}
 }
+
+// =============================================================================
+// Tab z-index override
+// Blazor ships fluent-tab[aria-selected="true"] { z-index: 1 } via fluent-components.scss.
+// That rule, combined with `position: relative` from elsewhere, creates a stacking
+// context that can fight with overlay components when the tabs sit in an elevated
+// ancestor (sticky header, transformed container, etc.). Reset it — selected state
+// is already conveyed via font-weight and color tokens.
+// =============================================================================
+fluent-tab[aria-selected="true"] {
+	z-index: auto;
+}
+

@@ -31,3 +31,16 @@
 	gap: 1rem;
 	align-items: center;
 }
+
+// Canonical label style used by form components (TextField, Select,
+// Autocomplete, Radio, RadioGroup) so labels stay visually consistent
+// regardless of whether the input is a fluent web component or a custom one.
+.fluent-label {
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--neutral-foreground-rest);
+	margin-bottom: 0.25rem;
+}
+

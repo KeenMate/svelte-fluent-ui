@@ -6,6 +6,7 @@
 	provideFluentDesignSystem().register(fluentTextField())
 
 	type Props = {
+		id?: string | null | undefined
 		value?: string | null | undefined
 		placeholder?: string | null | undefined
 		appearance?: string | null | undefined
@@ -15,6 +16,7 @@
 		type?: string | null | undefined
 		name?: string | null | undefined
 		label?: string | null | undefined
+		labelTemplate?: SlotType | null | undefined
 		autofocus?: boolean | null | undefined
 		autocomplete?: string | null | undefined
 		children?: SlotType | null | undefined
@@ -36,6 +38,7 @@
 	}
 
 	let {
+		id = undefined,
 		value = $bindable(),
 		placeholder = undefined,
 		appearance = undefined,
@@ -45,6 +48,7 @@
 		type = undefined,
 		name = undefined,
 		label = undefined,
+		labelTemplate = undefined,
 		autofocus = undefined,
 		autocomplete = "off",
 		children = undefined,
@@ -133,9 +137,21 @@
 	})
 </script>
 
+{#if label || labelTemplate}
+	<label for={id} class="fluent-label">
+		{#if label}
+			{label}
+		{/if}
+		{#if labelTemplate}
+			{@render labelTemplate?.()}
+		{/if}
+	</label>
+{/if}
+
 <!-- svelte-ignore a11y_no_static_element_interactions a11y_autofocus -->
 <fluent-text-field
 	bind:this={element}
+	{id}
 	{value}
 	{placeholder}
 	{appearance}
@@ -147,6 +163,7 @@
 	{autofocus}
 	{autocomplete}
 	{style}
+	aria-label={!label && !labelTemplate ? undefined : label || undefined}
 	oninput={handleOnInput}
 	onchange={handleOnChange}
 	onkeydown={handleOnKeyDown}
@@ -156,8 +173,6 @@
 >
 	{#if children}
 		{@render children()}
-	{:else}
-		{label}
 	{/if}
 	{#if end}
 		<div slot="end">

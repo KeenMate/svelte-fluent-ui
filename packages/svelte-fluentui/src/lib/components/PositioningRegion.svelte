@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte'
 	import type {SlotType} from "../types/index.js"
+	import {portal} from "../actions/portal.js"
 
 	type PositionType = "bottom" | "left" | "right" | "top"
 	type AlignType = "center" | "top"
@@ -12,6 +13,9 @@
 		title?: string
 		position?: PositionType
 		align?: AlignType  // Vertical alignment for left/right positions
+		/** When true (default), the overlay width is forced to the anchor's width.
+		 *  Set to false for popups that should size to their content (e.g. calendar). */
+		matchWidth?: boolean
 		children?: SlotType
 	}
 
@@ -22,6 +26,7 @@
 		title = undefined,
 		position: positionProp = "bottom",
 		align: alignProp = "center",
+		matchWidth = true,
 		children = undefined
 	}: Props = $props()
 
@@ -136,6 +141,7 @@
 	<!-- Positioned overlay mode (for dropdowns, tooltips) -->
 	{#if visible}
 		<div
+			use:portal
 			bind:this={overlayElement}
 			class="positioning-region"
 			{title}
@@ -143,7 +149,7 @@
 				position: fixed;
 				top: {coords.top}px;
 				left: {coords.left}px;
-				width: {coords.width}px;
+				{matchWidth ? `width: ${coords.width}px;` : ''}
 				{style}
 			"
 		>
@@ -163,6 +169,6 @@
 
 <style>
 	.positioning-region {
-		z-index: 1000;
+		z-index: var(--fluent-z-popover);
 	}
 </style>

@@ -53,3 +53,11 @@ export {default as Tabs} from "./components/Tabs.svelte"
 export {default as TimePicker} from "./components/TimePicker.svelte"
 export {default as Toast} from "./components/Toast.svelte"
 export {default as ToastContainer} from "./components/ToastContainer.svelte"
+
+// Actions
+export {portal} from "./actions/portal.js"
+export type {PortalTarget} from "./actions/portal.js"
+
+// Side-effect: register window.components['svelte-fluentui']
+import "./global.js"
+export {VERSION} from "./version.js"
