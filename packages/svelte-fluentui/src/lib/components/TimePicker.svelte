@@ -332,7 +332,7 @@
 				anchor={wrapperElement}
 				visible={isOpen}
 				matchWidth={false}
-				style="z-index: var(--fluent-z-popover); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); min-width: 280px;"
+				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); min-width: 280px;"
 			>
 				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 				<div class="time-picker-panel" bind:this={popupElement} onclick={handlePopupClick}>

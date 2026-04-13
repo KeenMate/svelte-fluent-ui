@@ -169,6 +169,6 @@
 
 <style>
 	.positioning-region {
-		z-index: var(--fluent-z-popover);
+		z-index: var(--fluent-z-popover, 1060);
 	}
 </style>

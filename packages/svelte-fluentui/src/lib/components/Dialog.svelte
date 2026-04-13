@@ -266,12 +266,12 @@
 		position: fixed;
 		inset: 0;
 		background-color: rgba(0, 0, 0, 0.4);
-		z-index: var(--fluent-z-modal-backdrop);
+		z-index: var(--fluent-z-modal-backdrop, 1040);
 	}
 
 	.dialog-positioned {
 		position: fixed;
-		z-index: var(--fluent-z-modal);
+		z-index: var(--fluent-z-modal, 1050);
 	}
 
 	fluent-dialog::part(control) {

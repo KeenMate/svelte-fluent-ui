@@ -154,13 +154,13 @@
 		color: inherit;
 		font-size: 1.25rem;
 		font-weight: 600;
-		z-index: var(--fluent-z-sticky);
+		z-index: var(--fluent-z-sticky, 1020);
 	}
 
 	/* Mobile menu toggle button */
 	:global(.topnav .mobile-menu-toggle) {
 		display: none;
-		z-index: var(--fluent-z-sticky);
+		z-index: var(--fluent-z-sticky, 1020);
 		order: -1;
 	}
 
@@ -240,7 +240,7 @@
 			background: var(--neutral-layer-1, #ffffff);
 			border-right: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 			transition: left 0.3s ease-in-out;
-			z-index: var(--fluent-z-fixed);
+			z-index: var(--fluent-z-fixed, 1030);
 			box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 			overflow-y: auto;
 		}

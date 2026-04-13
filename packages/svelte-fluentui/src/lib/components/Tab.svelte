@@ -99,5 +99,23 @@
 	.editable-label {
 		padding: 3px 5px;
 	}
+
+	/*
+	 * Override Microsoft FluentUI's shipped rule:
+	 *   fluent-tab[aria-selected="true"] { z-index: 1 }
+	 *
+	 * Combined with `position: relative` on tabs and an elevated parent
+	 * stacking context (sticky header, transformed container, etc.), that
+	 * rule makes selected tabs render above modals/overlays. Reset it.
+	 *
+	 * Lives here (not in a global SCSS file) so it ships automatically
+	 * whenever the consumer uses our Tab component, regardless of which
+	 * stylesheets they choose to import. !important is used because the
+	 * upstream rule has identical specificity and we can't guarantee
+	 * source order in the consumer's bundle.
+	 */
+	:global(fluent-tab[aria-selected="true"]) {
+		z-index: auto !important;
+	}
 </style>
 
