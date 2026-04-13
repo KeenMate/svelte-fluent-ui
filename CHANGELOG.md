@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Autocomplete label spacing** - Removed redundant `gap: 0.5rem` on `.fluent-autocomplete` wrapper; label-to-input spacing now comes solely from the shared `.fluent-label` margin, matching the other form components
 
 ### Fixed
+- **npm audit — cookie vulnerability** - Added an `overrides` entry in the workspace root `package.json` pinning `cookie` to `^0.7.2` (the patched version per [GHSA-pxg6-pf52-xh8x](https://github.com/advisories/GHSA-pxg6-pf52-xh8x)). SvelteKit upstream still pulls `cookie@^0.6.0` transitively, so this is the cleanest way to flush the vulnerability without waiting for an upstream release. After a clean `npm install`, audit now reports 0 vulnerabilities
 - **DatePicker / TimePicker popup positioning** - Calendar/time popup no longer renders in the top-left corner of the viewport
   - Root cause: `bind:this` on a `<TextField>` Svelte component returned the component instance, not a DOM element, so `PositioningRegion` couldn't compute anchor coordinates
   - Both pickers now bind `PositioningRegion`'s `anchor` to their own `<div class="*-wrapper">` DOM element

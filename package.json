@@ -8,5 +8,11 @@
 	],
 	"scripts": {
 		"dev": "npm run dev -w docs"
+	},
+	"overrides": {
+		"@sveltejs/kit": {
+			"cookie": "^0.7.2"
+		},
+		"cookie": "^0.7.2"
 	}
 }
