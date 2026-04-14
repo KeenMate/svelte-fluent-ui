@@ -6,24 +6,34 @@ A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2
 
 - 🎨 **Complete FluentUI Component Set** - Wraps all major FluentUI web components
 - 🔧 **TypeScript Support** - Full type definitions for all components
-- 📱 **Responsive Design** - Built-in responsive layout components
+- 📱 **Responsive Design** - Built-in responsive layout components (incl. responsive `Tabs` with scroll/wrap/clip modes)
 - 🎯 **Svelte 5 Compatible** - Works with the latest Svelte features
 - 🎨 **SCSS & Tailwind CSS** - Flexible styling options
 - 📦 **Tree-shakeable** - Import only what you need
-- ✨ **FluentUI Blazor Inspired** - Advanced components like DatePicker, TimePicker, InputFile, and Autocomplete
+- ✨ **FluentUI Blazor Inspired** - Advanced components like Calendar, DatePicker, TimePicker, InputFile, Autocomplete
 - 💾 **Navigation Persistence** - Sidebar menu state persists across page reloads with localStorage
 - 🎯 **Active Route Highlighting** - Current page automatically highlighted in navigation
 - 🔔 **Toast Notifications** - Programmatic toast service with multiple positions and auto-dismiss
+- 🗂 **Centralized z-index scale + portaled overlays** - Dialogs, popovers and tooltips render through `document.body` so they escape ancestor stacking contexts; every overlay uses a shared `--fluent-z-*` token scale with baked-in fallbacks
+- 🪟 **`portal` action** - Utility action exported for consumer-built overlays that need to escape parent stacking contexts
+- 🔌 **Global runtime API** - `window.components["svelte-fluentui"].version()` exposed at runtime for introspection (mirrors the pattern used by sister packages)
 
 ## Highlights
 
+- **Unified form label styling** - TextField, Select, Autocomplete, Radio, RadioGroup and Textarea all share a single canonical `.fluent-label` class so labels look identical across every field
+- **Autocomplete height parity** - The custom Autocomplete now matches FluentUI text field / select height (32px) using the same `--base-height-multiplier × --design-unit` tokens
+- **Ctrl+Space in Autocomplete** - Press `Ctrl+Space` (or `⌘+Space` on Mac) to force-open the dropdown with all available options
+- **Dialog** - Full Fluent-style layout: `title` / `header` slot, right-aligned footer, `primaryAction` / `secondaryAction` shorthand, or custom `footer` snippet. Portaled to `<body>` so it escapes ancestor stacking contexts
+- **DatePicker & TimePicker** - Calendar/clock popups anchored correctly to their inputs, natural-width popups (no more stretch-to-input-width), outside-click + `Escape` dismissal, `minDate`/`maxDate` / `minTime`/`maxTime`, `firstDayOfWeek`, `disabledDateFunc`, `autoClose`, bindable `open`
+- **Calendar** - `firstDayOfWeek` override, `selectableDates` allow-list, `onPickerMonthChange` callback
+- **Tabs responsive overflow** - `responsive="scroll" | "wrap" | "clip"` + optional `justify` prop. Tabs no longer overflow narrow containers; keeps compact start-aligned layout by default
+- **Slider** - Proper wrapper with `bind:value`, `min`/`max`/`step`, `orientation`, `onchange`/`oninput`, labels
 - **Navigation Persistence** - Sidebar menu state automatically saved to localStorage and restored on page reload
 - **Active Route Highlighting** - Current page is automatically highlighted in the navigation menu
 - **Toast Service** - Programmatic notifications with `toast.success()`, `toast.error()`, etc. - 6 positions, progress bars, auto-dismiss
-- **DatePicker & TimePicker** - Full-featured date and time selection with calendar popup and time picker
 - **InputFile** - Drag-and-drop file upload with validation and progress tracking
-- **Autocomplete** - Multiple selection with tag/chip display and async search support
-- **QuickGrid** - Advanced data grid with sorting, filtering, and pagination
+- **Autocomplete** - Multiple selection with tag/chip display, async search with AbortSignal, initial options, Ctrl+Space to show all
+- **QuickGrid** - Advanced data grid with sorting, filtering, pagination, editable rows, row toolbar, context menu
 - **Three-State Checkbox** - Checkbox with indeterminate state support
 - **Responsive Layout** - Complete layout system with Grid, Stack, and responsive components
 
@@ -238,20 +248,87 @@ npm install svelte-fluentui
 
   let selectedDate = $state<Date | null>(new Date())
   let selectedTime = $state<string | null>("14:30")
+
+  // Deny weekends
+  const disabledDateFunc = (d: Date) => d.getDay() === 0 || d.getDay() === 6
 </script>
 
 <DatePicker
   bind:value={selectedDate}
   label="Select date"
   placeholder="Choose a date"
+  firstDayOfWeek={1}
+  {disabledDateFunc}
+  autoClose={true}
 />
 
 <TimePicker
   bind:value={selectedTime}
   label="Select time"
-  use24Hours={true}
+  useAmPm={false}
   showSeconds={false}
+  minTime="08:00"
+  maxTime="18:00"
+  autoClose={true}
 />
+```
+
+### Dialog with Actions
+```svelte
+<script>
+  import { Dialog, Button } from 'svelte-fluentui'
+
+  let open = $state(false)
+  let name = $state("")
+</script>
+
+<Button onclick={() => open = true}>Open Dialog</Button>
+
+<Dialog
+  bind:visible={open}
+  title="Rename item"
+  modal
+  primaryAction={{
+    label: "Save",
+    onClick: async () => {
+      if (!name.trim()) return false  // keep open
+      await saveName(name)
+      // auto-closes when onClick resolves to anything but `false`
+    }
+  }}
+  secondaryAction={{
+    label: "Cancel"
+  }}
+>
+  <label>
+    Name
+    <input bind:value={name} />
+  </label>
+</Dialog>
+```
+
+### Responsive Tabs
+```svelte
+<script>
+  import { Tabs, Tab } from 'svelte-fluentui'
+</script>
+
+<!-- Default: tabs scroll horizontally when too wide -->
+<Tabs activeId="overview">
+  {#snippet childContent()}
+    <Tab id="overview" label="Overview" />
+    <Tab id="members" label="Members" />
+    <Tab id="activity" label="Activity" />
+    <Tab id="integrations" label="Integrations" />
+    <Tab id="settings" label="Settings" />
+  {/snippet}
+</Tabs>
+
+<!-- Wrap onto multiple rows instead of scrolling -->
+<Tabs responsive="wrap" activeId="a">...</Tabs>
+
+<!-- Justify: tabs divide the row equally -->
+<Tabs justify activeId="a">...</Tabs>
 ```
 
 ### Autocomplete with Multiple Selection
@@ -340,6 +417,53 @@ npm install svelte-fluentui
 <button onclick={showError}>Show Error</button>
 <button onclick={showWithProgress}>Show With Progress</button>
 ```
+
+### `portal` Action (for custom overlays)
+```svelte
+<script>
+  import { portal } from 'svelte-fluentui'
+
+  let open = $state(false)
+</script>
+
+<button onclick={() => open = true}>Show overlay</button>
+
+{#if open}
+  <!-- Moved to <body> for the lifetime of this block so ancestor
+       stacking contexts / transforms don't affect its z-index. -->
+  <div use:portal class="my-overlay" onclick={() => open = false}>
+    My custom overlay
+  </div>
+{/if}
+```
+
+### Global Runtime API
+```js
+// In any browser console, after the page has loaded svelte-fluentui:
+window.components["svelte-fluentui"].version()
+// => "1.0.0-rc08"
+```
+
+Also available as a direct import:
+```js
+import { VERSION } from 'svelte-fluentui'
+console.log(VERSION)
+```
+
+## Z-Index Scale
+
+All overlays use a shared token scale so the layering stays consistent across the library. Variables are exposed at `:root` when you import the SCSS bundle; every `z-index: var(--fluent-z-*)` declaration in components also includes the numeric fallback so things still stack correctly even without our SCSS loaded.
+
+| Token | Value | Used for |
+|---|---|---|
+| `--fluent-z-dropdown` | 1000 | Simple dropdowns, grid overlays |
+| `--fluent-z-sticky` | 1020 | Sticky app bars / headers |
+| `--fluent-z-fixed` | 1030 | Fixed sidebars / mobile nav |
+| `--fluent-z-modal-backdrop` | 1040 | Dialog overlay |
+| `--fluent-z-modal` | 1050 | Dialog itself |
+| `--fluent-z-popover` | 1060 | Calendar / time / autocomplete popups (above modal) |
+| `--fluent-z-tooltip` | 1070 | Tooltip |
+| `--fluent-z-toast` | 1080 | Toast |
 
 ## Development
 

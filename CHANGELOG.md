@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0-rc08] - 2026-04-13
+## [1.0.0-rc08] - 2026-04-14
 
 ### Added
 - **Applications section** - New top-level docs section with real-life UI pattern examples
@@ -53,6 +53,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Footer alignment changed from split (`space-between`) to right-aligned (`flex-end`) to match Fluent visual conventions
   - Existing `actions` snippet, `dismissable`/`dismissButtonText` still work; they now sit in the right-aligned footer alongside `primaryAction`/`secondaryAction`
   - When `title`/`header` is omitted, the close X reverts to a floating top-right button (matching legacy behavior) instead of reserving an empty header strip — so old dialogs with their own `<h3>` in the body still look right
+- **Tabs responsive overflow** - New `responsive` prop on `Tabs` controls how the tab list handles widths wider than its container
+  - `"scroll"` (default): horizontal overflow with a thin scrollbar — tabs no longer overflow narrow containers
+  - `"wrap"`: tab rows wrap onto multiple lines
+  - `"clip"`: preserves FluentUI's upstream behavior (tablist grows to `max-content`) for backwards compatibility
+  - Implemented via `::part(tablist)` (fluent-tabs exposes `part="tablist"` on its shadow-root tab list), so the override ships automatically whenever the component is used — no SCSS import required. Previously the tablist had `width: max-content` hard-wired in the shadow DOM, forcing consumer apps to override it in their own styles
+  - Tabs stay compactly aligned at the start (not justified across the container) by default: the scroll/wrap modes use `max-width: 100%` on the host + `overflow-x: auto` so the tablist keeps its natural `max-content` width and only scrolls when it doesn't fit
+  - New `justify` boolean prop (default `false`) — when `true`, the tab list stretches to fill the available width so the tabs divide the row equally. Applies in `"scroll"` / `"wrap"` modes; in `"scroll"` mode it also disables the scrollbar since the list always fits by definition
 - **Global runtime API** - Package now registers `window.components["svelte-fluentui"]` on import (browser only), exposing `version()` so non-Svelte / console code can introspect the loaded version. Mirrors the pattern used by sister packages (e.g. `web-multiselect`)
   - Also exported as `VERSION` from `svelte-fluentui` for direct import
   - Auto-generated `src/lib/version.ts` is rewritten on each build by the new `scripts/pre-package.js` to keep it in sync with `package.json`
