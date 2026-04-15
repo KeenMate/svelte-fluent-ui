@@ -117,5 +117,18 @@
 	:global(fluent-tab[aria-selected="true"]) {
 		z-index: auto !important;
 	}
+
+	/*
+	 * FluentUI's tab template is a bare `<slot></slot>` with no gap between
+	 * slotted children, so an icon + label ends up visually glued (e.g.
+	 * "⌂Overview"). Make the host a flex container with a small gap so
+	 * icons, labels, and badges breathe. Kept in the component's style so
+	 * it ships automatically with every <Tab> usage.
+	 */
+	:global(fluent-tab) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
 </style>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge} from "svelte-fluentui"
 
 	type Property = {
 		name: string
@@ -8,34 +8,50 @@
 		description: string
 	}
 
-	const properties: Property[] = [
-		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
-		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot for additional child content"},
-		{name: "class", type: "string", default: '""', description: "Custom class for styling"},
-		{name: "content", type: "SlotType", default: "undefined", description: "Slot for tab panel content"},
-		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the tab"},
-		{name: "header", type: "SlotType", default: "undefined", description: "Custom header slot"},
-		{name: "icon", type: "SlotType", default: "undefined", description: "Optional icon slot"},
+	const tabsProperties: Property[] = [
+		{name: "id", type: "string", default: "undefined", description: "Unique ID for the <fluent-tabs> element"},
+		{name: "class", type: "string", default: '""', description: "Custom class"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS"},
+		{name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Tab bar orientation"},
+		{name: "activeId", type: "string", default: "undefined", description: "ID of the initially active tab"},
+		{name: "showActiveIndicator", type: "boolean", default: "true", description: "Show the active indicator line under/beside the selected tab"},
+		{name: "responsive", type: '"scroll" | "wrap" | "clip"', default: '"scroll"', description: "Overflow behaviour when the tab list is wider than the container. scroll = horizontal scrollbar (default). wrap = tabs flow onto multiple rows. clip = upstream FluentUI behaviour (tablist grows to max-content and overflows)"},
+		{name: "justify", type: "boolean", default: "false", description: "When true, the tab list stretches to fill the container and tabs divide the row equally. Default keeps the compact start-aligned layout"},
+		{name: "overflow", type: "{ label: string; onclick?: () => void }[]", default: "[]", description: "Items shown in the built-in \"more\" overflow menu"},
+		{name: "moreButtonId", type: "string", default: '"more-button"', description: "ID for the more-button badge (used as the menu anchor)"},
+		{name: "styleMoreValues", type: "string", default: '""', description: "Inline style for the overflow badge"},
+		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot containing the child <Tab> elements"}
+	]
+
+	const tabProperties: Property[] = [
 		{name: "id", type: "string", default: "undefined", description: "Unique ID"},
 		{name: "label", type: "string", default: "undefined", description: "Tab label text"},
-		{name: "labelEditable", type: "boolean", default: "false", description: "Allows inline editing of label"},
-		{name: "overflow", type: "string", default: "undefined", description: "Overflow behavior of the tab"},
-		{name: "showClose", type: "boolean", default: "false", description: "Shows close button on tab"},
-		{name: "style", type: "string", default: '""', description: "Inline CSS styles"},
-		{name: "visible", type: "boolean", default: "true", description: "Controls whether tab is rendered"}
+		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
+		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the tab"},
+		{name: "labelEditable", type: "boolean", default: "false", description: "Allows inline editing of the tab label"},
+		{name: "showClose", type: "boolean", default: "false", description: "Shows a close (×) button on the tab"},
+		{name: "overflow", type: "string", default: "undefined", description: "Overflow behaviour of this individual tab"},
+		{name: "visible", type: "boolean", default: "true", description: "Controls whether the tab is rendered"},
+		{name: "data", type: "Record<string, unknown>", default: "undefined", description: "Arbitrary context data surfaced to ontabchange when this tab is selected"},
+		{name: "class", type: "string", default: '""', description: "Custom class"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS"},
+		{name: "icon", type: "SlotType", default: "undefined", description: "Optional icon slot rendered before the label"},
+		{name: "header", type: "SlotType", default: "undefined", description: "Fully custom header content (replaces the icon + label default)"},
+		{name: "content", type: "SlotType", default: "undefined", description: "Tab panel content"},
+		{name: "childContent", type: "SlotType", default: "undefined", description: "Alternative content slot, rendered after `content`"}
 	]
 
 	const callbacks: Property[] = [
 		{name: "ontabchange", type: "(detail: { tabId: string; data?: Record<string, unknown> }) => void", default: "undefined", description: "Fired on Tabs when the active tab changes"},
-		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired on Tab when the close button is clicked"}
+		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired on Tab when its close (×) button is clicked"}
 	]
 
 	const slots: Property[] = [
-		{name: "childContent", type: "SlotType", default: "undefined", description: "Tab items and panels"},
-		{name: "icon", type: "SlotType", default: "conditional", description: "Slot for icon inside tab header"},
-		{name: "header", type: "SlotType", default: "conditional", description: "Custom tab header content"},
-		{name: "content", type: "SlotType", default: "conditional", description: "Main content inside tab panel"},
-		{name: "end", type: "fluent-badge", default: "conditional", description: "Overflow badge"}
+		{name: "childContent", type: "SlotType", default: "undefined", description: "(Tabs) Holds the child <Tab> elements"},
+		{name: "icon", type: "SlotType", default: "undefined", description: "(Tab) Icon shown before the label"},
+		{name: "header", type: "SlotType", default: "undefined", description: "(Tab) Fully custom header"},
+		{name: "content", type: "SlotType", default: "undefined", description: "(Tab) Tab panel body"},
+		{name: "end", type: "fluent-badge", default: "auto", description: "(Tabs) Overflow-count badge rendered automatically when `overflow` is non-empty"}
 	]
 
 	const propertyColumns = [
@@ -44,10 +60,37 @@
 		{field: "default", title: "Default", sortable: true},
 		{field: "description", title: "Description", filterable: true}
 	]
+
+	// Tracks active tab for the ontabchange demo
+	let activeId = $state("overview")
+	let lastSelected = $state<{tabId: string; data?: Record<string, unknown>} | undefined>(undefined)
+
+	function handleTabChange(detail: {tabId: string; data?: Record<string, unknown>}) {
+		lastSelected = detail
+		activeId = detail.tabId
+	}
+
+	// Closable tabs demo
+	let closableTabs = $state([
+		{id: "doc1", label: "Invoice-2026-04.pdf", icon: "document"},
+		{id: "doc2", label: "Contract.docx", icon: "document"},
+		{id: "doc3", label: "Budget-Q2.xlsx", icon: "document"},
+		{id: "doc4", label: "Notes.txt", icon: "document"}
+	])
+	function closeTab(id: string) {
+		closableTabs = closableTabs.filter(t => t.id !== id)
+	}
+
+	// Overflow menu demo
+	const overflowItems = [
+		{label: "Billing", onclick: () => console.log("billing clicked")},
+		{label: "Audit log", onclick: () => console.log("audit clicked")},
+		{label: "Archive", onclick: () => console.log("archive clicked")}
+	]
 </script>
 
 <Stack orientation="vertical" gap="1rem">
-	<h1>Tab</h1>
+	<h1>Tabs</h1>
 
 	<Card>
 		<p>
@@ -61,14 +104,14 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+				<h2>Tabs properties</h2>
+				<QuickGrid items={tabsProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+				<h2>Tab properties</h2>
+				<QuickGrid items={tabProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
@@ -77,13 +120,19 @@
 				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
 	</Grid>
 
 	<Card>
 		<h2 class="content-subhead">Examples</h2>
 
 		<h3>Basic tab layout</h3>
-
+		<p>Minimal tabs — labels only.</p>
 		<Tabs>
 			{#snippet childContent()}
 				<Tab id="tab1" label="First tab">
@@ -91,14 +140,338 @@
 						<p>Example text for tab 1</p>
 					{/snippet}
 				</Tab>
-
 				<Tab id="tab2" label="Second tab">
 					{#snippet content()}
 						<p>Example text for tab 2</p>
 					{/snippet}
 				</Tab>
+				<Tab id="tab3" label="Third tab">
+					{#snippet content()}
+						<p>Example text for tab 3</p>
+					{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+	</Card>
+
+	<Card>
+		<h3>Tabs with icons</h3>
+		<p>Pass an <code>icon</code> snippet to each <code>&lt;Tab&gt;</code>.</p>
+		<Tabs activeId="home-tab">
+			{#snippet childContent()}
+				<Tab id="home-tab" label="Home">
+					{#snippet icon()}
+						<Icon name="home" size={16} />
+					{/snippet}
+					{#snippet content()}
+						<p>Landing page content.</p>
+					{/snippet}
+				</Tab>
+				<Tab id="profile-tab" label="Profile">
+					{#snippet icon()}
+						<Icon name="person" size={16} />
+					{/snippet}
+					{#snippet content()}
+						<p>Profile details and avatar.</p>
+					{/snippet}
+				</Tab>
+				<Tab id="inbox-tab" label="Inbox">
+					{#snippet icon()}
+						<Icon name="mail" size={16} />
+					{/snippet}
+					{#snippet content()}
+						<p>Unread messages and notifications.</p>
+					{/snippet}
+				</Tab>
+				<Tab id="calendar-tab" label="Calendar">
+					{#snippet icon()}
+						<Icon name="calendar" size={16} />
+					{/snippet}
+					{#snippet content()}
+						<p>Upcoming events and reminders.</p>
+					{/snippet}
+				</Tab>
+				<Tab id="settings-tab" label="Settings">
+					{#snippet icon()}
+						<Icon name="settings" size={16} />
+					{/snippet}
+					{#snippet content()}
+						<p>Preferences and integrations.</p>
+					{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+	</Card>
+
+	<Card>
+		<h3>Custom header with badge</h3>
+		<p>
+			Use the <code>header</code> snippet for arbitrary header content — here
+			we put an icon, a label, and a status badge together on the "Inbox" tab.
+		</p>
+		<Tabs activeId="overview2">
+			{#snippet childContent()}
+				<Tab id="overview2" label="Overview">
+					{#snippet icon()}<Icon name="home" size={16} />{/snippet}
+					{#snippet content()}<p>Overview page</p>{/snippet}
+				</Tab>
+				<Tab id="inbox2">
+					{#snippet header()}
+						<Icon name="mail" size={16} />
+						<span>Inbox</span>
+						<Badge appearance="accent">3</Badge>
+					{/snippet}
+					{#snippet content()}<p>You have 3 unread messages.</p>{/snippet}
+				</Tab>
+				<Tab id="archive2" label="Archive">
+					{#snippet icon()}<Icon name="folder" size={16} />{/snippet}
+					{#snippet content()}<p>Archived items.</p>{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+	</Card>
+
+	<Card>
+		<h3>Justified tabs</h3>
+		<p>
+			<code>justify</code> stretches the tab list to fill the container and
+			each tab takes an equal share of the row. Useful for fixed, top-level
+			section navigation.
+		</p>
+		<Tabs justify activeId="summary">
+			{#snippet childContent()}
+				<Tab id="summary" label="Summary">
+					{#snippet icon()}<Icon name="document" size={16} />{/snippet}
+					{#snippet content()}<p>High-level summary</p>{/snippet}
+				</Tab>
+				<Tab id="details" label="Details">
+					{#snippet icon()}<Icon name="info" size={16} />{/snippet}
+					{#snippet content()}<p>Detailed breakdown</p>{/snippet}
+				</Tab>
+				<Tab id="history" label="History">
+					{#snippet icon()}<Icon name="history" size={16} />{/snippet}
+					{#snippet content()}<p>Activity log</p>{/snippet}
+				</Tab>
+				<Tab id="sharing" label="Sharing">
+					{#snippet icon()}<Icon name="share" size={16} />{/snippet}
+					{#snippet content()}<p>Share and permissions</p>{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+	</Card>
+
+	<Card>
+		<h3>Responsive modes</h3>
+		<p>
+			Many tabs + narrow container. Resize the browser (or the preview
+			containers below) to see how each mode handles overflow.
+		</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<div>
+				<p><strong><code>responsive="scroll"</code> (default)</strong> — horizontal scrollbar appears when tabs don't fit.</p>
+				<div style="max-width: 420px; border: 1px dashed var(--neutral-stroke-rest); padding: 0.5rem;">
+					<Tabs responsive="scroll" activeId="s1">
+						{#snippet childContent()}
+							<Tab id="s1" label="Basic info" />
+							<Tab id="s2" label="Languages" />
+							<Tab id="s3" label="Additional attributes" />
+							<Tab id="s4" label="Values" />
+							<Tab id="s5" label="Maintenance" />
+							<Tab id="s6" label="Audit trail" />
+							<Tab id="s7" label="Integrations" />
+						{/snippet}
+					</Tabs>
+				</div>
+			</div>
+
+			<div>
+				<p><strong><code>responsive="wrap"</code></strong> — tabs flow onto multiple rows.</p>
+				<div style="max-width: 420px; border: 1px dashed var(--neutral-stroke-rest); padding: 0.5rem;">
+					<Tabs responsive="wrap" activeId="w1">
+						{#snippet childContent()}
+							<Tab id="w1" label="Basic info" />
+							<Tab id="w2" label="Languages" />
+							<Tab id="w3" label="Additional attributes" />
+							<Tab id="w4" label="Values" />
+							<Tab id="w5" label="Maintenance" />
+							<Tab id="w6" label="Audit trail" />
+							<Tab id="w7" label="Integrations" />
+						{/snippet}
+					</Tabs>
+				</div>
+			</div>
+
+			<div>
+				<p><strong><code>responsive="clip"</code></strong> — upstream FluentUI behaviour (tablist grows to <code>max-content</code> and overflows).</p>
+				<div style="max-width: 420px; overflow: hidden; border: 1px dashed var(--neutral-stroke-rest); padding: 0.5rem;">
+					<Tabs responsive="clip" activeId="c1">
+						{#snippet childContent()}
+							<Tab id="c1" label="Basic info" />
+							<Tab id="c2" label="Languages" />
+							<Tab id="c3" label="Additional attributes" />
+							<Tab id="c4" label="Values" />
+							<Tab id="c5" label="Maintenance" />
+							<Tab id="c6" label="Audit trail" />
+							<Tab id="c7" label="Integrations" />
+						{/snippet}
+					</Tabs>
+				</div>
+			</div>
+		</Stack>
+	</Card>
+
+	<Card>
+		<h3>Vertical orientation</h3>
+		<p>Set <code>orientation="vertical"</code> for stacked tabs (side navigation style).</p>
+		<div style="display: flex; min-height: 180px;">
+			<Tabs orientation="vertical" activeId="v1">
+				{#snippet childContent()}
+					<Tab id="v1" label="General">
+						{#snippet icon()}<Icon name="settings" size={16} />{/snippet}
+						{#snippet content()}<p>General settings</p>{/snippet}
+					</Tab>
+					<Tab id="v2" label="Appearance">
+						{#snippet icon()}<Icon name="color" size={16} />{/snippet}
+						{#snippet content()}<p>Theme, accent color, density</p>{/snippet}
+					</Tab>
+					<Tab id="v3" label="Notifications">
+						{#snippet icon()}<Icon name="alert" size={16} />{/snippet}
+						{#snippet content()}<p>Notification preferences</p>{/snippet}
+					</Tab>
+					<Tab id="v4" label="Security">
+						{#snippet icon()}<Icon name="shield" size={16} />{/snippet}
+						{#snippet content()}<p>Password, 2FA, sessions</p>{/snippet}
+					</Tab>
+				{/snippet}
+			</Tabs>
+		</div>
+	</Card>
+
+	<Card>
+		<h3>Closable tabs</h3>
+		<p>
+			Set <code>showClose</code> on a tab and listen to <code>oncloseclick</code>
+			to get the "browser-style" closable tab UX. Close a tab below and watch
+			the list shrink.
+		</p>
+		{#if closableTabs.length > 0}
+			<Tabs activeId={closableTabs[0].id}>
+				{#snippet childContent()}
+					{#each closableTabs as t (t.id)}
+						<Tab
+							id={t.id}
+							label={t.label}
+							showClose
+							oncloseclick={() => closeTab(t.id)}
+						>
+							{#snippet icon()}<Icon name={t.icon} size={16} />{/snippet}
+							{#snippet content()}<p>Content of {t.label}</p>{/snippet}
+						</Tab>
+					{/each}
+				{/snippet}
+			</Tabs>
+		{:else}
+			<p><em>No tabs left. Refresh the page to reset.</em></p>
+		{/if}
+	</Card>
+
+	<Card>
+		<h3>Disabled tab</h3>
+		<p>Disabled tabs are greyed out and cannot be activated.</p>
+		<Tabs activeId="d1">
+			{#snippet childContent()}
+				<Tab id="d1" label="Active">
+					{#snippet icon()}<Icon name="checkmark" size={16} />{/snippet}
+					{#snippet content()}<p>This tab is enabled.</p>{/snippet}
+				</Tab>
+				<Tab id="d2" label="Disabled" disabled>
+					{#snippet icon()}<Icon name="lock" size={16} />{/snippet}
+					{#snippet content()}<p>This tab is disabled.</p>{/snippet}
+				</Tab>
+				<Tab id="d3" label="Also active">
+					{#snippet icon()}<Icon name="star" size={16} />{/snippet}
+					{#snippet content()}<p>This tab is enabled.</p>{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+	</Card>
+
+	<Card>
+		<h3>Editable labels</h3>
+		<p>
+			Set <code>labelEditable</code> to let users rename a tab inline. Click
+			the label to edit, press <kbd>Enter</kbd> or click away to commit.
+		</p>
+		<Tabs activeId="e1">
+			{#snippet childContent()}
+				<Tab id="e1" label="Untitled 1" labelEditable>
+					{#snippet icon()}<Icon name="edit" size={16} />{/snippet}
+					{#snippet content()}<p>Editable tab</p>{/snippet}
+				</Tab>
+				<Tab id="e2" label="Untitled 2" labelEditable>
+					{#snippet icon()}<Icon name="edit" size={16} />{/snippet}
+					{#snippet content()}<p>Another editable tab</p>{/snippet}
+				</Tab>
+				<Tab id="e3" label="Fixed name">
+					{#snippet icon()}<Icon name="lock" size={16} />{/snippet}
+					{#snippet content()}<p>Not editable.</p>{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+	</Card>
+
+	<Card>
+		<h3>Controlled activeId with <code>ontabchange</code> + tab data</h3>
+		<p>
+			Each tab passes a <code>data</code> object that's surfaced to
+			<code>ontabchange</code>. Current active: <strong>{activeId}</strong>.
+		</p>
+		<Tabs {activeId} ontabchange={handleTabChange}>
+			{#snippet childContent()}
+				<Tab id="overview" label="Overview" data={{section: "overview", index: 0}}>
+					{#snippet icon()}<Icon name="home" size={16} />{/snippet}
+					{#snippet content()}<p>Overview panel.</p>{/snippet}
+				</Tab>
+				<Tab id="members" label="Members" data={{section: "members", index: 1}}>
+					{#snippet icon()}<Icon name="people" size={16} />{/snippet}
+					{#snippet content()}<p>Members panel.</p>{/snippet}
+				</Tab>
+				<Tab id="activity" label="Activity" data={{section: "activity", index: 2}}>
+					{#snippet icon()}<Icon name="history" size={16} />{/snippet}
+					{#snippet content()}<p>Activity panel.</p>{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
+		{#if lastSelected}
+			<p style="margin-top: 1rem;">
+				<strong>Last event:</strong>
+				<code>{JSON.stringify(lastSelected)}</code>
+			</p>
+		{/if}
+	</Card>
+
+	<Card>
+		<h3>Overflow menu</h3>
+		<p>
+			Pass an <code>overflow</code> array to <code>&lt;Tabs&gt;</code> to get
+			a badge + menu for items that don't belong in the main tab strip.
+		</p>
+		<Tabs overflow={overflowItems} activeId="o1">
+			{#snippet childContent()}
+				<Tab id="o1" label="Home">
+					{#snippet icon()}<Icon name="home" size={16} />{/snippet}
+					{#snippet content()}<p>Home panel</p>{/snippet}
+				</Tab>
+				<Tab id="o2" label="Projects">
+					{#snippet icon()}<Icon name="folder" size={16} />{/snippet}
+					{#snippet content()}<p>Projects panel</p>{/snippet}
+				</Tab>
+				<Tab id="o3" label="Reports">
+					{#snippet icon()}<Icon name="chart" size={16} />{/snippet}
+					{#snippet content()}<p>Reports panel</p>{/snippet}
+				</Tab>
 			{/snippet}
 		</Tabs>
 	</Card>
 </Stack>
-
