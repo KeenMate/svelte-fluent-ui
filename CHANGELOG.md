@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0-rc08] - 2026-04-14
+## [1.0.0-rc09] - 2026-04-15
 
 ### Added
 - **Applications section** - New top-level docs section with real-life UI pattern examples
@@ -79,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `TopNav` brand / mobile toggle / mobile sidebar use `--fluent-z-sticky` / `--fluent-z-fixed`
   - `SiteSettings` Dialog no longer needs the `style="z-index: 10000"` workaround
 - **Selected fluent-tab z-index neutralized** - Blazor's `fluent-components.scss` ships `fluent-tab[aria-selected="true"] { z-index: 1 }`. Combined with parent stacking contexts that could elevate the tab above modals, this caused selected tabs to "shine through" dialogs. Override moved into `Tab.svelte`'s scoped style as `:global(fluent-tab[aria-selected="true"]) { z-index: auto !important }` so it ships automatically with the component (consumers who don't import our SCSS bundle were missing the previous override). Selected state remains visually obvious through font-weight/color
+- **Dialog Escape now handled globally** - Previously the keydown handler was wired only on the dialog element, so `Esc` was lost whenever focus drifted outside the dialog (e.g. user clicked the overlay). Now a single document-level `keydown` listener (capture phase) routes `Esc` to the topmost open Dialog instance, regardless of where focus lives. The listener is installed lazily when the first dialog opens and removed when the last one closes — no extra prop required, behavior is governed by the existing `closeOnEscape` (default `true`) and `onbeforeclose` (return `false` to veto)
 - **Tab spacing** - FluentUI's `<fluent-tab>` template is a single bare `<slot>` with no gap between children, so icon + label + badge render visually glued. `Tab.svelte` now ships `:global(fluent-tab) { display: inline-flex; align-items: center; gap: 0.5rem }` as part of the component so any combination of icon / label / badge / close button breathes automatically
 - **Z-index CSS variables now have fallbacks** - All `z-index: var(--fluent-z-*)` declarations across components now include the absolute fallback (`var(--fluent-z-modal-backdrop, 1040)` etc.). Consumers who don't import `theme.scss` (so the variables aren't defined) still get correct stacking instead of `z-index: auto`
 - **Unified form label styling** - TextField, Select, Autocomplete, Radio, and RadioGroup now share a single canonical `.fluent-label` class

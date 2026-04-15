@@ -4,9 +4,56 @@
 		hide: VoidFunction
 		toggle: VoidFunction
 	}
+
+	/**
+	 * Global stack of currently-open Dialog instances. Used so a single
+	 * document-level keydown listener can always route Escape to the
+	 * topmost open dialog, regardless of where focus lives. The listener
+	 * is installed lazily when the first dialog opens and torn down when
+	 * the last one closes.
+	 */
+	type DialogHandle = {
+		closeOnEscape: () => boolean
+		preventClose: () => boolean
+		onbeforeclose: () => boolean | void
+		hide: () => void
+	}
+	const openDialogStack: DialogHandle[] = []
+	let escListenerAttached = false
+
+	function handleGlobalEscape(e: KeyboardEvent) {
+		if (e.key !== "Escape") return
+		const top = openDialogStack[openDialogStack.length - 1]
+		if (!top) return
+		if (top.preventClose()) return
+		if (!top.closeOnEscape()) return
+		const beforeClose = top.onbeforeclose
+		if (beforeClose && beforeClose() === false) return
+		e.preventDefault()
+		e.stopPropagation()
+		top.hide()
+	}
+
+	function pushDialog(handle: DialogHandle) {
+		openDialogStack.push(handle)
+		if (!escListenerAttached && typeof document !== "undefined") {
+			document.addEventListener("keydown", handleGlobalEscape, true)
+			escListenerAttached = true
+		}
+	}
+
+	function popDialog(handle: DialogHandle) {
+		const idx = openDialogStack.lastIndexOf(handle)
+		if (idx >= 0) openDialogStack.splice(idx, 1)
+		if (openDialogStack.length === 0 && escListenerAttached && typeof document !== "undefined") {
+			document.removeEventListener("keydown", handleGlobalEscape, true)
+			escListenerAttached = false
+		}
+	}
 </script>
 
 <script lang="ts">
+	import {onDestroy} from "svelte"
 	import {fluentDialog, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {SlotType} from "../types/index.js"
 	import Button from "./Button.svelte"
@@ -140,15 +187,21 @@
 		hide()
 	}
 
-	function handleKeyDown(e: KeyboardEvent) {
-		if (e.key === "Escape" && !preventClose && closeOnEscape) {
-			e.preventDefault()
-			if (onbeforeclose && onbeforeclose() === false) {
-				return
-			}
-			hide()
-		}
+	// Wire this instance into the global Escape stack while visible. Listener
+	// lives on `document` so Esc works regardless of where focus is.
+	const handle: DialogHandle = {
+		closeOnEscape: () => closeOnEscape,
+		preventClose: () => preventClose,
+		onbeforeclose: () => onbeforeclose?.(),
+		hide
 	}
+	$effect(() => {
+		if (visible) {
+			pushDialog(handle)
+			return () => popDialog(handle)
+		}
+	})
+	onDestroy(() => popDialog(handle))
 
 	async function runAction(action: DialogAction) {
 		const result = await action.onClick?.()
@@ -169,7 +222,7 @@
 
 {#if visible}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div use:portal class="dialog-overlay" onkeydown={handleKeyDown} onclick={!preventClose ? handleClose : undefined}></div>
+	<div use:portal class="dialog-overlay" onclick={!preventClose ? handleClose : undefined}></div>
 {/if}
 
 <fluent-dialog
@@ -183,7 +236,6 @@
 	{ariaLabel}
 	class="dialog-positioned"
 	style={dialogStyle + (style ? ` ${style}` : '')}
-	onkeydown={handleKeyDown}
 >
 	<div class="dialog-container">
 		{#if hasHeaderRow}
