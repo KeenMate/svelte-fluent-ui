@@ -109,7 +109,17 @@
 		headerInfo?: string  // Info tooltip shown next to header title (displays ⓘ icon)
 		sortable?: boolean
 		filterable?: boolean
+		/** Explicit column width. Accepts any CSS length (px, %, rem, ch, etc.). Ignored when `autoWidth` is true. */
 		width?: string
+		/** CSS min-width for the column. */
+		minWidth?: string
+		/** CSS max-width for the column. */
+		maxWidth?: string
+		/** When true, the column sizes to its header content and does not stretch to fill remaining table width.
+		 *  Effectively sets `width: 1%; white-space: nowrap` on the header cell. Works best in combination with
+		 *  the grid-level `fillerColumn` prop so the freed-up space is absorbed by a trailing empty column
+		 *  instead of redistributing to other columns. */
+		autoWidth?: boolean
 		align?: "left" | "center" | "right"
 		format?: (value: any, row: T) => string
 		template?: (row: T) => string
@@ -214,6 +224,10 @@
 		pageSize?: number
 		striped?: boolean
 		hoverable?: boolean
+		/** When true, appends an empty filler column at the end of every row that absorbs any remaining
+		 *  horizontal space. Pair with per-column `width` / `minWidth` / `maxWidth` / `autoWidth` when you
+		 *  want columns to keep predefined widths instead of stretching to justify across the table. */
+		fillerColumn?: boolean
 		class?: string
 		style?: string
 		cellTemplate?: SlotType
@@ -253,6 +267,7 @@
 		pageSize = 10,
 		striped = true,
 		hoverable = true,
+		fillerColumn = false,
 		class: className = "",
 		style = "",
 		cellTemplate = undefined,
@@ -285,6 +300,25 @@
 	// Resolve toolbar props with backwards compatibility
 	const resolvedShowToolbar = $derived(showRowToolbar ?? showRowActions ?? false)
 	const resolvedToolbarConfig = $derived(rowToolbar ?? rowActions ?? ['add', 'delete', 'duplicate'] as RowToolbarConfig<T>[])
+
+	// Build inline style for a column header cell. Covers `autoWidth` (shrink-to-content trick),
+	// explicit `width`, `minWidth` / `maxWidth`, and optional text-align. Returns empty string when
+	// no width-related props and `includeAlign` is false so we don't emit a stray `style=""`.
+	function getColumnHeaderStyle(column: Column<T>, includeAlign: boolean): string {
+		const parts: string[] = []
+		if (column.autoWidth) {
+			// `width: 1%` + `white-space: nowrap` is the canonical HTML-table trick for sizing a
+			// column to its content. Browser treats the 1% as a lower bound and the nowrap forces
+			// the intrinsic min-width to be the header's no-wrap width, which wins.
+			parts.push("width: 1%", "white-space: nowrap")
+		} else if (column.width) {
+			parts.push(`width: ${column.width}`)
+		}
+		if (column.minWidth) parts.push(`min-width: ${column.minWidth}`)
+		if (column.maxWidth) parts.push(`max-width: ${column.maxWidth}`)
+		if (includeAlign) parts.push(`text-align: ${column.align || "left"}`)
+		return parts.join("; ")
+	}
 
 	// Sorting state
 	let sortColumn = $state<string | null>(null)
@@ -777,7 +811,6 @@
 				// For dropdown editors, prevent auto-reopening when we refocus
 				const isDropdownEditor = column.editor === "select" || column.editor === "combobox" || column.editor === "autocomplete"
 				if (isDropdownEditor) {
-					console.log('[QG1] Setting skipNextDropdownAutoEdit = true')
 					skipNextDropdownAutoEdit = true
 				}
 				focusCell(rowIndex, colIndex)
@@ -844,13 +877,10 @@
 				const isDropdownEditor = column.editor === "select" || column.editor === "combobox" || column.editor === "autocomplete"
 				if (isDropdownEditor && isCellEditable(column)) {
 					// Skip auto-edit if we just committed from this dropdown (prevents reopen after selection)
-					console.log('[QG2] handleCellFocus dropdown, skipNextDropdownAutoEdit =', skipNextDropdownAutoEdit)
 					if (skipNextDropdownAutoEdit) {
-						console.log('[QG3] Skipping auto-edit')
 						skipNextDropdownAutoEdit = false
 						return
 					}
-					console.log('[QG4] Starting auto-edit')
 					startEdit(rowIndex, String(column.field), item, column, colIndex)
 				}
 			}
@@ -1630,7 +1660,7 @@
 						<th class="actions-column"></th>
 					{/if}
 					{#each columns as column}
-						<th style={column.width ? `width: ${column.width}` : ""}>
+						<th style={getColumnHeaderStyle(column, false)}>
 							{#if column.filterable !== false}
 								<input
 									type="text"
@@ -1642,6 +1672,9 @@
 							{/if}
 						</th>
 					{/each}
+					{#if fillerColumn}
+						<th class="filler-column"></th>
+					{/if}
 				</tr>
 			{/if}
 			<tr>
@@ -1654,7 +1687,7 @@
 						class={`column-header ${column.sortable !== false && sortable ? "sortable" : ""} ${
 							sortColumn === String(column.field) ? `sorted sorted-${sortDirection}` : ""
 						}`}
-						style={column.width ? `width: ${column.width}; text-align: ${column.align || "left"}` : `text-align: ${column.align || "left"}`}
+						style={getColumnHeaderStyle(column, true)}
 						onclick={() => handleSort(column)}
 					>
 						<div class="column-header-content">
@@ -1676,12 +1709,15 @@
 						</div>
 					</th>
 				{/each}
+				{#if fillerColumn}
+					<th class="filler-column column-header"></th>
+				{/if}
 			</tr>
 		</thead>
 		<tbody>
 			{#if displayItems.length === 0}
 				<tr>
-					<td colspan={columns.length + (resolvedShowToolbar && toolbarTrigger === 'button' ? 1 : 0)} class="empty-message">
+					<td colspan={columns.length + (resolvedShowToolbar && toolbarTrigger === 'button' ? 1 : 0) + (fillerColumn ? 1 : 0)} class="empty-message">
 						No items to display
 					</td>
 				</tr>
@@ -1803,6 +1839,9 @@
 								{/if}
 							</td>
 						{/each}
+						{#if fillerColumn}
+							<td class="filler-column"></td>
+						{/if}
 					</tr>
 				{/each}
 			{/if}
@@ -1959,6 +1998,15 @@
 		background: var(--neutral-layer-1, #ffffff);
 		font-size: var(--type-ramp-base-font-size, 14px);
 		line-height: var(--type-ramp-base-line-height, 20px);
+	}
+
+	/* Filler column: an empty trailing cell whose sole job is to absorb any leftover
+	   horizontal space so preceding columns keep their defined / auto widths instead
+	   of stretching. No content, no padding, no interaction — it just exists. */
+	.filler-column {
+		width: auto;
+		padding: 0;
+		background: transparent;
 	}
 
 	.column-header {

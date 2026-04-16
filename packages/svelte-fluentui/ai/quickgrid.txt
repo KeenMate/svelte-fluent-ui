@@ -40,6 +40,10 @@ pageable: boolean             # Enable pagination (default: false)
 pageSize: number              # Items per page (default: 10)
 striped: boolean              # Striped rows (default: true)
 hoverable: boolean            # Row hover effect (default: true)
+fillerColumn: boolean         # Append empty trailing column that absorbs leftover
+                              # horizontal space. Use with per-column width / autoWidth
+                              # to keep columns at their defined widths instead of
+                              # justifying across the table (default: false)
 class: string                 # Additional CSS classes
 style: string                 # Inline styles
 
@@ -65,7 +69,12 @@ type Column<T> = {
   headerInfo?: string         # Tooltip text (shows ⓘ icon)
   sortable?: boolean          # Enable sorting for column
   filterable?: boolean        # Enable filtering for column
-  width?: string              # Column width (e.g., "100px", "20%")
+  width?: string              # Explicit column width (any CSS length: "100px",
+                              # "20%", "10rem", etc.). Ignored when autoWidth is true
+  minWidth?: string           # CSS min-width (e.g. "80px")
+  maxWidth?: string           # CSS max-width (e.g. "320px")
+  autoWidth?: boolean         # Size column to its header content; don't stretch.
+                              # Best paired with grid-level fillerColumn
   align?: "left" | "center" | "right"
 
   # Formatting
@@ -183,6 +192,38 @@ PAGINATION
   pageable
   pageSize={10}
 />
+
+
+COLUMN WIDTH CONTROL
+--------------------
+By default the grid stretches columns to fill 100% of its container (HTML
+table auto-layout). To keep columns at predefined widths, combine per-column
+width/min/max/autoWidth with the grid-level `fillerColumn` prop.
+
+Fixed widths + filler:
+  const columns = [
+    { field: "id",     title: "ID",     width: "80px" },
+    { field: "name",   title: "Name",   width: "200px" },
+    { field: "email",  title: "Email",  width: "280px" }
+  ]
+  <QuickGrid items={data} {columns} fillerColumn />
+
+Auto-size small columns to content; let one flex:
+  const columns = [
+    { field: "id",       title: "ID",       autoWidth: true },
+    { field: "status",   title: "Status",   autoWidth: true },
+    { field: "description", title: "Description" }  // takes remaining space
+  ]
+  <QuickGrid items={data} {columns} />
+
+Min/max constraints:
+  { field: "name", title: "Name", minWidth: "150px", maxWidth: "400px" }
+
+Notes:
+- `width` / `minWidth` / `maxWidth` accept any CSS length (px, %, rem, ch, vw, ...)
+- `autoWidth` implements the `width: 1%; white-space: nowrap` header trick;
+  don't combine with `width`
+- Without `fillerColumn`, any extra space is redistributed to non-fixed columns
 
 
 EDITABLE GRID

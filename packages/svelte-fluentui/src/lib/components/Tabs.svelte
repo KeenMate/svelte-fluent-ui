@@ -121,20 +121,29 @@
 	 */
 
 	/*
-	 * scroll: horizontal overflow with a scroll bar (default).
+	 * scroll: horizontal overflow on the *tablist only*.
 	 *
-	 * Do NOT set `width: 100%` on the tablist — FluentUI uses a CSS grid
-	 * whose tracks stretch to fill, so forcing 100% width justifies the
-	 * tabs across the whole container. Instead: cap via `max-width` and
-	 * put the scroll on the host element, so the tablist keeps its natural
-	 * `width: max-content` layout and scrolls only when it exceeds the
-	 * container.
+	 * Overflow must live on ::part(tablist), NOT the host. The host wraps
+	 * both the tab row and the tab panels — any `overflow: hidden` on it
+	 * would clip popovers, dropdowns, and tooltips rendered inside tab
+	 * content. Keep the host as a normal block (content area grows
+	 * naturally) and scroll only the inner tablist strip.
+	 *
+	 * `width: max-content` (FluentUI default) + `max-width: 100%` means the
+	 * tablist stays at its natural content width until it would exceed the
+	 * container, then caps at 100% and scrolls. Tabs stay compactly
+	 * aligned at the start — no justify side-effect.
+	 *
+	 * Scrollbar is hidden visually (scrollbar-width: none) — scroll still
+	 * works via wheel/trackpad/touch/keyboard. Matches VS Code / Chrome
+	 * tab UX. `::-webkit-scrollbar` can't be styled through `::part()`,
+	 * but modern Chromium/Safari honor `scrollbar-width: none` directly.
 	 */
-	:global(.fluent-tabs-wrapper.responsive-scroll) {
+	:global(.fluent-tabs-wrapper.responsive-scroll::part(tablist)) {
 		max-width: 100%;
 		overflow-x: auto;
 		overflow-y: hidden;
-		scrollbar-width: thin;
+		scrollbar-width: none;
 	}
 
 	/* wrap: tabs flow onto multiple rows */
@@ -158,9 +167,6 @@
 	 */
 	:global(.fluent-tabs-wrapper.justify:not(.responsive-clip)::part(tablist)) {
 		width: 100%;
-	}
-	:global(.fluent-tabs-wrapper.justify.responsive-scroll) {
-		overflow-x: visible;
 	}
 
 	/* Tabs themselves should never compress their labels nor be shrunk by

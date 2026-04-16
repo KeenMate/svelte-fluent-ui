@@ -7,7 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0-rc09] - 2026-04-15
+## [1.0.0-rc10] - 2026-04-16
+
+### Added
+- **QuickGrid column width control** - Three new per-column props on `Column<T>` plus a grid-level opt-in filler column, so columns can keep predefined widths instead of being justified across the table
+  - `minWidth?: string` - CSS `min-width` for the column. Any CSS length (`"80px"`, `"20%"`, `"10rem"`, `"40ch"`, ...)
+  - `maxWidth?: string` - CSS `max-width` for the column
+  - `autoWidth?: boolean` - Size column to its header content and prevent it from stretching. Implements the classic HTML-table `width: 1%; white-space: nowrap` header trick. Ignored if `width` is also set — use one or the other
+  - `width?: string` (existing) now JSDoc'd for consistency with the new props
+- **QuickGrid `fillerColumn` prop** (opt-in, default `false`) - Appends an empty trailing `<th>` / `<td>` to every row that absorbs any remaining horizontal space. Pair with `autoWidth` or explicit `width` on the other columns so the freed-up space goes into the filler instead of redistributing across the real columns. The filler cell has no padding, background, or interaction — it just exists to soak up width
+
+### Fixed
+- **Tabs `responsive="scroll"` no longer clips tab-panel content** - Horizontal-scroll overflow was applied to the whole `<fluent-tabs>` host in rc09, which wraps both the tab row *and* the tab panels. That meant `overflow-y: hidden` on the host also clipped popovers, dropdowns, tooltips, and other overlays rendered inside the tab content (a dropdown opened near the bottom of a tab panel would get cut off by the tab-row's overflow context). Moved the scroll onto `::part(tablist)` only — the host is now a normal block whose content area grows naturally, and only the tab strip itself scrolls when it exceeds the container
+- **Tabs scroll bar hidden by default** - The thin scrollbar that rendered under the active-tab underline in `responsive="scroll"` mode is now hidden (`scrollbar-width: none`). Scrolling still works via wheel, trackpad, touch, and keyboard — matching the tab-row UX in VS Code and Chrome. Removes the need for consumers to override `.fluent-tabs-wrapper.responsive-scroll { overflow: … }` in their own styles
+
+### Changed
+- **QuickGrid / GridCellEditor - debug logs removed** - Stripped 14 leftover `console.log` statements from the dropdown-editor flow (`[1]`–`[10]` in `GridCellEditor.svelte`) and the navigate-mode auto-edit prevention flow (`[QG1]`–`[QG4]` in `QuickGrid.svelte`). Real `console.error` handlers for option-loading and search failures are kept
+
+
 
 ### Added
 - **Applications section** - New top-level docs section with real-life UI pattern examples

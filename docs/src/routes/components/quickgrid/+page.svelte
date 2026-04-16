@@ -17,6 +17,7 @@
 		{name: "pageSize", type: "number", default: "10", description: "Number of items per page"},
 		{name: "striped", type: "boolean", default: "true", description: "Alternate row background colors"},
 		{name: "hoverable", type: "boolean", default: "true", description: "Highlight rows on mouse hover"},
+		{name: "fillerColumn", type: "boolean", default: "false", description: "Append an empty trailing column that absorbs leftover horizontal space, so preceding columns keep their defined widths instead of stretching to justify"},
 		{name: "editable", type: "boolean", default: "false", description: "Enable inline cell editing"},
 		{name: "editTrigger", type: '"click" | "dblclick" | "button" | "always" | "navigate"', default: '"dblclick"', description: "How to trigger cell editing"},
 		{name: "dropdownShowOnFocus", type: "boolean", default: "true", description: "Auto-show dropdown editor when cell is focused (navigate mode)"},
@@ -283,7 +284,25 @@
 							<td>width</td>
 							<td>string</td>
 							<td>undefined</td>
-							<td>Column width (e.g., "120px")</td>
+							<td>Column width. Any CSS length (e.g. <code>"120px"</code>, <code>"20%"</code>, <code>"10rem"</code>). Ignored when <code>autoWidth</code> is true</td>
+						</tr>
+						<tr>
+							<td>minWidth</td>
+							<td>string</td>
+							<td>undefined</td>
+							<td>CSS <code>min-width</code> for the column (e.g. <code>"80px"</code>)</td>
+						</tr>
+						<tr>
+							<td>maxWidth</td>
+							<td>string</td>
+							<td>undefined</td>
+							<td>CSS <code>max-width</code> for the column (e.g. <code>"320px"</code>)</td>
+						</tr>
+						<tr>
+							<td>autoWidth</td>
+							<td>boolean</td>
+							<td>undefined</td>
+							<td>Size column to its header content and prevent it from stretching. Pair with grid-level <code>fillerColumn</code> so the freed space is absorbed by a trailing empty column instead of redistributing to other columns</td>
 						</tr>
 						<tr>
 							<td>align</td>

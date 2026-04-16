@@ -169,9 +169,7 @@
 
 	// Open dropdown and initialize options
 	function openDropdown() {
-		console.log('[8] openDropdown called, dropdownOpen =', dropdownOpen)
 		if (dropdownOpen) return
-		console.log('[9] opening dropdown now')
 		dropdownOpen = true
 		highlightedIndex = -1
 
@@ -202,7 +200,6 @@
 
 	// Close dropdown
 	function closeDropdown() {
-		console.log('[10] closeDropdown called')
 		dropdownOpen = false
 		highlightedIndex = -1
 		if (searchDebounceTimer) {
@@ -218,17 +215,13 @@
 
 	// Select an option from dropdown
 	function selectDropdownOption(option: EditorOption) {
-		console.log('[1] selectDropdownOption called', getOptionLabel(option))
 		const newValue = getOptionValue(option)
 		internalValue = newValue
 		filterText = getOptionLabel(option)
 		isUserFiltering = false  // Not filtering, just displaying selected value
 		justSelected = true  // Prevent dropdown from reopening on refocus
-		console.log('[2] justSelected set to true')
 		closeDropdown()
-		console.log('[3] closeDropdown called, about to oncommit')
 		oncommit(newValue)
-		console.log('[4] oncommit called')
 	}
 
 	// Scroll highlighted option into view
@@ -358,14 +351,11 @@
 	}
 
 	function handleComboboxFocus() {
-		console.log('[5] handleComboboxFocus called, justSelected =', justSelected)
 		// Don't reopen dropdown if we just selected a value (prevents immediate reopen after Enter)
 		if (justSelected) {
-			console.log('[6] justSelected is true, skipping openDropdown')
 			justSelected = false
 			return
 		}
-		console.log('[7] opening dropdown from focus')
 		isUserFiltering = false  // Reset filtering on focus to show all options
 		openDropdown()
 	}
