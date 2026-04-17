@@ -143,7 +143,7 @@
 		<div
 			use:portal
 			bind:this={overlayElement}
-			class="positioning-region"
+			class="positioning-region positioning-region-floating"
 			{title}
 			style="
 				position: fixed;
@@ -168,7 +168,10 @@
 {/if}
 
 <style>
-	.positioning-region {
+	/* Only the portalled floating variant needs to sit above page content.
+	 * The static wrapper mode is used inside NavLink etc. — applying z-index
+	 * there would lift every nav item above modals/dialog overlays. */
+	.positioning-region-floating {
 		z-index: var(--fluent-z-popover, 1060);
 	}
 </style>

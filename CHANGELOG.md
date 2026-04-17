@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc11] - 2026-04-17
+
+### Fixed
+- **Sidebar nav items no longer overlap Dialog overlay / Dialog** - `PositioningRegion.svelte` applied `z-index: var(--fluent-z-popover, 1060)` to the `.positioning-region` class globally. But that class is used in two modes: a portalled floating overlay (dropdowns, toolbars) *and* a plain static wrapper that `NavLink` / `NavExpander` render around every sidebar item. The static wrapper was inheriting the popover z-index, which put every sidebar link above the Dialog overlay (1040) and even above the Dialog itself (1050). Fix: scope the z-index rule to a new `.positioning-region-floating` class applied only to the portalled floating variant. Static wrappers are now plain layout wrappers with no stacking context, so modals/dialogs once again paint above the sidebar
+
 ## [1.0.0-rc10] - 2026-04-16
 
 ### Added
