@@ -6,7 +6,7 @@ A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2
 
 - 🎨 **Complete FluentUI Component Set** - Wraps all major FluentUI web components
 - 🔧 **TypeScript Support** - Full type definitions for all components
-- 📱 **Responsive Design** - Built-in responsive layout components (incl. responsive `Tabs` with scroll/wrap/clip modes)
+- 📱 **Responsive Design** - Built-in responsive layout components (incl. responsive `Tabs` with scroll/wrap/menu modes)
 - 🎯 **Svelte 5 Compatible** - Works with the latest Svelte features
 - 🎨 **SCSS & Tailwind CSS** - Flexible styling options
 - 📦 **Tree-shakeable** - Import only what you need
@@ -26,7 +26,7 @@ A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2
 - **Dialog** - Full Fluent-style layout: `title` / `header` slot, right-aligned footer, `primaryAction` / `secondaryAction` shorthand, or custom `footer` snippet. Portaled to `<body>` so it escapes ancestor stacking contexts
 - **DatePicker & TimePicker** - Calendar/clock popups anchored correctly to their inputs, natural-width popups (no more stretch-to-input-width), outside-click + `Escape` dismissal, `minDate`/`maxDate` / `minTime`/`maxTime`, `firstDayOfWeek`, `disabledDateFunc`, `autoClose`, bindable `open`
 - **Calendar** - `firstDayOfWeek` override, `selectableDates` allow-list, `onPickerMonthChange` callback
-- **Tabs responsive overflow** - `responsive="scroll" | "wrap" | "clip"` + optional `justify` prop. Tabs no longer overflow narrow containers; keeps compact start-aligned layout by default
+- **Tabs** - Pure-Svelte implementation (no more shadow-DOM wrestling) with animated full-tab-width active indicator. `responsive="scroll" | "wrap" | "menu"` — `scroll` auto-shows `‹ ›` arrow buttons on overflow; `menu` collapses overflow into a `⋯` dropdown that swaps the picked tab into the strip on select, with ellipsis truncation on the borderline tab. Full keyboard nav, vertical orientation with `stripWidth` sidebar sizing + auto-ellipsis labels, swipe-to-navigate on the panels (opt out via `swipe={false}`), per-tab `title` tooltips, and `justify` for equal-width stretching
 - **Slider** - Proper wrapper with `bind:value`, `min`/`max`/`step`, `orientation`, `onchange`/`oninput`, labels
 - **Navigation Persistence** - Sidebar menu state automatically saved to localStorage and restored on page reload
 - **Active Route Highlighting** - Current page is automatically highlighted in the navigation menu

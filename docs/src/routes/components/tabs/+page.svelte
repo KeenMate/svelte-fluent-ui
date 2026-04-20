@@ -1,5 +1,7 @@
 <script lang="ts">
-	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge} from "svelte-fluentui"
+	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge, Slider} from "svelte-fluentui"
+
+	let verticalStripWidth = $state(200)
 
 	type Property = {
 		name: string
@@ -9,17 +11,18 @@
 	}
 
 	const tabsProperties: Property[] = [
-		{name: "id", type: "string", default: "undefined", description: "Unique ID for the <fluent-tabs> element"},
+		{name: "id", type: "string", default: "undefined", description: "Unique ID on the tabs container"},
 		{name: "class", type: "string", default: '""', description: "Custom class"},
 		{name: "style", type: "string", default: '""', description: "Inline CSS"},
 		{name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Tab bar orientation"},
-		{name: "activeId", type: "string", default: "undefined", description: "ID of the initially active tab"},
-		{name: "showActiveIndicator", type: "boolean", default: "true", description: "Show the active indicator line under/beside the selected tab"},
-		{name: "responsive", type: '"scroll" | "wrap" | "clip"', default: '"scroll"', description: "Overflow behaviour when the tab list is wider than the container. scroll = horizontal scrollbar (default). wrap = tabs flow onto multiple rows. clip = upstream FluentUI behaviour (tablist grows to max-content and overflows)"},
+		{name: "activeId", type: "string (bindable)", default: "undefined", description: "ID of the currently active tab. If unset on mount, defaults to the first visible tab's id"},
+		{name: "showActiveIndicator", type: "boolean", default: "true", description: "Show the animated full-width active indicator under (horizontal) / beside (vertical) the selected tab"},
+		{name: "responsive", type: '"scroll" | "wrap" | "menu"', default: '"scroll"', description: "Overflow behaviour when the tab list is wider than the container. scroll = horizontal scroll with auto-appearing ‹ › arrow buttons. wrap = tabs flow onto multiple rows. menu = overflowing tabs collapse into a ⋯ button at the end; selecting a hidden tab swaps it into the strip in place of the last-visible tab (ellipsis truncation on borderline tabs)"},
 		{name: "justify", type: "boolean", default: "false", description: "When true, the tab list stretches to fill the container and tabs divide the row equally. Default keeps the compact start-aligned layout"},
-		{name: "overflow", type: "{ label: string; onclick?: () => void }[]", default: "[]", description: "Items shown in the built-in \"more\" overflow menu"},
-		{name: "moreButtonId", type: "string", default: '"more-button"', description: "ID for the more-button badge (used as the menu anchor)"},
-		{name: "styleMoreValues", type: "string", default: '""', description: "Inline style for the overflow badge"},
+		{name: "stripWidth", type: "string (CSS length)", default: "undefined", description: "Fixed width for the tab strip. Most useful in orientation='vertical' — caps the sidebar width and auto-ellipsises long labels"},
+		{name: "stripHeight", type: "string (CSS length)", default: "undefined", description: "Fixed height for the tab strip (symmetric counterpart to stripWidth). Rarely needed"},
+		{name: "swipe", type: "boolean", default: "true", description: "Enable swipe-left/right (or swipe-up/down in vertical orientation) on the tabpanels to navigate prev/next tab. Touches starting on interactive elements (input, button, slider, contenteditable) are ignored so form controls keep their gestures"},
+		{name: "ontabchange", type: "(detail: { tabId: string; data?: Record<string, unknown> }) => void", default: "undefined", description: "Fired when the active tab changes. `data` is whatever the tab registered via its `data` prop"},
 		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot containing the child <Tab> elements"}
 	]
 
@@ -303,17 +306,17 @@
 			</div>
 
 			<div>
-				<p><strong><code>responsive="clip"</code></strong> — upstream FluentUI behaviour (tablist grows to <code>max-content</code> and overflows).</p>
-				<div style="max-width: 420px; overflow: hidden; border: 1px dashed var(--neutral-stroke-rest); padding: 0.5rem;">
-					<Tabs responsive="clip" activeId="c1">
+				<p><strong><code>responsive="menu"</code></strong> — tabs that don't fit collapse into a <code>⋯</code> button at the end. Clicking it opens a menu of hidden tabs; selecting one swaps it into the strip in place of the last visible tab.</p>
+				<div style="max-width: 420px; border: 1px dashed var(--neutral-stroke-rest); padding: 0.5rem;">
+					<Tabs responsive="menu" activeId="m1">
 						{#snippet childContent()}
-							<Tab id="c1" label="Basic info" />
-							<Tab id="c2" label="Languages" />
-							<Tab id="c3" label="Additional attributes" />
-							<Tab id="c4" label="Values" />
-							<Tab id="c5" label="Maintenance" />
-							<Tab id="c6" label="Audit trail" />
-							<Tab id="c7" label="Integrations" />
+							<Tab id="m1" label="Basic info" />
+							<Tab id="m2" label="Language & Countries" />
+							<Tab id="m3" label="Additional attributes" />
+							<Tab id="m4" label="Values" />
+							<Tab id="m5" label="Maintenance" />
+							<Tab id="m6" label="Audit trail" />
+							<Tab id="m7" label="Integrations" />
 						{/snippet}
 					</Tabs>
 				</div>
@@ -323,15 +326,34 @@
 
 	<Card>
 		<h3>Vertical orientation</h3>
-		<p>Set <code>orientation="vertical"</code> for stacked tabs (side navigation style).</p>
+		<p>
+			Set <code>orientation="vertical"</code> for stacked tabs (side navigation style).
+			Use the slider below to change <code>stripWidth</code> and watch the labels
+			ellipsis when the strip gets too narrow for the full text.
+		</p>
+
+		<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+			<label for="v-strip-slider" style="min-width: 10rem;">
+				stripWidth: <strong>{verticalStripWidth}px</strong>
+			</label>
+			<Slider
+				id="v-strip-slider"
+				min={80}
+				max={360}
+				step={10}
+				bind:value={verticalStripWidth}
+				style="flex: 1; max-width: 360px;"
+			/>
+		</div>
+
 		<div style="display: flex; min-height: 180px;">
-			<Tabs orientation="vertical" activeId="v1">
+			<Tabs orientation="vertical" activeId="v1" stripWidth={`${verticalStripWidth}px`}>
 				{#snippet childContent()}
 					<Tab id="v1" label="General">
 						{#snippet icon()}<Icon name="settings" size={16} />{/snippet}
 						{#snippet content()}<p>General settings</p>{/snippet}
 					</Tab>
-					<Tab id="v2" label="Appearance">
+					<Tab id="v2" label="Appearance & Theme Customization">
 						{#snippet icon()}<Icon name="color" size={16} />{/snippet}
 						{#snippet content()}<p>Theme, accent color, density</p>{/snippet}
 					</Tab>
@@ -339,7 +361,7 @@
 						{#snippet icon()}<Icon name="alert" size={16} />{/snippet}
 						{#snippet content()}<p>Notification preferences</p>{/snippet}
 					</Tab>
-					<Tab id="v4" label="Security">
+					<Tab id="v4" label="Security, Privacy & Data Sharing">
 						{#snippet icon()}<Icon name="shield" size={16} />{/snippet}
 						{#snippet content()}<p>Password, 2FA, sessions</p>{/snippet}
 					</Tab>

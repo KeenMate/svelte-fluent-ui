@@ -1,34 +1,32 @@
 <script lang="ts">
-	import { fluentTab, fluentTabPanel, provideFluentDesignSystem } from "@fluentui/web-components";
-	import type { SlotType } from "../types/index.js";
-
-	provideFluentDesignSystem().register(fluentTab(), fluentTabPanel());
+	import { getContext, onDestroy, untrack } from "svelte"
+	import type { SlotType } from "../types/index.js"
+	import { TABS_CONTEXT_KEY, type TabsContext } from "./Tabs.svelte"
 
 	type Props = {
-		class?: string;
-		style?: string;
-		id?: string;
-		disabled?: boolean;
-		ariaLabel?: string;
-		label?: string;
-		icon?: SlotType;
-		header?: SlotType;
-		content?: SlotType;
-		childContent?: SlotType;
-		labelEditable?: boolean;
-		showClose?: boolean;
-		overflow?: string;
-		visible?: boolean;
-		/** Arbitrary context data passed to ontabchange when this tab is selected */
-		data?: Record<string, unknown>;
-		oncloseclick?: () => void;
-	};
+		class?: string
+		style?: string
+		id: string
+		disabled?: boolean
+		ariaLabel?: string
+		label?: string
+		icon?: SlotType
+		header?: SlotType
+		content?: SlotType
+		childContent?: SlotType
+		labelEditable?: boolean
+		showClose?: boolean
+		visible?: boolean
+		/** Arbitrary context data passed to `ontabchange` when this tab becomes active. */
+		data?: Record<string, unknown>
+		oncloseclick?: () => void
+	}
 
 	let {
 		class: className = "",
 		style = "",
-		id = undefined,
-		disabled = undefined,
+		id,
+		disabled = false,
 		ariaLabel = undefined,
 		label = undefined,
 		icon = undefined,
@@ -37,98 +35,57 @@
 		childContent = undefined,
 		labelEditable = false,
 		showClose = false,
-		overflow = undefined,
 		visible = true,
 		data = undefined,
 		oncloseclick = undefined
-	}: Props = $props();
+	}: Props = $props()
+
+	const ctx = getContext<TabsContext | undefined>(TABS_CONTEXT_KEY)
+
+	if (!ctx && typeof console !== "undefined") {
+		console.warn("<Tab> must be placed inside a <Tabs> component. Nothing will render.")
+	}
+
+	/*
+	 * Tab.svelte renders no DOM of its own — it only registers its props
+	 * with the parent <Tabs> via context. <Tabs> reads the registered
+	 * entries and renders the real tab buttons + panels from them.
+	 *
+	 * The property reads in the `entry` literal below subscribe this effect
+	 * to Tab's props — so when the consumer changes `label`, `disabled`, a
+	 * snippet reference, etc., we re-register. The `register()` call itself
+	 * is wrapped in `untrack(…)` because Tabs.svelte's register() reads the
+	 * `tabs` $state array (to find/update the entry) and then writes to it.
+	 * Without untrack, those reads would make this effect subscribe to the
+	 * very array register() mutates, causing an immediate effect-update-
+	 * depth-exceeded loop (Svelte 5: an effect must not read the state it
+	 * writes). untrack prevents the read-side of register from being
+	 * tracked, while the prop reads in the object literal above remain
+	 * tracked and still drive re-registration on real prop changes.
+	 */
+	$effect(() => {
+		if (!ctx) return
+		const entry = {
+			id,
+			label,
+			icon,
+			header,
+			content,
+			childContent,
+			disabled,
+			ariaLabel,
+			labelEditable,
+			showClose,
+			visible,
+			data,
+			oncloseclick,
+			class: className,
+			style
+		}
+		untrack(() => ctx.register(entry))
+	})
+
+	onDestroy(() => {
+		if (ctx) untrack(() => ctx.unregister(id))
+	})
 </script>
-
-{#if visible}
-	<fluent-tab
-		class="tab-wrapper {className}"
-		style={style}
-		{id}
-		{disabled}
-		aria-label={ariaLabel || label}
-		{overflow}
-		data-tab-context={data ? JSON.stringify(data) : undefined}
-	>
-		{#if icon}
-			{@render icon?.()}
-		{/if}
-
-		{#if header}
-			{@render header?.()}
-		{:else if labelEditable}
-			<span
-				contenteditable="true"
-				autocapitalize="off"
-				spellcheck="false"
-				title="Click to edit this tab name"
-				class="editable-label"
-			>
-				{label}
-			</span>
-		{:else if label}
-			{label}
-		{/if}
-
-		{#if showClose}
-			<fluent-icon
-				value="dismiss"
-				width="12px"
-				class="fluent-tab-close"
-				title="Close"
-				onclick={oncloseclick}
-			/>
-		{/if}
-	</fluent-tab>
-
-	<fluent-tab-panel style={style} class={className} id={`${id}-panel`}>
-		{@render content?.()}
-		{@render childContent?.()}
-	</fluent-tab-panel>
-{/if}
-
-<style>
-	.tab-wrapper {
-		margin-right: 0.5rem;
-	}
-
-	.editable-label {
-		padding: 3px 5px;
-	}
-
-	/*
-	 * Override Microsoft FluentUI's shipped rule:
-	 *   fluent-tab[aria-selected="true"] { z-index: 1 }
-	 *
-	 * Combined with `position: relative` on tabs and an elevated parent
-	 * stacking context (sticky header, transformed container, etc.), that
-	 * rule makes selected tabs render above modals/overlays. Reset it.
-	 *
-	 * Lives here (not in a global SCSS file) so it ships automatically
-	 * whenever the consumer uses our Tab component, regardless of which
-	 * stylesheets they choose to import. !important is used because the
-	 * upstream rule has identical specificity and we can't guarantee
-	 * source order in the consumer's bundle.
-	 */
-	:global(fluent-tab[aria-selected="true"]) {
-		z-index: auto !important;
-	}
-
-	/*
-	 * FluentUI's tab template is a bare `<slot></slot>` with no gap between
-	 * slotted children, so an icon + label ends up visually glued (e.g.
-	 * "⌂Overview"). Make the host a flex container with a small gap so
-	 * icons, labels, and badges breathe. Kept in the component's style so
-	 * it ships automatically with every <Tab> usage.
-	 */
-	:global(fluent-tab) {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-</style>
-
