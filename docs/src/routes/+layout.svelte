@@ -269,7 +269,9 @@
 			icon: "cursor_hover",
 			items: [
 				{label: "Anchor", href: "/components/anchor"},
-				{label: "Button", href: "/components/button"}
+				{label: "Button", href: "/components/button"},
+				{label: "ContextMenu", href: "/components/context-menu"},
+				{label: "MenuButton", href: "/components/menu-button"}
 			]
 		},
 		{

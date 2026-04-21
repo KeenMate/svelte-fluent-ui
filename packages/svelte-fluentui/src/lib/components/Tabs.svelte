@@ -598,7 +598,7 @@
 		untrack(() => onOverflowTabClick(activeId!))
 	})
 
-	// Close the overflow menu on outside click / Escape.
+	// Close the overflow menu on outside click / Escape / outside scroll.
 	$effect(() => {
 		if (!overflowOpen) return
 		function onDocClick(e: MouseEvent) {
@@ -615,11 +615,24 @@
 		function onKey(e: KeyboardEvent) {
 			if (e.key === "Escape") overflowOpen = false
 		}
+		/*
+		 * Any scroll outside the menu closes it — scroll events don't
+		 * bubble so the listener uses capture to catch scroll on any
+		 * ancestor scroll container. Scrolls inside the menu itself are
+		 * ignored so users can still scroll a long overflow list.
+		 */
+		function onScroll(e: Event) {
+			const target = e.target as Node | null
+			if (target instanceof HTMLElement && target.closest?.(".fluent-tabs-overflow-menu")) return
+			overflowOpen = false
+		}
 		document.addEventListener("mousedown", onDocClick, true)
 		document.addEventListener("keydown", onKey, true)
+		document.addEventListener("scroll", onScroll, true)
 		return () => {
 			document.removeEventListener("mousedown", onDocClick, true)
 			document.removeEventListener("keydown", onKey, true)
+			document.removeEventListener("scroll", onScroll, true)
 		}
 	})
 

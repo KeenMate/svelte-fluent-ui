@@ -32,6 +32,8 @@
 		// Buttons & Actions
 		{group: "Buttons & Actions", name: "Anchor", description: "Styled link button", href: "/components/anchor"},
 		{group: "Buttons & Actions", name: "Button", description: "Clickable button with multiple appearances", href: "/components/button"},
+		{group: "Buttons & Actions", name: "ContextMenu", description: "Right-click menu at cursor, auto-flipping/shifting away from viewport edges", href: "/components/context-menu"},
+		{group: "Buttons & Actions", name: "MenuButton", description: "Button that opens a dropdown context menu on click", href: "/components/menu-button"},
 
 		// Layout
 		{group: "Layout", name: "BodyContent", description: "Main content area wrapper", href: "/components/navigation-layout/body-content"},

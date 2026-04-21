@@ -1,6 +1,6 @@
 {
 	"name": "svelte-fluentui",
-	"version": "1.0.0-rc12",
+	"version": "1.0.0-rc13",
 	"description": "A Svelte wrapper library for Microsoft FluentUI web components",
 	"license": "MIT",
 	"author": "KeenMate",
@@ -92,6 +92,7 @@
 		"design-system"
 	],
 	"dependencies": {
+		"@floating-ui/dom": "^1.7.6",
 		"@fluentui/svg-icons": "^1.1.313",
 		"esm-env": "^1.2.2"
 	}

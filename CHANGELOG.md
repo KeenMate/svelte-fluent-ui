@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc13] - 2026-04-20
+
+### Added
+- **New `MenuButton` component** - Button that opens a dropdown menu on click instead of firing an `onclick`. Takes an `items: MenuButtonItem[]` array (label, icon, disabled, visible, danger, dividerBefore, onclick), forwards button props (`appearance`, `disabled`, `class`, `style`, `children`/`start`/`end` snippets), and exposes bindable `open` plus `onopen`/`onclose` callbacks. Menu positioning uses `@floating-ui/dom` — `flip` to the opposite side when near viewport edges, `shift` for horizontal nudging, `size` middleware to cap max-height and make the menu scrollable when space is tight, `autoUpdate` for live reposition on scroll/resize. Portalled to `<body>` so it escapes ancestor stacking contexts. Exported as `MenuButton` + `MenuButtonItem` type, with a dedicated demo page at `/components/menu-button`.
+- **New `ContextMenu` component** - Standalone right-click menu that opens at the cursor position. Wraps children with a `display: contents` span that catches `contextmenu` events and portals a Floating-UI-positioned menu at the click coordinates (via a virtual anchor). Reuses the `MenuButtonItem` shape from `MenuButton`. New `offsetMenuX` / `offsetMenuY` props push the menu away from the cursor so the click position doesn't land directly on the first item — defaults to `offsetMenuX: 8` so the cursor sits safely off the left edge of the menu after right-click. `disabled` prop falls through to the browser's native context menu. Dedicated demo page at `/components/context-menu` with basic, offset-sliders, per-item, conditional-visibility, and sidebar-style sections scenarios
+- **`MenuButtonItem` expandable sections & submenus** - Extended the item shape with `id` (stable key), `children` (nested items), `expandable`, `defaultExpanded`:
+  - **Inline expandable sections** (`children` + `expandable: true`) — renders the item as a section header with a rotating chevron; children render inline below when expanded. Matches the sidebar-style nav menu pattern (overview + nested components, dividers between groups). Expand state is remembered across menu opens
+  - **Side-opening submenus** (`children` only) — renders the item as a trigger with a right-pointing chevron; hover/focus opens a separate Floating-UI popover at `placement="right-start"` with `flip(fallbackPlacements: ["left-start", "right-end", "left-end"])` so it auto-flips to the left when near the right edge of the viewport. Hover-intent delays (150ms open / 250ms close) prevent flicker and let the user diagonally swoop from trigger to submenu body. Sibling submenus (same parent) auto-close when a new one opens. Nested submenus work recursively (the same `renderItem` snippet is called inside each submenu portal)
+  - Custom menu markup replaces `<fluent-menu>` / `<fluent-menu-item>` in `ContextMenu` so we can render nested structure without shadow-DOM acrobatics. Styled against FluentUI design tokens (neutral-layer-1 background, neutral-stroke-layer-rest border, popover shadow, stealth-hover fill, accent-fill-rest icon color, error-foreground for `danger` items)
+  - `Escape` pops submenus one level at a time before closing the root menu
+  - Close-on-scroll restored — context menus traditionally dismiss when the underlying content scrolls (scroll events don't bubble, so the listener uses capture to catch any ancestor's scroll). Scrolls *inside* the menu itself are ignored so long scrollable menus still work
+  - `SvelteMap` (from `svelte/reactivity`) is used for the open-submenus map — a plain `new Map()` wrapped in `$state()` doesn't proxy `.set()`/`.delete()` mutations, so submenus wouldn't render reactively otherwise
+
+### Changed
+- **MenuButton now uses Floating UI** - Replaced the `PositioningRegion` wrapper with direct `@floating-ui/dom` calls for more robust positioning. `flip` handles top/bottom overflow, `shift({ padding: 8 })` nudges horizontally, `size` caps max-height so a tall menu near the bottom of the viewport becomes internally scrollable instead of getting clipped, and `autoUpdate` reposition on scroll/resize means the menu follows its anchor live (we removed the force-close-on-scroll workaround that the previous hand-rolled positioning required)
+- **New dependency: `@floating-ui/dom`** - Added as a library dependency for `MenuButton` and `ContextMenu` positioning
+
 ## [1.0.0-rc12] - 2026-04-20
 
 ### Changed
