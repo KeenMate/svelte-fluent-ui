@@ -140,25 +140,29 @@
 		</p>
 	</Card>
 
-	<h2>API</h2>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Card>
-		<h3>Properties</h3>
-		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Callbacks</h3>
-		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Slots</h3>
-		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Autocomplete Modes</h3>
+		<h2>Autocomplete Modes</h2>
 		<table class="api-table">
 			<thead>
 				<tr>
@@ -183,12 +187,11 @@
 		</table>
 	</Card>
 
-	<h2>Examples</h2>
-
-	<!-- Default Examples -->
 	<Card>
+		<h2>Examples</h2>
+
 		<h3>Default examples</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Combobox id="basic" bind:value={basicValue} options={songs} label="Select the best song" />
@@ -208,12 +211,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- From a list of Option<T> items -->
-	<Card>
 		<h3>From a list of Option&lt;T&gt; items</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>From list of Option&lt;string&gt; items</strong>
@@ -235,12 +235,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Disabled Examples -->
-	<Card>
 		<h3>Disabled examples</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Disabled Combobox</strong>
@@ -268,12 +265,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Appearance Example -->
-	<Card>
 		<h3>Appearance example</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Filled</strong>
@@ -282,12 +276,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Autocomplete Examples -->
-	<Card>
 		<h3>Autocomplete examples</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Inline Autocomplete</strong>
@@ -313,13 +304,10 @@
 			<Combobox id="diacritics" bind:value={diacriticsValue} options={namesWithDiacritics} autocomplete="list" width="300px" />
 			<small>Selected: {diacriticsValue[0] ? namesWithDiacritics.find(n => n.value === diacriticsValue[0])?.label : "None"}</small>
 		</Stack>
-	</Card>
 
-	<!-- Minimum Search Length -->
-	<Card>
 		<h3>Minimum search length</h3>
 		<p>Use <code>minSearchLength</code> to keep the dropdown closed until the user has typed at least N characters. Useful against large or async option sets where opening on a single character would be wasteful.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>minSearchLength={2}</strong>
@@ -329,12 +317,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- List Examples -->
-	<Card>
 		<h3>List examples</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>With long list</strong>
@@ -354,12 +339,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Option Template -->
-	<Card>
 		<h3>Option template</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Combobox id="template" bind:value={templateValue}>
@@ -376,12 +358,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Width and Styling -->
-	<Card>
 		<h3>Width and styling</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Custom width (200px)</strong>
@@ -395,12 +374,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Callback Example -->
-	<Card>
 		<h3>Callback example</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>With onchange callback</strong>
@@ -418,33 +394,6 @@
 </Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 1rem 0 0 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
-	small {
-		font-size: 0.875rem;
-	}
-
 	.person-option {
 		display: flex;
 		align-items: center;

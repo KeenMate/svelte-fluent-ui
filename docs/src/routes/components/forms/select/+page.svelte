@@ -118,6 +118,10 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Select</h1>
 
+	<p>
+		An implementation of an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select" target="_blank" rel="noopener noreferrer">HTML select element</a> as a component supporting the Fluent UI design system.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
@@ -125,179 +129,185 @@
 			|
 			<a href="https://www.fluentui-blazor.net/Select" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
 		</p>
-		<p>
-			An implementation of an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select" target="_blank" rel="noopener noreferrer">HTML select element</a> as a component supporting the Fluent UI design system.
-		</p>
 	</Card>
 
-	<h2>Multiple Select Examples</h2>
-
 	<Grid spacing={3}>
-		<!-- Multiple items (all visible - default behavior) -->
-		<GridItem xs={12} md={6} lg={4}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Multiple (all visible)</h3>
-				<p>Default behavior: all options shown, height auto-calculated to fit all.</p>
-				<Select label="Items" multiple>
-					{#snippet children()}
-						<Option value="apple">Apple</Option>
-						<Option value="grape">Grape</Option>
-						<Option value="strawberry">Strawberry</Option>
-						<Option value="cherry">Cherry</Option>
-						<Option value="banana">Banana</Option>
-					{/snippet}
-				</Select>
+				<h2>Properties</h2>
+				<QuickGrid items={selectProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
-		<!-- Multiple items with maxVisibleOptions -->
-		<GridItem xs={12} md={6} lg={4}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Multiple with maxVisibleOptions</h3>
-				<p>Use <code>maxVisibleOptions={4}</code> to limit visible items and enable scrolling.</p>
-				<Select label="Items" multiple maxVisibleOptions={4}>
-					{#snippet children()}
-						<Option value="apple">Apple</Option>
-						<Option value="grape">Grape</Option>
-						<Option value="strawberry">Strawberry</Option>
-						<Option value="cherry">Cherry</Option>
-						<Option value="banana">Banana</Option>
-						<Option value="watermelon">Watermelon</Option>
-						<Option value="persimmon">Persimmon</Option>
-						<Option value="grapefruit">Grapefruit</Option>
-					{/snippet}
-				</Select>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
-		<!-- Multiple items with selected and disabled -->
-		<GridItem xs={12} md={6} lg={4}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Multiple with selected/disabled</h3>
-				<p>Options can be pre-selected or disabled.</p>
-				<Select label="Items" multiple>
-					{#snippet children()}
-						<Option value="option1" selected>Selected 1</Option>
-						<Option value="option2" selected>Selected 2</Option>
-						<Option value="disabled1" disabled>Disabled 1</Option>
-						<Option value="disabled2" disabled>Disabled 2</Option>
-						<Option value="option3">Option 3</Option>
-						<Option value="option4">Option 4</Option>
-					{/snippet}
-				</Select>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
+	</Grid>
 
-		<!-- Single select default -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Single select (default)</h3>
-				<p>Standard dropdown select.</p>
-				<Select label="Choose a fruit">
-					{#snippet children()}
-						<Option value="">Select...</Option>
-						<Option value="apple">Apple</Option>
-						<Option value="banana">Banana</Option>
-						<Option value="cherry">Cherry</Option>
-					{/snippet}
-				</Select>
-			</Card>
-		</GridItem>
+	<Card>
+		<h2>Option Properties</h2>
+		<p>Props on the <code>&lt;Option&gt;</code> child component.</p>
+		<QuickGrid items={optionProperties} columns={propertyColumns} sortable filterable striped />
+	</Card>
 
-		<!-- Appearances -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Appearances</h3>
+	<Card>
+		<h2>Examples</h2>
+
+		<h3>Multiple (all visible)</h3>
+		<p>Default behavior: all options shown, height auto-calculated to fit all.</p>
+		<Select label="Items" multiple>
+			{#snippet children()}
+				<Option value="apple">Apple</Option>
+				<Option value="grape">Grape</Option>
+				<Option value="strawberry">Strawberry</Option>
+				<Option value="cherry">Cherry</Option>
+				<Option value="banana">Banana</Option>
+			{/snippet}
+		</Select>
+
+		<h3>Multiple with maxVisibleOptions</h3>
+		<p>Use <code>maxVisibleOptions={4}</code> to limit visible items and enable scrolling.</p>
+		<Select label="Items" multiple maxVisibleOptions={4}>
+			{#snippet children()}
+				<Option value="apple">Apple</Option>
+				<Option value="grape">Grape</Option>
+				<Option value="strawberry">Strawberry</Option>
+				<Option value="cherry">Cherry</Option>
+				<Option value="banana">Banana</Option>
+				<Option value="watermelon">Watermelon</Option>
+				<Option value="persimmon">Persimmon</Option>
+				<Option value="grapefruit">Grapefruit</Option>
+			{/snippet}
+		</Select>
+
+		<h3>Multiple with selected/disabled</h3>
+		<p>Options can be pre-selected or disabled.</p>
+		<Select label="Items" multiple>
+			{#snippet children()}
+				<Option value="option1" selected>Selected 1</Option>
+				<Option value="option2" selected>Selected 2</Option>
+				<Option value="disabled1" disabled>Disabled 1</Option>
+				<Option value="disabled2" disabled>Disabled 2</Option>
+				<Option value="option3">Option 3</Option>
+				<Option value="option4">Option 4</Option>
+			{/snippet}
+		</Select>
+
+		<h3>Single select (default)</h3>
+		<p>Standard dropdown select.</p>
+		<Select label="Choose a fruit">
+			{#snippet children()}
+				<Option value="">Select...</Option>
+				<Option value="apple">Apple</Option>
+				<Option value="banana">Banana</Option>
+				<Option value="cherry">Cherry</Option>
+			{/snippet}
+		</Select>
+
+		<h3>Appearances</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
-					<div>
-						<strong>Outline</strong>
-						<Select appearance="outline">
-							{#snippet children()}
-								<Option value="1">Option 1</Option>
-								<Option value="2">Option 2</Option>
-							{/snippet}
-						</Select>
-					</div>
-					<div>
-						<strong>Filled</strong>
-						<Select appearance="filled">
-							{#snippet children()}
-								<Option value="1">Option 1</Option>
-								<Option value="2">Option 2</Option>
-							{/snippet}
-						</Select>
-					</div>
+					<strong>Outline</strong>
+					<Select appearance="outline">
+						{#snippet children()}
+							<Option value="1">Option 1</Option>
+							<Option value="2">Option 2</Option>
+						{/snippet}
+					</Select>
 				</Stack>
-			</Card>
-		</GridItem>
-
-		<!-- Disabled states -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Disabled states</h3>
+			</GridItem>
+			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
-					<div>
-						<strong>Disabled Select</strong>
-						<Select label="Items" disabled>
-							{#snippet children()}
-								<Option value="1">Cannot interact</Option>
-							{/snippet}
-						</Select>
-					</div>
-					<div>
-						<strong>Disabled Option</strong>
-						<Select label="Items">
-							{#snippet children()}
-								<Option value="1">Enabled</Option>
-								<Option value="2" disabled>Disabled option</Option>
-								<Option value="3">Enabled</Option>
-							{/snippet}
-						</Select>
-					</div>
+					<strong>Filled</strong>
+					<Select appearance="filled">
+						{#snippet children()}
+							<Option value="1">Option 1</Option>
+							<Option value="2">Option 2</Option>
+						{/snippet}
+					</Select>
 				</Stack>
-			</Card>
-		</GridItem>
+			</GridItem>
+		</Grid>
 
-		<!-- Position above/below -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Forced position</h3>
+		<h3>Disabled states</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
-					<div>
-						<strong>Position above</strong>
-						<Select label="Items" position="above">
-							{#snippet children()}
-								<Option value="1">Opens above</Option>
-								<Option value="2">Option 2</Option>
-								<Option value="3">Option 3</Option>
-							{/snippet}
-						</Select>
-					</div>
-					<div>
-						<strong>Position below</strong>
-						<Select label="Items" position="below">
-							{#snippet children()}
-								<Option value="1">Opens below</Option>
-								<Option value="2">Option 2</Option>
-								<Option value="3">Option 3</Option>
-							{/snippet}
-						</Select>
-					</div>
+					<strong>Disabled Select</strong>
+					<Select label="Items" disabled>
+						{#snippet children()}
+							<Option value="1">Cannot interact</Option>
+						{/snippet}
+					</Select>
 				</Stack>
-			</Card>
-		</GridItem>
-
-		<!-- Width control -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Width control</h3>
+			</GridItem>
+			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Disabled Option</strong>
+					<Select label="Items">
+						{#snippet children()}
+							<Option value="1">Enabled</Option>
+							<Option value="2" disabled>Disabled option</Option>
+							<Option value="3">Enabled</Option>
+						{/snippet}
+					</Select>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Forced position</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Position above</strong>
+					<Select label="Items" position="above">
+						{#snippet children()}
+							<Option value="1">Opens above</Option>
+							<Option value="2">Option 2</Option>
+							<Option value="3">Option 3</Option>
+						{/snippet}
+					</Select>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Position below</strong>
+					<Select label="Items" position="below">
+						{#snippet children()}
+							<Option value="1">Opens below</Option>
+							<Option value="2">Option 2</Option>
+							<Option value="3">Option 3</Option>
+						{/snippet}
+					</Select>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Width control</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Full width</strong>
 					<Select label="Full width" width="100%">
 						{#snippet children()}
 							<Option value="1">Full width select</Option>
 							<Option value="2">Option 2</Option>
 						{/snippet}
 					</Select>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Fixed width</strong>
 					<Select label="Fixed width" width="150px">
 						{#snippet children()}
 							<Option value="1">150px width</Option>
@@ -305,100 +315,58 @@
 						{/snippet}
 					</Select>
 				</Stack>
-			</Card>
-		</GridItem>
+			</GridItem>
+		</Grid>
 
-		<!-- Long list -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Long list</h3>
-				<p>FluentUI handles long lists with built-in scrolling.</p>
-				<Select label="Countries">
-					{#snippet children()}
-						<Option value="">Select a country...</Option>
-						<Option value="us">United States</Option>
-						<Option value="uk">United Kingdom</Option>
-						<Option value="ca">Canada</Option>
-						<Option value="au">Australia</Option>
-						<Option value="de">Germany</Option>
-						<Option value="fr">France</Option>
-						<Option value="jp">Japan</Option>
-						<Option value="cn">China</Option>
-						<Option value="in">India</Option>
-						<Option value="br">Brazil</Option>
-					{/snippet}
-				</Select>
-			</Card>
-		</GridItem>
+		<h3>Long list</h3>
+		<p>FluentUI handles long lists with built-in scrolling.</p>
+		<Select label="Countries">
+			{#snippet children()}
+				<Option value="">Select a country...</Option>
+				<Option value="us">United States</Option>
+				<Option value="uk">United Kingdom</Option>
+				<Option value="ca">Canada</Option>
+				<Option value="au">Australia</Option>
+				<Option value="de">Germany</Option>
+				<Option value="fr">France</Option>
+				<Option value="jp">Japan</Option>
+				<Option value="cn">China</Option>
+				<Option value="in">India</Option>
+				<Option value="br">Brazil</Option>
+			{/snippet}
+		</Select>
 
-		<!-- Two-way binding -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Two-way binding</h3>
-				<p>Use <code>bind:value</code> for reactive binding.</p>
-				<Select label="Fruit" bind:value={selectedFruit}>
-					{#snippet children()}
-						<Option value="apple">Apple</Option>
-						<Option value="banana">Banana</Option>
-						<Option value="cherry">Cherry</Option>
-					{/snippet}
-				</Select>
-				<p>Selected: <code>{selectedFruit}</code></p>
-			</Card>
-		</GridItem>
+		<h3>Two-way binding</h3>
+		<p>Use <code>bind:value</code> for reactive binding.</p>
+		<Select label="Fruit" bind:value={selectedFruit}>
+			{#snippet children()}
+				<Option value="apple">Apple</Option>
+				<Option value="banana">Banana</Option>
+				<Option value="cherry">Cherry</Option>
+			{/snippet}
+		</Select>
+		<p>Selected: <code>{selectedFruit}</code></p>
 
-		<!-- Data binding with onchange -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>Data binding</h3>
-				<p>Use <code>data</code> prop on Option to pass object data.</p>
-				<Select label="Language" value={selectedLanguageValue} onchange={handleLanguageChange}>
-					{#snippet children()}
-						{#each languages as lang}
-							<Option value={String(lang.id)} data={lang}>{lang.name} ({lang.native})</Option>
-						{/each}
-					{/snippet}
-				</Select>
-				<p>Value: <code>{selectedLanguageValue}</code></p>
-				<p>Data: <code>{selectedLanguage?.name}</code></p>
-			</Card>
-		</GridItem>
+		<h3>Data binding</h3>
+		<p>Use <code>data</code> prop on Option to pass object data.</p>
+		<Select label="Language" value={selectedLanguageValue} onchange={handleLanguageChange}>
+			{#snippet children()}
+				{#each languages as lang}
+					<Option value={String(lang.id)} data={lang}>{lang.name} ({lang.native})</Option>
+				{/each}
+			{/snippet}
+		</Select>
+		<p>Value: <code>{selectedLanguageValue}</code></p>
+		<p>Data: <code>{selectedLanguage?.name}</code></p>
 
-		<!-- From array -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
-				<h3>From array</h3>
-				<p>Generate options from an array using <code>#each</code>.</p>
-				<Select label="Numbers">
-					{#snippet children()}
-						{#each Array.from({length: 5}, (_, i) => i + 1) as num}
-							<Option value={String(num)}>Option {num}</Option>
-						{/each}
-					{/snippet}
-				</Select>
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<h2>API Reference</h2>
-
-	<Card>
-		<h3>Select Properties</h3>
-		<QuickGrid items={selectProperties} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Option Properties</h3>
-		<QuickGrid items={optionProperties} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Callbacks</h3>
-		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Slots</h3>
-		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+		<h3>From array</h3>
+		<p>Generate options from an array using <code>#each</code>.</p>
+		<Select label="Numbers">
+			{#snippet children()}
+				{#each Array.from({length: 5}, (_, i) => i + 1) as num}
+					<Option value={String(num)}>Option {num}</Option>
+				{/each}
+			{/snippet}
+		</Select>
 	</Card>
 </Stack>

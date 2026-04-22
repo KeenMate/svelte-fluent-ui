@@ -64,51 +64,90 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Grid</h1>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">Grid (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Grid" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<p>
-		Grid supports two layout modes:
-	</p>
+	<p>Grid supports two layout modes:</p>
 	<ul>
 		<li><strong>Flex-spacing mode</strong> (default): responsive 12-column system with <code>GridItem</code> breakpoint props (<code>xs</code>, <code>sm</code>, <code>md</code>…). Based on FluentUI Blazor.</li>
 		<li><strong>Columns mode</strong>: pass <code>columns={'{N}'}</code> (plus optional <code>gap</code>) for a CSS-grid layout with N equal-width tracks. Simpler, and immune to content-based width stealing between cells.</li>
 	</ul>
 
 	<Card>
-		<h2>Basic Grid</h2>
-	<p>Grid with default spacing (3):</p>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Custom component">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/Grid" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+		</p>
+	</Card>
 
 	<Grid spacing={3}>
-		<GridItem xs={12} md={6} lg={4}>
-			<Card class="grid-card-layer2">
-				<h3>Column 1</h3>
-				<p>xs=12, md=6, lg=4</p>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Grid Properties</h2>
+				<QuickGrid items={gridProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem xs={12} md={6} lg={4}>
-			<Card class="grid-card-layer2">
-				<h3>Column 2</h3>
-				<p>xs=12, md=6, lg=4</p>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Grid Callbacks</h2>
+				<QuickGrid items={gridCallbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem xs={12} md={12} lg={4}>
-			<Card class="grid-card-layer2">
-				<h3>Column 3</h3>
-				<p>xs=12, md=12, lg=4</p>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Grid Slots</h2>
+				<QuickGrid items={gridSlots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
-	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>GridItem Properties</h2>
+				<QuickGrid items={gridItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>GridItem Callbacks</h2>
+				<QuickGrid items={gridItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>GridItem Slots</h2>
+				<QuickGrid items={gridItemSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Card>
-		<h2>Columns mode (CSS grid)</h2>
+		<h2>Examples</h2>
+
+		<h3>Basic Grid</h3>
+		<p>Grid with default spacing (3):</p>
+		<Grid spacing={3}>
+			<GridItem xs={12} md={6} lg={4}>
+				<Card class="grid-card-layer2">
+					<h4>Column 1</h4>
+					<p>xs=12, md=6, lg=4</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} md={6} lg={4}>
+				<Card class="grid-card-layer2">
+					<h4>Column 2</h4>
+					<p>xs=12, md=6, lg=4</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} md={12} lg={4}>
+				<Card class="grid-card-layer2">
+					<h4>Column 3</h4>
+					<p>xs=12, md=12, lg=4</p>
+				</Card>
+			</GridItem>
+		</Grid>
+
+		<h3>Columns mode (CSS grid)</h3>
 		<p>
 			With <code>columns={'{N}'}</code> Grid switches to CSS grid with N equal-width tracks.
 			<code>GridItem</code> children need no breakpoint props — each one becomes a cell.
@@ -116,7 +155,6 @@
 			than the others (notice the long string in the middle cell below does not steal space
 			from its neighbors):
 		</p>
-
 		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Card class="grid-card-layer2">
@@ -137,9 +175,7 @@
 				</Card>
 			</GridItem>
 		</Grid>
-
 		<p style="margin-top: 1rem;">Two columns with a tighter gap:</p>
-
 		<Grid columns={2} gap="0.5rem">
 			<GridItem>
 				<Card class="grid-card-layer3">Left</Card>
@@ -148,9 +184,7 @@
 				<Card class="grid-card-layer3">Right</Card>
 			</GridItem>
 		</Grid>
-
 		<p style="margin-top: 1rem;">Four columns:</p>
-
 		<Grid columns={4} gap="0.75rem">
 			<GridItem>
 				<Card class="grid-card-layer3">1</Card>
@@ -165,173 +199,113 @@
 				<Card class="grid-card-layer3">4</Card>
 			</GridItem>
 		</Grid>
+
+		<h3>Different Spacing</h3>
+		<p>Grid with spacing={6}:</p>
+		<Grid spacing={6}>
+			<GridItem xs={12} sm={6} md={4}>
+				<Card class="grid-card-layer3">
+					<h4>Card 1</h4>
+					<p>Larger spacing between items</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} sm={6} md={4}>
+				<Card class="grid-card-layer3">
+					<h4>Card 2</h4>
+					<p>Larger spacing between items</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} sm={12} md={4}>
+				<Card class="grid-card-layer3">
+					<h4>Card 3</h4>
+					<p>Larger spacing between items</p>
+				</Card>
+			</GridItem>
+		</Grid>
+
+		<h3>Justify Content</h3>
+		<p>Grid with justify="center":</p>
+		<Grid spacing={3} justify="center">
+			<GridItem xs={6} md={3}>
+				<Card class="grid-card-centered">
+					<Badge appearance="accent">Centered 1</Badge>
+				</Card>
+			</GridItem>
+			<GridItem xs={6} md={3}>
+				<Card class="grid-card-centered">
+					<Badge appearance="accent">Centered 2</Badge>
+				</Card>
+			</GridItem>
+		</Grid>
+
+		<h3>Breakpoint Detection</h3>
+		<p>Current breakpoint: <strong>{currentBreakpoint}</strong></p>
+		<Grid spacing={3} onBreakpointEnter={handleBreakpointChange}>
+			<GridItem xs={12}>
+				<Card class="grid-card-layer3">
+					<h4>Responsive Info</h4>
+					<ul class="breakpoint-list">
+						<li><strong>xs</strong>: &lt; 600px</li>
+						<li><strong>sm</strong>: 600px - 959px</li>
+						<li><strong>md</strong>: 960px - 1279px</li>
+						<li><strong>lg</strong>: 1280px - 1919px</li>
+						<li><strong>xl</strong>: 1920px - 2559px</li>
+						<li><strong>xxl</strong>: ≥ 2560px</li>
+					</ul>
+				</Card>
+			</GridItem>
+		</Grid>
+
+		<h3>Hidden When Breakpoints</h3>
+		<p>Items can be hidden at specific breakpoints:</p>
+		<Grid spacing={3}>
+			<GridItem xs={12} md={6} hiddenWhen="xs">
+				<Card class="grid-card-layer2">
+					<h4>Hidden on XS</h4>
+					<p>This card is hidden on extra small screens</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} md={6} hiddenWhen="md-up">
+				<Card class="grid-card-layer2">
+					<h4>Hidden MD and up</h4>
+					<p>This card is hidden on medium screens and larger</p>
+				</Card>
+			</GridItem>
+		</Grid>
+
+		<h3>Complex Layout</h3>
+		<Grid spacing={4}>
+			<GridItem xs={12}>
+				<Card class="grid-header-card">
+					<h4>Full Width Header</h4>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} md={8}>
+				<Card class="grid-card-layer2 grid-card-min-height">
+					<h4>Main Content Area</h4>
+					<p>This takes up 2/3 of the width on medium screens and up.</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} md={4}>
+				<Card class="grid-card-layer2 grid-card-min-height">
+					<h4>Sidebar</h4>
+					<p>This takes up 1/3 of the width on medium screens and up.</p>
+				</Card>
+			</GridItem>
+			<GridItem xs={12} sm={6} md={3}>
+				<Card class="grid-card-layer3">Footer 1</Card>
+			</GridItem>
+			<GridItem xs={12} sm={6} md={3}>
+				<Card class="grid-card-layer3">Footer 2</Card>
+			</GridItem>
+			<GridItem xs={12} sm={6} md={3}>
+				<Card class="grid-card-layer3">Footer 3</Card>
+			</GridItem>
+			<GridItem xs={12} sm={6} md={3}>
+				<Card class="grid-card-layer3">Footer 4</Card>
+			</GridItem>
+		</Grid>
 	</Card>
-
-	<Card>
-		<h2>Different Spacing</h2>
-	<p>Grid with spacing={6}:</p>
-
-	<Grid spacing={6}>
-		<GridItem xs={12} sm={6} md={4}>
-			<Card class="grid-card-layer3">
-				<h4>Card 1</h4>
-				<p>Larger spacing between items</p>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} sm={6} md={4}>
-			<Card class="grid-card-layer3">
-				<h4>Card 2</h4>
-				<p>Larger spacing between items</p>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} sm={12} md={4}>
-			<Card class="grid-card-layer3">
-				<h4>Card 3</h4>
-				<p>Larger spacing between items</p>
-			</Card>
-		</GridItem>
-	</Grid>
-	</Card>
-
-	<Card>
-		<h2>Justify Content</h2>
-	<p>Grid with justify="center":</p>
-
-	<Grid spacing={3} justify="center">
-		<GridItem xs={6} md={3}>
-			<Card class="grid-card-centered">
-				<Badge appearance="accent">Centered 1</Badge>
-			</Card>
-		</GridItem>
-		<GridItem xs={6} md={3}>
-			<Card class="grid-card-centered">
-				<Badge appearance="accent">Centered 2</Badge>
-			</Card>
-		</GridItem>
-	</Grid>
-	</Card>
-
-	<Card>
-		<h2>Breakpoint Detection</h2>
-	<p>Current breakpoint: <strong>{currentBreakpoint}</strong></p>
-
-	<Grid spacing={3} onBreakpointEnter={handleBreakpointChange}>
-		<GridItem xs={12}>
-			<Card class="grid-card-layer3">
-				<h4>Responsive Info</h4>
-				<ul class="breakpoint-list">
-					<li><strong>xs</strong>: &lt; 600px</li>
-					<li><strong>sm</strong>: 600px - 959px</li>
-					<li><strong>md</strong>: 960px - 1279px</li>
-					<li><strong>lg</strong>: 1280px - 1919px</li>
-					<li><strong>xl</strong>: 1920px - 2559px</li>
-					<li><strong>xxl</strong>: ≥ 2560px</li>
-				</ul>
-			</Card>
-		</GridItem>
-	</Grid>
-	</Card>
-
-	<Card>
-		<h2>Hidden When Breakpoints</h2>
-	<p>Items can be hidden at specific breakpoints:</p>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} md={6} hiddenWhen="xs">
-			<Card class="grid-card-layer2">
-				<h4>Hidden on XS</h4>
-				<p>This card is hidden on extra small screens</p>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} md={6} hiddenWhen="md-up">
-			<Card class="grid-card-layer2">
-				<h4>Hidden MD and up</h4>
-				<p>This card is hidden on medium screens and larger</p>
-			</Card>
-		</GridItem>
-	</Grid>
-	</Card>
-
-	<Card>
-		<h2>Complex Layout</h2>
-	<Grid spacing={4}>
-		<GridItem xs={12}>
-			<Card class="grid-header-card">
-				<h3>Full Width Header</h3>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} md={8}>
-			<Card class="grid-card-layer2 grid-card-min-height">
-				<h4>Main Content Area</h4>
-				<p>This takes up 2/3 of the width on medium screens and up.</p>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} md={4}>
-			<Card class="grid-card-layer2 grid-card-min-height">
-				<h4>Sidebar</h4>
-				<p>This takes up 1/3 of the width on medium screens and up.</p>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} sm={6} md={3}>
-			<Card class="grid-card-layer3">Footer 1</Card>
-		</GridItem>
-		<GridItem xs={12} sm={6} md={3}>
-			<Card class="grid-card-layer3">Footer 2</Card>
-		</GridItem>
-		<GridItem xs={12} sm={6} md={3}>
-			<Card class="grid-card-layer3">Footer 3</Card>
-		</GridItem>
-		<GridItem xs={12} sm={6} md={3}>
-			<Card class="grid-card-layer3">Footer 4</Card>
-		</GridItem>
-	</Grid>
-	</Card>
-
-	<h2>Grid API</h2>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={gridProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={gridCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={gridSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<h2>GridItem API</h2>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={gridItemProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={gridItemCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={gridItemSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
 </Stack>
 
 <style>

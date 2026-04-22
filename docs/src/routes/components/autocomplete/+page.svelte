@@ -73,7 +73,6 @@
 	let tagsAboveValue = $state<string[]>(["red", "blue"])
 	let tagsBelowValue = $state<string[]>(["js", "ts"])
 
-	// Async search handler
 	async function handleAsyncSearch(searchText: string) {
 		await new Promise(resolve => setTimeout(resolve, 500))
 		return countries.filter(c =>
@@ -94,7 +93,6 @@
 		)
 	}
 
-	// People search
 	async function handlePeopleSearch(searchText: string) {
 		await new Promise(resolve => setTimeout(resolve, 400))
 		return people.filter(p =>
@@ -103,7 +101,6 @@
 		)
 	}
 
-	// Callback handlers
 	function handleSelectionChange(selected: string[]) {
 		callbackMessage = `Selection changed: ${selected.length > 0 ? selected.join(", ") : "None"}`
 	}
@@ -124,7 +121,6 @@
 		{name: "options", type: "OptionItem[]", default: "[]", description: "Available options for selection"},
 		{name: "placeholder", type: "string", default: '"Type to search..."', description: "Placeholder text for input"},
 		{name: "label", type: "string", default: "undefined", description: "Label text above component"},
-		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label content"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disable the component"},
 		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
 		{name: "required", type: "boolean", default: "false", description: "Mark field as required"},
@@ -149,56 +145,26 @@
 		{name: "width", type: "string", default: "undefined", description: "Component width"},
 		{name: "height", type: "string", default: "undefined", description: "Component height"},
 		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
-		{name: "style", type: "string", default: '""', description: "Inline styles"},
-		{name: "headerContent", type: "Snippet", default: "undefined", description: "Custom header in dropdown"},
-		{name: "footerContent", type: "Snippet", default: "undefined", description: "Custom footer in dropdown"},
-		{name: "optionTemplate", type: "Snippet<[OptionItem]>", default: "undefined", description: "Custom option rendering"},
-		{name: "onoptionssearch", type: "Function", default: "undefined", description: "Custom search function"},
-		{name: "onselectedoptionschange", type: "Function", default: "undefined", description: "Called when selection changes"},
-		{name: "ondismissed", type: "Function", default: "undefined", description: "Called when dropdown closes"}
+		{name: "style", type: "string", default: '""', description: "Inline styles"}
+	]
+
+	const callbacks: Property[] = [
+		{name: "onoptionssearch", type: "(searchText: string) => Promise<OptionItem[]> | OptionItem[]", default: "undefined", description: "Called when user types to search. Return filtered options (sync or async). If omitted, built-in case-insensitive contains filter is used."},
+		{name: "onselectedoptionschange", type: "(selected: T[]) => void", default: "undefined", description: "Called when the selected options array changes (item added or removed)."},
+		{name: "ondismissed", type: "() => void", default: "undefined", description: "Called when the dropdown closes."}
+	]
+
+	const slots: Property[] = [
+		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label content rendered above the input. Replaces the plain text label prop when provided."},
+		{name: "optionTemplate", type: "Snippet<[OptionItem]>", default: "undefined", description: "Custom rendering for each option in the dropdown list. Receives the OptionItem as a parameter."},
+		{name: "headerContent", type: "Snippet", default: "undefined", description: "Custom content rendered at the top of the dropdown overlay, above the option list."},
+		{name: "footerContent", type: "Snippet", default: "undefined", description: "Custom content rendered at the bottom of the dropdown overlay, below the option list."}
 	]
 
 	const propertyColumns = [
 		{field: "name", title: "Name", sortable: true, filterable: true},
 		{field: "type", title: "Type", sortable: true, filterable: true},
 		{field: "default", title: "Default", sortable: true},
-		{field: "description", title: "Description", filterable: true}
-	]
-
-	type Callback = {
-		name: string
-		signature: string
-		description: string
-	}
-
-	const callbacks: Callback[] = [
-		{name: "onoptionssearch", signature: "(searchText: string) => Promise<OptionItem[]> | OptionItem[]", description: "Called when user types to search. Return filtered options (sync or async). If omitted, built-in case-insensitive contains filter is used."},
-		{name: "onselectedoptionschange", signature: "(selected: T[]) => void", description: "Called when the selected options array changes (item added or removed)."},
-		{name: "ondismissed", signature: "() => void", description: "Called when the dropdown closes."}
-	]
-
-	const callbackColumns = [
-		{field: "name", title: "Name", sortable: true, filterable: true},
-		{field: "signature", title: "Signature", sortable: false, filterable: false},
-		{field: "description", title: "Description", filterable: true}
-	]
-
-	type SlotItem = {
-		name: string
-		type: string
-		description: string
-	}
-
-	const slots: SlotItem[] = [
-		{name: "labelTemplate", type: "Snippet", description: "Custom label content rendered above the input. Replaces the plain text label prop when provided."},
-		{name: "optionTemplate", type: "Snippet<[OptionItem]>", description: "Custom rendering for each option in the dropdown list. Receives the OptionItem as a parameter."},
-		{name: "headerContent", type: "Snippet", description: "Custom content rendered at the top of the dropdown overlay, above the option list."},
-		{name: "footerContent", type: "Snippet", description: "Custom content rendered at the bottom of the dropdown overlay, below the option list."}
-	]
-
-	const slotColumns = [
-		{field: "name", title: "Name", sortable: true, filterable: true},
-		{field: "type", title: "Type", sortable: true, filterable: true},
 		{field: "description", title: "Description", filterable: true}
 	]
 </script>
@@ -214,37 +180,35 @@
 	<Card>
 		<p>
 			<strong>References:</strong>
-			N/A (custom implementation)
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
 			|
 			<a href="https://www.fluentui-blazor.net/Autocomplete" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
 		</p>
 	</Card>
 
-	<h2>API</h2>
-
-	<Grid columns={1} gap="1rem">
-		<GridItem>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Properties</h3>
+				<h2>Properties</h2>
 				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Callbacks</h3>
-				<QuickGrid items={callbacks} columns={callbackColumns} sortable filterable striped />
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Slots</h3>
-				<QuickGrid items={slots} columns={slotColumns} sortable filterable striped />
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
 
 	<Card>
-		<h3>OptionItem Type</h3>
+		<h2>OptionItem Type</h2>
 		<pre><code>{`type OptionItem<T = any> = {
   value: T          // Unique identifier
   text: string      // Display text
@@ -252,12 +216,11 @@
 }`}</code></pre>
 	</Card>
 
-	<h2>Examples</h2>
-
-	<!-- Default Examples -->
 	<Card>
+		<h2>Examples</h2>
+
 		<h3>Default</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Basic</strong>
@@ -295,13 +258,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Tags Position -->
-	<Card>
 		<h3>Tags Position</h3>
 		<p>Control where selected tags appear using the <code>tagsPosition</code> prop. Default is <code>"inline"</code> (inside the input field, like FluentUI Blazor).</p>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Inline (default)</strong>
@@ -345,13 +305,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Multiple = false -->
-	<Card>
 		<h3>Multiple = false</h3>
 		<p>When the <code>multiple</code> prop is explicitly set to <code>false</code>, it behaves like a single-select autocomplete.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Explicit single-select</strong>
@@ -366,13 +323,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Many Items -->
-	<Card>
 		<h3>Many Items</h3>
 		<p>Use <code>maxOptionsSearch</code> to control the dropdown display and limit results.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Max 5 options shown</strong>
@@ -399,13 +353,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Close via code -->
-	<Card>
 		<h3>Close via code</h3>
 		<p>Use <code>keepOpen</code> to control whether the dropdown closes after selection.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>keepOpen = true</strong>
@@ -420,13 +371,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Initial Options -->
-	<Card>
 		<h3>Different object instances from search results</h3>
 		<p>Show initial options before user types, then use async search for full dataset.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Initial popular options</strong>
@@ -443,12 +391,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Disabled States -->
-	<Card>
 		<h3>States</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Disabled</strong>
@@ -483,12 +428,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Appearance -->
-	<Card>
 		<h3>Appearance</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Outline (default)</strong>
@@ -512,12 +454,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Width -->
-	<Card>
 		<h3>Width</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Custom width (300px)</strong>
@@ -540,13 +479,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Debounce / Immediate Delay -->
-	<Card>
 		<h3>Debounce (immediateDelay)</h3>
 		<p>Use <code>immediateDelay</code> to add a debounce delay before triggering search.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>300ms delay</strong>
@@ -561,13 +497,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Minimum Search Length -->
-	<Card>
 		<h3>Minimum search length</h3>
 		<p>Use <code>minSearchLength</code> to skip the search entirely until the user has typed enough characters. Below the threshold, <code>onoptionssearch</code> is never invoked — essential when searching against large/expensive backends.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>minSearchLength={3}</strong>
@@ -585,13 +518,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Option Template -->
-	<Card>
 		<h3>Option Template</h3>
 		<p>Use <code>optionTemplate</code> snippet to customize how options are rendered.</p>
-		<Grid columns={1} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={1} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Autocomplete
@@ -614,13 +544,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Header/Footer Content -->
-	<Card>
 		<h3>Header and Footer Content</h3>
 		<p>Use <code>headerContent</code> and <code>footerContent</code> snippets for custom dropdown sections.</p>
-		<Grid columns={1} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={1} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Autocomplete
@@ -644,13 +571,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Select on Tab -->
-	<Card>
 		<h3>Select Value on Tab</h3>
 		<p>Control whether Tab key selects the highlighted option with <code>selectValueOnTab</code>.</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>selectValueOnTab = true (default)</strong>
@@ -676,12 +600,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Callbacks -->
-	<Card>
 		<h3>Callbacks</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>onselectedoptionschange</strong>
@@ -709,9 +630,9 @@
 		</Grid>
 	</Card>
 
-	<h2>Usage Examples</h2>
-
 	<Card>
+		<h2>Usage Examples</h2>
+
 		<h3>Basic Usage</h3>
 		<pre><code>{`<script lang="ts">
   import { Autocomplete } from "svelte-fluentui"
@@ -770,29 +691,6 @@
 </Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 1.5rem 0 0 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
 	pre {
 		background: var(--neutral-layer-3);
 		padding: 1rem;

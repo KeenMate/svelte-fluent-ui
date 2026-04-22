@@ -18,8 +18,19 @@
 		}
 	});
 
+	function escapeHtml(s: string): string {
+		return s
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+	}
+
 	function convertMarkdownToHtml(markdown: string): string {
-		let html = markdown;
+		// Escape raw HTML before applying markdown transforms. Without this,
+		// a code span like `<fluent-dialog>` becomes <code><fluent-dialog></code>
+		// and the browser parses the inner tag as a real element (which then
+		// auto-initializes and paints an empty dialog on the page).
+		let html = escapeHtml(markdown);
 
 		// Headers
 		html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
