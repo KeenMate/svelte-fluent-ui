@@ -31,6 +31,7 @@
 		autocomplete?: string
 		maxSelectedOptions?: number
 		maxOptionsSearch?: number
+		minSearchLength?: number
 		showOverlayOnEmptyResults?: boolean
 		showInitialOptions?: boolean
 		initialOptionsCount?: number
@@ -70,6 +71,7 @@
 		autocomplete = undefined,
 		maxSelectedOptions = undefined,
 		maxOptionsSearch = 9,
+		minSearchLength = undefined,
 		showOverlayOnEmptyResults = true,
 		showInitialOptions = false,
 		initialOptionsCount = undefined,
@@ -168,6 +170,16 @@
 					isOpen = false
 				}
 			}
+			return
+		}
+
+		// Gate: below minSearchLength, don't search or open the dropdown.
+		// Why: against large/async option sets, searching on a single character
+		// is wasteful (UX noise) or expensive (triggers consumer API calls).
+		if (minSearchLength && text.trim().length < minSearchLength) {
+			filteredOptions = []
+			isOpen = false
+			isSearching = false
 			return
 		}
 

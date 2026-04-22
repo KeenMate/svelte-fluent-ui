@@ -1,24 +1,6 @@
 <script lang="ts">
 	import { Autocomplete, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui"
-
-	// Sample data - countries
-	const countries = [
-		{ value: "us", text: "United States" },
-		{ value: "uk", text: "United Kingdom" },
-		{ value: "ca", text: "Canada" },
-		{ value: "au", text: "Australia" },
-		{ value: "de", text: "Germany" },
-		{ value: "fr", text: "France" },
-		{ value: "it", text: "Italy" },
-		{ value: "es", text: "Spain" },
-		{ value: "jp", text: "Japan" },
-		{ value: "cn", text: "China" },
-		{ value: "in", text: "India" },
-		{ value: "br", text: "Brazil" },
-		{ value: "mx", text: "Mexico" },
-		{ value: "ru", text: "Russia" },
-		{ value: "za", text: "South Africa" }
-	]
+	import { countries } from "$lib/demo-data/datasets"
 
 	const colors = [
 		{ value: "red", text: "Red" },
@@ -73,6 +55,8 @@
 	let asyncValue = $state<string[]>([])
 	let initialOptionsValue = $state<string[]>([])
 	let debounceValue = $state<string[]>([])
+	let minSearchLengthValue = $state<string[]>([])
+	let minSearchLengthCalls = $state<number>(0)
 	let disabledValue = $state<string[]>(["us"])
 	let readonlyValue = $state<string[]>(["uk", "ca"])
 	let requiredValue = $state<string[]>([])
@@ -97,23 +81,15 @@
 		)
 	}
 
-	// Full country search (for initial options example)
-	async function handleCountrySearch(searchText: string) {
+	// Alias kept for the "initial options" example — now just hits the full list
+	const handleCountrySearch = handleAsyncSearch
+
+	// Search used by the minSearchLength demo — counts calls so we can show
+	// that the function is NOT invoked for sub-threshold queries.
+	async function handleMinSearchLengthSearch(searchText: string) {
+		minSearchLengthCalls += 1
 		await new Promise(resolve => setTimeout(resolve, 300))
-		const allCountries = [
-			...countries,
-			{ value: "ar", text: "Argentina" },
-			{ value: "eg", text: "Egypt" },
-			{ value: "gr", text: "Greece" },
-			{ value: "id", text: "Indonesia" },
-			{ value: "ie", text: "Ireland" },
-			{ value: "kr", text: "South Korea" },
-			{ value: "nl", text: "Netherlands" },
-			{ value: "no", text: "Norway" },
-			{ value: "nz", text: "New Zealand" },
-			{ value: "pl", text: "Poland" }
-		]
-		return allCountries.filter(c =>
+		return countries.filter(c =>
 			c.text.toLowerCase().includes(searchText.toLowerCase())
 		)
 	}
@@ -158,6 +134,7 @@
 		{name: "multiple", type: "boolean", default: "undefined", description: "Explicitly enable multi-select mode"},
 		{name: "maxSelectedOptions", type: "number", default: "undefined", description: "Max selections allowed (1 = single-select)"},
 		{name: "maxOptionsSearch", type: "number", default: "9", description: "Max options shown in dropdown"},
+		{name: "minSearchLength", type: "number", default: "undefined", description: "Minimum typed characters before search runs. Below the threshold, onoptionssearch is NOT called and the dropdown stays closed."},
 		{name: "showOverlayOnEmptyResults", type: "boolean", default: "true", description: "Show dropdown on no results"},
 		{name: "showInitialOptions", type: "boolean", default: "false", description: "Show options on focus when empty"},
 		{name: "initialOptionsCount", type: "number", default: "maxOptionsSearch", description: "Initial options count limit"},
@@ -581,6 +558,30 @@
 						placeholder="Type to search (300ms delay)..."
 					/>
 					<small>Selected: {debounceValue.join(", ") || "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+	</Card>
+
+	<!-- Minimum Search Length -->
+	<Card>
+		<h3>Minimum search length</h3>
+		<p>Use <code>minSearchLength</code> to skip the search entirely until the user has typed enough characters. Below the threshold, <code>onoptionssearch</code> is never invoked — essential when searching against large/expensive backends.</p>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>minSearchLength={3}</strong>
+					<small style="color: var(--neutral-foreground-hint);">The call counter stays at 0 until you type 3 characters.</small>
+					<Autocomplete
+						bind:selectedOptions={minSearchLengthValue}
+						onoptionssearch={handleMinSearchLengthSearch}
+						minSearchLength={3}
+						immediateDelay={200}
+						label="Search countries"
+						placeholder="Type at least 3 characters..."
+					/>
+					<small>Search calls fired: <strong>{minSearchLengthCalls}</strong></small>
+					<small>Selected: {minSearchLengthValue.join(", ") || "None"}</small>
 				</Stack>
 			</GridItem>
 		</Grid>

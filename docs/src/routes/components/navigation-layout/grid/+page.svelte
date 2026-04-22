@@ -15,9 +15,11 @@
 	}
 
 	const gridProperties: Property[] = [
-		{name: "spacing", type: "number (1-10)", default: "3", description: "Spacing between grid items"},
-		{name: "justify", type: "JustifyContent", default: "flex-start", description: "Horizontal alignment of items"},
-		{name: "adaptiveRendering", type: "boolean", default: "false", description: "Only render items for current breakpoint"},
+		{name: "columns", type: "number", default: "undefined", description: "Switches Grid to CSS-grid mode with N equal-width tracks (minmax(0, 1fr)). Children fill one cell each; xs/sm/md breakpoint props are ignored."},
+		{name: "gap", type: "string", default: '"1rem" (when columns set)', description: "Gap between cells in columns mode (e.g. '0.5rem', '16px'). Ignored in flex-spacing mode."},
+		{name: "spacing", type: "number (1-10)", default: "3", description: "Spacing between grid items (flex-spacing mode only)"},
+		{name: "justify", type: "JustifyContent", default: "flex-start", description: "Horizontal alignment of items (flex-spacing mode only)"},
+		{name: "adaptiveRendering", type: "boolean", default: "false", description: "Only render items for current breakpoint (flex-spacing mode only)"},
 		{name: "class", type: "string", default: '""', description: "Additional CSS class names"},
 		{name: "style", type: "string", default: '""', description: "Inline CSS styles"}
 	]
@@ -72,8 +74,12 @@
 	</Card>
 
 	<p>
-		Responsive 12-column grid system with breakpoints based on FluentUI Blazor implementation.
+		Grid supports two layout modes:
 	</p>
+	<ul>
+		<li><strong>Flex-spacing mode</strong> (default): responsive 12-column system with <code>GridItem</code> breakpoint props (<code>xs</code>, <code>sm</code>, <code>md</code>…). Based on FluentUI Blazor.</li>
+		<li><strong>Columns mode</strong>: pass <code>columns={'{N}'}</code> (plus optional <code>gap</code>) for a CSS-grid layout with N equal-width tracks. Simpler, and immune to content-based width stealing between cells.</li>
+	</ul>
 
 	<Card>
 		<h2>Basic Grid</h2>
@@ -99,6 +105,66 @@
 			</Card>
 		</GridItem>
 	</Grid>
+	</Card>
+
+	<Card>
+		<h2>Columns mode (CSS grid)</h2>
+		<p>
+			With <code>columns={'{N}'}</code> Grid switches to CSS grid with N equal-width tracks.
+			<code>GridItem</code> children need no breakpoint props — each one becomes a cell.
+			Columns stay at exactly 1/N of the container even if one cell's content is much wider
+			than the others (notice the long string in the middle cell below does not steal space
+			from its neighbors):
+		</p>
+
+		<Grid columns={3} gap="1rem">
+			<GridItem>
+				<Card class="grid-card-layer2">
+					<h4>Cell 1</h4>
+					<p>Short content</p>
+				</Card>
+			</GridItem>
+			<GridItem>
+				<Card class="grid-card-layer2">
+					<h4>Cell 2</h4>
+					<p style="word-break: break-all;">ThisIsADeliberatelyUnbreakableStringThatWouldBlowOutAFlexColumnButMinmax0TracksShrinkBelowContent</p>
+				</Card>
+			</GridItem>
+			<GridItem>
+				<Card class="grid-card-layer2">
+					<h4>Cell 3</h4>
+					<p>Short content</p>
+				</Card>
+			</GridItem>
+		</Grid>
+
+		<p style="margin-top: 1rem;">Two columns with a tighter gap:</p>
+
+		<Grid columns={2} gap="0.5rem">
+			<GridItem>
+				<Card class="grid-card-layer3">Left</Card>
+			</GridItem>
+			<GridItem>
+				<Card class="grid-card-layer3">Right</Card>
+			</GridItem>
+		</Grid>
+
+		<p style="margin-top: 1rem;">Four columns:</p>
+
+		<Grid columns={4} gap="0.75rem">
+			<GridItem>
+				<Card class="grid-card-layer3">1</Card>
+			</GridItem>
+			<GridItem>
+				<Card class="grid-card-layer3">2</Card>
+			</GridItem>
+			<GridItem>
+				<Card class="grid-card-layer3">3</Card>
+			</GridItem>
+			<GridItem>
+				<Card class="grid-card-layer3">4</Card>
+			</GridItem>
+		</Grid>
 	</Card>
 
 	<Card>

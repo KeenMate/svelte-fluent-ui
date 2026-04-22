@@ -8,269 +8,376 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **QuickGrid Editable Mode** - Excel-like inline cell editing (inspired by FluentUI Blazor)
-  - Navigate mode with arrow key navigation between cells
-  - Editor types: `text`, `number`, `checkbox`, `select`, `date`, `autocomplete`, `custom`
-  - Custom editor support via `oncelledit` callback with context object
-  - Sync and async validation with `validate` callback
-  - Dynamic options loading with `loadOptions` and `optionsLoadTrigger`
-  - Per-column edit triggers: `click`, `dblclick`, `button`, `always`, `navigate`
-  - Events: `onrowchange`, `onroweditstart`, `onroweditcancel`, `onvalidationerror`
-  - GridCellEditor component for consistent editor UI
-  - Demo page at `/components/quickgrid-editable`
+- **`Combobox` `minSearchLength` prop** - Keeps the dropdown closed until the typed text reaches the configured length. Useful against large or async option sets where opening on a single character like `"a"` is wasteful — visual noise for a consumer's list, actual cost for one driving an API. Implementation listens to the `<fluent-combobox>` `input` event and queues a microtask to force-close `el.open = false` after Fluent has already set its own open state, so the override wins. Empty input is deliberately not gated (clicking into an empty combobox to browse still works); only the `typed.length > 0 && typed.length < minSearchLength` range closes it
+- **`Autocomplete` `minSearchLength` prop** - Short-circuits `filterOptions` before the debounce timer or `performSearch` runs. Below the threshold, `onoptionssearch` is never invoked (the critical win for async search against expensive backends), `filteredOptions` is cleared, and the dropdown is closed. Bypassed for empty input so `showInitialOptions` still works, and `showAllOptions` (Ctrl+Space) still overrides as an explicit user ask
+- **`Grid` columns mode (`columns` + `gap` props)** - Passing `columns={N}` switches `Grid` from its 12-column flex-spacing mode to CSS grid with `grid-template-columns: repeat(N, minmax(0, 1fr))`. Each `<GridItem>` becomes an equal-width track regardless of content. Why `minmax(0, 1fr)` and not `1fr`: grid items default to `min-width: auto` (intrinsic content width), so with plain `1fr` a single chip-stuffed Autocomplete or long unbreakable string could still steal width from siblings — the same bug the mode is meant to fix. `minmax(0, 1fr)` lets tracks shrink below content, so columns stay pinned at 1/N of the container. Optional `gap` prop (default `"1rem"`) controls inter-cell spacing. The two modes are mutually exclusive: when `columns` is set, `spacing`/`justify`/`data-spacing` are suppressed and the existing `.fluent-grid[data-spacing="N"]` margin/padding rules don't match; when it isn't, the existing flex system is untouched. Backward-compatible for every existing `<Grid spacing={N}>` caller — no migration needed
 
-- **Dialog Component Enhancements** - Improved keyboard handling and close control
-  - `closeOnEscape` prop - Enable/disable Escape key to close dialog (default: true)
-  - `onbeforeclose` callback - Return false to prevent closing (for unsaved data checks)
-  - Escape key now closes dialog (respects `preventClose`, `closeOnEscape`, and `onbeforeclose`)
-  - X button also respects `onbeforeclose` callback
+### Changed
+- **Demo datasets expanded** - Replaced small hand-written fixtures in the Autocomplete, Combobox, and Select demos with a shared `docs/src/lib/demo-data/datasets.ts` module: ~195 real countries (heavy prefix clusters like "United ...", "South ...", "Saint ..."), 63 songs with heavy clustering ("All ...", "I Want ...", "Sweet ..." etc.), and 33 languages with shared first letters so Select's native type-ahead has something to cycle through when the user presses `s` repeatedly. The old fixtures were small (5–15 items) and mostly unique-prefix, making it hard to exercise filtering, scrolling, `maxOptionsSearch` limits, or `minSearchLength` gating
+- **Grid demo page updated** - Documents both layout modes side-by-side. Property table now includes `columns` and `gap` rows and flags which props are flex-mode-only. New "Columns mode (CSS grid)" demo card visually demonstrates the `minmax(0, 1fr)` promise: a 3-column row where the middle cell contains a deliberately unbreakable string, and the outer two cells stay pinned at 1/3 width each
+- **Autocomplete / Combobox demo pages** - Added property-table entries for `minSearchLength` and dedicated demo cards. Autocomplete's demo includes a call counter (incremented inside the `onoptionssearch` handler) so users can visually confirm the async function is NOT invoked below the threshold
 
-- **Icon Component Enhancements** - New color system matching FluentUI Blazor
-  - `color` prop - Color enum: `neutral`, `accent`, `warning`, `info`, `error`, `success`, `fill`, `fill-inverse`, `lightweight`, `disabled`, `custom`
-  - `customColor` prop - Custom color value when `color="custom"`
-  - `width` prop - Override width independently of size
-  - Colors map to FluentUI CSS variables (e.g., `accent` → `var(--accent-fill-rest)`)
-  - Legacy `primaryFill` still supported for backwards compatibility
-
-- **Select/Option Component Data Support** - Select now returns both value and item data on change
-  - `Option` component: Added `data` prop to store arbitrary context data
-  - `Select` component: `onchange` now returns `{ value: string, data?: Record<string, unknown> }`
-  - Eliminates need to manually look up selected item from data array
-
-- **Tabs/Tab Component Enhancements** - Tab change event now includes context data
-  - `Tab` component: Added `data` prop to store arbitrary context data
-  - `Tabs` component: `ontabchange` now returns `{ tabId: string, data?: Record<string, unknown> }`
-  - Renamed `onTabChange` → `ontabchange` (Svelte 5 convention)
-  - Renamed `onCloseClick` → `oncloseclick` on Tab component
-
-- **Dialog Modal Backdrop** - Added proper backdrop for modal dialogs
-  - Backdrop blocks interaction with content behind the dialog
-  - Semi-transparent overlay (rgba(0, 0, 0, 0.4))
-  - Proper z-index layering (backdrop: 1040, dialog: 1050)
-
-- **Badge Component Rewrite** - Replaced buggy fluent-badge with custom implementation
-  - Same API: `color`, `fill`, `appearance`, `circular`, `onclick`, `class`, `style`
-  - Uses CSS variables for theming (`--badge-fill-*`, `--badge-color-*`)
-  - Appearance variants: lightweight, accent, neutral, outline, tint
-
-- **NumberField Component Enhancements** - New properties matching FluentUI Blazor API
-  - `minlength` - Minimum character length
-  - `maxlength` - Maximum character length
-  - `size` - Input field size
-  - `list` - ID of a datalist element for suggestions
-  - `ariaLabel` - Accessibility label (aria-label)
-  - `title` - Tooltip text on hover
-  - `width` - Component width (e.g., '300px', '100%')
-  - `height` - Component height
-  - `class` - Additional CSS classes
-  - `start` slot - Content/icon before the input
-  - `end` slot - Content/icon after the input
-  - `onfocus`, `onblur`, `onkeydown`, `onkeyup` event handlers
-  - `focus()`, `blur()`, `select()` methods
-
-- **NumberField Documentation Page** - Comprehensive rewrite with FluentUI Blazor examples
-  - API documentation tables (Parameters, EventCallbacks, Methods, Slots)
-  - Reference links to FluentUI Web Components and FluentUI Blazor
-  - Default examples (integer, nullable integer, positive integer)
-  - Types examples (short, integer, long, float, decimal)
-  - Types with constraints (min/max overrides)
-  - Display examples (full width, placeholder, hide steps, required, disabled, read-only)
-  - Icons examples with start/end slots
-  - Focus examples (autofocus, focus async with button)
-  - Filled appearance examples
-  - Callback example with onchange
-
-### Fixed
-- **Dialog Padding** - Fixed excessive default padding on fluent-dialog
-  - Added `::part(control)` CSS to set standard 1rem padding
-
-- **QuickGrid Navigate Mode - Custom Editor Focus** - Fixed arrow keys not working after custom editor commit
-  - Custom editors now properly refocus the cell after commit/cancel in navigate mode
-  - Same fix previously applied to checkbox/select/date editors
-
-- **ToastContainer Svelte 5 Compatibility** - Fixed legacy `$:` reactive statement
-  - Converted `$:` block to `$effect()` for Svelte 5 runes mode
-  - Converted variables to `$state` and `$derived`
-  - Fixes "legacy_reactive_statement_invalid" error in runes mode
-
-- **Dialog X Button Not Working** - Fixed close button using wrong event handler name
-  - Changed `onClick` → `onclick` (Svelte 5 convention)
-  - Also fixed Dismiss button handler
-
-- **Numeric Property Binding Issues** - Fixed multiple components failing with falsy values like 0
-  - Pattern `prop={prop || null}` fails when value is 0 (e.g., `min={0}` becomes `null`)
-  - Fixed using spread pattern: `{...(prop !== undefined ? { prop } : {})}`
-  - Components fixed: NumberField, Search, Textarea, Listbox, GridItem
-
-- **GridItem Data Attributes** - Fixed undefined values being passed to data attributes
-  - Changed from `data-sm={sm}` to spread pattern to avoid "Cannot convert undefined to object" errors
-
-- **NumberField "undefined" Rendering** - Fixed attributes rendering as literal "undefined"
-  - All optional attributes now use `|| null` pattern
-  - Title attribute uses spread pattern to avoid rendering "null"
-
-- **Checkbox Component** - Added missing props matching FluentUI Blazor API
-  - `name` - Form field name
-  - `label` - Label text (alternative to children slot)
-  - `ariaLabel` - Accessibility label
-  - `class` - Additional CSS classes
-  - `style` - Inline styles
-  - `threeStateOrderUncheckToIntermediate` - Controls three-state cycle order (false: Unchecked→Checked→Intermediate, true: Unchecked→Intermediate→Checked)
-
-- **Checkbox Documentation Page** - Comprehensive rewrite with FluentUI Blazor examples
-  - API documentation tables (Properties, Callbacks)
-  - Reference links to FluentUI Web Components and FluentUI Blazor
-  - Default checkbox examples (horizontal/vertical layouts)
-  - Three-state examples with value display
-  - Three-state list with parent/child checkboxes
-  - Disabled and read-only examples
-  - Label and form integration examples
-
-- **Listbox Component** - Added missing props matching FluentUI Blazor API
-  - `name` - Form field name
-  - `label` - Label text displayed above the listbox
-  - `ariaLabel` - Accessibility label
-  - `width` - Component width (e.g., '300px', '100%')
-  - `height` - Component height (e.g., '200px')
-  - `size` - Number of visible options
-  - `class` - Additional CSS classes
-  - `style` - Inline styles
-  - `onchange` - Callback when selection changes
-
-- **Listbox Documentation Page** - Comprehensive rewrite with FluentUI Blazor examples
-  - API documentation tables (Properties, Callbacks, Slots)
-  - Reference links to FluentUI Web Components and FluentUI Blazor
-  - Manual example with various option states
-  - Default example with people picker
-  - From list of Option<T> items examples
-  - Long list example (US States)
-  - Long list with Width and Height example
-  - Option template with icons and badges
-  - Multiple selection example
-  - Disabled and label examples
-
-- **Badge Component** - Enhanced with color system and documentation
-  - `fill` - Background color key referencing `--badge-fill-[name]` CSS variable
-  - `color` - Text color key referencing `--badge-color-[name]` CSS variable
-  - `class` - Additional CSS classes
-  - `style` - Inline styles
-  - Built-in colors: brand, danger, important, informative, severe, subtle, success, warning
-  - Auto-fills `fill` from `color` when only color is specified
-  - Technical documentation comment explaining the color system
-
-- **Badge Documentation Page** - Comprehensive examples
-  - API documentation tables (Properties, Callbacks, Slots)
-  - Reference links to FluentUI Web Components and FluentUI Blazor
-  - Built-in colors showcase
-  - Appearance examples (accent, lightweight, neutral, outline, tint)
-  - Color + Appearance combinations grid
-  - Custom colors with CSS variables
-  - Circular badge examples
-
-- **Autocomplete Component Enhancements** - New properties matching FluentUI Blazor API
-  - `tagsPosition` - Control where selected tags appear: `"inline"` (default, inside input like FluentUI Blazor), `"above"`, or `"below"` the input field
-  - `labelTemplate` - Custom label content via Svelte snippet
-  - `id` - Element ID
-  - `title` - Tooltip text
-  - `ariaLabel` - Accessibility label
-  - `height` - Component height
-  - `multiple` - Explicitly enable/disable multi-select mode (independent of maxSelectedOptions)
-  - `loading` - External loading state control (overrides internal isSearching state)
-  - `immediateDelay` - Debounce delay in ms before triggering search
-  - `selectValueOnTab` - Control whether Tab key selects highlighted option (default: true)
-  - `headerContent` - Snippet for custom header in dropdown
-  - `footerContent` - Snippet for custom footer in dropdown
-  - `optionTemplate` - Snippet for custom option rendering
-  - `ondismissed` - Callback when dropdown closes
-  - Backspace key removes last chip when input is empty (inline mode UX improvement)
-  - Custom inline chips with proper focus state management
-  - Click anywhere in inline container focuses input
-
-- **Autocomplete Documentation Page** - Comprehensive examples matching FluentUI Blazor
-  - Default examples with basic, pre-selected, and single-select variants
-  - **Tags Position examples** - Demonstrates all three modes: inline (default), above, and below
-  - Multiple vs single-select mode examples
-  - Many items with maxOptionsSearch and maxSelectedOptions
-  - Close via code with keepOpen
-  - Initial options with async search pattern
-  - Disabled, readonly, and required states
-  - Appearance styles (outline, filled)
-  - Width customization
-  - Debounce (immediateDelay) example
-  - Option template with custom rendering (icons, email)
-  - Header and footer content snippets
-  - Select on Tab behavior examples
-  - Callback examples (onselectedoptionschange, ondismissed)
-  - Code examples for basic usage, async search, and custom templates
-
-- **Combobox Component Enhancements** - New properties matching FluentUI Blazor API
-  - `label` - Label text displayed above the combobox
-  - `labelTemplate` - Custom label content via Svelte snippet
-  - `ariaLabel` - Accessibility label (aria-label)
-  - `title` - Tooltip text
-  - `width` - Component width (e.g., '300px', '100%')
-  - `height` - Component height
-  - `class` - Additional CSS classes
-  - `style` - Inline styles
-  - `onchange` - Callback when selection changes
-
-- **Combobox Documentation Page** - Comprehensive examples matching FluentUI Blazor
-  - Default examples with basic, pre-selected, and placeholder variants
-  - Option types: from Option array and inline Option elements
-  - Disabled states: entire combobox, individual items, all items disabled
-  - Appearance styles: outline (default) and filled
-  - Autocomplete modes: inline, list, and both
-  - List examples: long scrollable list, position above/below
-  - Option template with custom content (icons + formatted text)
-  - Width/styling examples
-  - Callback example demonstrating onchange
-
-### Fixed
-- **Autocomplete Dropdown Jumping** - Fixed dropdown moving up/down when navigating with arrow keys
-  - PositioningRegion now only calculates position when dropdown opens, not on every re-render
-  - Prevents position recalculation during keyboard navigation
-
-- **Autocomplete Tags Styling (above/below modes)** - Fixed ugly appearance of tags
-  - Replaced `<fluent-badge>` with custom styled elements for full CSS control
-  - Tags now match FluentUI Blazor style: neutral background, dark text, red X icon
-
-- **Combobox "undefined" Display Bug** - Fixed attributes rendering as literal "undefined" string
-  - Fixed `title` attribute showing "undefined" tooltip when not set (now uses spread pattern)
-  - Fixed `data-option-label` in Option.svelte rendering "undefined" (now uses `|| null`)
-
-- **Combobox Position Prop** - Fixed `position="above"` not being applied correctly
-  - FluentUI web components require property assignment, not just attribute
-  - Added `$effect` to set `element.position` property after mount
-  - Position now correctly forces dropdown above or below input
-
-- **Combobox Pre-selected Value Display** - Fixed pre-selected values not showing label on initial render
-  - Added initialization effect with setTimeout to wait for fluent-option elements to register
-  - Now correctly displays the selected option's label text in the input field
-
-## [1.0.0-rc06] - 2025-11-27
+## [1.0.0-rc13] - 2026-04-20
 
 ### Added
-- **Alert Component** - Notification banner for displaying important messages
-  - 4 intent levels: `info`, `success`, `warning`, `danger`
-  - Optional `title` prop for header
-  - Optional `dismissable` prop with dismiss button
-  - Custom `icon` slot (Svelte 5 snippet) to override default intent icons
-  - `ondismiss` callback
-  - Demo page at `/components/alert`
+- **New `MenuButton` component** - Button that opens a dropdown menu on click instead of firing an `onclick`. Takes an `items: MenuButtonItem[]` array (label, icon, disabled, visible, danger, dividerBefore, onclick), forwards button props (`appearance`, `disabled`, `class`, `style`, `children`/`start`/`end` snippets), and exposes bindable `open` plus `onopen`/`onclose` callbacks. Menu positioning uses `@floating-ui/dom` — `flip` to the opposite side when near viewport edges, `shift` for horizontal nudging, `size` middleware to cap max-height and make the menu scrollable when space is tight, `autoUpdate` for live reposition on scroll/resize. Portalled to `<body>` so it escapes ancestor stacking contexts. Exported as `MenuButton` + `MenuButtonItem` type, with a dedicated demo page at `/components/menu-button`.
+- **New `ContextMenu` component** - Standalone right-click menu that opens at the cursor position. Wraps children with a `display: contents` span that catches `contextmenu` events and portals a Floating-UI-positioned menu at the click coordinates (via a virtual anchor). Reuses the `MenuButtonItem` shape from `MenuButton`. New `offsetMenuX` / `offsetMenuY` props push the menu away from the cursor so the click position doesn't land directly on the first item — defaults to `offsetMenuX: 8` so the cursor sits safely off the left edge of the menu after right-click. `disabled` prop falls through to the browser's native context menu. Dedicated demo page at `/components/context-menu` with basic, offset-sliders, per-item, conditional-visibility, and sidebar-style sections scenarios
+- **`MenuButtonItem` expandable sections & submenus** - Extended the item shape with `id` (stable key), `children` (nested items), `expandable`, `defaultExpanded`:
+  - **Inline expandable sections** (`children` + `expandable: true`) — renders the item as a section header with a rotating chevron; children render inline below when expanded. Matches the sidebar-style nav menu pattern (overview + nested components, dividers between groups). Expand state is remembered across menu opens
+  - **Side-opening submenus** (`children` only) — renders the item as a trigger with a right-pointing chevron; hover/focus opens a separate Floating-UI popover at `placement="right-start"` with `flip(fallbackPlacements: ["left-start", "right-end", "left-end"])` so it auto-flips to the left when near the right edge of the viewport. Hover-intent delays (150ms open / 250ms close) prevent flicker and let the user diagonally swoop from trigger to submenu body. Sibling submenus (same parent) auto-close when a new one opens. Nested submenus work recursively (the same `renderItem` snippet is called inside each submenu portal)
+  - Custom menu markup replaces `<fluent-menu>` / `<fluent-menu-item>` in `ContextMenu` so we can render nested structure without shadow-DOM acrobatics. Styled against FluentUI design tokens (neutral-layer-1 background, neutral-stroke-layer-rest border, popover shadow, stealth-hover fill, accent-fill-rest icon color, error-foreground for `danger` items)
+  - `Escape` pops submenus one level at a time before closing the root menu
+  - Close-on-scroll restored — context menus traditionally dismiss when the underlying content scrolls (scroll events don't bubble, so the listener uses capture to catch any ancestor's scroll). Scrolls *inside* the menu itself are ignored so long scrollable menus still work
+  - `SvelteMap` (from `svelte/reactivity`) is used for the open-submenus map — a plain `new Map()` wrapped in `$state()` doesn't proxy `.set()`/`.delete()` mutations, so submenus wouldn't render reactively otherwise
 
-- **Icon Component Documentation** - Comprehensive guide for using FluentUI icons
-  - Setup instructions with Vite plugin
-  - Examples for sizes, variants, colors, and hover effects
-  - API reference and plugin options
-  - Demo page at `/components/icon`
+### Changed
+- **MenuButton now uses Floating UI** - Replaced the `PositioningRegion` wrapper with direct `@floating-ui/dom` calls for more robust positioning. `flip` handles top/bottom overflow, `shift({ padding: 8 })` nudges horizontally, `size` caps max-height so a tall menu near the bottom of the viewport becomes internally scrollable instead of getting clipped, and `autoUpdate` reposition on scroll/resize means the menu follows its anchor live (we removed the force-close-on-scroll workaround that the previous hand-rolled positioning required)
+- **New dependency: `@floating-ui/dom`** - Added as a library dependency for `MenuButton` and `ContextMenu` positioning
 
-- **Vite Plugin: fluentuiIcons** - Smart icon bundling for production builds
-  - Dev mode: Serves icons directly from node_modules
-  - Build mode: Scans source files and copies only used icons to output
-  - Auto-detects `<Icon name="..." />` patterns in .svelte, .ts, .js files
-  - Config file support (`fluentui-icons.config.json`) for registering dynamic icons
-  - Configurable sizes, variants, and output path
-  - Import via `import { fluentuiIcons } from 'svelte-fluentui/vite'`
+## [1.0.0-rc12] - 2026-04-20
+
+### Changed
+- **Tabs / Tab — full custom Svelte rewrite** - Dropped the `<fluent-tabs>` / `<fluent-tab>` / `<fluent-tab-panel>` web-component wrappers in favor of a first-class Svelte implementation. The previous rewrite attempts (rc09 scroll clip, rc10 scrollbar styling, rc11 host-width cascade, wrap mode) were all losing cascade races against upstream shadow-DOM styles (`:host { display: grid; grid-template-columns: auto 1fr auto }` and `.tablist { width: max-content }`) — author `::part()` rules lost, JS-applied inline styles on shadow parts worked but felt fragile. Replaced with a pure Svelte + design-tokens implementation:
+  - **Public API unchanged** — `<Tabs activeId ontabchange ... childContent>` + `<Tab id label icon content>` usage keeps working exactly as before. `<Tab>` now renders no DOM of its own; it registers its props with the parent via context, and `<Tabs>` renders the real tab buttons + panels from the registered entries
+  - **Responsive modes work reliably** — `scroll` clips and scrolls within the container (hidden scrollbar), `wrap` flows tabs onto multiple rows (real flex-wrap), `menu` collapses overflowing tabs into a `⋯` button at the end of the strip that opens a floating menu of hidden tabs. Selecting a hidden tab swaps its position with the last-visible tab so the selection stays in the strip. Uses the same `fluent-menu`/`fluent-menu-item` styling as QuickGrid's context menu for visual consistency. The old `clip` mode was removed — `scroll` + `menu` cover every real-world need it did
+  - **Menu-mode ellipsis truncation** — when the next tab doesn't fully fit but there's ≥ 60px of remaining strip space, it's kept in the strip as the last visible tab and capped via `max-width`; the label truncates with `…` (icon + close button stay intact) rather than being kicked into the overflow menu. Edge case where the very first tab alone is wider than the strip also truncates rather than clipping raw
+  - **Menu `⋯` button pinned to the end of the strip** — via flex `margin-left: auto` (horizontal) / `margin-top: auto` (vertical) so its position doesn't shift with the width of the last-visible tab. Shadow tablist copy stays in flow so its natural width is measurable (`:not(.fluent-tab-shadow)` scopes the margin to the real button)
+  - **Measurement is feedback-loop-free** — `menu` mode uses an off-screen "shadow" tablist that renders every tab at natural width. `visibleCount` is computed by cumulative-summing shadow widths against the real tablist's `clientWidth`. Without the shadow, showing/hiding the overflow button would swing the measurement in a cycle
+  - **Scroll arrow buttons** — in `responsive="scroll"` mode, `‹` and `›` buttons appear at the ends automatically when there's overflow, and scroll by 80% of the tablist width on click. Hidden when the tablist fits. Absolute-positioned over the strip edges so toggling them doesn't change the tablist's `clientWidth` (which would itself feedback-loop)
+  - **Animated full-width active indicator** — a 2px bar that slides between tabs with a cubic-bezier `transform`/`width` transition (vs FluentUI's 20px static sub-tab micro-indicator). `translate(x, y)` on both axes so the indicator correctly tracks the active tab's row in `responsive="wrap"` multi-row layouts
+  - **Keyboard navigation** — `ArrowLeft`/`ArrowRight` (horizontal) or `ArrowUp`/`ArrowDown` (vertical), `Home`, `End`. Disabled tabs are skipped automatically
+  - **Vertical orientation** fully supported — strip on the left with a vertical border, indicator on the left edge. Long labels auto-ellipsis so one wide tab doesn't inflate the whole strip
+  - **`stripWidth` / `stripHeight` props** — cap the strip's cross-axis. Most useful in `orientation="vertical"` where the default is natural-width (widest label wins); `stripWidth="200px"` gives a predictable sidebar and each tab's label auto-ellipsises when needed
+  - **Swipe navigation** — horizontal-swipe on the tabpanels container (vertical-swipe in vertical orientation) navigates prev/next tab. Dominant-axis guard (`|Δmain| ≥ 50px` AND `|Δmain| ≥ |Δcross| × 1.5`) so scrolling panel content doesn't hijack the gesture; touches starting on interactive elements (`input`, `button`, `textarea`, `select`, links, contenteditable, ARIA `slider`/`spinbutton`) are ignored so form controls keep their gestures. Opt out with `swipe={false}`
+  - **Native `title` tooltip** — each tab button gets `title={tab.label}` so hover reveals the full text, especially useful for ellipsis-truncated labels
+  - **Read+write effect loop fixed in Tab registration** — `ctx.register()` reads the `tabs` $state array (for findIndex) before writing to it. Without isolation, Tab's `$effect` subscribes to `tabs` and then writes to it, producing `effect_update_depth_exceeded`. Fix: wrap `register`/`unregister` calls in `untrack(() => …)` so the prop reads in the effect body stay tracked (re-run on real prop changes) but the array reads inside register don't
+  - Deprecated `overflow={...}` prop — the dropdown-overflow feature was rarely used, not auto-populated from real overflow, and is superseded by `responsive="menu"`. Warns to the console if set
+- **Sidebar nav items no longer overlap Dialog overlay / Dialog** - `PositioningRegion.svelte` applied `z-index: var(--fluent-z-popover, 1060)` to the `.positioning-region` class globally. But that class is used in two modes: a portalled floating overlay (dropdowns, toolbars) *and* a plain static wrapper that `NavLink` / `NavExpander` render around every sidebar item. The static wrapper was inheriting the popover z-index, which put every sidebar link above the Dialog overlay (1040) and even above the Dialog itself (1050). Fix: scope the z-index rule to a new `.positioning-region-floating` class applied only to the portalled floating variant. Static wrappers are now plain layout wrappers with no stacking context, so modals/dialogs once again paint above the sidebar
+
+## [1.0.0-rc10] - 2026-04-16
+
+### Added
+- **QuickGrid column width control** - Three new per-column props on `Column<T>` plus a grid-level opt-in filler column, so columns can keep predefined widths instead of being justified across the table
+  - `minWidth?: string` - CSS `min-width` for the column. Any CSS length (`"80px"`, `"20%"`, `"10rem"`, `"40ch"`, ...)
+  - `maxWidth?: string` - CSS `max-width` for the column
+  - `autoWidth?: boolean` - Size column to its header content and prevent it from stretching. Implements the classic HTML-table `width: 1%; white-space: nowrap` header trick. Ignored if `width` is also set — use one or the other
+  - `width?: string` (existing) now JSDoc'd for consistency with the new props
+- **QuickGrid `fillerColumn` prop** (opt-in, default `false`) - Appends an empty trailing `<th>` / `<td>` to every row that absorbs any remaining horizontal space. Pair with `autoWidth` or explicit `width` on the other columns so the freed-up space goes into the filler instead of redistributing across the real columns. The filler cell has no padding, background, or interaction — it just exists to soak up width
+
+### Fixed
+- **Tabs `responsive="scroll"` no longer clips tab-panel content** - Horizontal-scroll overflow was applied to the whole `<fluent-tabs>` host in rc09, which wraps both the tab row *and* the tab panels. That meant `overflow-y: hidden` on the host also clipped popovers, dropdowns, tooltips, and other overlays rendered inside the tab content (a dropdown opened near the bottom of a tab panel would get cut off by the tab-row's overflow context). Moved the scroll onto `::part(tablist)` only — the host is now a normal block whose content area grows naturally, and only the tab strip itself scrolls when it exceeds the container
+- **Tabs scroll bar hidden by default** - The thin scrollbar that rendered under the active-tab underline in `responsive="scroll"` mode is now hidden (`scrollbar-width: none`). Scrolling still works via wheel, trackpad, touch, and keyboard — matching the tab-row UX in VS Code and Chrome. Removes the need for consumers to override `.fluent-tabs-wrapper.responsive-scroll { overflow: … }` in their own styles
+
+### Changed
+- **QuickGrid / GridCellEditor - debug logs removed** - Stripped 14 leftover `console.log` statements from the dropdown-editor flow (`[1]`–`[10]` in `GridCellEditor.svelte`) and the navigate-mode auto-edit prevention flow (`[QG1]`–`[QG4]` in `QuickGrid.svelte`). Real `console.error` handlers for option-loading and search failures are kept
+
+
+
+### Added
+- **Applications section** - New top-level docs section with real-life UI pattern examples
+  - New sidebar group "Applications" with overview page at `/applications`
+  - **Filter Card** (`/applications/filter-card`) - combines TextField (search), Select (category), and Autocomplete (multi-tag) filters in one card row driving a reactive QuickGrid
+  - **Order Form** (`/applications/order-form`) - cascading hardware/software order form. Selecting an order type (mobile / hardware / software) reveals a different branch of fields; some branches cascade further (e.g. Hardware → Computer reveals OS/RAM/storage/budget). Exercises nearly every form component: TextField, Textarea, Select, Option, Combobox, Autocomplete, NumberField, DatePicker, TimePicker, RadioGroup, Radio, Checkbox, Switch, InputFile, Button, Badge, Divider, Icon, Accordion, and the Toast service
+- **Autocomplete Ctrl+Space shortcut** - Open dropdown with all available options
+  - Press `Ctrl+Space` (or `⌘+Space` on Mac) in an Autocomplete input to force-open the dropdown showing all options minus already-selected ones
+  - Works in both synchronous (`options`) and async (`onoptionssearch`) modes
+  - New internal `showAllOptions()` helper usable for programmatic open
+- **TextField** - New `id` and `labelTemplate` props to match `Select` / `Autocomplete`
+- **Calendar** - Additional props from FluentUI Blazor FluentCalendar API
+  - `firstDayOfWeek` (0=Sunday…6=Saturday) overrides the culture's default week start
+  - `selectableDates` — inverse of `disabledDateFunc` (return `true` to allow); composes with `disabledDateFunc`
+  - `onPickerMonthChange` callback fires when the user navigates months/years via prev/next
+- **DatePicker** - Additional props from FluentUI Blazor FluentDatePicker API
+  - `disabledDateFunc` — pass-through to inner Calendar (composes with `minDate`/`maxDate`)
+  - `firstDayOfWeek` — pass-through to inner Calendar
+  - `autoClose` (default `true`) — close the popup on date select
+  - Bindable `open` + `onOpenChange` callback for controlled popup state
+  - `id` — so the `<label for="…">` associates with the text field
+  - `labelTemplate` snippet
+  - `openCalendarIconAriaLabel`, `title`
+  - Label now uses the shared `.fluent-label` class (consistent with TextField/Select/Autocomplete)
+- **TimePicker** - Additional props from FluentUI Blazor FluentTimePicker API
+  - `minTime` / `maxTime` (`HH:mm` or `HH:mm:ss`) — clamp valid times; apply is no-op when out of range
+  - `useAmPm` (nullable) — overrides `use24Hours` when explicitly set
+  - `secondStep` — increment for the seconds column
+  - `autoClose` (default `true`)
+  - Bindable `open` + `onOpenChange` callback for controlled popup state
+  - `id`, `labelTemplate`, `title`, `openClockIconAriaLabel`
+  - Label now uses the shared `.fluent-label` class
+- **Slider component** - Proper wrapper implementation (was previously a TODO stub with no props)
+  - Props: `id`, `value` (bindable number), `min`, `max`, `step`, `orientation`, `disabled`, `readonly`, `required`, `name`, `label`, `labelTemplate`, `ariaLabel`, `class`, `style`
+  - Callbacks: `onchange`, `oninput` (both receive numeric value)
+  - Two-way binding via `bind:value`, label uses shared `.fluent-label` class
+  - Keeps web component's string value in sync via element-property assignment
+- **Dialog** - Header / footer / action props to match FluentUI Blazor's FluentDialog visual layout
+  - `title` prop renders a heading (left side) alongside the close button (right side) in a header row
+  - `header` snippet for fully custom header content
+  - `footer` snippet for fully custom footer content
+  - `primaryAction` / `secondaryAction` props — `{label, appearance?, disabled?, onClick?}` shorthand for the common "OK / Cancel" pattern. `onClick` may return `false` to keep the dialog open after the click
+  - Footer alignment changed from split (`space-between`) to right-aligned (`flex-end`) to match Fluent visual conventions
+  - Existing `actions` snippet, `dismissable`/`dismissButtonText` still work; they now sit in the right-aligned footer alongside `primaryAction`/`secondaryAction`
+  - When `title`/`header` is omitted, the close X reverts to a floating top-right button (matching legacy behavior) instead of reserving an empty header strip — so old dialogs with their own `<h3>` in the body still look right
+- **Tabs responsive overflow** - New `responsive` prop on `Tabs` controls how the tab list handles widths wider than its container
+  - `"scroll"` (default): horizontal overflow with a thin scrollbar — tabs no longer overflow narrow containers
+  - `"wrap"`: tab rows wrap onto multiple lines
+  - `"clip"`: preserves FluentUI's upstream behavior (tablist grows to `max-content`) for backwards compatibility
+  - Implemented via `::part(tablist)` (fluent-tabs exposes `part="tablist"` on its shadow-root tab list), so the override ships automatically whenever the component is used — no SCSS import required. Previously the tablist had `width: max-content` hard-wired in the shadow DOM, forcing consumer apps to override it in their own styles
+  - Tabs stay compactly aligned at the start (not justified across the container) by default: the scroll/wrap modes use `max-width: 100%` on the host + `overflow-x: auto` so the tablist keeps its natural `max-content` width and only scrolls when it doesn't fit
+  - New `justify` boolean prop (default `false`) — when `true`, the tab list stretches to fill the available width so the tabs divide the row equally. Applies in `"scroll"` / `"wrap"` modes; in `"scroll"` mode it also disables the scrollbar since the list always fits by definition
+- **Global runtime API** - Package now registers `window.components["svelte-fluentui"]` on import (browser only), exposing `version()` so non-Svelte / console code can introspect the loaded version. Mirrors the pattern used by sister packages (e.g. `web-multiselect`)
+  - Also exported as `VERSION` from `svelte-fluentui` for direct import
+  - Auto-generated `src/lib/version.ts` is rewritten on each build by the new `scripts/pre-package.js` to keep it in sync with `package.json`
+- **`portal` action** - New public export (`import {portal} from "svelte-fluentui"`)
+  - Moves an element out of its current DOM position into another container (defaults to `document.body`) for the lifetime of the action
+  - Useful for any consumer-built overlay (custom dropdowns, popovers) that needs to escape ancestor stacking contexts
+  - Used internally by `Dialog`, `PositioningRegion`, and `Tooltip`
+
+### Changed
+- **Centralized z-index scale + portal-based overlays** - Replaced ad-hoc / hardcoded `z-index` values across components with the long-defined token scale, and routed all overlays (modal, popovers, tooltips) through `document.body` so the scale is honored regardless of where the consumer renders them
+  - New CSS variables exposed at `:root` (mirroring `$z-index-*` tokens): `--fluent-z-dropdown` (1000), `--fluent-z-sticky` (1020), `--fluent-z-fixed` (1030), `--fluent-z-modal-backdrop` (1040), `--fluent-z-modal` (1050), `--fluent-z-popover` (1060), `--fluent-z-tooltip` (1070), `--fluent-z-toast` (1080)
+  - New `portal` action exported from `svelte-fluentui` — moves an element to `document.body` (or any selector/element) for its lifetime, escaping ancestor stacking contexts
+  - `Dialog` overlay + `<fluent-dialog>` now portal to `<body>` and use `--fluent-z-modal-backdrop` / `--fluent-z-modal`
+  - `PositioningRegion` overlay portals to `<body>` and uses `--fluent-z-popover` (so dropdowns from inside a modal correctly render above it)
+  - `Tooltip` portals and uses `--fluent-z-tooltip`
+  - `Autocomplete`, `DatePicker`, `TimePicker`, `GridCellEditor`, `QuickGrid` (context menu, row connector) now consume `--fluent-z-popover` / `--fluent-z-dropdown`
+  - `TopNav` brand / mobile toggle / mobile sidebar use `--fluent-z-sticky` / `--fluent-z-fixed`
+  - `SiteSettings` Dialog no longer needs the `style="z-index: 10000"` workaround
+- **Selected fluent-tab z-index neutralized** - Blazor's `fluent-components.scss` ships `fluent-tab[aria-selected="true"] { z-index: 1 }`. Combined with parent stacking contexts that could elevate the tab above modals, this caused selected tabs to "shine through" dialogs. Override moved into `Tab.svelte`'s scoped style as `:global(fluent-tab[aria-selected="true"]) { z-index: auto !important }` so it ships automatically with the component (consumers who don't import our SCSS bundle were missing the previous override). Selected state remains visually obvious through font-weight/color
+- **Dialog Escape now handled globally** - Previously the keydown handler was wired only on the dialog element, so `Esc` was lost whenever focus drifted outside the dialog (e.g. user clicked the overlay). Now a single document-level `keydown` listener (capture phase) routes `Esc` to the topmost open Dialog instance, regardless of where focus lives. The listener is installed lazily when the first dialog opens and removed when the last one closes — no extra prop required, behavior is governed by the existing `closeOnEscape` (default `true`) and `onbeforeclose` (return `false` to veto)
+- **Tab spacing** - FluentUI's `<fluent-tab>` template is a single bare `<slot>` with no gap between children, so icon + label + badge render visually glued. `Tab.svelte` now ships `:global(fluent-tab) { display: inline-flex; align-items: center; gap: 0.5rem }` as part of the component so any combination of icon / label / badge / close button breathes automatically
+- **Z-index CSS variables now have fallbacks** - All `z-index: var(--fluent-z-*)` declarations across components now include the absolute fallback (`var(--fluent-z-modal-backdrop, 1040)` etc.). Consumers who don't import `theme.scss` (so the variables aren't defined) still get correct stacking instead of `z-index: auto`
+- **Unified form label styling** - TextField, Select, Autocomplete, Radio, and RadioGroup now share a single canonical `.fluent-label` class
+  - New global `.fluent-label` style in `components.scss` (0.875rem / weight 600 / neutral foreground / 0.25rem bottom margin)
+  - `TextField` now renders its own `<label class="fluent-label" for={id}>` above `<fluent-text-field>` instead of slot-delegating the label text to the web component's internal label
+  - `Autocomplete` label class renamed from `.autocomplete-label` to `.fluent-label`; local styles removed
+  - `Textarea` label now uses `.fluent-label` class for consistency
+  - Result: all form fields now have visually identical labels
+- **Autocomplete height parity with fluent-text-field / fluent-select**
+  - Outer `.autocomplete-input-container` pinned to `min-height` using FluentUI `--base-height-multiplier × --design-unit` tokens (32px default), with `box-sizing: border-box`
+  - Inline-mode container padding reduced from `4px 8px` to `0 8px` to avoid stacking with inner input padding
+  - Native input vertical padding removed (`4px 0` → `0`); non-inline override still provides `4px 8px`
+  - Inline-mode input stretches to container height via `align-self: stretch`
+  - Net effect: autocomplete total height is now exactly 32px (was ~37.33px), matching FluentUI text field and select
+- **Autocomplete label spacing** - Removed redundant `gap: 0.5rem` on `.fluent-autocomplete` wrapper; label-to-input spacing now comes solely from the shared `.fluent-label` margin, matching the other form components
+
+### Fixed
+- **npm audit — cookie vulnerability** - Added an `overrides` entry in the workspace root `package.json` pinning `cookie` to `^0.7.2` (the patched version per [GHSA-pxg6-pf52-xh8x](https://github.com/advisories/GHSA-pxg6-pf52-xh8x)). SvelteKit upstream still pulls `cookie@^0.6.0` transitively, so this is the cleanest way to flush the vulnerability without waiting for an upstream release. After a clean `npm install`, audit now reports 0 vulnerabilities
+- **DatePicker / TimePicker popup positioning** - Calendar/time popup no longer renders in the top-left corner of the viewport
+  - Root cause: `bind:this` on a `<TextField>` Svelte component returned the component instance, not a DOM element, so `PositioningRegion` couldn't compute anchor coordinates
+  - Both pickers now bind `PositioningRegion`'s `anchor` to their own `<div class="*-wrapper">` DOM element
+- **DatePicker / TimePicker popup width** - Popup now sizes to its content instead of stretching to the input's width
+  - `PositioningRegion` gained a `matchWidth?: boolean` prop (default `true`, preserving existing behavior for combobox/select dropdowns)
+  - DatePicker and TimePicker pass `matchWidth={false}` so the calendar / clock panels use their natural width
+- **DatePicker / TimePicker outside-click and Escape dismiss** - Popups now close when clicking outside the field/popup or pressing `Escape`
+- **DatePicker / TimePicker end-slot button layout** - Calendar/clock icon and clear (×) button were stacking vertically, making the × button spill below the input
+  - Wrapped both buttons in a `.end-buttons` inline-flex container with `gap: 0.25rem`
+- **Icon names** - Fixed PascalCase icon names that should be lowercase (icons rendered as ⚠️)
+  - `"Person"` → `"person"` in Autocomplete, Listbox, and Combobox demo pages
+  - `"Money"` → `"money"` and `"Calculator"` → `"calculator"` in NumberField demo page
+  - `"Globe"` → `"globe"` in Search demo page
+  - Also fixed string `size="16"` to numeric `size={16}` in affected usages
+- **Vite plugin icon detection** - `extractIconNames` now matches `icon:` and `iconName:` object properties in addition to `name:`, fixing sidebar icons not being copied to production builds
+- **Dockerfile** - Added missing `README.md` to root COPY step, fixing `post-package.js` build failure
+
+### Documentation
+- **References section** - Added missing References links to Button, Select, and Icon demo pages
+- **API documentation audit** - Added Properties, Callbacks, and Slots tables to all component demo pages that were missing them:
+  - Pages missing all three: Button, DatePicker, TimePicker, Toast Service, QuickGrid, QuickGrid Editable, QuickGrid Context Menu, NumberField, Radio, RadioGroup, Search, Grid, MultiSplitter
+  - Pages missing Callbacks and/or Slots: Autocomplete, Checkbox, Icon, InputFile, Listbox, Combobox, Card, Tabs, Toast, Toolbar, Tooltip, AppBar, Navigation, BodyContent, Layout, Spacer
+
+### Added
+- **Select Component** - Enhanced props and functionality to match FluentUI Blazor API
+  - New props: `title`, `width`, `height`, `maxVisibleOptions`, `indicatorTemplate`
+  - `width`/`height` props for dimension control via inline styles
+  - `maxVisibleOptions` prop for opt-in height constraint in `multiple` select mode
+    - When explicitly set, limits visible options and enables scrolling
+    - Uses scroll container wrapper to preserve FluentUI borders
+    - Automatically measures option row height and sets container height
+    - Default behavior: show all options with auto-calculated height (no constraint)
+  - `indicatorTemplate` slot for custom dropdown indicator/arrow
+  - `onchange` callback now returns `selectedOption` (display text) in addition to `value` and `data`
+  - Comprehensive docs page with 12 examples:
+    - Multiple select: all visible, with maxVisibleOptions, with selected/disabled options
+    - Single select (default dropdown)
+    - Appearances (outline, filled)
+    - Disabled states (disabled select, disabled option)
+    - Forced position (above/below)
+    - Width control (full width, fixed width)
+    - Long list with built-in scrolling
+    - Two-way binding with `bind:value`
+    - Data binding with `onchange` and Option `data` prop
+    - Dynamic options from array using `#each`
+  - API reference tables for Select props, Option props, callbacks, and slots
+
+- **Option Component** - Enhanced props to match FluentUI Blazor API
+  - New props: `class`, `style`, `icon` (slot)
+  - `icon` slot renders before option text for icon support in dropdowns
+  - Removed console.log debug statement
+
+- **QuickGrid Native Dropdown Editors** - Built-in Select, Combobox, and Autocomplete editors for grid cells
+  - **Native Select**: Click/Enter opens dropdown, arrow keys navigate, letter keys jump to matching option
+  - **Native Combobox**: Type to filter static options, arrow keys navigate filtered list
+  - **Native Autocomplete**: Type to trigger async search with debounce, can commit freeform text
+  - All editors use `PositioningRegion` for dropdown positioning
+  - FluentUI-styled dropdowns with proper theming and dark mode support
+  - Keyboard navigation: ArrowUp/Down navigate, Enter selects, Escape closes/cancels, Tab commits
+  - `initialSearchQuery` support for typing-to-edit in navigate mode (all dropdown types)
+
+- **QuickGrid dropdownShowOnFocus Prop** - Auto-enter edit mode for dropdown editors when cell is focused
+  - Configurable via `dropdownShowOnFocus` prop (default: true)
+  - Select, Combobox, and Autocomplete columns show editor immediately on cell focus
+  - Eliminates need for double-click or Enter to start editing dropdown cells
+
+- **QuickGrid Column Header Info** - Info icons with tooltips for column headers
+  - New `headerInfo` column property displays ⓘ icon next to header title
+  - Uses FluentUI Icon component (`info` icon with accent color)
+  - Hover tooltip shows the info text
+
+- **QuickGrid Draft Row Editing** - Row-level draft editing for validation workflows
+  - When editing starts, row is cloned to preserve original values
+  - Invalid values are shown in the cell (not reverted)
+  - `RowChangeDetail` now includes both `row` (original) and `draftRow` (with user changes)
+  - Enables "show what user typed even if invalid" UX pattern
+
+- **AbortController Support for Autocomplete Search** - Cancel stale search requests
+  - `onSearch` callback now receives optional `AbortSignal` parameter
+  - Previous in-flight requests are automatically aborted when user types more
+  - Prevents stale results from appearing (e.g., typing "cz" won't show "c" results)
+  - Proper cleanup when dropdown closes
+
+- **QuickGrid Row Toolbar** - Enhanced floating toolbar with custom actions and multi-row layout
+  - Renamed from `rowActions` to `rowToolbar` (backwards compatible aliases maintained)
+  - New props: `showRowToolbar`, `rowToolbar`, `ontoolbarclick`
+  - Custom toolbar items with: `id`, `icon`, `title`, `label`, `row`, `group`, `danger`, `disabled`, `onclick`
+  - Multi-row layout: items can be assigned to different rows (`row: 1` closest to grid row)
+  - Groups with dividers: items with different `group` numbers separated by `|` divider
+  - Async onclick support: custom handlers can be async functions
+  - Predefined types still work: `'add'`, `'delete'`, `'duplicate'`, `'moveUp'`, `'moveDown'`
+  - Backwards compatible: string shorthand (`['add', 'delete']`) still works
+  - RTL support for mirrored layouts
+
+- **QuickGrid Toolbar Trigger Modes** - Control how row toolbar is shown
+  - New `toolbarTrigger` prop with three modes: `'hover'` (default), `'click'`, `'button'`
+  - **Hover mode**: Show on mouse hover, hide on mouse leave (existing behavior)
+  - **Click mode**: Show/hide by clicking on the row (toggle)
+  - **Button mode**: Adds dedicated actions column with ⋮ button to show/hide toolbar
+  - Toolbar auto-hides on scroll in hover mode
+
+- **QuickGrid Toolbar Alignment** - Vertical alignment option for row toolbar
+  - New `toolbarAlign` prop: `'center'` (default) or `'top'`
+  - `'top'` aligns first toolbar row with the grid row for consistent visual appearance
+
+- **QuickGrid Context Menu** - Right-click context menu with cell/row awareness
+  - New `contextMenu` prop accepts array of menu item configurations
+  - New `oncontextmenuopen` callback fired when menu opens with full context
+  - Uses FluentUI `fluent-menu` / `fluent-menu-item` components for native styling
+  - Menu items support:
+    - `label`: Static string or dynamic function `(context) => string`
+    - `icon`: Optional emoji or icon string
+    - `disabled`: Boolean or function `(context) => boolean`
+    - `visible`: Boolean or function `(context) => boolean`
+    - `danger`: Red styling for destructive actions
+    - `dividerBefore`: Add divider line before item
+    - `onclick`: Handler receives full context (row, rowIndex, colIndex, column, cellValue)
+  - Auto-repositions to stay within viewport boundaries
+  - Closes on: click outside, Escape key, scroll
+
+- **Radio/RadioGroup Components** - Enhanced props to match FluentUI Blazor API
+  - **RadioGroup** new props: `label`, `labelTemplate`, `ariaLabel`, `orientation`, `required`, `autofocus`, `placeholder`, `class`, `style`, `onchange`
+  - **Radio** new props: `label`, `labelTemplate`, `ariaLabel`, `name`, `readonly`, `disabled`, `required`, `checked`, `autofocus`, `class`, `style`
+  - Context-based communication between RadioGroup and Radio for proper state management
+  - Uses spread pattern for all optional attributes to prevent `null`/`undefined` values causing issues
+  - Separate demo pages: `/components/forms/radio` and `/components/forms/radiogroup`
+  - RadioGroup page includes: Default, In a toolbar, States (readonly/disabled), Label outside group, With preset examples
+
+- **Search Component** - Enhanced props and functionality to match FluentUI Blazor API
+  - New props: `immediate`, `immediateDelay`, `dataList`, `displayName`, `width`, `height`, `title`
+  - New slot props: `start` and `end` for custom icons inside the search field
+  - `immediate` mode with optional `immediateDelay` for debounced search callbacks
+  - `focusAsync(preventScroll?)` method exposed for programmatic focus
+  - Default `appearance="outline"` for proper bordered input styling
+  - Uses spread pattern for all optional attributes to prevent `null` values causing issues
+  - Comprehensive docs page with examples:
+    - Basic (with/without label), Interactive search with results
+    - Interactive with debounce (500ms delay example)
+    - Immediate mode toggle with/without delay
+    - States: Full Width, Placeholder, Required, Disabled, Read only
+    - Icons: start/end slot support
+    - Focus: Autofocus and FocusAsync button example
+    - Filled style variants
+    - Miscellaneous: minlength/maxlength validation
+    - Placeholders and autofill prevention reference table
+
+### Changed
+- **Replaced `live-server` with `five-server`** - Maintained fork with modern dependencies
+  - Eliminates 6 vulnerabilities from outdated `braces`/`chokidar`/`micromatch` in `live-server`
+  - Upgraded `@sveltejs/adapter-auto` from `^6.1.1` to `^7.0.0` to unblock `npm audit fix`
+  - Reduced total vulnerabilities from 24 to 4 (remaining 4 are upstream `@sveltejs/kit` → `cookie` issue)
+
+- **GridCellEditor Refactored** - Replaced external `Autocomplete` component with native implementations
+  - Removed dependency on `Autocomplete.svelte` for grid editing
+  - Cell editors now feel native to the grid with consistent styling
+  - Arrow keys properly captured by dropdown when open (don't navigate grid)
+  - No flash of initial options when entering edit mode by typing (FOAC fix)
+
+### Fixed
+- **Select/Combobox Async Options** - Value not applied when options load asynchronously
+  - `fluent-select` and `fluent-combobox` web components only evaluate `current-value` at init
+  - If options are rendered after mount (e.g., from API call), the value prop was ignored
+  - Added `MutationObserver` to detect when child options are added and re-apply the value
+  - Consumers no longer need `{#key}` workaround to force re-render after async data loads
+  - Autocomplete not affected (pure Svelte component, no web component value-matching issue)
+
+- **Tooltip Component** - Complete rewrite to pure Svelte implementation
+  - Removed `fluent-tooltip` web component dependency
+  - Uses FluentUI design tokens (`--elevation-shadow-tooltip`, `--control-corner-radius`, etc.)
+  - Added fade in/out animation (opacity + scale transition)
+  - **Auto-positioning with flip logic** (Floating UI style):
+    - Automatically flips to opposite side when preferred position doesn't fit viewport
+    - Priority: preferred → opposite → whichever has more space
+    - Arrow tracks anchor position when tooltip is shifted
+  - **Scroll/resize tracking**: Tooltip repositions on scroll and window resize
+  - **Anchor visibility detection**: Tooltip fades out when anchor scrolls out of viewport
+  - Fixed demo page: removed bold text, corrected position type documentation
+
+- **QuickGrid Text Editor Arrow Keys** - ArrowLeft/ArrowRight now only move cursor in text inputs
+  - TextField, NumberField, Textarea: Arrow keys move text cursor, never navigate cells
+  - User must use Tab/Enter to leave cell (prevents accidental navigation)
+  - Select/Combobox/Checkbox: Arrow keys still navigate cells immediately
+  - ArrowUp/ArrowDown: Still navigate rows for all editor types
+
+- **QuickGrid Arrow Key Navigation** - Arrow keys no longer move grid focus when dropdown is open
+  - Added `e.stopPropagation()` to prevent event bubbling to grid
+  - QuickGrid's `handleEditorKeyDownInNavigateMode` now skips arrow key handling for dropdown editors
+- **QuickGrid Double-Click in Navigate Mode** - Double-click now properly enters edit mode
+  - Fixed `handleCellDblClick` to work with both "dblclick" and "navigate" edit triggers
+- **Dropdown Click-Outside Handling** - Clicking dropdown options no longer triggers blur/commit
+  - Added `onmousedown={(e) => e.preventDefault()}` to prevent focus loss when clicking options
+  - Changed from `onblur` to `onfocusout` (blur doesn't bubble, focusout does)
+- **QuickGrid Focus State Cleanup** - Cell focus border now clears when clicking outside the grid
+  - Added `handleGridFocusOut` to clear `focusedCell` when focus leaves the grid
+  - Prevents "stuck" focus border when clicking outside after editing
+- **Dropdown Scroll Blocking** - Page no longer scrolls when scrolling inside dropdown
+  - Added wheel event handler to block page scroll when dropdown is open
+  - Allows scrolling within dropdown options list
+- **Dropdown Width Matching** - Dropdown width now matches cell width exactly
+  - Dropdown anchors to parent `<td>` element instead of editor element
+  - Ensures consistent width regardless of cell padding
+- **Autocomplete Debounce** - Proper 300ms debounce for async search
+  - Initial options not shown when user starts editing by typing
+  - Search only triggered after debounce delay
+- **QuickGrid Row Action Connector Arrow** - Improved bracket-shaped connector for row action popup
+  - Changed from L-shape to `[` bracket shape pointing to row's left side (middle height)
+  - Arrow stays visible once row has moved (persists when returning to original position)
+  - Back-loop arrow (75% to 25% height) shown when popup overlaps the target row
+  - Proper horizontal spacing for arrow head (no overlap with vertical line)
+  - RTL support with mirrored `]` bracket shape
+
+- **Dialog Overlay** - Dialog no longer allows interaction with elements behind it
+  - Added a proper overlay `<div>` that covers the entire viewport when dialog is visible
+  - Blocks pointer events on sidebar, tabs, and all background content
+  - Clicking the overlay closes the dialog (unless `preventClose` is set)
+  - Replaced unreliable CSS `::before` pseudo-element approach that didn't block clicks through web component shadow DOM
 
 ## [1.0.0-rc05] - 2025-11-24 - PUBLISHED
 

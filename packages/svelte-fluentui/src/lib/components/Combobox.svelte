@@ -37,6 +37,7 @@
 		width?: string
 		height?: string
 		multiple?: boolean
+		minSearchLength?: number
 		onchange?: (value: SelectedValue) => void
 	}
 
@@ -66,6 +67,7 @@
 		width = undefined,
 		height = undefined,
 		multiple = false,
+		minSearchLength = undefined,
 		onchange = undefined
 	}: Props = $props()
 
@@ -211,6 +213,29 @@
 		if (element && position) {
 			(element as any).position = position
 		}
+	})
+
+	// Gate the dropdown when the typed text is shorter than minSearchLength.
+	// Why: against large/async option sets, opening on a single character like "a"
+	// is wasteful (UX noise) or expensive (triggers consumer API calls).
+	$effect(() => {
+		if (!element || !minSearchLength || minSearchLength <= 0) return
+
+		const el = element as any
+
+		function enforce() {
+			// Run after fluent-combobox has applied its own open state for this event.
+			queueMicrotask(() => {
+				if (!element) return
+				const typed = (el.value ?? "") as string
+				if (typed.length > 0 && typed.length < (minSearchLength ?? 0) && el.open) {
+					el.open = false
+				}
+			})
+		}
+
+		element.addEventListener("input", enforce)
+		return () => element?.removeEventListener("input", enforce)
 	})
 </script>
 

@@ -11,6 +11,11 @@
 		spacing?: number
 		justify?: JustifyContent
 		adaptiveRendering?: boolean
+		// When set, switches from 12-column flex mode to CSS grid mode:
+		// `repeat(columns, 1fr)` tracks with a fixed `gap`. Children no longer
+		// need xs/sm/md breakpoint props; each cell is an equal column.
+		columns?: number
+		gap?: string
 		onBreakpointEnter?: (size: GridItemSize) => void
 		class?: string
 		style?: string
@@ -21,6 +26,8 @@
 		spacing = 3,
 		justify = "flex-start",
 		adaptiveRendering = false,
+		columns = undefined,
+		gap = undefined,
 		onBreakpointEnter = undefined,
 		class: className = "",
 		style = ""
@@ -75,8 +82,11 @@
 	<div
 		bind:this={gridElement}
 		class="fluent-grid"
-		style:justify-content={justify}
-		data-spacing={spacing}
+		class:columns-mode={columns != null}
+		style:grid-template-columns={columns != null ? `repeat(${columns}, minmax(0, 1fr))` : null}
+		style:gap={columns != null ? (gap ?? "1rem") : null}
+		style:justify-content={columns != null ? null : justify}
+		data-spacing={columns != null ? null : spacing}
 	>
 		{@render children?.()}
 	</div>
@@ -88,6 +98,14 @@
 		display: flex;
 		flex-wrap: wrap;
 		box-sizing: border-box;
+	}
+
+	/* CSS grid mode — activated by the `columns` prop. Cells are sized by
+	   `grid-template-columns`, so flex-basis/max-width rules on children are
+	   inert here and can't steal space based on content width. */
+	.fluent-grid.columns-mode {
+		display: grid;
+		margin: 0;
 	}
 
 	/* Spacing variations */

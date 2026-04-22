@@ -12,11 +12,42 @@
 		native: string;
 	};
 
+	// Bigger list with shared first letters so type-ahead (e.g. pressing "s"
+	// multiple times) has something to cycle through.
 	const languages: Language[] = [
-		{ id: 1, name: "English", code: "en", native: "English" },
-		{ id: 2, name: "Czech", code: "cs", native: "Čeština" },
-		{ id: 3, name: "German", code: "de", native: "Deutsch" },
-		{ id: 4, name: "Spanish", code: "es", native: "Español" }
+		{ id: 1,  name: "Arabic",     code: "ar", native: "العربية" },
+		{ id: 2,  name: "Bengali",    code: "bn", native: "বাংলা" },
+		{ id: 3,  name: "Catalan",    code: "ca", native: "Català" },
+		{ id: 4,  name: "Chinese",    code: "zh", native: "中文" },
+		{ id: 5,  name: "Croatian",   code: "hr", native: "Hrvatski" },
+		{ id: 6,  name: "Czech",      code: "cs", native: "Čeština" },
+		{ id: 7,  name: "Danish",     code: "da", native: "Dansk" },
+		{ id: 8,  name: "Dutch",      code: "nl", native: "Nederlands" },
+		{ id: 9,  name: "English",    code: "en", native: "English" },
+		{ id: 10, name: "Estonian",   code: "et", native: "Eesti" },
+		{ id: 11, name: "Finnish",    code: "fi", native: "Suomi" },
+		{ id: 12, name: "French",     code: "fr", native: "Français" },
+		{ id: 13, name: "German",     code: "de", native: "Deutsch" },
+		{ id: 14, name: "Greek",      code: "el", native: "Ελληνικά" },
+		{ id: 15, name: "Hebrew",     code: "he", native: "עברית" },
+		{ id: 16, name: "Hindi",      code: "hi", native: "हिन्दी" },
+		{ id: 17, name: "Hungarian",  code: "hu", native: "Magyar" },
+		{ id: 18, name: "Italian",    code: "it", native: "Italiano" },
+		{ id: 19, name: "Japanese",   code: "ja", native: "日本語" },
+		{ id: 20, name: "Korean",     code: "ko", native: "한국어" },
+		{ id: 21, name: "Norwegian",  code: "no", native: "Norsk" },
+		{ id: 22, name: "Polish",     code: "pl", native: "Polski" },
+		{ id: 23, name: "Portuguese", code: "pt", native: "Português" },
+		{ id: 24, name: "Romanian",   code: "ro", native: "Română" },
+		{ id: 25, name: "Russian",    code: "ru", native: "Русский" },
+		{ id: 26, name: "Serbian",    code: "sr", native: "Српски" },
+		{ id: 27, name: "Slovak",     code: "sk", native: "Slovenčina" },
+		{ id: 28, name: "Slovenian",  code: "sl", native: "Slovenščina" },
+		{ id: 29, name: "Spanish",    code: "es", native: "Español" },
+		{ id: 30, name: "Swedish",    code: "sv", native: "Svenska" },
+		{ id: 31, name: "Turkish",    code: "tr", native: "Türkçe" },
+		{ id: 32, name: "Ukrainian",  code: "uk", native: "Українська" },
+		{ id: 33, name: "Vietnamese", code: "vi", native: "Tiếng Việt" }
 	];
 
 	let selectedLanguageValue = $state("1");

@@ -1,14 +1,6 @@
 <script lang="ts">
 	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui";
-
-	// Sample data - songs
-	const songs = [
-		{ value: "1", label: "Happy Birthday" },
-		{ value: "2", label: "Jingle Bells" },
-		{ value: "3", label: "Amazing Grace" },
-		{ value: "4", label: "Twinkle Twinkle" },
-		{ value: "5", label: "Silent Night" }
-	]
+	import { songs } from "$lib/demo-data/datasets";
 
 	// Sample data - sizes
 	const sizes = [
@@ -76,6 +68,7 @@
 	let callbackValue = $state<string[]>([])
 	let callbackMessage = $state<string>("")
 	let diacriticsValue = $state<string[]>([])
+	let minSearchValue = $state<string[]>([])
 
 	// Callback handler example
 	function handleSelectionChange(value: string[]) {
@@ -96,6 +89,7 @@
 		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the combobox"},
 		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
 		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
+		{name: "minSearchLength", type: "number", default: "undefined", description: "Keep dropdown closed until the typed text reaches this length. Useful with large/async option sets to avoid opening on a single character."},
 		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
 		{name: "appearance", type: '"outline" | "filled"', default: "outline", description: "Visual style"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disable the combobox"},
@@ -319,6 +313,22 @@
 			<Combobox id="diacritics" bind:value={diacriticsValue} options={namesWithDiacritics} autocomplete="list" width="300px" />
 			<small>Selected: {diacriticsValue[0] ? namesWithDiacritics.find(n => n.value === diacriticsValue[0])?.label : "None"}</small>
 		</Stack>
+	</Card>
+
+	<!-- Minimum Search Length -->
+	<Card>
+		<h3>Minimum search length</h3>
+		<p>Use <code>minSearchLength</code> to keep the dropdown closed until the user has typed at least N characters. Useful against large or async option sets where opening on a single character would be wasteful.</p>
+		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>minSearchLength={2}</strong>
+					<small style="color: var(--neutral-foreground-hint);">Type one character — dropdown stays closed. Type a second — it opens.</small>
+					<Combobox id="min-search" bind:value={minSearchValue} options={namesWithDiacritics} autocomplete="list" minSearchLength={2} width="300px" />
+					<small>Selected: {minSearchValue[0] ? namesWithDiacritics.find(n => n.value === minSearchValue[0])?.label : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
 	</Card>
 
 	<!-- List Examples -->
