@@ -31,3 +31,15 @@
 	gap: 1rem;
 	align-items: center;
 }
+
+// Demo-page example subsections: every h3 inside a component demo page
+// gets breathing room above it so consecutive examples don't sit flush.
+// `.content` is the main-content wrapper in +layout.svelte that every
+// demo page renders inside.
+.content h3 {
+	margin-top: 2rem;
+}
+
+.content h3:first-of-type {
+	margin-top: 0.5rem;
+}
