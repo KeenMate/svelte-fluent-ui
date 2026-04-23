@@ -55,6 +55,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>TextArea</h1>
 
+	<p>
+		A multi-line text input that wraps the <code>&lt;fluent-text-area&gt;</code> element, with outline
+		and filled appearances and standard form integration.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

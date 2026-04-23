@@ -55,6 +55,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Dialog</h1>
 
+	<p>
+		A modal or non-modal overlay that wraps the <code>&lt;fluent-dialog&gt;</code> element, with focus
+		trapping, dismiss behavior, preset sizes, and an actions slot for footer buttons.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

@@ -43,6 +43,12 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>DataGrid</h1>
 
+	<p>
+		A low-level grid layout that wraps the <code>&lt;fluent-data-grid&gt;</code>,
+		<code>&lt;fluent-data-grid-row&gt;</code>, and <code>&lt;fluent-data-grid-cell&gt;</code> elements.
+		For a higher-level component with sorting, filtering, and pagination use <code>QuickGrid</code> instead.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

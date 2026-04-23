@@ -29,6 +29,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Body content</h1>
 
+	<p>
+		The main content region inside a <code>Layout</code>, sitting between the header/navigation and
+		the footer. Inspired by the FluentUI Blazor BodyContent component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

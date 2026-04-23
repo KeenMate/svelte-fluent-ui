@@ -62,6 +62,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Paginator</h1>
 
+	<p>
+		A standalone pagination control with first/previous/next/last buttons and customizable summary
+		templates. Inspired by the FluentUI Blazor Paginator component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

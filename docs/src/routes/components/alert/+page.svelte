@@ -42,6 +42,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Alert</h1>
 
+	<p>
+		A contextual banner that displays informational, success, warning, or error messages with an optional
+		dismiss action. Inspired by the FluentUI Blazor MessageBar component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

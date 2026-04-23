@@ -38,6 +38,12 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Breadcrumb</h1>
 
+	<p>
+		A navigation trail that shows the user's location within a hierarchy. Wraps the
+		<code>&lt;fluent-breadcrumb&gt;</code> and <code>&lt;fluent-breadcrumb-item&gt;</code> elements with
+		configurable separators between items.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

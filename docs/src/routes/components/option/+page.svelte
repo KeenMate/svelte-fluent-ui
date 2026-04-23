@@ -39,6 +39,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Option</h1>
 
+	<p>
+		A single selectable item that wraps the <code>&lt;fluent-option&gt;</code> element, used inside
+		<code>Listbox</code>, <code>Combobox</code>, and <code>Select</code> components.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

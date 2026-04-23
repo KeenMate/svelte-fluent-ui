@@ -53,6 +53,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Radio Group</h1>
 
+	<p>
+		A container for <code>Radio</code> buttons that wraps the <code>&lt;fluent-radio-group&gt;</code>
+		element and enforces single-selection semantics with keyboard navigation between options.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

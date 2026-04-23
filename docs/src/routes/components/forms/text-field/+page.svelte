@@ -65,6 +65,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Text field</h1>
 
+	<p>
+		A single-line text input that wraps the <code>&lt;fluent-text-field&gt;</code> element, supporting
+		multiple input types, outline and filled appearances, and standard form integration.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

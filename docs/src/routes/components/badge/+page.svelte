@@ -35,6 +35,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Badge</h1>
 
+	<p>
+		A small visual indicator that wraps the <code>&lt;fluent-badge&gt;</code> element, used to highlight
+		status, counts, or labels next to other content.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

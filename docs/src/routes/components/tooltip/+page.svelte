@@ -37,6 +37,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Tooltip</h1>
 
+	<p>
+		A floating hint anchored to another element, shown on hover/focus with configurable position,
+		delay, and maximum width. Wraps the <code>&lt;fluent-tooltip&gt;</code> element.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

@@ -29,6 +29,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Spacer</h1>
 
+	<p>
+		A utility component that adds fixed or flexible empty space between siblings in a <code>Stack</code>
+		or flex container. Inspired by the FluentUI Blazor Spacer component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

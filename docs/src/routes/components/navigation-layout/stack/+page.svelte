@@ -35,6 +35,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Stack</h1>
 
+	<p>
+		A flexbox-based container that arranges children vertically or horizontally with configurable gap,
+		alignment, and wrapping — the go-to building block for one-dimensional layouts.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

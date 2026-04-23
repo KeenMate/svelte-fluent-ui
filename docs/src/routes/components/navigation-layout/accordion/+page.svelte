@@ -52,6 +52,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Accordion</h1>
 
+	<p>
+		A stack of collapsible panels that wraps the <code>&lt;fluent-accordion&gt;</code> and
+		<code>&lt;fluent-accordion-item&gt;</code> elements, with single or multiple-expand modes.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

@@ -262,14 +262,16 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Toast Service</h1>
 
+	<p>
+		A programmatic toast notification system with FluentUI styling. Add <code>&lt;ToastContainer /&gt;</code>
+		once in your layout, then call <code>toast.success()</code> from anywhere. For inline notifications see
+		the declarative <code>Toast</code> component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
 			<a href="https://www.fluentui-blazor.net/MessageBar" target="_blank" rel="noopener noreferrer">FluentUI Blazor MessageBar</a>
-		</p>
-		<p>
-			A programmatic toast notification system with FluentUI styling.
-			Add <code>&lt;ToastContainer /&gt;</code> once in your layout, then call <code>toast.success()</code> from anywhere.
 		</p>
 	</Card>
 

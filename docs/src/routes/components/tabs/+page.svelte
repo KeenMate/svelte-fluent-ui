@@ -96,6 +96,12 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Tabs</h1>
 
+	<p>
+		A tabbed interface built on <code>&lt;fluent-tab&gt;</code> with horizontal/vertical orientations,
+		overflow handling (scroll, wrap, or ellipsis menu), closable and editable tabs, and optional
+		swipe navigation between panels.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

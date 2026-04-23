@@ -36,6 +36,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Card</h1>
 
+	<p>
+		A content container that groups related information with FluentUI styling, padding, and surface
+		treatment. Inspired by the FluentUI Blazor Card component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

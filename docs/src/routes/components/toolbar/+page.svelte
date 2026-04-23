@@ -34,6 +34,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Toolbar</h1>
 
+	<p>
+		A horizontal container that wraps the <code>&lt;fluent-toolbar&gt;</code> element and groups related
+		controls — buttons, menus, dividers — with keyboard navigation between them.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

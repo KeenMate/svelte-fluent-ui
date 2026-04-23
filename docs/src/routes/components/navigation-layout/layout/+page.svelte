@@ -33,6 +33,12 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Layout</h1>
 
+	<p>
+		A page-level flex container that arranges <code>Header</code>, <code>AppBar</code>,
+		<code>BodyContent</code>, and <code>Footer</code> along a horizontal or vertical axis. Inspired by
+		the FluentUI Blazor Layout component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

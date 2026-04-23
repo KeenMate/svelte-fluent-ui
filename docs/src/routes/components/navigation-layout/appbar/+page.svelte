@@ -56,6 +56,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>AppBar</h1>
 
+	<p>
+		A persistent application bar of icon-and-label items rendered vertically or horizontally, typically
+		used for top-level navigation. Inspired by the FluentUI Blazor AppBar component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

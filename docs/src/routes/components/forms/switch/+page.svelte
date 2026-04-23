@@ -48,6 +48,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Switch</h1>
 
+	<p>
+		A two-state toggle that wraps the <code>&lt;fluent-switch&gt;</code> element, with optional
+		checked/unchecked labels and standard form integration.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

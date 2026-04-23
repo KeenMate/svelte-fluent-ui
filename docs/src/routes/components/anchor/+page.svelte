@@ -50,6 +50,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Anchor</h1>
 
+	<p>
+		A styled hyperlink that wraps the <code>&lt;fluent-anchor&gt;</code> element, supporting multiple visual
+		appearances and optional start/end icon slots while behaving like a standard anchor.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

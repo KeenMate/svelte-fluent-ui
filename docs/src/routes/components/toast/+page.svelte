@@ -55,6 +55,12 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Toast (Declarative Component)</h1>
 
+	<p>
+		A notification card with title, subtitle, timestamp, and primary/secondary actions, rendered
+		declaratively in place. Inspired by the FluentUI Blazor Toast component. For programmatic toasts
+		triggered from anywhere, see <code>ToastService</code>.
+	</p>
+
 	<Card>
 		<p>
 			<strong>ℹ️ Note:</strong> This is the declarative <code>&lt;Toast&gt;</code> component for manual state management.

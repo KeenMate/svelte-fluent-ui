@@ -81,6 +81,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Calendar</h1>
 
+	<p>
+		A date picker displayed inline, with single, multiple, and range selection modes, disabled date rules, and
+		localized formatting. Inspired by the FluentUI Blazor Calendar component.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>

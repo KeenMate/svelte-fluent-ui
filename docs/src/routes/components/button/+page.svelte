@@ -66,6 +66,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Button</h1>
 
+	<p>
+		A clickable button that wraps the <code>&lt;fluent-button&gt;</code> element, supporting multiple
+		appearances, form integration, and optional start/end icon slots.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
