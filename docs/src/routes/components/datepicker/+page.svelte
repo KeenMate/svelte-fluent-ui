@@ -41,9 +41,7 @@
 		{name: "onValueChange", type: "(value: Date | null) => void", default: "undefined", description: "Called when the selected date changes, either by calendar selection or manual text entry. Receives the new Date value or null when cleared."},
 	]
 
-	const slots: Property[] = [
-		{name: "(none)", type: "-", default: "-", description: "DatePicker does not expose any slots."},
-	]
+	const slots: Property[] = []
 
 	const propertyColumns = [
 		{field: "name", title: "Name", sortable: true, filterable: true},
@@ -53,169 +51,132 @@
 	]
 </script>
 
-<h1>DatePicker</h1>
+<Stack orientation="vertical" gap="1rem">
+	<h1>DatePicker</h1>
 
-<p>
-	A date selection component with calendar popup, date validation, and custom formatting options.
-	Inspired by the FluentUI Blazor DatePicker component.
-</p>
-
-<Card>
-	<h3>Reference</h3>
 	<p>
-		<strong>FluentUI Web Components:</strong> N/A (custom implementation)<br/>
-		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/DatePicker" target="_blank" rel="noopener noreferrer">FluentDatePicker</a>
+		A date selection component with calendar popup, date validation, and custom formatting options.
+		Inspired by the FluentUI Blazor DatePicker component.
 	</p>
-</Card>
 
-<h2>API</h2>
-
-<Grid spacing={3}>
-	<GridItem xs={12} xl={6} xxl={4}>
-		<Card>
-			<h3>Properties</h3>
-			<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-		</Card>
-	</GridItem>
-	<GridItem xs={12} xl={6} xxl={4}>
-		<Card>
-			<h3>Callbacks</h3>
-			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-		</Card>
-	</GridItem>
-	<GridItem xs={12} xl={6} xxl={4}>
-		<Card>
-			<h3>Slots</h3>
-			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-		</Card>
-	</GridItem>
-</Grid>
-
-<h2>Examples</h2>
-
-<!-- Basic DatePicker -->
-<Card>
-	<h3>Basic DatePicker</h3>
-	<p>A simple date picker with default settings.</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem; max-width: 400px;">
-		<DatePicker
-			bind:value={basicDate}
-			label="Select a date"
-			placeholder="Choose a date"
-		/>
-		<p style="margin: 0;">Selected: {basicDate ? basicDate.toLocaleDateString() : 'None'}</p>
-	</Stack>
-</Card>
-
-<!-- DatePicker with Min/Max -->
-<Card>
-	<h3>DatePicker with Min/Max Dates</h3>
-	<p>Date picker with restricted date range (last 30 days to next 30 days from today).</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem; max-width: 400px;">
-		<DatePicker
-			bind:value={minMaxDate}
-			label="Select a date (restricted range)"
-			placeholder="Choose a date"
-			minDate={minDate}
-			maxDate={maxDate}
-		/>
-		<p style="margin: 0;">Selected: {minMaxDate ? minMaxDate.toLocaleDateString() : 'None'}</p>
-		<p style="margin: 0; font-size: 0.875rem; color: var(--neutral-foreground-hint);">
-			Valid range: {minDate.toLocaleDateString()} - {maxDate.toLocaleDateString()}
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/DatePicker" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
 		</p>
-	</Stack>
-</Card>
+	</Card>
 
-<!-- DatePicker with Custom Format -->
-<Card>
-	<h3>DatePicker with Custom Format</h3>
-	<p>Date picker with custom date formatting options.</p>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem; max-width: 400px;">
-		<DatePicker
-			bind:value={customFormatDate}
-			label="Custom date format"
-			placeholder="Choose a date"
-			dateFormat={{ weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }}
-		/>
-		<p style="margin: 0;">Selected: {customFormatDate ? customFormatDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }) : 'None'}</p>
-	</Stack>
-</Card>
+	<Card>
+		<h2>Examples</h2>
 
-<!-- DatePicker States -->
-<Card>
-	<h3>DatePicker States</h3>
-	<p>Date pickers in different states.</p>
+		<h3>Basic DatePicker</h3>
+		<p>A simple date picker with default settings.</p>
 
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem; max-width: 400px;">
-		<DatePicker
-			label="Normal"
-			placeholder="Select a date"
-		/>
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<DatePicker
+				bind:value={basicDate}
+				label="Select a date"
+				placeholder="Choose a date"
+			/>
+			<p style="margin: 0;">Selected: {basicDate ? basicDate.toLocaleDateString() : 'None'}</p>
+		</Stack>
 
-		<DatePicker
-			label="Disabled"
-			placeholder="Select a date"
-			disabled={true}
-		/>
+		<h3>DatePicker with Min/Max Dates</h3>
+		<p>Date picker with restricted date range (last 30 days to next 30 days from today).</p>
 
-		<DatePicker
-			label="Readonly"
-			placeholder="Select a date"
-			readonly={true}
-			bind:value={disabledDate}
-		/>
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<DatePicker
+				bind:value={minMaxDate}
+				label="Select a date (restricted range)"
+				placeholder="Choose a date"
+				minDate={minDate}
+				maxDate={maxDate}
+			/>
+			<p style="margin: 0;">Selected: {minMaxDate ? minMaxDate.toLocaleDateString() : 'None'}</p>
+			<p style="margin: 0; font-size: 0.875rem; color: var(--neutral-foreground-hint);">
+				Valid range: {minDate.toLocaleDateString()} - {maxDate.toLocaleDateString()}
+			</p>
+		</Stack>
 
-		<DatePicker
-			label="Required"
-			placeholder="Select a date"
-			required={true}
-		/>
-	</Stack>
-</Card>
+		<h3>DatePicker with Custom Format</h3>
+		<p>Date picker with custom date formatting options.</p>
 
-<!-- DatePicker with Different Appearances -->
-<Card>
-	<h3>DatePicker with Different Appearances</h3>
-	<p>Date pickers with different visual styles.</p>
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<DatePicker
+				bind:value={customFormatDate}
+				label="Custom date format"
+				placeholder="Choose a date"
+				dateFormat={{ weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }}
+			/>
+			<p style="margin: 0;">Selected: {customFormatDate ? customFormatDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }) : 'None'}</p>
+		</Stack>
 
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem; max-width: 400px;">
-		<DatePicker
-			label="Filled (default)"
-			placeholder="Select a date"
-		/>
+		<h3>DatePicker States</h3>
+		<p>Date pickers in different states.</p>
 
-		<DatePicker
-			label="Outline"
-			placeholder="Select a date"
-			appearance="outline"
-		/>
-	</Stack>
-</Card>
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<DatePicker
+				label="Normal"
+				placeholder="Select a date"
+			/>
 
-<style>
-	h1 {
-		font-size: 2rem;
-		margin: 0 0 2rem 0;
-		font-weight: 600;
-	}
+			<DatePicker
+				label="Disabled"
+				placeholder="Select a date"
+				disabled={true}
+			/>
 
-	h2 {
-		font-size: 1.5rem;
-		margin: 2rem 0 1rem 0;
-		font-weight: 600;
-	}
+			<DatePicker
+				label="Readonly"
+				placeholder="Select a date"
+				readonly={true}
+				bind:value={disabledDate}
+			/>
 
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 1rem 0;
-		font-weight: 600;
-	}
+			<DatePicker
+				label="Required"
+				placeholder="Select a date"
+				required={true}
+			/>
+		</Stack>
 
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-</style>
+		<h3>DatePicker with Different Appearances</h3>
+		<p>Date pickers with different visual styles.</p>
+
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<DatePicker
+				label="Filled (default)"
+				placeholder="Select a date"
+			/>
+
+			<DatePicker
+				label="Outline"
+				placeholder="Select a date"
+				appearance="outline"
+			/>
+		</Stack>
+	</Card>
+</Stack>

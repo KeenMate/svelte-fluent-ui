@@ -64,177 +64,155 @@
 	let errorFiles = $state<{file: File, error: string}[]>([])
 </script>
 
-<h1>InputFile</h1>
+<Stack orientation="vertical" gap="1rem">
+	<h1>InputFile</h1>
 
-<p>
-	The InputFile component provides file upload functionality with drag-and-drop support,
-	validation, and progress tracking. Inspired by the FluentUI Blazor InputFile component.
-</p>
-
-<Card>
-	<h3>Reference</h3>
 	<p>
-		<strong>FluentUI Web Components:</strong> N/A (custom implementation)<br/>
-		<strong>FluentUI Blazor:</strong> <a href="https://www.fluentui-blazor.net/InputFile" target="_blank" rel="noopener noreferrer">FluentInputFile</a>
+		The InputFile component provides file upload functionality with drag-and-drop support,
+		validation, and progress tracking. Inspired by the FluentUI Blazor InputFile component.
 	</p>
-</Card>
 
-<h2>Examples</h2>
-
-<!-- Basic InputFile with automatic upload -->
-<Card>
-	<h3>Basic InputFile with Automatic Upload</h3>
-	<p>Drag and drop files or click browse to select. Files are automatically "uploaded" with simulated progress.</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			uploadFileCallback={simulateUpload}
-			onFileSelected={(files) => {
-				console.log("Files selected:", files)
-				selectedFiles = files
-			}}
-			onFileUploaded={(file) => {
-				console.log("File uploaded:", file)
-				uploadedFiles = [...uploadedFiles, file]
-			}}
-			onFileError={(file, error) => {
-				console.log("File error:", file, error)
-				errorFiles = [...errorFiles, {file, error}]
-			}}
-			onCompleted={() => {
-				console.log("All uploads completed")
-			}}
-		/>
-	</Stack>
-</Card>
-
-<!-- Multiple files with limits -->
-<Card>
-	<h3>Multiple Files with Limits</h3>
-	<p>Upload multiple files (max 5) with size limit of 5MB per file.</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			multiple={true}
-			maxFileCount={5}
-			maxFileSize={5 * 1024 * 1024}
-			uploadFileCallback={simulateUpload}
-		/>
-	</Stack>
-</Card>
-
-<!-- Image files only -->
-<Card>
-	<h3>Image Files Only</h3>
-	<p>Accept only image files (jpg, png, gif).</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			accept="image/*"
-			multiple={true}
-			uploadFileCallback={simulateUpload}
-		/>
-	</Stack>
-</Card>
-
-<!-- Specific file types -->
-<Card>
-	<h3>Specific File Types</h3>
-	<p>Accept only PDF and Word documents.</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			accept=".pdf,.doc,.docx"
-			multiple={true}
-			uploadFileCallback={simulateUpload}
-		/>
-	</Stack>
-</Card>
-
-<!-- Without drag-drop zone -->
-<Card>
-	<h3>Without Drag-Drop Zone</h3>
-	<p>Simple button-based file selection without drag-drop area.</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			showDragDropZone={false}
-			multiple={true}
-			uploadFileCallback={simulateUpload}
-		/>
-	</Stack>
-</Card>
-
-<!-- Manual upload (no callback) -->
-<Card>
-	<h3>Manual Upload (No Auto-Upload)</h3>
-	<p>Files are selected but not automatically uploaded. You can process them manually.</p>
-
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			multiple={true}
-			onFileSelected={(files) => {
-				console.log("Files ready for manual processing:", files)
-			}}
-		/>
-		<p style="margin: 0; font-size: 0.875rem; color: var(--neutral-foreground-hint);">
-			Files will stay in "Pending" state until you process them with your own upload logic.
+	<Card>
+		<p>
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<a href="https://www.fluentui-blazor.net/InputFile" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
 		</p>
-	</Stack>
-</Card>
+	</Card>
 
-<!-- Disabled -->
-<Card>
-	<h3>Disabled State</h3>
-	<p>InputFile in disabled state.</p>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
-		<InputFile
-			disabled={true}
-		/>
-	</Stack>
-</Card>
-
-<h2>API</h2>
-
-<Card>
-	<h3>Properties</h3>
-	<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-</Card>
-
-<Grid columns={2} gap="1rem">
-	<GridItem>
-		<Card>
-			<h3>Callbacks</h3>
-			<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-		</Card>
-	</GridItem>
-	<GridItem>
-		<Card>
-			<h3>Slots</h3>
-			<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-		</Card>
-	</GridItem>
-</Grid>
-
-<Card>
-	<h3>FileUploadHandler Type</h3>
-	<pre><code>type FileUploadHandler = (
+	<Card>
+		<h2>FileUploadHandler Type</h2>
+		<pre><code>type FileUploadHandler = (
   file: File,
   onProgress: (percent: number) => void
 ) => Promise&lt;void&gt;</code></pre>
-	<p>
-		A function that handles file upload. It receives the file and a progress callback function.
-		Call <code>onProgress(percent)</code> to update the progress bar (0-100).
-		Return a Promise that resolves on success or rejects on error.
-	</p>
-</Card>
+		<p>
+			A function that handles file upload. It receives the file and a progress callback function.
+			Call <code>onProgress(percent)</code> to update the progress bar (0-100).
+			Return a Promise that resolves on success or rejects on error.
+		</p>
+	</Card>
 
-<h2>Usage Example</h2>
+	<Card>
+		<h2>Examples</h2>
 
-<Card>
-	<h3>Custom Upload Handler</h3>
-	<pre><code>{`<script lang="ts">
+		<h3>Basic InputFile with Automatic Upload</h3>
+		<p>Drag and drop files or click browse to select. Files are automatically "uploaded" with simulated progress.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				uploadFileCallback={simulateUpload}
+				onFileSelected={(files) => {
+					console.log("Files selected:", files)
+					selectedFiles = files
+				}}
+				onFileUploaded={(file) => {
+					console.log("File uploaded:", file)
+					uploadedFiles = [...uploadedFiles, file]
+				}}
+				onFileError={(file, error) => {
+					console.log("File error:", file, error)
+					errorFiles = [...errorFiles, {file, error}]
+				}}
+				onCompleted={() => {
+					console.log("All uploads completed")
+				}}
+			/>
+		</Stack>
+
+		<h3>Multiple Files with Limits</h3>
+		<p>Upload multiple files (max 5) with size limit of 5MB per file.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				multiple={true}
+				maxFileCount={5}
+				maxFileSize={5 * 1024 * 1024}
+				uploadFileCallback={simulateUpload}
+			/>
+		</Stack>
+
+		<h3>Image Files Only</h3>
+		<p>Accept only image files (jpg, png, gif).</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				accept="image/*"
+				multiple={true}
+				uploadFileCallback={simulateUpload}
+			/>
+		</Stack>
+
+		<h3>Specific File Types</h3>
+		<p>Accept only PDF and Word documents.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				accept=".pdf,.doc,.docx"
+				multiple={true}
+				uploadFileCallback={simulateUpload}
+			/>
+		</Stack>
+
+		<h3>Without Drag-Drop Zone</h3>
+		<p>Simple button-based file selection without drag-drop area.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				showDragDropZone={false}
+				multiple={true}
+				uploadFileCallback={simulateUpload}
+			/>
+		</Stack>
+
+		<h3>Manual Upload (No Auto-Upload)</h3>
+		<p>Files are selected but not automatically uploaded. You can process them manually.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				multiple={true}
+				onFileSelected={(files) => {
+					console.log("Files ready for manual processing:", files)
+				}}
+			/>
+			<p style="margin: 0; font-size: 0.875rem; color: var(--neutral-foreground-hint);">
+				Files will stay in "Pending" state until you process them with your own upload logic.
+			</p>
+		</Stack>
+
+		<h3>Disabled State</h3>
+		<p>InputFile in disabled state.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<InputFile
+				disabled={true}
+			/>
+		</Stack>
+
+		<h3>Custom Upload Handler Example</h3>
+		<pre><code>{`<script lang="ts">
   import { InputFile } from "svelte-fluentui"
   import type { FileUploadHandler } from "svelte-fluentui"
 
@@ -275,32 +253,10 @@
   uploadFileCallback={uploadToServer}
   onFileUploaded={(file) => console.log("Uploaded:", file.name)}
 />`}</code></pre>
-</Card>
+	</Card>
+</Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0 0 2rem 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 2rem 0 1rem 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 1rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
 	.api-table {
 		width: 100%;
 		border-collapse: collapse;

@@ -66,6 +66,3 @@
 		</BodyContent>
 	</Card>
 </Stack>
-
-<style lang="scss">
-</style>

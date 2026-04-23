@@ -65,7 +65,7 @@
 	</Grid>
 
 	<Card>
-		<h2 class="content-subhead">Examples</h2>
+		<h2>Examples</h2>
 
 		<h3>Basic toolbar</h3>
 		<Toolbar>

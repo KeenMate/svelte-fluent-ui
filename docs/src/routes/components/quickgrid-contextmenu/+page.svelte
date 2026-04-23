@@ -290,6 +290,12 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>QuickGrid Context Menu</h1>
 
+	<p>
+		QuickGrid supports right-click context menus that are cell and row aware. The context menu can be used
+		in both read-only and editable grids, with support for dynamic labels, conditional visibility, and
+		disabled states based on row/cell data.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
@@ -305,94 +311,68 @@
 		</div>
 	{/if}
 
-	<p>
-		QuickGrid supports right-click context menus that are cell and row aware. The context menu can be used
-		in both read-only and editable grids, with support for dynamic labels, conditional visibility, and
-		disabled states based on row/cell data.
-	</p>
-
 	<Grid spacing={3}>
-		<!-- Read-Only Context Menu -->
-		<GridItem span={12}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Read-Only Grid with Context Menu</h3>
-				<p style="color: var(--neutral-foreground-hint); margin-bottom: 1rem;">
-					Right-click any cell to see the context menu. Try "Copy Cell" to see dynamic labels based on column.
-				</p>
-				<QuickGrid
-					items={products}
-					columns={readOnlyColumns}
-					sortable
-					contextMenu={readOnlyContextMenu}
-					oncontextmenuopen={handleContextMenuOpen}
-				/>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
-		<!-- Editable Context Menu -->
-		<GridItem span={12}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Editable Grid with Context Menu</h3>
-				<p style="color: var(--neutral-foreground-hint); margin-bottom: 1rem;">
-					Right-click to see context-aware options. Note: "Delete" is disabled for active products,
-					"Restock" only appears for low-stock items (stock &lt; 20).
-				</p>
-				<QuickGrid
-					items={products}
-					columns={editableColumns}
-					editable
-					editTrigger="dblclick"
-					contextMenu={editableContextMenu}
-					onrowchange={handleRowChange}
-				/>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-
-		<!-- API Documentation: QuickGrid props -->
-		<GridItem span={12}>
-			<Grid spacing={3}>
-				<GridItem xs={12} xl={6} xxl={4}>
-					<Card>
-						<h3>Properties</h3>
-						<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-					</Card>
-				</GridItem>
-				<GridItem xs={12} xl={6} xxl={4}>
-					<Card>
-						<h3>Callbacks</h3>
-						<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-					</Card>
-				</GridItem>
-				<GridItem xs={12} xl={6} xxl={4}>
-					<Card>
-						<h3>Slots</h3>
-						<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-					</Card>
-				</GridItem>
-			</Grid>
-		</GridItem>
-
-		<!-- API Documentation: ContextMenuItem type -->
-		<GridItem span={12}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>ContextMenuItem Properties</h3>
-				<QuickGrid items={contextMenuItems} columns={contextMenuItemColumns} sortable filterable striped />
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
+	</Grid>
 
-		<!-- API Documentation: ContextMenuContext type -->
-		<GridItem span={12}>
-			<Card>
-				<h3>ContextMenuContext Properties</h3>
-				<QuickGrid items={contextMenuContext} columns={contextMenuContextColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
+	<Card>
+		<h2>ContextMenuItem Properties</h2>
+		<QuickGrid items={contextMenuItems} columns={contextMenuItemColumns} sortable filterable striped />
+	</Card>
 
-		<!-- Code Example -->
-		<GridItem span={12}>
-			<Card>
-				<h3>Example Usage</h3>
-				<pre><code>{`<QuickGrid
+	<Card>
+		<h2>ContextMenuContext Properties</h2>
+		<QuickGrid items={contextMenuContext} columns={contextMenuContextColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h2>Examples</h2>
+
+		<h3>Read-Only Grid with Context Menu</h3>
+		<p style="color: var(--neutral-foreground-hint);">
+			Right-click any cell to see the context menu. Try "Copy Cell" to see dynamic labels based on column.
+		</p>
+		<QuickGrid
+			items={products}
+			columns={readOnlyColumns}
+			sortable
+			contextMenu={readOnlyContextMenu}
+			oncontextmenuopen={handleContextMenuOpen}
+		/>
+
+		<h3>Editable Grid with Context Menu</h3>
+		<p style="color: var(--neutral-foreground-hint);">
+			Right-click to see context-aware options. Note: "Delete" is disabled for active products,
+			"Restock" only appears for low-stock items (stock &lt; 20).
+		</p>
+		<QuickGrid
+			items={products}
+			columns={editableColumns}
+			editable
+			editTrigger="dblclick"
+			contextMenu={editableContextMenu}
+			onrowchange={handleRowChange}
+		/>
+
+		<h3>Example Usage</h3>
+		<pre><code>{`<QuickGrid
   items={products}
   columns={columns}
   contextMenu={[
@@ -420,9 +400,7 @@
     }
   ]}
 />`}</code></pre>
-			</Card>
-		</GridItem>
-	</Grid>
+	</Card>
 </Stack>
 
 <style>

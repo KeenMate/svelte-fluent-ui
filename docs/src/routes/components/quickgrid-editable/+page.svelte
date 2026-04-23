@@ -830,6 +830,10 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>QuickGrid Editable</h1>
 
+	<p>
+		QuickGrid supports inline editing with multiple editor types, edit triggers, validation, and advanced callbacks. This page covers all editable features.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
@@ -840,10 +844,6 @@
 			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
 		</p>
 	</Card>
-
-	<p>
-		QuickGrid supports inline editing with multiple editor types, edit triggers, validation, and advanced callbacks. This page covers all editable features.
-	</p>
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
@@ -857,132 +857,69 @@
 		</GridItem>
 	</Grid>
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Editing Props (QuickGrid)</h2>
-				<table class="member-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Default</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>editable</td>
-							<td>boolean</td>
-							<td>false</td>
-							<td>Enable inline editing mode</td>
-						</tr>
-						<tr>
-							<td>editTrigger</td>
-							<td>"click" | "dblclick" | "button" | "always" | "navigate"</td>
-							<td>"dblclick"</td>
-							<td>How to trigger cell editing</td>
-						</tr>
-						<tr>
-							<td>invalidCells</td>
-							<td>CellValidationState[]</td>
-							<td>[]</td>
-							<td>Bindable array of invalid cells (rowIndex, field, error)</td>
-						</tr>
-						<tr>
-							<td>onrowchange</td>
-							<td>(detail) =&gt; void</td>
-							<td>undefined</td>
-							<td>Callback when cell value changes (includes isValid, validationError)</td>
-						</tr>
-						<tr>
-							<td>onroweditstart</td>
-							<td>(detail) =&gt; void</td>
-							<td>undefined</td>
-							<td>Callback when cell enters edit mode</td>
-						</tr>
-						<tr>
-							<td>onroweditcancel</td>
-							<td>(detail) =&gt; void</td>
-							<td>undefined</td>
-							<td>Callback when editing is cancelled</td>
-						</tr>
-						<tr>
-							<td>onvalidationerror</td>
-							<td>(detail) =&gt; void</td>
-							<td>undefined</td>
-							<td>Callback when validation fails</td>
-						</tr>
-					</tbody>
-				</table>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Column Editing Props</h2>
-				<table class="member-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Default</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>editable</td>
-							<td>boolean</td>
-							<td>undefined</td>
-							<td>Enable editing for this column</td>
-						</tr>
-						<tr>
-							<td>editor</td>
-							<td>"text" | "number" | "checkbox" | "select" | "date" | "autocomplete" | "custom"</td>
-							<td>"text"</td>
-							<td>Editor type for this column</td>
-						</tr>
-						<tr>
-							<td>editTrigger</td>
-							<td>"click" | "dblclick" | "button" | "always" | "navigate"</td>
-							<td>grid default</td>
-							<td>Per-column edit trigger override</td>
-						</tr>
-						<tr>
-							<td>editorOptions</td>
-							<td>object</td>
-							<td>undefined</td>
-							<td>Editor options (min/max, options, loadOptions, etc.)</td>
-						</tr>
-						<tr>
-							<td>onbeforecommit</td>
-							<td>(context) =&gt; ValidationResult | boolean | string | null | Promise</td>
-							<td>undefined</td>
-							<td>Validate and optionally transform value before commit</td>
-						</tr>
-						<tr>
-							<td>validate</td>
-							<td>(value, row) =&gt; string | null | Promise</td>
-							<td>undefined</td>
-							<td>Legacy validation (use onbeforecommit instead)</td>
-						</tr>
-						<tr>
-							<td>oncelledit</td>
-							<td>(context) =&gt; void</td>
-							<td>undefined</td>
-							<td>Custom editor callback (for editor="custom")</td>
-						</tr>
-						<tr>
-							<td>showEditButton</td>
-							<td>boolean</td>
-							<td>false</td>
-							<td>Show edit button in cell</td>
-						</tr>
-					</tbody>
-				</table>
-			</Card>
-		</GridItem>
-	</Grid>
+	<Card>
+		<h2>Column Editing Props</h2>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Default</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>editable</td>
+					<td>boolean</td>
+					<td>undefined</td>
+					<td>Enable editing for this column</td>
+				</tr>
+				<tr>
+					<td>editor</td>
+					<td>"text" | "number" | "checkbox" | "select" | "date" | "autocomplete" | "custom"</td>
+					<td>"text"</td>
+					<td>Editor type for this column</td>
+				</tr>
+				<tr>
+					<td>editTrigger</td>
+					<td>"click" | "dblclick" | "button" | "always" | "navigate"</td>
+					<td>grid default</td>
+					<td>Per-column edit trigger override</td>
+				</tr>
+				<tr>
+					<td>editorOptions</td>
+					<td>object</td>
+					<td>undefined</td>
+					<td>Editor options (min/max, options, loadOptions, etc.)</td>
+				</tr>
+				<tr>
+					<td>onbeforecommit</td>
+					<td>(context) =&gt; ValidationResult | boolean | string | null | Promise</td>
+					<td>undefined</td>
+					<td>Validate and optionally transform value before commit</td>
+				</tr>
+				<tr>
+					<td>validate</td>
+					<td>(value, row) =&gt; string | null | Promise</td>
+					<td>undefined</td>
+					<td>Legacy validation (use onbeforecommit instead)</td>
+				</tr>
+				<tr>
+					<td>oncelledit</td>
+					<td>(context) =&gt; void</td>
+					<td>undefined</td>
+					<td>Custom editor callback (for editor="custom")</td>
+				</tr>
+				<tr>
+					<td>showEditButton</td>
+					<td>boolean</td>
+					<td>false</td>
+					<td>Show edit button in cell</td>
+				</tr>
+			</tbody>
+		</table>
+	</Card>
 
 	<Card>
 		<h2>Edit Triggers</h2>
@@ -1019,365 +956,6 @@
 	</Card>
 
 	<Card>
-		<h2>Editable Grid (Double-click)</h2>
-		<p>Double-click any editable cell to edit. Press <strong>Enter</strong> to save, <strong>Escape</strong> to cancel. Supports text, number, checkbox, and select editors.</p>
-		<QuickGrid
-			items={sampleData}
-			columns={editableColumns}
-			editable
-			editTrigger="dblclick"
-			onrowchange={handleRowChange}
-			pageable
-			pageSize={8}
-		/>
-		{#if lastChange}
-			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
-				<strong>Last change:</strong> {lastChange}
-			</p>
-		{/if}
-	</Card>
-
-	<Card>
-		<h2>Always Editable (Spreadsheet Mode)</h2>
-		<p>All cells are always in edit mode - like a spreadsheet. Try using <strong>Tab</strong> to move between cells.</p>
-		<QuickGrid
-			items={sampleData}
-			columns={alwaysEditableColumns}
-			editable
-			onrowchange={handleRowChange}
-			pageable
-			pageSize={10}
-			striped={false}
-		/>
-	</Card>
-
-	<Card>
-		<h2>Navigate Mode (Excel-like)</h2>
-		<p>Click a cell to focus, then use keyboard to navigate and edit:</p>
-		<table class="member-table" style="margin-bottom: 1rem;">
-			<thead>
-				<tr>
-					<th>Key</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>Arrow keys</td><td>Move between editable cells</td></tr>
-				<tr><td>Tab / Shift+Tab</td><td>Move to next/previous cell</td></tr>
-				<tr><td>Enter / F2</td><td>Enter edit mode</td></tr>
-				<tr><td>Space</td><td>Toggle checkbox</td></tr>
-				<tr><td>Escape</td><td>Cancel editing, return to navigation</td></tr>
-				<tr><td>Any character</td><td>Start editing and type (text/number fields)</td></tr>
-				<tr><td>Enter (while editing)</td><td>Commit and move to cell below</td></tr>
-			</tbody>
-		</table>
-		<QuickGrid
-			items={sampleData}
-			columns={navigateColumns}
-			editable
-			editTrigger="navigate"
-			onrowchange={handleRowChange}
-			pageable
-			pageSize={10}
-		/>
-	</Card>
-
-	<Card>
-		<h2>Mixed Edit Triggers</h2>
-		<p>Different columns can have different edit triggers:</p>
-		<QuickGrid
-			items={sampleData}
-			columns={mixedTriggerColumns}
-			editable
-			onrowchange={handleRowChange}
-			pageable
-			pageSize={8}
-		/>
-		<div style="margin-top: 1rem; padding: 1rem; background: var(--neutral-layer-2); border-radius: 4px;">
-			<p><strong>Test checkboxes (outside grid):</strong></p>
-			<label><input type="checkbox" /> Checkbox 1</label><br/>
-			<label><input type="checkbox" /> Checkbox 2</label><br/>
-			<label><input type="checkbox" /> Checkbox 3</label>
-		</div>
-	</Card>
-
-	<Card>
-		<h2>Custom Editor: JSON in Dialog</h2>
-		<p>Click the edit button (✎) in the Metadata column to open a JSON editor dialog. This demonstrates using <code>editor: "custom"</code> with <code>oncelledit</code> callback.</p>
-		<QuickGrid
-			items={sampleData}
-			columns={jsonEditorColumns}
-			editable
-			onrowchange={handleRowChange}
-			pageable
-			pageSize={8}
-		/>
-	</Card>
-
-	<!-- JSON Editor Dialog -->
-	<Dialog
-		visible={jsonDialogOpen}
-		modal
-		size="small"
-		onClose={handleJsonCancel}
-	>
-		<div class="json-editor-dialog">
-			<h3>Edit JSON Metadata</h3>
-			<p style="margin-bottom: 0.5rem; color: var(--neutral-foreground-hint, #707070);">
-				Editing: {jsonEditorContext?.row?.name ?? ""}
-			</p>
-			<textarea
-				bind:this={jsonTextarea}
-				class="json-textarea"
-				bind:value={jsonEditorValue}
-				placeholder={'{"key": "value"}'}
-				rows={12}
-			></textarea>
-			{#if jsonError}
-				<p class="json-error">{jsonError}</p>
-			{/if}
-			<div class="json-dialog-actions">
-				<Button appearance="neutral" onclick={handleJsonCancel}>Cancel</Button>
-				<Button appearance="accent" onclick={handleJsonSave}>Save</Button>
-			</div>
-		</div>
-	</Dialog>
-
-	<Card>
-		<h2>Validation with onbeforecommit (Excel-like)</h2>
-		<p>
-			Use <code>onbeforecommit</code> for validation and value transformation. Invalid cells stay marked until fixed.
-			Click a cell and use arrow keys to navigate, type to edit. Try entering invalid values:
-		</p>
-		<ul style="margin: 0.5rem 0 1rem 1.5rem;">
-			<li><strong>Name:</strong> Empty or less than 2 characters</li>
-			<li><strong>Email:</strong> Missing @ or domain</li>
-			<li><strong>Age:</strong> Negative or over 150</li>
-			<li><strong>Score:</strong> Less than 0 or more than 100</li>
-		</ul>
-		<QuickGrid
-			items={validationData}
-			columns={validationColumns}
-			editable
-			editTrigger="navigate"
-			checkboxAlwaysEditable
-			bind:invalidCells={validationInvalidCells}
-			onrowchange={handleValidationRowChange}
-		/>
-		<div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-			{#if validationLastChange}
-				<p style="padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px; margin: 0;">
-					{validationLastChange}
-				</p>
-			{/if}
-			{#if validationInvalidCells.length > 0}
-				<p style="padding: 0.5rem; background: var(--error-fill-rest, #fde7e9); border-radius: 4px; margin: 0; color: var(--error-foreground, #d13438);">
-					Invalid cells: {validationInvalidCells.length}
-				</p>
-			{/if}
-		</div>
-	</Card>
-
-	<Card>
-		<h2>Async Validation</h2>
-		<p>
-			<code>onbeforecommit</code> supports async validation. Try changing a username to "admin", "root", "system", or "test" - these are reserved and will show a validation error after the async check.
-		</p>
-		<QuickGrid
-			items={asyncValidationData}
-			columns={asyncValidationColumns}
-			editable
-			editTrigger="dblclick"
-			bind:invalidCells={asyncInvalidCells}
-			onrowchange={handleAsyncValidationRowChange}
-		/>
-		{#if asyncLastChange}
-			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
-				{asyncLastChange}
-			</p>
-		{/if}
-	</Card>
-
-	<Card>
-		<h2>Row Action Popup</h2>
-		<p>
-			Hover over a row to see a popup with action buttons below the first cell. Actions include: <strong>Add</strong> (+), <strong>Delete</strong> (−), and <strong>Duplicate</strong> (⧉).
-		</p>
-		<QuickGrid
-			items={rowActionsData}
-			columns={rowActionsColumns}
-			editable
-			editTrigger="dblclick"
-			showRowActions
-			onrowaction={handleRowAction}
-			onrowchange={handleRowActionsRowChange}
-		/>
-		{#if lastRowAction}
-			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
-				{lastRowAction}
-			</p>
-		{/if}
-	</Card>
-
-	<Card>
-		<h2>Row Actions with Move Up/Down</h2>
-		<p>
-			You can customize which actions appear using the <code>rowActions</code> prop:
-		</p>
-		<QuickGrid
-			items={rowActionsData2}
-			columns={rowActionsColumns}
-			editable
-			editTrigger="dblclick"
-			showRowActions
-			rowActions={['moveUp', 'moveDown', 'duplicate', 'delete']}
-			onrowaction={handleRowAction2}
-			onrowchange={handleRowActionsRowChange2}
-		/>
-		{#if lastRowAction2}
-			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
-				{lastRowAction2}
-			</p>
-		{/if}
-	</Card>
-
-	<Card>
-		<h2>Advanced Row Toolbar (Multi-row, Groups, Custom Actions)</h2>
-		<p>
-			The <code>rowToolbar</code> prop supports advanced configurations:
-		</p>
-		<ul style="margin: 0.5rem 0 1rem 1.5rem;">
-			<li><strong>Multi-row layout:</strong> Items can be placed in different rows (<code>row: 1</code> = closest to grid)</li>
-			<li><strong>Groups with dividers:</strong> Items with different <code>group</code> numbers are separated by <code>|</code></li>
-			<li><strong>Custom actions:</strong> Define <code>onclick</code> handlers with async support</li>
-			<li><strong>Dynamic disabled:</strong> Use a function <code>(row, rowIndex) =&gt; boolean</code> to disable conditionally</li>
-			<li><strong>Labels:</strong> Add text labels next to icons with <code>label</code> property</li>
-			<li><strong>Toolbar alignment:</strong> Use <code>toolbarAlign</code> to control vertical alignment (<code>center</code> or <code>top</code>)</li>
-			<li><strong>Toolbar trigger:</strong> Use <code>toolbarTrigger</code> to control how toolbar appears (<code>hover</code>, <code>click</code>, or <code>button</code>)</li>
-		</ul>
-		<div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-			<div style="display: flex; align-items: center; gap: 0.5rem;">
-				<label for="toolbar-align">Alignment:</label>
-				<Select id="toolbar-align" value={toolbarAlignment} onchange={({ value }) => toolbarAlignment = value as 'center' | 'top'}>
-					<Option value="center">Center (default)</Option>
-					<Option value="top">Top (first row aligned)</Option>
-				</Select>
-			</div>
-			<div style="display: flex; align-items: center; gap: 0.5rem;">
-				<label for="toolbar-trigger">Trigger:</label>
-				<Select id="toolbar-trigger" value={toolbarTriggerMode} onchange={({ value }) => toolbarTriggerMode = value as 'hover' | 'click' | 'button'}>
-					<Option value="hover">Hover (default)</Option>
-					<Option value="click">Click on row</Option>
-					<Option value="button">Button in first column</Option>
-				</Select>
-			</div>
-		</div>
-		<QuickGrid
-			items={toolbarData}
-			columns={rowActionsColumns}
-			editable
-			editTrigger="dblclick"
-			showRowToolbar
-			rowToolbar={advancedToolbar}
-			toolbarAlign={toolbarAlignment}
-			toolbarTrigger={toolbarTriggerMode}
-			ontoolbarclick={handleToolbarClick}
-			onrowchange={handleToolbarRowChange}
-		/>
-		{#if lastToolbarAction}
-			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
-				{lastToolbarAction}
-			</p>
-		{/if}
-	</Card>
-
-	<Card>
-		<h2>Advanced Row Toolbar Code Example</h2>
-		<pre>{`// Define toolbar with multi-row layout, groups, and custom actions
-const advancedToolbar = [
-  // Row 1: Move actions (group 1) | CRUD actions (group 2)
-  { id: 'moveUp', type: 'moveUp', icon: '↑', title: 'Move up', row: 1, group: 1,
-    disabled: (row, idx) => idx === 0 },
-  { id: 'moveDown', type: 'moveDown', icon: '↓', title: 'Move down', row: 1, group: 1,
-    disabled: (row, idx) => idx === items.length - 1 },
-  { id: 'add', type: 'add', icon: '+', title: 'Add', row: 1, group: 2 },
-  { id: 'duplicate', type: 'duplicate', icon: '⧉', title: 'Duplicate', row: 1, group: 2 },
-  { id: 'delete', type: 'delete', icon: '−', title: 'Delete', danger: true, row: 1, group: 2 },
-
-  // Row 2: Custom actions with async onclick
-  { id: 'export', icon: '📤', title: 'Export', row: 2, group: 1,
-    onclick: async ({ row }) => {
-      await exportToCSV(row)
-    }
-  },
-  { id: 'preview', icon: '👁', title: 'Preview', label: 'View', row: 2, group: 1,
-    onclick: ({ row }) => showPreviewDialog(row)
-  }
-]
-
-<QuickGrid
-  {items}
-  {columns}
-  showRowToolbar
-  rowToolbar={advancedToolbar}
-  ontoolbarclick={handleToolbarClick}
-/>`}</pre>
-	</Card>
-
-	<Card>
-		<h2>Row Actions Code Example</h2>
-		<pre>{`<script lang="ts">
-  let items = $state([
-    { id: 1, name: "Item One", value: 100 },
-    { id: 2, name: "Item Two", value: 200 }
-  ])
-
-  let nextId = 3
-
-  function handleRowAction(detail) {
-    const { action, rowIndex, row } = detail
-
-    switch (action) {
-      case 'add':
-        items = [
-          ...items.slice(0, rowIndex + 1),
-          { id: nextId++, name: "", value: 0 },
-          ...items.slice(rowIndex + 1)
-        ]
-        break
-      case 'delete':
-        items = items.filter((_, i) => i !== rowIndex)
-        break
-      case 'duplicate':
-        items = [
-          ...items.slice(0, rowIndex + 1),
-          { ...row, id: nextId++ },
-          ...items.slice(rowIndex + 1)
-        ]
-        break
-    }
-  }
-</script>
-
-<QuickGrid
-  {items}
-  {columns}
-  editable
-  showRowActions
-  onrowaction={handleRowAction}
-/>
-
-<!-- Or customize which actions to show -->
-<QuickGrid
-  {items}
-  {columns}
-  showRowActions
-  rowActions={['add', 'duplicate']}
-  onrowaction={handleRowAction}
-/>`}</pre>
-	</Card>
-
-	<Card>
 		<h2>Row Actions Props</h2>
 		<table class="member-table">
 			<thead>
@@ -1409,7 +987,7 @@ const advancedToolbar = [
 				</tr>
 			</tbody>
 		</table>
-		<h3 style="margin-top: 1rem;">RowActionType</h3>
+		<h3>RowActionType</h3>
 		<table class="member-table">
 			<thead>
 				<tr>
@@ -1426,7 +1004,7 @@ const advancedToolbar = [
 				<tr><td>'moveDown'</td><td>↓</td><td>Move the row down</td></tr>
 			</tbody>
 		</table>
-		<h3 style="margin-top: 1rem;">RowActionClickDetail</h3>
+		<h3>RowActionClickDetail</h3>
 		<table class="member-table">
 			<thead>
 				<tr>
@@ -1441,163 +1019,6 @@ const advancedToolbar = [
 				<tr><td>row</td><td>T</td><td>The row data</td></tr>
 			</tbody>
 		</table>
-	</Card>
-
-	<Card>
-		<h2>Basic Editable Code Example</h2>
-		<pre>{`<script lang="ts">
-  type Person = {
-    id: number
-    name: string
-    age: number
-    active: boolean
-    role: string
-  }
-
-  let data: Person[] = $state([
-    { id: 1, name: "Alice", age: 28, active: true, role: "admin" },
-    { id: 2, name: "Bob", age: 34, active: false, role: "user" }
-  ])
-
-  const columns = [
-    { field: "id", title: "ID", width: "80px" },
-    { field: "name", title: "Name", editable: true, editor: "text" },
-    { field: "age", title: "Age", editable: true, editor: "number",
-      editorOptions: { min: 0, max: 120 } },
-    { field: "active", title: "Active", editable: true, editor: "checkbox" },
-    {
-      field: "role",
-      title: "Role",
-      editable: true,
-      editor: "select",
-      editorOptions: {
-        options: [
-          { value: "admin", label: "Administrator" },
-          { value: "user", label: "User" }
-        ]
-      }
-    }
-  ]
-
-  function handleRowChange(detail) {
-    // Update data - the component does NOT mutate your data
-    data[detail.rowIndex] = {
-      ...detail.row,
-      [detail.field]: detail.newValue
-    }
-  }
-</script>
-
-<QuickGrid
-  items={data}
-  columns={columns}
-  editable
-  editTrigger="dblclick"
-  onrowchange={handleRowChange}
-/>`}</pre>
-	</Card>
-
-	<Card>
-		<h2>Async Validation</h2>
-		<p>QuickGrid supports both synchronous and asynchronous validation. The cell shows a loading state during async validation.</p>
-		<pre>{`const columns = [
-  {
-    field: "email",
-    title: "Email",
-    editable: true,
-    editor: "text",
-    // Supports both sync and async validation
-    validate: async (value, row) => {
-      // Async API call to check uniqueness
-      const exists = await checkEmailExists(value, row.id)
-      return exists ? "Email already in use" : null
-    }
-  }
-]
-
-<QuickGrid
-  items={data}
-  columns={columns}
-  editable
-  onvalidationerror={(detail) => {
-    console.log(\`Validation failed: \${detail.error}\`)
-  }}
-/>`}</pre>
-	</Card>
-
-	<Card>
-		<h2>Dynamic Options Loading</h2>
-		<p>Select and autocomplete editors can load options dynamically with configurable timing.</p>
-		<table class="member-table" style="margin-bottom: 1rem;">
-			<thead>
-				<tr>
-					<th>optionsLoadTrigger</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>immediate</td><td>Load once when grid mounts, cache forever</td></tr>
-				<tr><td>oneditstart</td><td>Load when cell enters edit mode (default)</td></tr>
-				<tr><td>ondropdownopen</td><td>Load when dropdown opens (lazy)</td></tr>
-			</tbody>
-		</table>
-		<pre>{`const columns = [
-  {
-    field: "departmentId",
-    title: "Department",
-    editable: true,
-    editor: "select",
-    editorOptions: {
-      // Load options dynamically
-      loadOptions: async (row, field) => {
-        const departments = await fetchDepartments(row.companyId)
-        return departments.map(d => ({ value: d.id, label: d.name }))
-      },
-      optionsLoadTrigger: "ondropdownopen"
-    }
-  }
-]`}</pre>
-	</Card>
-
-	<Card>
-		<h2>Custom Editor (Dialog)</h2>
-		<p>Use <code>editor: "custom"</code> with <code>oncelledit</code> callback to implement custom editors like dialogs, JSON editors, color pickers, etc.</p>
-		<pre>{`<script>
-  let showJsonDialog = false
-  let jsonEditorContext = null
-
-  const columns = [
-    {
-      field: "metadata",
-      title: "Metadata",
-      editable: true,
-      editor: "custom",
-      showEditButton: true,  // Shows edit icon in cell
-      format: (value) => value ? "{ ... }" : "(empty)",
-      oncelledit: (context) => {
-        // context provides: value, row, rowIndex, field, commit(), cancel()
-        jsonEditorContext = context
-        showJsonDialog = true
-      }
-    }
-  ]
-
-  function handleJsonSave(newJson) {
-    jsonEditorContext?.commit(newJson)  // Fires onrowchange
-    showJsonDialog = false
-  }
-</script>
-
-<QuickGrid {items} {columns} editable onrowchange={handleRowChange} />
-
-{#if showJsonDialog}
-  <Dialog open onclose={() => jsonEditorContext?.cancel()}>
-    <JsonEditor
-      value={jsonEditorContext?.value}
-      onsave={handleJsonSave}
-    />
-  </Dialog>
-{/if}`}</pre>
 	</Card>
 
 	<Card>
@@ -1682,7 +1103,7 @@ const advancedToolbar = [
 				<tr><td>validationError</td><td>string | null</td><td>Error message if validation failed</td></tr>
 			</tbody>
 		</table>
-		<p style="margin-top: 0.5rem;"><strong>Note:</strong> Invalid values persist in <code>draftRow</code> and are displayed in the cell, allowing users to see and fix their invalid input. Use <code>draftRow</code> when applying changes to your data.</p>
+		<p><strong>Note:</strong> Invalid values persist in <code>draftRow</code> and are displayed in the cell, allowing users to see and fix their invalid input. Use <code>draftRow</code> when applying changes to your data.</p>
 	</Card>
 
 	<Card>
@@ -1728,7 +1149,512 @@ const advancedToolbar = [
 	</Card>
 
 	<Card>
-		<h2>onbeforecommit Code Example</h2>
+		<h2>CellValidationState</h2>
+		<p>The <code>invalidCells</code> array contains objects with this shape:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>rowIndex</td><td>number</td><td>Row index of the invalid cell</td></tr>
+				<tr><td>field</td><td>string</td><td>Field name of the invalid cell</td></tr>
+				<tr><td>error</td><td>string</td><td>Validation error message</td></tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<!-- JSON Editor Dialog -->
+	<Dialog
+		visible={jsonDialogOpen}
+		modal
+		size="small"
+		onClose={handleJsonCancel}
+	>
+		<div class="json-editor-dialog">
+			<h3>Edit JSON Metadata</h3>
+			<p style="margin-bottom: 0.5rem; color: var(--neutral-foreground-hint, #707070);">
+				Editing: {jsonEditorContext?.row?.name ?? ""}
+			</p>
+			<textarea
+				bind:this={jsonTextarea}
+				class="json-textarea"
+				bind:value={jsonEditorValue}
+				placeholder={'{"key": "value"}'}
+				rows={12}
+			></textarea>
+			{#if jsonError}
+				<p class="json-error">{jsonError}</p>
+			{/if}
+			<div class="json-dialog-actions">
+				<Button appearance="neutral" onclick={handleJsonCancel}>Cancel</Button>
+				<Button appearance="accent" onclick={handleJsonSave}>Save</Button>
+			</div>
+		</div>
+	</Dialog>
+
+	<Card>
+		<h2>Examples</h2>
+
+		<h3>Editable Grid (Double-click)</h3>
+		<p>Double-click any editable cell to edit. Press <strong>Enter</strong> to save, <strong>Escape</strong> to cancel. Supports text, number, checkbox, and select editors.</p>
+		<QuickGrid
+			items={sampleData}
+			columns={editableColumns}
+			editable
+			editTrigger="dblclick"
+			onrowchange={handleRowChange}
+			pageable
+			pageSize={8}
+		/>
+		{#if lastChange}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				<strong>Last change:</strong> {lastChange}
+			</p>
+		{/if}
+
+		<h3>Always Editable (Spreadsheet Mode)</h3>
+		<p>All cells are always in edit mode - like a spreadsheet. Try using <strong>Tab</strong> to move between cells.</p>
+		<QuickGrid
+			items={sampleData}
+			columns={alwaysEditableColumns}
+			editable
+			onrowchange={handleRowChange}
+			pageable
+			pageSize={10}
+			striped={false}
+		/>
+
+		<h3>Navigate Mode (Excel-like)</h3>
+		<p>Click a cell to focus, then use keyboard to navigate and edit:</p>
+		<table class="member-table" style="margin-bottom: 1rem;">
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>Arrow keys</td><td>Move between editable cells</td></tr>
+				<tr><td>Tab / Shift+Tab</td><td>Move to next/previous cell</td></tr>
+				<tr><td>Enter / F2</td><td>Enter edit mode</td></tr>
+				<tr><td>Space</td><td>Toggle checkbox</td></tr>
+				<tr><td>Escape</td><td>Cancel editing, return to navigation</td></tr>
+				<tr><td>Any character</td><td>Start editing and type (text/number fields)</td></tr>
+				<tr><td>Enter (while editing)</td><td>Commit and move to cell below</td></tr>
+			</tbody>
+		</table>
+		<QuickGrid
+			items={sampleData}
+			columns={navigateColumns}
+			editable
+			editTrigger="navigate"
+			onrowchange={handleRowChange}
+			pageable
+			pageSize={10}
+		/>
+
+		<h3>Mixed Edit Triggers</h3>
+		<p>Different columns can have different edit triggers:</p>
+		<QuickGrid
+			items={sampleData}
+			columns={mixedTriggerColumns}
+			editable
+			onrowchange={handleRowChange}
+			pageable
+			pageSize={8}
+		/>
+		<div style="margin-top: 1rem; padding: 1rem; background: var(--neutral-layer-2); border-radius: 4px;">
+			<p><strong>Test checkboxes (outside grid):</strong></p>
+			<label><input type="checkbox" /> Checkbox 1</label><br/>
+			<label><input type="checkbox" /> Checkbox 2</label><br/>
+			<label><input type="checkbox" /> Checkbox 3</label>
+		</div>
+
+		<h3>Custom Editor: JSON in Dialog</h3>
+		<p>Click the edit button (✎) in the Metadata column to open a JSON editor dialog. This demonstrates using <code>editor: "custom"</code> with <code>oncelledit</code> callback.</p>
+		<QuickGrid
+			items={sampleData}
+			columns={jsonEditorColumns}
+			editable
+			onrowchange={handleRowChange}
+			pageable
+			pageSize={8}
+		/>
+
+		<h3>Validation with onbeforecommit (Excel-like)</h3>
+		<p>
+			Use <code>onbeforecommit</code> for validation and value transformation. Invalid cells stay marked until fixed.
+			Click a cell and use arrow keys to navigate, type to edit. Try entering invalid values:
+		</p>
+		<ul style="margin: 0.5rem 0 1rem 1.5rem;">
+			<li><strong>Name:</strong> Empty or less than 2 characters</li>
+			<li><strong>Email:</strong> Missing @ or domain</li>
+			<li><strong>Age:</strong> Negative or over 150</li>
+			<li><strong>Score:</strong> Less than 0 or more than 100</li>
+		</ul>
+		<QuickGrid
+			items={validationData}
+			columns={validationColumns}
+			editable
+			editTrigger="navigate"
+			checkboxAlwaysEditable
+			bind:invalidCells={validationInvalidCells}
+			onrowchange={handleValidationRowChange}
+		/>
+		<div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+			{#if validationLastChange}
+				<p style="padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px; margin: 0;">
+					{validationLastChange}
+				</p>
+			{/if}
+			{#if validationInvalidCells.length > 0}
+				<p style="padding: 0.5rem; background: var(--error-fill-rest, #fde7e9); border-radius: 4px; margin: 0; color: var(--error-foreground, #d13438);">
+					Invalid cells: {validationInvalidCells.length}
+				</p>
+			{/if}
+		</div>
+
+		<h3>Async Validation</h3>
+		<p>
+			<code>onbeforecommit</code> supports async validation. Try changing a username to "admin", "root", "system", or "test" - these are reserved and will show a validation error after the async check.
+		</p>
+		<QuickGrid
+			items={asyncValidationData}
+			columns={asyncValidationColumns}
+			editable
+			editTrigger="dblclick"
+			bind:invalidCells={asyncInvalidCells}
+			onrowchange={handleAsyncValidationRowChange}
+		/>
+		{#if asyncLastChange}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				{asyncLastChange}
+			</p>
+		{/if}
+
+		<h3>Row Action Popup</h3>
+		<p>
+			Hover over a row to see a popup with action buttons below the first cell. Actions include: <strong>Add</strong> (+), <strong>Delete</strong> (−), and <strong>Duplicate</strong> (⧉).
+		</p>
+		<QuickGrid
+			items={rowActionsData}
+			columns={rowActionsColumns}
+			editable
+			editTrigger="dblclick"
+			showRowActions
+			onrowaction={handleRowAction}
+			onrowchange={handleRowActionsRowChange}
+		/>
+		{#if lastRowAction}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				{lastRowAction}
+			</p>
+		{/if}
+
+		<h3>Row Actions with Move Up/Down</h3>
+		<p>
+			You can customize which actions appear using the <code>rowActions</code> prop:
+		</p>
+		<QuickGrid
+			items={rowActionsData2}
+			columns={rowActionsColumns}
+			editable
+			editTrigger="dblclick"
+			showRowActions
+			rowActions={['moveUp', 'moveDown', 'duplicate', 'delete']}
+			onrowaction={handleRowAction2}
+			onrowchange={handleRowActionsRowChange2}
+		/>
+		{#if lastRowAction2}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				{lastRowAction2}
+			</p>
+		{/if}
+
+		<h3>Advanced Row Toolbar (Multi-row, Groups, Custom Actions)</h3>
+		<p>
+			The <code>rowToolbar</code> prop supports advanced configurations:
+		</p>
+		<ul style="margin: 0.5rem 0 1rem 1.5rem;">
+			<li><strong>Multi-row layout:</strong> Items can be placed in different rows (<code>row: 1</code> = closest to grid)</li>
+			<li><strong>Groups with dividers:</strong> Items with different <code>group</code> numbers are separated by <code>|</code></li>
+			<li><strong>Custom actions:</strong> Define <code>onclick</code> handlers with async support</li>
+			<li><strong>Dynamic disabled:</strong> Use a function <code>(row, rowIndex) =&gt; boolean</code> to disable conditionally</li>
+			<li><strong>Labels:</strong> Add text labels next to icons with <code>label</code> property</li>
+			<li><strong>Toolbar alignment:</strong> Use <code>toolbarAlign</code> to control vertical alignment (<code>center</code> or <code>top</code>)</li>
+			<li><strong>Toolbar trigger:</strong> Use <code>toolbarTrigger</code> to control how toolbar appears (<code>hover</code>, <code>click</code>, or <code>button</code>)</li>
+		</ul>
+		<div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+			<div style="display: flex; align-items: center; gap: 0.5rem;">
+				<label for="toolbar-align">Alignment:</label>
+				<Select id="toolbar-align" value={toolbarAlignment} onchange={({ value }) => toolbarAlignment = value as 'center' | 'top'}>
+					<Option value="center">Center (default)</Option>
+					<Option value="top">Top (first row aligned)</Option>
+				</Select>
+			</div>
+			<div style="display: flex; align-items: center; gap: 0.5rem;">
+				<label for="toolbar-trigger">Trigger:</label>
+				<Select id="toolbar-trigger" value={toolbarTriggerMode} onchange={({ value }) => toolbarTriggerMode = value as 'hover' | 'click' | 'button'}>
+					<Option value="hover">Hover (default)</Option>
+					<Option value="click">Click on row</Option>
+					<Option value="button">Button in first column</Option>
+				</Select>
+			</div>
+		</div>
+		<QuickGrid
+			items={toolbarData}
+			columns={rowActionsColumns}
+			editable
+			editTrigger="dblclick"
+			showRowToolbar
+			rowToolbar={advancedToolbar}
+			toolbarAlign={toolbarAlignment}
+			toolbarTrigger={toolbarTriggerMode}
+			ontoolbarclick={handleToolbarClick}
+			onrowchange={handleToolbarRowChange}
+		/>
+		{#if lastToolbarAction}
+			<p style="margin-top: 1rem; padding: 0.5rem; background: var(--neutral-layer-2, #f5f5f5); border-radius: 4px;">
+				{lastToolbarAction}
+			</p>
+		{/if}
+
+		<h3>Advanced Row Toolbar Code Example</h3>
+		<pre>{`// Define toolbar with multi-row layout, groups, and custom actions
+const advancedToolbar = [
+  // Row 1: Move actions (group 1) | CRUD actions (group 2)
+  { id: 'moveUp', type: 'moveUp', icon: '↑', title: 'Move up', row: 1, group: 1,
+    disabled: (row, idx) => idx === 0 },
+  { id: 'moveDown', type: 'moveDown', icon: '↓', title: 'Move down', row: 1, group: 1,
+    disabled: (row, idx) => idx === items.length - 1 },
+  { id: 'add', type: 'add', icon: '+', title: 'Add', row: 1, group: 2 },
+  { id: 'duplicate', type: 'duplicate', icon: '⧉', title: 'Duplicate', row: 1, group: 2 },
+  { id: 'delete', type: 'delete', icon: '−', title: 'Delete', danger: true, row: 1, group: 2 },
+
+  // Row 2: Custom actions with async onclick
+  { id: 'export', icon: '📤', title: 'Export', row: 2, group: 1,
+    onclick: async ({ row }) => {
+      await exportToCSV(row)
+    }
+  },
+  { id: 'preview', icon: '👁', title: 'Preview', label: 'View', row: 2, group: 1,
+    onclick: ({ row }) => showPreviewDialog(row)
+  }
+]
+
+<QuickGrid
+  {items}
+  {columns}
+  showRowToolbar
+  rowToolbar={advancedToolbar}
+  ontoolbarclick={handleToolbarClick}
+/>`}</pre>
+
+		<h3>Row Actions Code Example</h3>
+		<pre>{`<script lang="ts">
+  let items = $state([
+    { id: 1, name: "Item One", value: 100 },
+    { id: 2, name: "Item Two", value: 200 }
+  ])
+
+  let nextId = 3
+
+  function handleRowAction(detail) {
+    const { action, rowIndex, row } = detail
+
+    switch (action) {
+      case 'add':
+        items = [
+          ...items.slice(0, rowIndex + 1),
+          { id: nextId++, name: "", value: 0 },
+          ...items.slice(rowIndex + 1)
+        ]
+        break
+      case 'delete':
+        items = items.filter((_, i) => i !== rowIndex)
+        break
+      case 'duplicate':
+        items = [
+          ...items.slice(0, rowIndex + 1),
+          { ...row, id: nextId++ },
+          ...items.slice(rowIndex + 1)
+        ]
+        break
+    }
+  }
+</script>
+
+<QuickGrid
+  {items}
+  {columns}
+  editable
+  showRowActions
+  onrowaction={handleRowAction}
+/>
+
+<!-- Or customize which actions to show -->
+<QuickGrid
+  {items}
+  {columns}
+  showRowActions
+  rowActions={['add', 'duplicate']}
+  onrowaction={handleRowAction}
+/>`}</pre>
+
+		<h3>Basic Editable Code Example</h3>
+		<pre>{`<script lang="ts">
+  type Person = {
+    id: number
+    name: string
+    age: number
+    active: boolean
+    role: string
+  }
+
+  let data: Person[] = $state([
+    { id: 1, name: "Alice", age: 28, active: true, role: "admin" },
+    { id: 2, name: "Bob", age: 34, active: false, role: "user" }
+  ])
+
+  const columns = [
+    { field: "id", title: "ID", width: "80px" },
+    { field: "name", title: "Name", editable: true, editor: "text" },
+    { field: "age", title: "Age", editable: true, editor: "number",
+      editorOptions: { min: 0, max: 120 } },
+    { field: "active", title: "Active", editable: true, editor: "checkbox" },
+    {
+      field: "role",
+      title: "Role",
+      editable: true,
+      editor: "select",
+      editorOptions: {
+        options: [
+          { value: "admin", label: "Administrator" },
+          { value: "user", label: "User" }
+        ]
+      }
+    }
+  ]
+
+  function handleRowChange(detail) {
+    // Update data - the component does NOT mutate your data
+    data[detail.rowIndex] = {
+      ...detail.row,
+      [detail.field]: detail.newValue
+    }
+  }
+</script>
+
+<QuickGrid
+  items={data}
+  columns={columns}
+  editable
+  editTrigger="dblclick"
+  onrowchange={handleRowChange}
+/>`}</pre>
+
+		<h3>Async Validation Code Example</h3>
+		<p>QuickGrid supports both synchronous and asynchronous validation. The cell shows a loading state during async validation.</p>
+		<pre>{`const columns = [
+  {
+    field: "email",
+    title: "Email",
+    editable: true,
+    editor: "text",
+    // Supports both sync and async validation
+    validate: async (value, row) => {
+      // Async API call to check uniqueness
+      const exists = await checkEmailExists(value, row.id)
+      return exists ? "Email already in use" : null
+    }
+  }
+]
+
+<QuickGrid
+  items={data}
+  columns={columns}
+  editable
+  onvalidationerror={(detail) => {
+    console.log(\`Validation failed: \${detail.error}\`)
+  }}
+/>`}</pre>
+
+		<h3>Dynamic Options Loading</h3>
+		<p>Select and autocomplete editors can load options dynamically with configurable timing.</p>
+		<table class="member-table" style="margin-bottom: 1rem;">
+			<thead>
+				<tr>
+					<th>optionsLoadTrigger</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>immediate</td><td>Load once when grid mounts, cache forever</td></tr>
+				<tr><td>oneditstart</td><td>Load when cell enters edit mode (default)</td></tr>
+				<tr><td>ondropdownopen</td><td>Load when dropdown opens (lazy)</td></tr>
+			</tbody>
+		</table>
+		<pre>{`const columns = [
+  {
+    field: "departmentId",
+    title: "Department",
+    editable: true,
+    editor: "select",
+    editorOptions: {
+      // Load options dynamically
+      loadOptions: async (row, field) => {
+        const departments = await fetchDepartments(row.companyId)
+        return departments.map(d => ({ value: d.id, label: d.name }))
+      },
+      optionsLoadTrigger: "ondropdownopen"
+    }
+  }
+]`}</pre>
+
+		<h3>Custom Editor (Dialog)</h3>
+		<p>Use <code>editor: "custom"</code> with <code>oncelledit</code> callback to implement custom editors like dialogs, JSON editors, color pickers, etc.</p>
+		<pre>{`<script>
+  let showJsonDialog = false
+  let jsonEditorContext = null
+
+  const columns = [
+    {
+      field: "metadata",
+      title: "Metadata",
+      editable: true,
+      editor: "custom",
+      showEditButton: true,  // Shows edit icon in cell
+      format: (value) => value ? "{ ... }" : "(empty)",
+      oncelledit: (context) => {
+        // context provides: value, row, rowIndex, field, commit(), cancel()
+        jsonEditorContext = context
+        showJsonDialog = true
+      }
+    }
+  ]
+
+  function handleJsonSave(newJson) {
+    jsonEditorContext?.commit(newJson)  // Fires onrowchange
+    showJsonDialog = false
+  }
+</script>
+
+<QuickGrid {items} {columns} editable onrowchange={handleRowChange} />
+
+{#if showJsonDialog}
+  <Dialog open onclose={() => jsonEditorContext?.cancel()}>
+    <JsonEditor
+      value={jsonEditorContext?.value}
+      onsave={handleJsonSave}
+    />
+  </Dialog>
+{/if}`}</pre>
+
+		<h3>onbeforecommit Code Example</h3>
 		<pre>{`const columns = [
   {
     field: "email",
@@ -1784,26 +1710,9 @@ function handleRowChange(detail) {
   bind:invalidCells={invalidCells}
   onrowchange={handleRowChange}
 />`}</pre>
-	</Card>
 
-	<Card>
-		<h2>CellValidationState</h2>
-		<p>The <code>invalidCells</code> array contains objects with this shape:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>rowIndex</td><td>number</td><td>Row index of the invalid cell</td></tr>
-				<tr><td>field</td><td>string</td><td>Field name of the invalid cell</td></tr>
-				<tr><td>error</td><td>string</td><td>Validation error message</td></tr>
-			</tbody>
-		</table>
-		<p style="margin-top: 1rem;">Use <code>bind:invalidCells</code> to track which cells have validation errors:</p>
+		<h3>Using invalidCells</h3>
+		<p>Use <code>bind:invalidCells</code> to track which cells have validation errors:</p>
 		<pre>{`let invalidCells = $state([])
 
 // Check if form is valid before saving

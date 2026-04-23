@@ -21,9 +21,16 @@
 		{name: "justify", type: "boolean", default: "false", description: "When true, the tab list stretches to fill the container and tabs divide the row equally. Default keeps the compact start-aligned layout"},
 		{name: "stripWidth", type: "string (CSS length)", default: "undefined", description: "Fixed width for the tab strip. Most useful in orientation='vertical' — caps the sidebar width and auto-ellipsises long labels"},
 		{name: "stripHeight", type: "string (CSS length)", default: "undefined", description: "Fixed height for the tab strip (symmetric counterpart to stripWidth). Rarely needed"},
-		{name: "swipe", type: "boolean", default: "true", description: "Enable swipe-left/right (or swipe-up/down in vertical orientation) on the tabpanels to navigate prev/next tab. Touches starting on interactive elements (input, button, slider, contenteditable) are ignored so form controls keep their gestures"},
-		{name: "ontabchange", type: "(detail: { tabId: string; data?: Record<string, unknown> }) => void", default: "undefined", description: "Fired when the active tab changes. `data` is whatever the tab registered via its `data` prop"},
-		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot containing the child <Tab> elements"}
+		{name: "swipe", type: "boolean", default: "true", description: "Enable swipe-left/right (or swipe-up/down in vertical orientation) on the tabpanels to navigate prev/next tab. Touches starting on interactive elements (input, button, slider, contenteditable) are ignored so form controls keep their gestures"}
+	]
+
+	const tabsCallbacks: Property[] = [
+		{name: "ontabchange", type: "(detail: { tabId: string; data?: Record<string, unknown> }) => void", default: "undefined", description: "Fired when the active tab changes. `data` is whatever the tab registered via its `data` prop"}
+	]
+
+	const tabsSlots: Property[] = [
+		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot containing the child <Tab> elements"},
+		{name: "end", type: "fluent-badge", default: "auto", description: "Overflow-count badge rendered automatically when `overflow` is non-empty"}
 	]
 
 	const tabProperties: Property[] = [
@@ -37,24 +44,18 @@
 		{name: "visible", type: "boolean", default: "true", description: "Controls whether the tab is rendered"},
 		{name: "data", type: "Record<string, unknown>", default: "undefined", description: "Arbitrary context data surfaced to ontabchange when this tab is selected"},
 		{name: "class", type: "string", default: '""', description: "Custom class"},
-		{name: "style", type: "string", default: '""', description: "Inline CSS"},
+		{name: "style", type: "string", default: '""', description: "Inline CSS"}
+	]
+
+	const tabCallbacks: Property[] = [
+		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired when the tab's close (×) button is clicked"}
+	]
+
+	const tabSlots: Property[] = [
 		{name: "icon", type: "SlotType", default: "undefined", description: "Optional icon slot rendered before the label"},
 		{name: "header", type: "SlotType", default: "undefined", description: "Fully custom header content (replaces the icon + label default)"},
 		{name: "content", type: "SlotType", default: "undefined", description: "Tab panel content"},
 		{name: "childContent", type: "SlotType", default: "undefined", description: "Alternative content slot, rendered after `content`"}
-	]
-
-	const callbacks: Property[] = [
-		{name: "ontabchange", type: "(detail: { tabId: string; data?: Record<string, unknown> }) => void", default: "undefined", description: "Fired on Tabs when the active tab changes"},
-		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired on Tab when its close (×) button is clicked"}
-	]
-
-	const slots: Property[] = [
-		{name: "childContent", type: "SlotType", default: "undefined", description: "(Tabs) Holds the child <Tab> elements"},
-		{name: "icon", type: "SlotType", default: "undefined", description: "(Tab) Icon shown before the label"},
-		{name: "header", type: "SlotType", default: "undefined", description: "(Tab) Fully custom header"},
-		{name: "content", type: "SlotType", default: "undefined", description: "(Tab) Tab panel body"},
-		{name: "end", type: "fluent-badge", default: "auto", description: "(Tabs) Overflow-count badge rendered automatically when `overflow` is non-empty"}
 	]
 
 	const propertyColumns = [
@@ -107,32 +108,47 @@
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Tabs properties</h2>
+				<h2>Tabs Properties</h2>
 				<QuickGrid items={tabsProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Tab properties</h2>
+				<h2>Tabs Callbacks</h2>
+				<QuickGrid items={tabsCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tabs Slots</h2>
+				<QuickGrid items={tabsSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tab Properties</h2>
 				<QuickGrid items={tabProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				<h2>Tab Callbacks</h2>
+				<QuickGrid items={tabCallbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+				<h2>Tab Slots</h2>
+				<QuickGrid items={tabSlots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
 
 	<Card>
-		<h2 class="content-subhead">Examples</h2>
+		<h2>Examples</h2>
 
 		<h3>Basic tab layout</h3>
 		<p>Minimal tabs — labels only.</p>
@@ -155,9 +171,7 @@
 				</Tab>
 			{/snippet}
 		</Tabs>
-	</Card>
 
-	<Card>
 		<h3>Tabs with icons</h3>
 		<p>Pass an <code>icon</code> snippet to each <code>&lt;Tab&gt;</code>.</p>
 		<Tabs activeId="home-tab">
@@ -204,9 +218,7 @@
 				</Tab>
 			{/snippet}
 		</Tabs>
-	</Card>
 
-	<Card>
 		<h3>Custom header with badge</h3>
 		<p>
 			Use the <code>header</code> snippet for arbitrary header content — here
@@ -232,9 +244,7 @@
 				</Tab>
 			{/snippet}
 		</Tabs>
-	</Card>
 
-	<Card>
 		<h3>Justified tabs</h3>
 		<p>
 			<code>justify</code> stretches the tab list to fill the container and
@@ -261,9 +271,7 @@
 				</Tab>
 			{/snippet}
 		</Tabs>
-	</Card>
 
-	<Card>
 		<h3>Responsive modes</h3>
 		<p>
 			Many tabs + narrow container. Resize the browser (or the preview
@@ -322,9 +330,7 @@
 				</div>
 			</div>
 		</Stack>
-	</Card>
 
-	<Card>
 		<h3>Vertical orientation</h3>
 		<p>
 			Set <code>orientation="vertical"</code> for stacked tabs (side navigation style).
@@ -368,9 +374,7 @@
 				{/snippet}
 			</Tabs>
 		</div>
-	</Card>
 
-	<Card>
 		<h3>Closable tabs</h3>
 		<p>
 			Set <code>showClose</code> on a tab and listen to <code>oncloseclick</code>
@@ -396,9 +400,7 @@
 		{:else}
 			<p><em>No tabs left. Refresh the page to reset.</em></p>
 		{/if}
-	</Card>
 
-	<Card>
 		<h3>Disabled tab</h3>
 		<p>Disabled tabs are greyed out and cannot be activated.</p>
 		<Tabs activeId="d1">
@@ -417,9 +419,7 @@
 				</Tab>
 			{/snippet}
 		</Tabs>
-	</Card>
 
-	<Card>
 		<h3>Editable labels</h3>
 		<p>
 			Set <code>labelEditable</code> to let users rename a tab inline. Click
@@ -441,9 +441,7 @@
 				</Tab>
 			{/snippet}
 		</Tabs>
-	</Card>
 
-	<Card>
 		<h3>Controlled activeId with <code>ontabchange</code> + tab data</h3>
 		<p>
 			Each tab passes a <code>data</code> object that's surfaced to
@@ -471,9 +469,7 @@
 				<code>{JSON.stringify(lastSelected)}</code>
 			</p>
 		{/if}
-	</Card>
 
-	<Card>
 		<h3>Overflow menu</h3>
 		<p>
 			Pass an <code>overflow</code> array to <code>&lt;Tabs&gt;</code> to get

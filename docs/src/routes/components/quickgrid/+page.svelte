@@ -133,6 +133,10 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>QuickGrid</h1>
 
+	<p>
+		A lightweight, flexible data grid component with sorting, filtering, and pagination support. Inspired by ASP.NET QuickGrid.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
@@ -145,10 +149,6 @@
 			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
 		</p>
 	</Card>
-
-	<p>
-		A lightweight, flexible data grid component with sorting, filtering, and pagination support. Inspired by ASP.NET QuickGrid.
-	</p>
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
@@ -171,195 +171,112 @@
 		</GridItem>
 	</Grid>
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>QuickGrid Component</h2>
-				<table class="member-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Default</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>items</td>
-							<td>T[]</td>
-							<td>[]</td>
-							<td>Array of data items to display</td>
-						</tr>
-						<tr>
-							<td>columns</td>
-							<td>Column&lt;T&gt;[]</td>
-							<td>[]</td>
-							<td>Column definitions</td>
-						</tr>
-						<tr>
-							<td>sortable</td>
-							<td>boolean</td>
-							<td>false</td>
-							<td>Enable sorting globally</td>
-						</tr>
-						<tr>
-							<td>filterable</td>
-							<td>boolean</td>
-							<td>false</td>
-							<td>Enable filtering globally</td>
-						</tr>
-						<tr>
-							<td>pageable</td>
-							<td>boolean</td>
-							<td>false</td>
-							<td>Enable pagination</td>
-						</tr>
-						<tr>
-							<td>pageSize</td>
-							<td>number</td>
-							<td>10</td>
-							<td>Items per page</td>
-						</tr>
-						<tr>
-							<td>striped</td>
-							<td>boolean</td>
-							<td>true</td>
-							<td>Alternate row colors</td>
-						</tr>
-						<tr>
-							<td>hoverable</td>
-							<td>boolean</td>
-							<td>true</td>
-							<td>Highlight rows on hover</td>
-						</tr>
-						<tr>
-							<td>editable</td>
-							<td>boolean</td>
-							<td>false</td>
-							<td>Enable inline editing (<a href="/components/quickgrid-editable">see editable docs</a>)</td>
-						</tr>
-					</tbody>
-				</table>
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Column Definition</h2>
-				<table class="member-table">
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Default</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>field</td>
-							<td>keyof T | string</td>
-							<td>required</td>
-							<td>Field name from data item</td>
-						</tr>
-						<tr>
-							<td>title</td>
-							<td>string</td>
-							<td>required</td>
-							<td>Column header text</td>
-						</tr>
-						<tr>
-							<td>sortable</td>
-							<td>boolean</td>
-							<td>undefined</td>
-							<td>Enable sorting for this column</td>
-						</tr>
-						<tr>
-							<td>filterable</td>
-							<td>boolean</td>
-							<td>undefined</td>
-							<td>Enable filtering for this column</td>
-						</tr>
-						<tr>
-							<td>width</td>
-							<td>string</td>
-							<td>undefined</td>
-							<td>Column width. Any CSS length (e.g. <code>"120px"</code>, <code>"20%"</code>, <code>"10rem"</code>). Ignored when <code>autoWidth</code> is true</td>
-						</tr>
-						<tr>
-							<td>minWidth</td>
-							<td>string</td>
-							<td>undefined</td>
-							<td>CSS <code>min-width</code> for the column (e.g. <code>"80px"</code>)</td>
-						</tr>
-						<tr>
-							<td>maxWidth</td>
-							<td>string</td>
-							<td>undefined</td>
-							<td>CSS <code>max-width</code> for the column (e.g. <code>"320px"</code>)</td>
-						</tr>
-						<tr>
-							<td>autoWidth</td>
-							<td>boolean</td>
-							<td>undefined</td>
-							<td>Size column to its header content and prevent it from stretching. Pair with grid-level <code>fillerColumn</code> so the freed space is absorbed by a trailing empty column instead of redistributing to other columns</td>
-						</tr>
-						<tr>
-							<td>align</td>
-							<td>"left" | "center" | "right"</td>
-							<td>"left"</td>
-							<td>Text alignment</td>
-						</tr>
-						<tr>
-							<td>format</td>
-							<td>(value, row) =&gt; string</td>
-							<td>undefined</td>
-							<td>Custom cell formatter</td>
-						</tr>
-						<tr>
-							<td>editable</td>
-							<td>boolean</td>
-							<td>undefined</td>
-							<td>Enable editing (<a href="/components/quickgrid-editable">see editable docs</a>)</td>
-						</tr>
-					</tbody>
-				</table>
-			</Card>
-		</GridItem>
-	</Grid>
+	<Card>
+		<h2>Column Definition</h2>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Default</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>field</td>
+					<td>keyof T | string</td>
+					<td>required</td>
+					<td>Field name from data item</td>
+				</tr>
+				<tr>
+					<td>title</td>
+					<td>string</td>
+					<td>required</td>
+					<td>Column header text</td>
+				</tr>
+				<tr>
+					<td>sortable</td>
+					<td>boolean</td>
+					<td>undefined</td>
+					<td>Enable sorting for this column</td>
+				</tr>
+				<tr>
+					<td>filterable</td>
+					<td>boolean</td>
+					<td>undefined</td>
+					<td>Enable filtering for this column</td>
+				</tr>
+				<tr>
+					<td>width</td>
+					<td>string</td>
+					<td>undefined</td>
+					<td>Column width. Any CSS length (e.g. <code>"120px"</code>, <code>"20%"</code>, <code>"10rem"</code>). Ignored when <code>autoWidth</code> is true</td>
+				</tr>
+				<tr>
+					<td>minWidth</td>
+					<td>string</td>
+					<td>undefined</td>
+					<td>CSS <code>min-width</code> for the column (e.g. <code>"80px"</code>)</td>
+				</tr>
+				<tr>
+					<td>maxWidth</td>
+					<td>string</td>
+					<td>undefined</td>
+					<td>CSS <code>max-width</code> for the column (e.g. <code>"320px"</code>)</td>
+				</tr>
+				<tr>
+					<td>autoWidth</td>
+					<td>boolean</td>
+					<td>undefined</td>
+					<td>Size column to its header content and prevent it from stretching. Pair with grid-level <code>fillerColumn</code> so the freed space is absorbed by a trailing empty column instead of redistributing to other columns</td>
+				</tr>
+				<tr>
+					<td>align</td>
+					<td>"left" | "center" | "right"</td>
+					<td>"left"</td>
+					<td>Text alignment</td>
+				</tr>
+				<tr>
+					<td>format</td>
+					<td>(value, row) =&gt; string</td>
+					<td>undefined</td>
+					<td>Custom cell formatter</td>
+				</tr>
+				<tr>
+					<td>editable</td>
+					<td>boolean</td>
+					<td>undefined</td>
+					<td>Enable editing (<a href="/components/quickgrid-editable">see editable docs</a>)</td>
+				</tr>
+			</tbody>
+		</table>
+	</Card>
 
 	<Card>
-		<h2>Basic Grid</h2>
+		<h2>Examples</h2>
+
+		<h3>Basic Grid</h3>
 		<p>Simple grid with default settings:</p>
 		<QuickGrid items={sampleData} columns={basicColumns} />
-	</Card>
 
-	<Card>
-		<h2>Sortable Grid</h2>
+		<h3>Sortable Grid</h3>
 		<p>Click column headers to sort (supports string, number, and mixed types):</p>
 		<QuickGrid items={sampleData} columns={sortableColumns} sortable />
-	</Card>
 
-	<Card>
-		<h2>Filterable Grid</h2>
+		<h3>Filterable Grid</h3>
 		<p>Type in the filter inputs to search (case-insensitive):</p>
 		<QuickGrid items={sampleData} columns={filterableColumns} filterable />
-	</Card>
 
-	<Card>
-		<h2>Paginated Grid</h2>
+		<h3>Paginated Grid</h3>
 		<p>Grid with pagination (5 items per page):</p>
 		<QuickGrid items={sampleData} columns={basicColumns} pageable pageSize={5} />
-	</Card>
 
-	<Card>
-		<h2>Custom Formatting</h2>
+		<h3>Custom Formatting</h3>
 		<p>Use format function to customize cell display:</p>
 		<QuickGrid items={sampleData} columns={formattedColumns} />
-	</Card>
 
-	<Card>
-		<h2>All Features Combined</h2>
+		<h3>All Features Combined</h3>
 		<p>Sorting, filtering, pagination, and custom formatting:</p>
 		<QuickGrid
 			items={sampleData}
@@ -369,16 +286,12 @@
 			pageable
 			pageSize={7}
 		/>
-	</Card>
 
-	<Card>
-		<h2>No Stripes, No Hover</h2>
+		<h3>No Stripes, No Hover</h3>
 		<p>Grid without alternating row colors or hover effects:</p>
 		<QuickGrid items={sampleData} columns={basicColumns} striped={false} hoverable={false} />
-	</Card>
 
-	<Card>
-		<h2>Editable Grid</h2>
+		<h3>Editable Grid</h3>
 		<p>QuickGrid supports inline editing with multiple editor types, validation, dynamic options loading, and custom editors.</p>
 		<p><a href="/components/quickgrid-editable">See QuickGrid Editable documentation</a> for examples and full API reference.</p>
 	</Card>

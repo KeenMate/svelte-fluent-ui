@@ -13,16 +13,31 @@
 		description: string
 	}
 
-	const properties: Property[] = [
+	const appBarProperties: Property[] = [
 		{name: "orientation", type: '"horizontal" | "vertical"', default: '"vertical"', description: "AppBar orientation"}
 	]
 
-	const actions: Property[] = []
+	const appBarCallbacks: Property[] = []
 
-	const callbacks: Property[] = []
-
-	const slots: Property[] = [
+	const appBarSlots: Property[] = [
 		{name: "children", type: "SlotType", default: "undefined", description: "AppBarItem components"}
+	]
+
+	const appBarItemProperties: Property[] = [
+		{name: "href", type: "string", default: "undefined", description: "URL — renders the item as a link"},
+		{name: "rel", type: "string", default: "undefined", description: "Link rel attribute"},
+		{name: "count", type: "number", default: "undefined", description: "Optional counter badge"},
+		{name: "active", type: "boolean", default: "undefined", description: "Marks the item as active (bindable)"},
+		{name: "class", type: "string", default: "undefined", description: "Additional CSS class"}
+	]
+
+	const appBarItemCallbacks: Property[] = [
+		{name: "onClick", type: "(ev: MouseEvent) => void", default: "undefined", description: "Fires when the item is clicked"}
+	]
+
+	const appBarItemSlots: Property[] = [
+		{name: "children", type: "SlotType", default: "undefined", description: "Item label content"},
+		{name: "icon", type: "SlotType", default: "undefined", description: "Icon rendered above the label"}
 	]
 
 	const propertyColumns = [
@@ -50,32 +65,44 @@
 		</p>
 	</Card>
 
-	<p>
-		For components: <br>
-		<span class="component-name">AppBar</span>,
-		<span class="component-name">AppBarItem</span>
-	</p>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBar Properties</h2>
+				<QuickGrid items={appBarProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBar Callbacks</h2>
+				<QuickGrid items={appBarCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBar Slots</h2>
+				<QuickGrid items={appBarSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Grid spacing={3}>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Properties</h2>
-				<p>(of AppBar)</p>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+				<h2>AppBarItem Properties</h2>
+				<QuickGrid items={appBarItemProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Callbacks</h2>
-				<p>(of AppBar)</p>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				<h2>AppBarItem Callbacks</h2>
+				<QuickGrid items={appBarItemCallbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h2>Slots</h2>
-				<p>(of AppBar)</p>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+				<h2>AppBarItem Slots</h2>
+				<QuickGrid items={appBarItemSlots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -83,54 +110,48 @@
 	<Card>
 		<h2>Examples</h2>
 		<div class="examples-container">
-		<div class="example-item">
-			<h5>Regular AppBar</h5>
+			<div class="example-item">
+				<h3>Regular AppBar</h3>
 
-			<Stack varticalAlign="start" horizontalAlign="start" vertical>
-				<AppBar>
-					<AppBarItem href="https://microsoft.com" rel="noreferer noorigin" target="_blank" icon={commonItemIcon}>
-						Microsoft
-					</AppBarItem>
+				<Stack varticalAlign="start" horizontalAlign="start" vertical>
+					<AppBar>
+						<AppBarItem href="https://microsoft.com" rel="noreferer noorigin" target="_blank" icon={commonItemIcon}>
+							Microsoft
+						</AppBarItem>
 
-					<AppBarItem href="/" icon={commonItemIcon}>
-						<!--{#snippet icon()}-->
-						<!--{/snippet}-->
-						Home
-					</AppBarItem>
-					<AppBarItem onClick={onAppBarItemClicked} icon={commonItemIcon}>
-						Item 2
-					</AppBarItem>
-					<AppBarItem href="https://microsoft.com" icon={commonItemIcon}>
-						<!--{#snippet icon()}-->
-						<!--{/snippet}-->
-						Item 4
-					</AppBarItem>
-					<AppBarItem icon={commonItemIcon}>
-						<!--{#snippet icon()}-->
-						<!--{/snippet}-->
-						Item 5
-					</AppBarItem>
-				</AppBar>
-			</Stack>
+						<AppBarItem href="/" icon={commonItemIcon}>
+							Home
+						</AppBarItem>
+						<AppBarItem onClick={onAppBarItemClicked} icon={commonItemIcon}>
+							Item 2
+						</AppBarItem>
+						<AppBarItem href="https://microsoft.com" icon={commonItemIcon}>
+							Item 4
+						</AppBarItem>
+						<AppBarItem icon={commonItemIcon}>
+							Item 5
+						</AppBarItem>
+					</AppBar>
+				</Stack>
+			</div>
+			<div class="example-item">
+				<h3>Horizontal AppBar menu</h3>
+
+				<Stack varticalAlign="start" horizontalAlign="start" vertical>
+					<AppBar orientation={AppBarOrientation.Horizontal}>
+						<AppBarItem title="Item 1 tooltip" icon={commonItemIcon}>
+							Item 1
+						</AppBarItem>
+						<AppBarItem title="Item 2 tooltip" icon={commonItemIcon}>
+							Item 2
+						</AppBarItem>
+						<AppBarItem title="Item 4 tooltip" icon={commonItemIcon}>
+							Item 4
+						</AppBarItem>
+					</AppBar>
+				</Stack>
+			</div>
 		</div>
-		<div class="example-item">
-			<h5>Horizontal AppBar menu</h5>
-
-			<Stack varticalAlign="start" horizontalAlign="start" vertical>
-				<AppBar orientation={AppBarOrientation.Horizontal}>
-					<AppBarItem title="Item 1 tooltip" icon={commonItemIcon}>
-						Item 1
-					</AppBarItem>
-					<AppBarItem title="Item 2 tooltip" icon={commonItemIcon}>
-						Item 2
-					</AppBarItem>
-					<AppBarItem title="Item 4 tooltip" icon={commonItemIcon}>
-						Item 4
-					</AppBarItem>
-				</AppBar>
-			</Stack>
-		</div>
-	</div>
 	</Card>
 </Stack>
 
