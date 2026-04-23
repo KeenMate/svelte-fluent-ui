@@ -65,12 +65,10 @@
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>

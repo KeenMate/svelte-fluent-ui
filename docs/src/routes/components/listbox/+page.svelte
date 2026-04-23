@@ -109,34 +109,32 @@
 		</p>
 	</Card>
 
-	<h2>API</h2>
-
-	<Card>
-		<h3>Properties</h3>
-		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Grid columns={2} gap="1rem">
-		<GridItem>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Callbacks</h3>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
 				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
-				<h3>Slots</h3>
+				<h2>Slots</h2>
 				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
 
-	<h2>Examples</h2>
-
-	<!-- Manual Example -->
 	<Card>
+		<h2>Examples</h2>
+
 		<h3>Manual</h3>
-		<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Stack orientation="vertical" gap="1rem">
 			<Listbox bind:value={manualValue}>
 				<Option value="">This option has no value</Option>
 				<Option value="item2" disabled>This option is disabled</Option>
@@ -150,12 +148,9 @@
 			</Listbox>
 			<small>Selection: Item 4</small>
 		</Stack>
-	</Card>
 
-	<!-- Default Example -->
-	<Card>
 		<h3>Default</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Listbox bind:value={defaultSelectedValue} label="Select a person">
 					{#each defaultPeople as person}
@@ -170,12 +165,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- From a list of Option<T> items -->
-	<Card>
 		<h3>From a list of Option&lt;T&gt; items</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="1rem">
 					<div>
@@ -210,12 +202,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Long list -->
-	<Card>
 		<h3>Long list</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Listbox bind:value={longListValue}>
 					{#each usStates as state}
@@ -227,12 +216,9 @@
 				<small>Selected value: {longListValue || "(none)"}</small>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Long list with Width and Height -->
-	<Card>
 		<h3>Long list with Width and Height</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Listbox bind:value={longListWithSizeValue} width="200px" height="250px">
 					{#each usStates as state}
@@ -244,12 +230,9 @@
 				<small>Selected value: {longListWithSizeValue || "(none)"}</small>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Option template -->
-	<Card>
 		<h3>Option template</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Listbox bind:value={templateValue}>
 					{#each templatePeople as person}
@@ -269,12 +252,9 @@
 				<small>Selected: {templateValue ? templatePeople.find(p => p.value === templateValue)?.firstName : "(none)"}</small>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Multiple Selection -->
-	<Card>
 		<h3>Multiple Selection</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<small>Use Ctrl/Cmd + click to select multiple items</small>
@@ -287,12 +267,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Disabled -->
-	<Card>
 		<h3>Disabled</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Listbox value="banana" disabled>
 					<Option value="apple">Apple</Option>
@@ -304,12 +281,9 @@
 				<small>Entire listbox is disabled</small>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- With Label -->
-	<Card>
 		<h3>With Label</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Listbox label="Select a fruit" value="apple">
 					<Option value="apple">Apple</Option>
@@ -322,29 +296,6 @@
 </Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 1rem 0 0 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
 	small {
 		font-size: 0.875rem;
 	}

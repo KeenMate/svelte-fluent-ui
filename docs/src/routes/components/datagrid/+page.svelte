@@ -60,12 +60,10 @@
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
@@ -76,7 +74,7 @@
 	</Grid>
 
 	<Card>
-		<h2 class="content-subhead">Examples</h2>
+		<h2>Examples</h2>
 
 		<h3>Basic DataGrid</h3>
 		<DataGrid ariaRowCount={sampleData.length + 1} generateHeader="sticky">

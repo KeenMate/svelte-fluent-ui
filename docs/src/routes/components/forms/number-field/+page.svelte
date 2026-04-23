@@ -133,15 +133,6 @@
 
 	<Card>
 		<p>
-			<strong>Note:</strong> This wrapping can be compared to a Wrapper Input. Consider implementation of a number input field leveraging the fluent UI design system.
-		</p>
-		<p>
-			Also, please be in general to not use a NumberField for the end of input form data like dates or percent.
-		</p>
-	</Card>
-
-	<Card>
-		<p>
 			<strong>References:</strong>
 			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
 			|
@@ -149,13 +140,38 @@
 		</p>
 	</Card>
 
-	<h2>Examples</h2>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<!-- Default Examples -->
 	<Card>
+		<h2>Methods</h2>
+		<QuickGrid items={methods} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h2>Examples</h2>
+
 		<h3>Default</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Integer</strong>
@@ -178,13 +194,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Types -->
-	<Card>
 		<h3>Types</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.75rem">
 					<div>
@@ -219,13 +232,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Types with constraints -->
-	<Card>
 		<h3>Types with constraints</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Stack orientation="vertical" gap="1rem">
 			<div>
 				<strong>Unsigned short with inherent constraints from type</strong>
 				<NumberField bind:value={constrainedShort} label="Example unsigned short" min={0} max={65535} />
@@ -242,13 +252,10 @@
 				<small>Minimum value: 10 Maximum value: 19</small>
 			</div>
 		</Stack>
-	</Card>
 
-	<!-- Displays -->
-	<Card>
 		<h3>Displays</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Stack orientation="vertical" gap="1rem">
 			<div>
 				<strong>Full Width</strong>
 				<NumberField bind:value={fullWidthValue} label="Full width" width="100%" />
@@ -276,13 +283,10 @@
 				<small>value: {readonlyValue}</small>
 			</div>
 		</Stack>
-	</Card>
 
-	<!-- Icons -->
-	<Card>
 		<h3>Icons</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Start icon</strong>
@@ -317,13 +321,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Focus -->
-	<Card>
 		<h3>Focus</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Autofocus</strong>
@@ -339,13 +340,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Filled Appearance -->
-	<Card>
 		<h3>Filled Appearance</h3>
 		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">Example: Basic</p>
-		<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Stack orientation="vertical" gap="1rem">
 			<div>
 				<strong>Default</strong>
 				<NumberField bind:value={filledDefault} label="Default" appearance="filled" />
@@ -369,12 +367,9 @@
 				<small>value: {filledReadonly}</small>
 			</div>
 		</Stack>
-	</Card>
 
-	<!-- Callback Example -->
-	<Card>
 		<h3>Callback example</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>With onchange callback</strong>
@@ -388,54 +383,9 @@
 			</GridItem>
 		</Grid>
 	</Card>
-
-	<h2>Documentation</h2>
-
-	<Card>
-		<h3>Parameters</h3>
-		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>EventCallbacks</h3>
-		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Methods</h3>
-		<QuickGrid items={methods} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Slots</h3>
-		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-	</Card>
 </Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 1.5rem 0 0 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
 	small {
 		font-size: 0.875rem;
 		color: var(--neutral-foreground-hint);

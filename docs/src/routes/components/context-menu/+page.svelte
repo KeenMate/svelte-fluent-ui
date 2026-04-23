@@ -140,19 +140,27 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>ContextMenu</h1>
 
+	<p>
+		Right-click anywhere inside the wrapped children to open a floating menu at the
+		cursor. Shares the same <code>MenuButtonItem</code> shape as <code>&lt;MenuButton&gt;</code>
+		— icon, label, disabled, visible, danger, dividerBefore, onclick — and the same
+		visual language as QuickGrid's built-in context menu.
+	</p>
+
+	<p>
+		Positioning is handled by <a href="https://floating-ui.com/" target="_blank" rel="noopener">Floating UI</a>
+		so the menu automatically flips away from the viewport edge (right-click near the
+		bottom of the screen and it opens upward), shifts horizontally to stay visible,
+		and caps its own height when space is tight so it becomes scrollable instead of
+		being cut off.
+	</p>
+
 	<Card>
 		<p>
-			Right-click anywhere inside the wrapped children to open a floating menu at the
-			cursor. Shares the same <code>MenuButtonItem</code> shape as <code>&lt;MenuButton&gt;</code>
-			— icon, label, disabled, visible, danger, dividerBefore, onclick — and the same
-			visual language as QuickGrid's built-in context menu.
-		</p>
-		<p>
-			Positioning is handled by <a href="https://floating-ui.com/" target="_blank" rel="noopener">Floating UI</a>
-			so the menu automatically flips away from the viewport edge (right-click near the
-			bottom of the screen and it opens upward), shifts horizontally to stay visible,
-			and caps its own height when space is tight so it becomes scrollable instead of
-			being cut off.
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Blazor">FluentUI Blazor (N/A)</span>
 		</p>
 	</Card>
 
@@ -180,7 +188,9 @@
 	</Grid>
 
 	<Card>
-		<h2>Basic usage</h2>
+		<h2>Examples</h2>
+
+		<h3>Basic usage</h3>
 		<p>
 			Right-click inside the box below. The browser's native context menu is
 			suppressed for this area and ours opens at the cursor.
@@ -201,10 +211,8 @@
 				&middot; opened at <code>({lastCursor.x}, {lastCursor.y})</code>
 			{/if}
 		</div>
-	</Card>
 
-	<Card>
-		<h2>Side-opening submenus</h2>
+		<h3>Side-opening submenus</h3>
 		<p>
 			Pass <code>children</code> without <code>expandable</code> to render an
 			item as a submenu trigger — hover (or focus) opens a floating submenu
@@ -222,10 +230,8 @@
 				</div>
 			</div>
 		</ContextMenu>
-	</Card>
 
-	<Card>
-		<h2>Expandable sections</h2>
+		<h3>Expandable sections</h3>
 		<p>
 			Pass <code>children</code> plus <code>expandable: true</code> on a menu item
 			to render it as an inline section header. Clicking the chevron expands or
@@ -243,10 +249,8 @@
 				</div>
 			</div>
 		</ContextMenu>
-	</Card>
 
-	<Card>
-		<h2>Offset from cursor</h2>
+		<h3>Offset from cursor</h3>
 		<p>
 			By default the menu opens right at the click position, which means the
 			cursor is sitting on the first menu item. Use
@@ -275,10 +279,8 @@
 				</div>
 			</div>
 		</ContextMenu>
-	</Card>
 
-	<Card>
-		<h2>Conditional items</h2>
+		<h3>Conditional items</h3>
 		<p>
 			Toggle the checkbox below, then right-click the box — the Delete item
 			becomes disabled when the lock is on.
@@ -293,10 +295,8 @@
 				<strong>Right-click for conditional menu</strong>
 			</div>
 		</ContextMenu>
-	</Card>
 
-	<Card>
-		<h2>Per-item menus in a list</h2>
+		<h3>Per-item menus in a list</h3>
 		<p>
 			Each item has its own <code>&lt;ContextMenu&gt;</code> with actions tailored to
 			the item. Right-click any card to see its own menu; pick Delete to remove it.
@@ -322,10 +322,8 @@
 				]}>Reset</button>
 			</p>
 		{/if}
-	</Card>
 
-	<Card>
-		<h2>Disabled trigger</h2>
+		<h3>Disabled trigger</h3>
 		<p>
 			Set <code>disabled</code> to fall back to the browser's native right-click menu —
 			useful when an element should opt out of the custom menu (e.g. an editable

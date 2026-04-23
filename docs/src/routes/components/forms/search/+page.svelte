@@ -146,12 +146,48 @@
 		</p>
 	</Card>
 
-	<h2>Examples</h2>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
-	<!-- Basic Examples -->
 	<Card>
+		<h2>Methods</h2>
+		<QuickGrid items={methods} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h2>Placeholders and autofill</h2>
+		<p>The <code>placeholder</code> parameter is used to set the placeholder text for the input field. This is a short hint that describes the expected value of the input field, it is displayed when the input field is empty and not focused.</p>
+		<p>The placeholder value affects the autofill suggestion feature in Microsoft Edge and Google Chrome. Even if you set the <code>autocomplete</code> parameter to off, the browser may still display autofill suggestions based on the placeholder value.</p>
+		<p style="margin-bottom: 1rem;">Here are certain placeholder values which you should avoid to prevent the browser from showing autofill suggestions:</p>
+
+		<QuickGrid items={placeholderData} columns={placeholderColumns} striped />
+
+		<p class="hint" style="margin-top: 1rem;">If you still want to use these placeholder values, then you need to disable autofill in your browser settings completely.</p>
+	</Card>
+
+	<Card>
+		<h2>Examples</h2>
+
 		<h3>Basic</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Without a label</strong>
@@ -165,12 +201,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Interactive -->
-	<Card>
 		<h3>Interactive</h3>
-		<Grid columns={1} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={1} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Search
@@ -192,12 +225,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Interactive with Debounce -->
-	<Card>
 		<h3>Interactive with debounce</h3>
-		<Grid columns={1} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={1} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Search
@@ -221,12 +251,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Immediate (with and without debounce) -->
-	<Card>
 		<h3>Immediate (with and without debounce)</h3>
-		<Grid columns={1} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={1} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Checkbox bind:checked={immediateDelayEnabled}>Immediate Delay</Checkbox>
@@ -251,12 +278,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- States -->
-	<Card>
 		<h3>States</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Full Width</strong>
@@ -288,12 +312,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Icons -->
-	<Card>
 		<h3>Icons</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>With start</strong>
@@ -315,12 +336,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Focus -->
-	<Card>
 		<h3>Focus</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Autofocus</strong>
@@ -339,12 +357,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Filled Style -->
-	<Card>
 		<h3>Filled style</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Default</strong>
@@ -376,12 +391,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Miscellaneous -->
-	<Card>
 		<h3>Miscellaneous</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Minlength</strong>
@@ -398,70 +410,9 @@
 			</GridItem>
 		</Grid>
 	</Card>
-
-	<h2>Documentation</h2>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Properties</h2><QuickGrid items={properties} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Callbacks</h2><QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Slots</h2><QuickGrid items={slots} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Methods</h2><QuickGrid items={methods} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-	</Grid>
-
-	<!-- Placeholders and Autofill -->
-	<Card>
-		<h3>Placeholders and autofill</h3>
-		<p>The <code>placeholder</code> parameter is used to set the placeholder text for the input field. This is a short hint that describes the expected value of the input field, it is displayed when the input field is empty and not focused.</p>
-		<p>The placeholder value affects the autofill suggestion feature in Microsoft Edge and Google Chrome. Even if you set the <code>autocomplete</code> parameter to off, the browser may still display autofill suggestions based on the placeholder value.</p>
-		<p style="margin-bottom: 1rem;">Here are certain placeholder values which you should avoid to prevent the browser from showing autofill suggestions:</p>
-
-		<QuickGrid items={placeholderData} columns={placeholderColumns} striped />
-
-		<p class="hint" style="margin-top: 1rem;">If you still want to use these placeholder values, then you need to disable autofill in your browser settings completely.</p>
-	</Card>
 </Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 1rem 0 0 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	h4 {
-		font-size: 1.1rem;
-		margin: 1rem 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
 	small {
 		font-size: 0.875rem;
 	}

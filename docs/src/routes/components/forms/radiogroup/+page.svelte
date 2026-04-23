@@ -67,12 +67,32 @@
 		The <code>RadioGroup</code> wraps the <code>&lt;fluent-radio-group&gt;</code> element, a web component implementation of a radio group leveraging the Fluent UI design system.
 	</p>
 
-	<h2>Examples</h2>
-
 	<Grid spacing={3}>
-		<!-- Default -->
-		<GridItem xs={12} md={6}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={radioGroupCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Examples</h2>
+
+		<Grid columns={2} gap="1rem">
+			<GridItem>
 				<h3>Default</h3>
 				<div class="example-section">
 					<span class="example-label">Numbers</span>
@@ -90,12 +110,9 @@
 					</RadioGroup>
 					<p class="selected-value">Selected: {stringsValue ?? "0"}</p>
 				</div>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- In a toolbar -->
-		<GridItem xs={12} md={6}>
-			<Card>
+			<GridItem>
 				<h3>In a toolbar</h3>
 				<Toolbar>
 					<Button appearance="accent">Go</Button>
@@ -106,39 +123,32 @@
 					</RadioGroup>
 					<Button appearance="accent">Stop</Button>
 				</Toolbar>
-			</Card>
-		</GridItem>
+			</GridItem>
+		</Grid>
 
-		<!-- States -->
-		<GridItem xs={12}>
-			<Card>
-				<h3>States</h3>
-				<Grid spacing={2}>
-					<GridItem xs={12} md={6}>
-						<h4>Read only</h4>
-						<p class="hint">readonly radio group</p>
-						<RadioGroup bind:value={readonlyValue} name="readonly-radio" readonly>
-							<Radio value="word">Word</Radio>
-							<Radio value="excel">Excel</Radio>
-						</RadioGroup>
-					</GridItem>
-					<GridItem xs={12} md={6}>
-						<h4>Disabled</h4>
-						<p class="hint">Disabled radio group</p>
-						<RadioGroup bind:value={disabledValue} name="disabled-radio" disabled>
-							<Radio value="lamborghini">Lamborghini</Radio>
-							<Radio value="ferrari">Ferrari</Radio>
-						</RadioGroup>
-					</GridItem>
-				</Grid>
-			</Card>
-		</GridItem>
+		<h3>States</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<h4>Read only</h4>
+				<p class="hint">readonly radio group</p>
+				<RadioGroup bind:value={readonlyValue} name="readonly-radio" readonly>
+					<Radio value="word">Word</Radio>
+					<Radio value="excel">Excel</Radio>
+				</RadioGroup>
+			</GridItem>
+			<GridItem>
+				<h4>Disabled</h4>
+				<p class="hint">Disabled radio group</p>
+				<RadioGroup bind:value={disabledValue} name="disabled-radio" disabled>
+					<Radio value="lamborghini">Lamborghini</Radio>
+					<Radio value="ferrari">Ferrari</Radio>
+				</RadioGroup>
+			</GridItem>
+		</Grid>
 
-		<!-- Label outside group -->
-		<GridItem xs={12} md={6}>
-			<Card>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
 				<h3>Label outside group</h3>
-				<h4>With label outside group</h4>
 				<RadioGroup bind:value={labelOutsideValue} name="label-outside-radio" label="Outside label" orientation="vertical">
 					<Radio value="apples">Apples</Radio>
 					<Radio value="oranges">Oranges</Radio>
@@ -151,14 +161,10 @@
 					<Radio value="pineapple">Pineapple</Radio>
 				</RadioGroup>
 				<p class="selected-value">Your favorite fruit: {labelOutsideValue}!</p>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- With preset -->
-		<GridItem xs={12} md={6}>
-			<Card>
+			<GridItem>
 				<h3>With preset</h3>
-				<h4>Preset value</h4>
 				<p class="hint">Preset selected-value</p>
 				<RadioGroup bind:value={presetValue} name="preset-radio">
 					<Radio value="iceman">Ice Man</Radio>
@@ -167,24 +173,9 @@
 					<Radio value="jester">Jester</Radio>
 				</RadioGroup>
 				<p class="selected-value">The best pilot according to you is: {presetValue}!</p>
-				<p class="selected-value">Your favorite pilot: {presetValue}!</p>
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<h2>Documentation</h2>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Properties</h2><QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Callbacks</h2><QuickGrid items={radioGroupCallbacks} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Slots</h2><QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-	</Grid>
+			</GridItem>
+		</Grid>
+	</Card>
 </Stack>
 
 <style>

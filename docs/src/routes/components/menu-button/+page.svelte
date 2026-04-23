@@ -91,18 +91,26 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>MenuButton</h1>
 
+	<p>
+		A button that opens a dropdown context menu on click instead of firing a
+		single <code>onclick</code>. Uses the same visual language as the QuickGrid
+		context menu and the <code>Tabs</code> <code>responsive="menu"</code> overflow
+		dropdown so menus look consistent across the library.
+	</p>
+
+	<p>
+		The menu is portalled to <code>&lt;body&gt;</code> via
+		<code>PositioningRegion</code> so it escapes ancestor stacking contexts. It
+		opens below the button by default and auto-flips to above when there isn't
+		enough room below.
+	</p>
+
 	<Card>
 		<p>
-			A button that opens a dropdown context menu on click instead of firing a
-			single <code>onclick</code>. Uses the same visual language as the QuickGrid
-			context menu and the <code>Tabs</code> <code>responsive="menu"</code> overflow
-			dropdown so menus look consistent across the library.
-		</p>
-		<p>
-			The menu is portalled to <code>&lt;body&gt;</code> via
-			<code>PositioningRegion</code> so it escapes ancestor stacking contexts. It
-			opens below the button by default and auto-flips to above when there isn't
-			enough room below.
+			<strong>References:</strong>
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
+			|
+			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Blazor">FluentUI Blazor (N/A)</span>
 		</p>
 	</Card>
 
@@ -113,21 +121,12 @@
 				<QuickGrid items={properties} columns={propertyColumns} />
 			</Card>
 		</GridItem>
-
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2><code>MenuButtonItem</code></h2>
-				<QuickGrid items={itemProps} columns={propertyColumns} />
-			</Card>
-		</GridItem>
-
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>Callbacks</h2>
 				<QuickGrid items={callbacks} columns={propertyColumns} />
 			</Card>
 		</GridItem>
-
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
 				<h2>Slots</h2>
@@ -137,7 +136,15 @@
 	</Grid>
 
 	<Card>
-		<h2>Basic usage</h2>
+		<h2>MenuButtonItem</h2>
+		<p>Shape of each entry in the <code>items</code> array.</p>
+		<QuickGrid items={itemProps} columns={propertyColumns} />
+	</Card>
+
+	<Card>
+		<h2>Examples</h2>
+
+		<h3>Basic usage</h3>
 		<p>
 			Pass an array of <code>items</code>. Click the button to open, click an
 			item to run its <code>onclick</code>; the menu auto-closes afterwards.
@@ -162,19 +169,15 @@
 				Last action: <strong>{lastAction}</strong>
 			</span>
 		</div>
-	</Card>
 
-	<Card>
-		<h2>Disabled items</h2>
+		<h3>Disabled items</h3>
 		<p>
 			Individual items can be disabled — they render dimmed and their
 			<code>onclick</code> is ignored.
 		</p>
 		<MenuButton items={withDisabledItems}>File</MenuButton>
-	</Card>
 
-	<Card>
-		<h2>Conditional visibility</h2>
+		<h3>Conditional visibility</h3>
 		<p>
 			Set <code>visible: false</code> on an item to omit it entirely — useful for
 			permission-based menus. Toggle the checkbox below and reopen the menu to
@@ -189,19 +192,15 @@
 				Document
 			</MenuButton>
 		</div>
-	</Card>
 
-	<Card>
-		<h2>Async item handler</h2>
+		<h3>Async item handler</h3>
 		<p>
 			<code>onclick</code> can return a promise. The menu closes immediately
 			but you can safely perform async work after.
 		</p>
 		<MenuButton items={asyncItems}>Run</MenuButton>
-	</Card>
 
-	<Card>
-		<h2>Controlled open state</h2>
+		<h3>Controlled open state</h3>
 		<p>
 			Use <code>bind:open</code> to control the menu from outside — useful for
 			closing it in response to some external event, or for imperatively opening
@@ -215,10 +214,8 @@
 				Toggle from outside (currently {controlledOpen ? "open" : "closed"})
 			</button>
 		</div>
-	</Card>
 
-	<Card>
-		<h2>Open upward</h2>
+		<h3>Open upward</h3>
 		<p>
 			Set <code>position="top"</code> to prefer opening above the button. The
 			menu still auto-flips to below if there's no room above.

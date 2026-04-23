@@ -118,29 +118,32 @@
 		</p>
 	</Card>
 
-	<h2>API</h2>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Card>
-		<h3>Properties</h3>
-		<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-	</Card>
+		<h2>Examples</h2>
 
-	<Card>
-		<h3>Callbacks</h3>
-		<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h3>Slots</h3>
-		<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<h2>Examples</h2>
-
-	<!-- Default checkbox examples -->
-	<Card>
 		<h3>Default checkbox examples</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Horizontal</strong>
@@ -162,12 +165,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Three States -->
-	<Card>
 		<h3>Three States</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="1rem">
 					<div>
@@ -204,12 +204,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Three States List -->
-	<Card>
 		<h3>Three States List</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<Checkbox checked={allChecked} withIntermediate onclick={handleAllClick}>
@@ -235,12 +232,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Disabled examples -->
-	<Card>
 		<h3>Disabled examples</h3>
-		<Grid columns={3} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={3} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Disabled unchecked</strong>
@@ -260,12 +254,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Read-only examples -->
-	<Card>
 		<h3>Read-only examples</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>ReadOnly unchecked</strong>
@@ -279,12 +270,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Label examples -->
-	<Card>
 		<h3>Label examples</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Using label prop</strong>
@@ -300,12 +288,9 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Callback example -->
-	<Card>
 		<h3>Callback example</h3>
-		<Grid columns={2} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>With onclick callback</strong>
@@ -320,40 +305,6 @@
 </Stack>
 
 <style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin: 1rem 0 0 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
-	small {
-		font-size: 0.875rem;
-	}
-
-	code {
-		background: var(--neutral-layer-3);
-		padding: 0.125rem 0.375rem;
-		border-radius: 3px;
-		font-size: 0.875rem;
-	}
-
 	.value-display {
 		margin-left: 1rem;
 		font-size: 0.875rem;

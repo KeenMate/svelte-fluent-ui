@@ -82,16 +82,10 @@
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Actions</h2>
-					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
-				</Card>
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
@@ -100,6 +94,11 @@
 			</Card>
 		</GridItem>
 	</Grid>
+
+	<Card>
+		<h2>Actions</h2>
+		<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+	</Card>
 
 	<Card>
 		<h2>Examples</h2>
@@ -112,10 +111,10 @@
 			oninput={onTextInputChanged}
 		/>
 
-		<h3 style="margin-top: 2rem;">Autocomplete Examples</h3>
+		<h3>Autocomplete Examples</h3>
 		<p>Control browser autocomplete behavior with the <code>autocomplete</code> prop:</p>
 
-		<Stack orientation="vertical" gap="1rem" style="margin-top: 1rem;">
+		<Stack orientation="vertical" gap="1rem">
 			<TextField
 				label="Autocomplete Off"
 				placeholder="Browser won't suggest values"

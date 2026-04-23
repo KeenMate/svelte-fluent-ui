@@ -83,6 +83,11 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Radio</h1>
 
+	<p>
+		An implementation of a radio button. Only to be used in a <code>RadioGroup</code>.
+		The <code>Radio</code> wraps the <code>&lt;fluent-radio&gt;</code> element, a web component implementation of a radio element leveraging the Fluent UI design system.
+	</p>
+
 	<Card>
 		<p>
 			<strong>References:</strong>
@@ -92,17 +97,47 @@
 		</p>
 	</Card>
 
-	<p>
-		An implementation of a radio button. Only to be used in a <code>RadioGroup</code>.
-		The <code>Radio</code> wraps the <code>&lt;fluent-radio&gt;</code> element, a web component implementation of a radio element leveraging the Fluent UI design system.
-	</p>
-
-	<h2>Examples</h2>
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>RadioGroup Properties</h2>
+				<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>RadioGroup Callbacks</h2>
+				<QuickGrid items={radioCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>RadioGroup Slots</h2>
+				<QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 
 	<Grid spacing={3}>
-		<!-- Default -->
-		<GridItem xs={12} md={6} lg={4}>
+		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
+				<h2>Radio Properties</h2>
+				<QuickGrid items={radioProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Radio Slots</h2>
+				<QuickGrid items={radioSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Examples</h2>
+
+		<Grid columns={3} gap="1rem">
+			<GridItem>
 				<h3>Default</h3>
 				<RadioGroup bind:value={defaultValue} name="default-radio" orientation="vertical">
 					<div class="radio-with-description">
@@ -114,43 +149,31 @@
 						<Radio value="with-label">label</Radio>
 					</div>
 				</RadioGroup>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- States: Checked -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Checked</h3>
 				<RadioGroup bind:value={checkedValue} name="checked-radio">
 					<Radio value="checked">Checked</Radio>
 				</RadioGroup>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- States: Required -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Required</h3>
 				<RadioGroup bind:value={requiredValue} name="required-radio" required>
 					<Radio value="required" required></Radio>
 				</RadioGroup>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- States: Disabled -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Disabled</h3>
 				<RadioGroup bind:value={disabledValue} name="disabled-radio" disabled>
 					<Radio value="label">label</Radio>
 					<Radio value="checked" checked>checked</Radio>
 				</RadioGroup>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- Aria Label -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Aria Label</h3>
 				<p class="hint">Visual vs audio label</p>
 				<RadioGroup bind:value={ariaLabelValue} name="aria-radio">
@@ -160,12 +183,9 @@
 				<RadioGroup bind:value={outsideLabelValue} name="outside-radio" label="Outside label">
 					<Radio value="label1">label1</Radio>
 				</RadioGroup>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- Orientation: Horizontal -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Horizontal (default)</h3>
 				<RadioGroup bind:value={horizontalValue} name="horizontal-radio" orientation="horizontal">
 					<Radio value="opt1">Option 1</Radio>
@@ -173,12 +193,9 @@
 					<Radio value="opt3">Option 3</Radio>
 				</RadioGroup>
 				<p class="value-display">Value: {horizontalValue}</p>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- Orientation: Vertical -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Vertical</h3>
 				<RadioGroup bind:value={verticalValue} name="vertical-radio" orientation="vertical">
 					<Radio value="opt1">Option 1</Radio>
@@ -186,12 +203,9 @@
 					<Radio value="opt3">Option 3</Radio>
 				</RadioGroup>
 				<p class="value-display">Value: {verticalValue}</p>
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- Callback -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>onChange Callback</h3>
 				<RadioGroup bind:value={callbackValue} name="callback-radio" orientation="vertical" onchange={handleChange}>
 					<Radio value="apple">Apple</Radio>
@@ -201,48 +215,18 @@
 				{#if callbackMessage}
 					<p class="callback-message">{callbackMessage}</p>
 				{/if}
-			</Card>
-		</GridItem>
+			</GridItem>
 
-		<!-- With Group Label -->
-		<GridItem xs={12} md={6} lg={4}>
-			<Card>
+			<GridItem>
 				<h3>Group Label</h3>
 				<RadioGroup bind:value={labelValue} name="label-radio" label="Select a fruit:" orientation="vertical">
 					<Radio value="apple">Apple</Radio>
 					<Radio value="orange">Orange</Radio>
 					<Radio value="grape">Grape</Radio>
 				</RadioGroup>
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<h2>Documentation</h2>
-
-	<h3>RadioGroup</h3>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Properties</h2><QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Callbacks</h2><QuickGrid items={radioCallbacks} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Slots</h2><QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-	</Grid>
-
-	<h3>Radio</h3>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Properties</h2><QuickGrid items={radioProperties} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Slots</h2><QuickGrid items={radioSlots} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-	</Grid>
+			</GridItem>
+		</Grid>
+	</Card>
 </Stack>
 
 <style>

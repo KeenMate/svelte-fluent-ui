@@ -67,11 +67,12 @@
 		</GridItem>
 	</Grid>
 
-	<!-- Built-in Colors -->
 	<Card>
+		<h2>Examples</h2>
+
 		<h3>Built-in Colors</h3>
 		<p>Pre-defined colors: brand, danger, important, informative, severe, subtle, success, warning</p>
-		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap;">
 			<Badge color="brand">brand</Badge>
 			<Badge color="danger">danger</Badge>
 			<Badge color="important">important</Badge>
@@ -81,26 +82,20 @@
 			<Badge color="success">success</Badge>
 			<Badge color="warning">warning</Badge>
 		</Stack>
-	</Card>
 
-	<!-- Appearance Examples -->
-	<Card>
 		<h3>Appearance</h3>
 		<p>Different appearance styles:</p>
-		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap;">
 			<Badge appearance="accent">Accent</Badge>
 			<Badge appearance="lightweight">Lightweight</Badge>
 			<Badge appearance="neutral">Neutral</Badge>
 			<Badge appearance="outline">Outline</Badge>
 			<Badge appearance="tint">Tint</Badge>
 		</Stack>
-	</Card>
 
-	<!-- Color + Appearance Combinations -->
-	<Card>
 		<h3>Color + Appearance Combinations</h3>
 		<p>Combining color with different appearances:</p>
-		<Grid columns={4} gap="1rem" style="margin-top: 1rem;">
+		<Grid columns={4} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>danger</strong>
@@ -142,13 +137,10 @@
 				</Stack>
 			</GridItem>
 		</Grid>
-	</Card>
 
-	<!-- Custom Colors -->
-	<Card>
 		<h3>Custom Colors</h3>
 		<p>Custom colors using CSS variables <code>--badge-fill-[name]</code> and <code>--badge-color-[name]</code>:</p>
-		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap;">
 			<Badge
 				style="--badge-fill-custom1: red; --badge-color-custom1: white;"
 				fill="custom1"
@@ -178,41 +170,12 @@
 				Gradient
 			</Badge>
 		</Stack>
-	</Card>
 
-	<!-- Circular -->
-	<Card>
 		<h3>Circular</h3>
-		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap;">
 			<Badge circular>1</Badge>
 			<Badge circular color="danger">5</Badge>
 			<Badge circular color="success">99+</Badge>
 		</Stack>
 	</Card>
 </Stack>
-
-<style>
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-		font-weight: 600;
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 600;
-	}
-
-	p {
-		margin: 0 0 0.5rem 0;
-		line-height: 1.5;
-	}
-
-	code {
-		background: var(--neutral-layer-3);
-		padding: 0.125rem 0.375rem;
-		border-radius: 3px;
-		font-size: 0.875rem;
-	}
-</style>

@@ -311,7 +311,9 @@
 	</Grid>
 
 	<Card>
-		<h2>Setup</h2>
+		<h2>Examples</h2>
+
+		<h3>Setup</h3>
 		<pre><code>{`// 1. Add ToastContainer to your layout (e.g., +layout.svelte)
 import { ToastContainer } from 'svelte-fluentui';
 
@@ -322,10 +324,6 @@ import { toast } from 'svelte-fluentui';
 
 const id = toast.success('Operation completed!');
 // Later: toast.dismiss(id);`}</code></pre>
-	</Card>
-
-	<Card>
-		<h2 class="content-subhead">Examples</h2>
 
 		<h3>Basic Variants</h3>
 		<div class="button-grid">
@@ -357,10 +355,8 @@ const id = toast.success('Operation completed!');
 			<Button appearance="outline" onClick={dismissLast}>Dismiss Last Toast</Button>
 			<Button appearance="outline" onClick={dismissAllToasts}>Dismiss All Toasts</Button>
 		</div>
-	</Card>
 
-	<Card>
-		<h2>Usage Examples</h2>
+		<h3>Usage Examples</h3>
 		<pre><code>{`import { toast } from 'svelte-fluentui';
 
 // Basic usage - returns toast ID

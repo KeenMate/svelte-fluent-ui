@@ -72,16 +72,10 @@
 			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Actions</h2>
-					<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
-				</Card>
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
 		</GridItem>
 		<GridItem xs={12} xl={6} xxl={4}>
 			<Card>
@@ -91,14 +85,18 @@
 		</GridItem>
 	</Grid>
 
-	<h2>Examples</h2>
-
-	<!-- Dialog Sizes -->
 	<Card>
+		<h2>Actions</h2>
+		<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h2>Examples</h2>
+
 		<h3>Dialog Sizes</h3>
 		<p>Dialogs can be displayed in different predefined sizes using the <code>size</code> prop.</p>
 
-		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; margin-top: 1rem;">
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap;">
 			<Button appearance="accent" onclick={() => smallDialog = true}>
 				Small (400px)
 			</Button>
@@ -168,14 +166,11 @@
 				<Button appearance="accent" onclick={() => fullDialog = false}>Close</Button>
 			</div>
 		</Dialog>
-	</Card>
 
-	<!-- Basic Example -->
-	<Card>
 		<h3>Basic Dialog</h3>
 		<p>Simple dialog with programmatic control using <code>show()</code> and <code>hide()</code> methods.</p>
 
-		<Button appearance="accent" onclick={() => dialog.show()} style="margin-top: 1rem;">
+		<Button appearance="accent" onclick={() => dialog.show()}>
 			Open Basic Dialog
 		</Button>
 
@@ -194,9 +189,5 @@
 		border-radius: 3px;
 		font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 		font-size: 0.875em;
-	}
-
-	h3 {
-		margin-top: 0;
 	}
 </style>
