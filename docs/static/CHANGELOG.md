@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0-rc14] - 2026-04-24 [PUBLISHED]
 
 ### Added
 - **`Combobox` `minSearchLength` prop** - Keeps the dropdown closed until the typed text reaches the configured length. Useful against large or async option sets where opening on a single character like `"a"` is wasteful — visual noise for a consumer's list, actual cost for one driving an API. Implementation listens to the `<fluent-combobox>` `input` event and queues a microtask to force-close `el.open = false` after Fluent has already set its own open state, so the override wins. Empty input is deliberately not gated (clicking into an empty combobox to browse still works); only the `typed.length > 0 && typed.length < minSearchLength` range closes it

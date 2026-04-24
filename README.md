@@ -2,6 +2,13 @@
 
 A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2.6.x), providing a seamless way to use FluentUI components in Svelte applications.
 
+## What's New in v1.0.0-rc14
+
+- **`Combobox` / `Autocomplete` `minSearchLength` prop** — keep the dropdown closed until the user has typed N characters. In `Autocomplete` this also short-circuits before the debounce timer, so `onoptionssearch` is never invoked against expensive backends for stray single-character input. `showInitialOptions` and `Ctrl+Space` still override
+- **`Grid` columns mode** — `<Grid columns={N} gap="1rem">` switches from the 12-column flex-spacing system to CSS grid with `repeat(N, minmax(0, 1fr))`, so every `<GridItem>` is locked at 1/N of the container regardless of content (no more one chip-stuffed cell stealing width). Fully backward-compatible: the existing `<Grid spacing={N}>` flow is untouched
+- **Docs pages standardized across the board** — all 41 component demo pages now share one layout (outer `<Stack>`, h1, description, References card, 3-column API grid for Properties/Callbacks/Slots, then a single Examples card with `<h3>` subsections). Every previously-missing component description was backfilled
+- **Changelog viewer no longer auto-registers stray custom elements** — the home and `/changelog` renderers now HTML-escape markdown before converting, so code spans like `` `<fluent-dialog>` `` display as literal text instead of silently painting an empty Fluent dialog on the page
+
 ## Features
 
 - 🎨 **Complete FluentUI Component Set** - Wraps all major FluentUI web components
