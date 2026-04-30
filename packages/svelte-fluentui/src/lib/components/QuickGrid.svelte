@@ -77,7 +77,7 @@
 
 	// Validation types
 	type CellValidationState = {
-		rowIndex: number
+		rowKey: string
 		field: string
 		error: string
 	}
@@ -124,6 +124,15 @@
 		format?: (value: any, row: T) => string
 		template?: (row: T) => string
 		snippet?: Snippet<[T]>
+		// Custom filter predicate. When set, replaces the built-in substring match for this
+		// column. Called once per row with the raw filter input string and the row.
+		// Returns `true` to keep the row, `false` to exclude it, or `null` when the input
+		// is syntactically invalid (e.g. user has only typed `>` so far) — `null` causes
+		// the filter to be ignored entirely (all rows pass) AND the filter input gets a
+		// `.invalid` class so the UI can surface the bad-syntax state. Assumes the
+		// validity is a property of the input string, not the row, so the grid only
+		// probes the first row to decide validity.
+		filter?: (filterValue: string, row: T) => boolean | null
 		// Editing props
 		editable?: boolean
 		editor?: EditorType
@@ -137,6 +146,8 @@
 		oncelledit?: (context: CustomEditorContext<T>) => void
 		// Show edit button in cell
 		showEditButton?: boolean
+		// Tree mode: render this column with indent + expand/collapse chevron
+		isTree?: boolean
 	}
 
 	type RowChangeDetail<T> = {
@@ -228,6 +239,10 @@
 		 *  horizontal space. Pair with per-column `width` / `minWidth` / `maxWidth` / `autoWidth` when you
 		 *  want columns to keep predefined widths instead of stretching to justify across the table. */
 		fillerColumn?: boolean
+		/** Default `min-width` applied to every column header that does not specify its own `minWidth`.
+		 *  Useful with `fillerColumn` to stop content-sized columns from collapsing to a one-word column.
+		 *  Accepts any CSS length (e.g. `"100px"`, `"8rem"`). */
+		columnMinWidth?: string
 		class?: string
 		style?: string
 		cellTemplate?: SlotType
@@ -249,6 +264,25 @@
 		// Context menu
 		contextMenu?: ContextMenuItem<T>[]
 		oncontextmenuopen?: (context: ContextMenuContext<T>) => void
+		// Stable row identity — keys internal state (drafts, edits) so they survive
+		// re-orderings (pagination, filter, tree expand/collapse). When omitted, the grid
+		// falls back to treePathMember in tree mode, then to the displayed-row index, and
+		// console.warns once if neither stable key is available while editing is enabled.
+		idMember?: keyof T
+		// Tree mode (ltree-style path hierarchy)
+		treePathMember?: keyof T              // Required to enable tree mode — field holding the path string ("1.2.3", "/1/2/3", "C:\\foo\\bar")
+		treeLevelMember?: keyof T             // Optional — pre-computed depth (0-based). Falls back to deriving from path.
+		treeParentMember?: keyof T            // Optional — pre-computed parent path. Falls back to deriving from path.
+		treeSeparator?: string                // Path separator. Auto-detected from first row if omitted.
+		treeDataSorted?: boolean              // True when caller already sorted items so parents precede children. Default false → grid sorts internally.
+		expandedPaths?: Set<string>           // Bindable set of expanded path strings. Default: managed internally.
+		defaultExpandDepth?: number           // Initial expansion depth when expandedPaths not bound. Omit to expand all.
+		treeDoubleClickBehavior?: "none" | "toggle"  // "toggle": double-clicking the tree column toggles expand/collapse on rows with children. Default "none".
+		// Filter mode. When set, internal client-side filtering is bypassed and the caller
+		// owns the filtered dataset (typical for server-side search). Filter inputs still
+		// render and fire this callback with a copy of the current `{field: value}` map on
+		// every keystroke — debounce + post to your backend, then update `items`.
+		onfilterchange?: (filters: Record<string, string>) => void
 		// Callbacks
 		onrowchange?: (detail: RowChangeDetail<T>) => void
 		onroweditstart?: (detail: { row: T, rowIndex: number, field: string }) => void
@@ -268,6 +302,7 @@
 		striped = true,
 		hoverable = true,
 		fillerColumn = false,
+		columnMinWidth = undefined,
 		class: className = "",
 		style = "",
 		cellTemplate = undefined,
@@ -288,6 +323,19 @@
 		// Context menu
 		contextMenu = undefined,
 		oncontextmenuopen = undefined,
+		// Stable row identity
+		idMember = undefined,
+		// Tree mode
+		treePathMember = undefined,
+		treeLevelMember = undefined,
+		treeParentMember = undefined,
+		treeSeparator = undefined,
+		treeDataSorted = false,
+		expandedPaths = $bindable(undefined),
+		defaultExpandDepth = undefined,
+		treeDoubleClickBehavior = "none",
+		// Filter delegation
+		onfilterchange = undefined,
 		// Callbacks
 		onrowchange = undefined,
 		onroweditstart = undefined,
@@ -314,7 +362,11 @@
 		} else if (column.width) {
 			parts.push(`width: ${column.width}`)
 		}
+		// Per-column minWidth wins; otherwise fall back to the grid-level default. Skip both
+		// when the column opted into autoWidth — that mode is supposed to shrink to content
+		// and a min-width would break the trick.
 		if (column.minWidth) parts.push(`min-width: ${column.minWidth}`)
+		else if (columnMinWidth && !column.autoWidth) parts.push(`min-width: ${columnMinWidth}`)
 		if (column.maxWidth) parts.push(`max-width: ${column.maxWidth}`)
 		if (includeAlign) parts.push(`text-align: ${column.align || "left"}`)
 		return parts.join("; ")
@@ -335,8 +387,42 @@
 	let currentCellError = $state<string | null>(null)  // Error for currently editing cell
 	let isValidating = $state(false)
 
-	// Draft rows - clones of rows being edited (preserves dirty values including invalid ones)
-	let draftRows = $state<Map<number, T>>(new Map())
+	// Draft rows - clones of rows being edited (preserves dirty values including invalid ones).
+	// Keyed by stable row id (idMember → treePathMember → displayed index fallback) so drafts
+	// survive pagination / filter / tree expand-collapse re-orderings.
+	let draftRows = $state<Map<string, T>>(new Map())
+
+	// Returns a stable key for a row. Coalesces idMember → treePathMember → displayed index.
+	// The index fallback is lossy (drifts on re-order) and triggers a one-shot console warning
+	// via the effect below when editing is enabled without a real stable id.
+	function getRowId(item: T, displayedIndex: number): string {
+		if (idMember !== undefined) {
+			const v = item[idMember]
+			if (v !== undefined && v !== null) return String(v)
+		}
+		if (treePathMember !== undefined) {
+			const v = item[treePathMember]
+			if (v !== undefined && v !== null) return String(v)
+		}
+		return String(displayedIndex)
+	}
+
+	let idWarningEmitted = $state(false)
+	$effect(() => {
+		if (idWarningEmitted) return
+		if (!editable) return
+		if (idMember !== undefined || treePathMember !== undefined) return
+		// eslint-disable-next-line no-console
+		console.warn(
+			"[QuickGrid] No `idMember` was provided while `editable` is enabled. Row state " +
+			"(drafts, in-progress edits) will be keyed by displayed-row index, which means " +
+			"pagination, filtering, sorting, or tree expand/collapse can shift the displayed " +
+			"order and cause an in-flight edit to land on the wrong row. Pass `idMember=\"id\"` " +
+			"(or any field that uniquely identifies a row) to fix this. In tree mode, " +
+			"`treePathMember` is also accepted as a fallback identity."
+		)
+		idWarningEmitted = true
+	})
 
 	// Navigation mode state (for "navigate" editTrigger)
 	let focusedCell = $state<{ rowIndex: number; colIndex: number } | null>(null)
@@ -384,21 +470,218 @@
 		})
 	})
 
-	// Computed: filtered items
-	let filteredItems = $derived.by(() => {
-		if (!filterable || Object.keys(filters).length === 0) return items
+	// ============ Tree mode helpers ============
+	let isTreeMode = $derived(treePathMember !== undefined)
+	let internalExpandedPaths = $state(new Set<string>())
+	let treeInitialized = $state(false)
 
-		return items.filter((item) => {
-			return Object.entries(filters).every(([field, filterValue]) => {
+	let resolvedTreeSeparator = $derived.by(() => {
+		if (treeSeparator) return treeSeparator
+		if (!isTreeMode) return "/"
+		// Scan items until we find a path that contains a recognizable separator —
+		// inspecting only items[0] would miss the case where the root is "1" and the
+		// first path that actually contains a separator is "1.1" (the second row).
+		for (const item of items) {
+			const p = String(item[treePathMember as keyof T] ?? "")
+			if (p.includes("/")) return "/"
+			if (p.includes("\\")) return "\\"
+			if (p.includes(".")) return "."
+		}
+		return "/"
+	})
+
+	function getRowPath(item: T): string {
+		if (!treePathMember) return ""
+		const raw = String(item[treePathMember] ?? "")
+		// Strip trailing separator so "C:\foo\" and "C:\foo" behave the same
+		const sep = resolvedTreeSeparator
+		return raw.endsWith(sep) ? raw.slice(0, -sep.length) : raw
+	}
+
+	function getRowLevel(item: T): number {
+		if (treeLevelMember) {
+			const v = item[treeLevelMember]
+			const n = Number(v)
+			return Number.isFinite(n) ? n : 0
+		}
+		const path = getRowPath(item)
+		if (!path) return 0
+		const sep = resolvedTreeSeparator
+		return path.split(sep).filter(Boolean).length - 1
+	}
+
+	function getRowParentPath(item: T): string {
+		if (treeParentMember) {
+			const raw = String(item[treeParentMember] ?? "")
+			const sep = resolvedTreeSeparator
+			return raw.endsWith(sep) ? raw.slice(0, -sep.length) : raw
+		}
+		const path = getRowPath(item)
+		if (!path) return ""
+		const sep = resolvedTreeSeparator
+		const idx = path.lastIndexOf(sep)
+		return idx >= 0 ? path.slice(0, idx) : ""
+	}
+
+	// Path-aware comparison: numeric segments compare numerically (so "1.2" < "1.10")
+	function compareTreePaths(a: string, b: string): number {
+		const sep = resolvedTreeSeparator
+		const aSegs = a.split(sep).filter(Boolean)
+		const bSegs = b.split(sep).filter(Boolean)
+		const min = Math.min(aSegs.length, bSegs.length)
+		for (let i = 0; i < min; i++) {
+			const aSeg = aSegs[i]
+			const bSeg = bSegs[i]
+			const aNum = Number(aSeg)
+			const bNum = Number(bSeg)
+			if (!isNaN(aNum) && !isNaN(bNum) && aSeg !== "" && bSeg !== "") {
+				if (aNum !== bNum) return aNum - bNum
+			} else if (aSeg !== bSeg) {
+				return aSeg.localeCompare(bSeg)
+			}
+		}
+		return aSegs.length - bSegs.length
+	}
+
+	// Set of every path that exists as an actual row (used to distinguish "real" ancestors
+	// from virtual roots — e.g. "C:" when only "C:\\Windows" and below are in the dataset).
+	let treePathSet = $derived.by(() => {
+		const result = new Set<string>()
+		if (!isTreeMode) return result
+		for (const item of items) result.add(getRowPath(item))
+		return result
+	})
+
+	// Set of paths that have at least one child in the dataset
+	let treeParentPathSet = $derived.by(() => {
+		const result = new Set<string>()
+		if (!isTreeMode) return result
+		for (const item of items) {
+			const parent = getRowParentPath(item)
+			if (parent) result.add(parent)
+		}
+		return result
+	})
+
+	function rowHasChildren(item: T): boolean {
+		return treeParentPathSet.has(getRowPath(item))
+	}
+
+	let resolvedExpandedPaths = $derived(expandedPaths ?? internalExpandedPaths)
+
+	function isPathExpanded(path: string): boolean {
+		return resolvedExpandedPaths.has(path)
+	}
+
+	function toggleExpand(path: string) {
+		if (expandedPaths !== undefined) {
+			const next = new Set(expandedPaths)
+			if (next.has(path)) next.delete(path)
+			else next.add(path)
+			expandedPaths = next
+		} else {
+			const next = new Set(internalExpandedPaths)
+			if (next.has(path)) next.delete(path)
+			else next.add(path)
+			internalExpandedPaths = next
+		}
+	}
+
+	// Initialize internal expansion when items first arrive (only if no external binding).
+	// `defaultExpandDepth` is interpreted relative to the shallowest level present in the
+	// dataset, not absolute level 0 — so a partial tree where the shallowest row is level 3
+	// still gets its own "roots" expanded.
+	$effect(() => {
+		if (!isTreeMode) return
+		if (expandedPaths !== undefined) return
+		if (treeInitialized) return
+		if (items.length === 0) return
+		let minLevel = Infinity
+		for (const item of items) minLevel = Math.min(minLevel, getRowLevel(item))
+		if (!Number.isFinite(minLevel)) minLevel = 0
+		const next = new Set<string>()
+		for (const item of items) {
+			const level = getRowLevel(item) - minLevel
+			if (defaultExpandDepth === undefined || level < defaultExpandDepth) {
+				next.add(getRowPath(item))
+			}
+		}
+		internalExpandedPaths = next
+		treeInitialized = true
+	})
+
+	// ============ Display chain ============
+
+	// Tree-ordered: caller-sorted, or sorted internally by path
+	let treeOrderedItems = $derived.by(() => {
+		if (!isTreeMode) return items
+		if (treeDataSorted) return items
+		return [...items].sort((a, b) => compareTreePaths(getRowPath(a), getRowPath(b)))
+	})
+
+	// Per-field validity for custom filters — `false` when the column's filter predicate
+	// returned null on the first row (probe), meaning the input is syntactically invalid
+	// (e.g. `>` typed so far without a number). Surfaced to the template so the input gets
+	// a `.invalid` class.
+	let filterValidity = $derived.by(() => {
+		const result: Record<string, boolean> = {}
+		if (items.length === 0) return result
+		for (const [field, filterValue] of Object.entries(filters)) {
+			if (!filterValue) continue
+			const col = columns.find((c) => String(c.field) === field)
+			if (!col?.filter) continue
+			const probe = col.filter(filterValue, items[0])
+			if (probe === null) result[field] = false
+		}
+		return result
+	})
+
+	// Computed: filtered items (tree-aware: includes ancestors of matches).
+	// When `onfilterchange` is provided the caller owns filtering — we render the inputs
+	// and fire the callback, but skip internal filtering entirely (server-side mode).
+	let filteredItems = $derived.by(() => {
+		if (onfilterchange) return treeOrderedItems
+		if (!filterable || Object.keys(filters).length === 0) return treeOrderedItems
+
+		const matchesFilter = (item: T) =>
+			Object.entries(filters).every(([field, filterValue]) => {
 				if (!filterValue) return true
+				// Per-column custom predicate wins over the built-in substring match.
+				const col = columns.find((c) => String(c.field) === field)
+				if (col?.filter) {
+					const result = col.filter(filterValue, item)
+					// null = invalid input → don't filter, treat row as a match.
+					return result === null ? true : result
+				}
 				const cellValue = String(item[field as keyof T] ?? "").toLowerCase()
 				return cellValue.includes(filterValue.toLowerCase())
 			})
-		})
+
+		if (!isTreeMode) return treeOrderedItems.filter(matchesFilter)
+
+		// Tree mode: include matched rows + all their ancestors so the hierarchy reads correctly
+		const matchedPaths = new Set<string>()
+		for (const item of treeOrderedItems) {
+			if (matchesFilter(item)) matchedPaths.add(getRowPath(item))
+		}
+		const includePaths = new Set(matchedPaths)
+		const sep = resolvedTreeSeparator
+		for (const path of matchedPaths) {
+			let parent = path
+			const idx0 = parent.lastIndexOf(sep)
+			parent = idx0 >= 0 ? parent.slice(0, idx0) : ""
+			while (parent) {
+				includePaths.add(parent)
+				const idx = parent.lastIndexOf(sep)
+				parent = idx >= 0 ? parent.slice(0, idx) : ""
+			}
+		}
+		return treeOrderedItems.filter((i) => includePaths.has(getRowPath(i)))
 	})
 
-	// Computed: sorted items
+	// Computed: sorted items. Tree mode preserves hierarchy and ignores column sort.
 	let sortedItems = $derived.by(() => {
+		if (isTreeMode) return filteredItems
 		if (!sortColumn) return filteredItems
 
 		return [...filteredItems].sort((a, b) => {
@@ -420,17 +703,38 @@
 		})
 	})
 
+	// Computed: visible items — hide descendants of collapsed nodes (tree only).
+	// When a filter is active, ancestors are already auto-included above and we render the
+	// full filtered set so users can see matches inside otherwise-collapsed branches.
+	// Ancestors that aren't actually present as rows in the dataset are treated as virtual
+	// roots and never gate visibility (supports partial-tree / subtree views).
+	let visibleItems = $derived.by(() => {
+		if (!isTreeMode) return sortedItems
+		const filterActive = filterable && Object.values(filters).some((v) => !!v)
+		if (filterActive) return sortedItems
+		const sep = resolvedTreeSeparator
+		return sortedItems.filter((item) => {
+			let parent = getRowParentPath(item)
+			while (parent) {
+				if (treePathSet.has(parent) && !resolvedExpandedPaths.has(parent)) return false
+				const idx = parent.lastIndexOf(sep)
+				parent = idx >= 0 ? parent.slice(0, idx) : ""
+			}
+			return true
+		})
+	})
+
 	// Computed: paginated items
 	let paginatedItems = $derived.by(() => {
-		if (!pageable) return sortedItems
+		if (!pageable) return visibleItems
 
 		const start = (currentPage - 1) * pageSize
 		const end = start + pageSize
-		return sortedItems.slice(start, end)
+		return visibleItems.slice(start, end)
 	})
 
 	// Computed: total pages
-	let totalPages = $derived(Math.ceil(sortedItems.length / pageSize))
+	let totalPages = $derived(Math.ceil(visibleItems.length / pageSize))
 
 	// Display items (final result)
 	let displayItems = $derived(paginatedItems)
@@ -450,6 +754,8 @@
 	function handleFilter(field: string, value: string) {
 		filters[field] = value
 		currentPage = 1 // Reset to first page when filtering
+		// Pass a shallow copy so callers can't mutate our internal state.
+		onfilterchange?.({ ...filters })
 	}
 
 	function goToPage(page: number) {
@@ -460,7 +766,7 @@
 
 	// Get raw value for a cell (checks draft row first, then original)
 	function getCellRawValue(item: T, rowIndex: number, field: string): unknown {
-		const draftRow = draftRows.get(rowIndex)
+		const draftRow = draftRows.get(getRowId(item, rowIndex))
 		if (draftRow) {
 			return draftRow[field as keyof T]
 		}
@@ -559,8 +865,9 @@
 		currentCellError = null
 
 		// Clone row if not already cloned (preserves dirty values across edits)
-		if (!draftRows.has(rowIndex)) {
-			draftRows.set(rowIndex, { ...item })
+		const rowKey = getRowId(item, rowIndex)
+		if (!draftRows.has(rowKey)) {
+			draftRows.set(rowKey, { ...item })
 		}
 
 		// Handle custom editor
@@ -608,67 +915,51 @@
 		}
 	}
 
-	// Helper functions for managing invalid cells
-	function addInvalidCell(rowIndex: number, field: string, error: string) {
-		const existingIndex = invalidCells.findIndex(c => c.rowIndex === rowIndex && c.field === field)
+	// Helper functions for managing invalid cells. Keyed by stable row id so markers survive
+	// pagination / filter / tree expand-collapse re-orderings.
+	function addInvalidCell(rowKey: string, field: string, error: string) {
+		const existingIndex = invalidCells.findIndex(c => c.rowKey === rowKey && c.field === field)
 		if (existingIndex >= 0) {
-			invalidCells[existingIndex] = { rowIndex, field, error }
+			invalidCells[existingIndex] = { rowKey, field, error }
 		} else {
-			invalidCells = [...invalidCells, { rowIndex, field, error }]
+			invalidCells = [...invalidCells, { rowKey, field, error }]
 		}
 	}
 
-	function removeInvalidCell(rowIndex: number, field: string) {
-		invalidCells = invalidCells.filter(c => !(c.rowIndex === rowIndex && c.field === field))
+	function removeInvalidCell(rowKey: string, field: string) {
+		invalidCells = invalidCells.filter(c => !(c.rowKey === rowKey && c.field === field))
 	}
 
-	function getCellValidationError(rowIndex: number, field: string): string | null {
-		const cell = invalidCells.find(c => c.rowIndex === rowIndex && c.field === field)
+	function getCellValidationError(rowKey: string, field: string): string | null {
+		const cell = invalidCells.find(c => c.rowKey === rowKey && c.field === field)
 		return cell?.error || null
 	}
 
-	function isCellInvalid(rowIndex: number, field: string): boolean {
-		return invalidCells.some(c => c.rowIndex === rowIndex && c.field === field)
+	function isCellInvalid(rowKey: string, field: string): boolean {
+		return invalidCells.some(c => c.rowKey === rowKey && c.field === field)
 	}
 
 	// ============ Draft Row Management Functions ============
-	// These allow external control over draft rows
+	// External-facing helpers (not currently called from inside the grid). Drafts are now
+	// keyed by the same stable id as everything else, so these accept a row key (string).
 
-	/**
-	 * Get the draft row for a given row index.
-	 * Returns undefined if no draft exists.
-	 */
-	function getRowDraft(rowIndex: number): T | undefined {
-		return draftRows.get(rowIndex)
+	function getRowDraft(rowKey: string): T | undefined {
+		return draftRows.get(rowKey)
 	}
 
-	/**
-	 * Check if a row has a draft (has been edited).
-	 */
-	function hasRowDraft(rowIndex: number): boolean {
-		return draftRows.has(rowIndex)
+	function hasRowDraft(rowKey: string): boolean {
+		return draftRows.has(rowKey)
 	}
 
-	/**
-	 * Discard the draft for a row, reverting cell displays to original values.
-	 * Also clears any invalid cell markers for the row.
-	 */
-	function discardRowDraft(rowIndex: number): void {
-		draftRows.delete(rowIndex)
-		// Remove invalid cell markers for this row
-		invalidCells = invalidCells.filter(c => c.rowIndex !== rowIndex)
+	function discardRowDraft(rowKey: string): void {
+		draftRows.delete(rowKey)
+		invalidCells = invalidCells.filter(c => c.rowKey !== rowKey)
 	}
 
-	/**
-	 * Get all row indices that have drafts.
-	 */
-	function getDraftRowIndices(): number[] {
+	function getDraftRowKeys(): string[] {
 		return Array.from(draftRows.keys())
 	}
 
-	/**
-	 * Discard all drafts and invalid cell markers.
-	 */
 	function discardAllDrafts(): void {
 		draftRows.clear()
 		invalidCells = []
@@ -699,13 +990,14 @@
 		const oldValue = item[column.field as keyof T]
 
 		// Update draft row
-		const draftRow = draftRows.get(rowIndex)
+		const rowKey = getRowId(item, rowIndex)
+		const draftRow = draftRows.get(rowKey)
 		if (draftRow) {
 			;(draftRow as any)[field] = newValue
 		}
 
 		// Remove from invalid cells if it was invalid
-		removeInvalidCell(rowIndex, field)
+		removeInvalidCell(rowKey, field)
 
 		// Always fire onrowchange with isValid: true
 		onrowchange?.({
@@ -773,17 +1065,18 @@
 		isValidating = false
 
 		// Update draft row with the new value (valid or invalid - preserves user input)
-		const draftRow = draftRows.get(rowIndex)
+		const rowKey = getRowId(item, rowIndex)
+		const draftRow = draftRows.get(rowKey)
 		if (draftRow) {
 			;(draftRow as any)[field] = finalValue
 		}
 
 		// Update invalid cells tracking
 		if (isValid) {
-			removeInvalidCell(rowIndex, field)
+			removeInvalidCell(rowKey, field)
 			currentCellError = null
 		} else {
-			addInvalidCell(rowIndex, field, validationErrorMsg || "Invalid value")
+			addInvalidCell(rowKey, field, validationErrorMsg || "Invalid value")
 			currentCellError = validationErrorMsg
 			onvalidationerror?.({ row: item, rowIndex, field, error: validationErrorMsg || "Invalid value" })
 		}
@@ -827,6 +1120,18 @@
 	}
 
 	function handleCellDblClick(e: MouseEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
+		// Tree-toggle on dblclick wins on the tree column when enabled and the row has
+		// children. Chevron's own ondblclick stops propagation, so this only fires for
+		// dblclicks elsewhere in the cell. Leaves fall through to the edit logic below.
+		if (
+			isTreeMode &&
+			column.isTree &&
+			treeDoubleClickBehavior === "toggle" &&
+			rowHasChildren(item)
+		) {
+			toggleExpand(getRowPath(item))
+			return
+		}
 		if (!isCellEditable(column)) return
 		const trigger = getColumnEditTrigger(column)
 		// Double-click should work in both "dblclick" and "navigate" modes
@@ -1665,6 +1970,7 @@
 								<input
 									type="text"
 									class="filter-input"
+									class:invalid={filterValidity[String(column.field)] === false}
 									placeholder="Filter..."
 									value={filters[String(column.field)] || ""}
 									oninput={(e) => handleFilter(String(column.field), e.currentTarget.value)}
@@ -1742,8 +2048,9 @@
 						{/if}
 						{#each columns as column, colIndex}
 							{@const cellField = String(column.field)}
-							{@const cellInvalid = isCellInvalid(rowIndex, cellField)}
-							{@const cellError = getCellValidationError(rowIndex, cellField)}
+							{@const cellRowKey = getRowId(item, rowIndex)}
+							{@const cellInvalid = isCellInvalid(cellRowKey, cellField)}
+							{@const cellError = getCellValidationError(cellRowKey, cellField)}
 							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 							<td
 								data-row={rowIndex}
@@ -1758,6 +2065,7 @@
 								onkeydown={(e) => handleNavigationKeyDown(e, rowIndex, colIndex, column, item)}
 								title={cellError || undefined}
 							>
+								{#snippet cellContent()}
 								{#if isEditing(rowIndex, cellField)}
 									{#if column.editor === "custom"}
 										<!-- Custom editor - handled via callback, show indicator -->
@@ -1836,6 +2144,46 @@
 											</button>
 										{/if}
 									</div>
+								{/if}
+								{/snippet}
+								{#if isTreeMode && column.isTree}
+									{@const _path = getRowPath(item)}
+									{@const _level = getRowLevel(item)}
+									{@const _hasChildren = rowHasChildren(item)}
+									{@const _expanded = isPathExpanded(_path)}
+									<!-- svelte-ignore a11y_no_static_element_interactions -->
+									<div
+										class="tree-cell"
+										style={`padding-inline-start: ${_level * 1.25}rem`}
+										onmousedown={(e) => {
+											// Suppress the default text-selection extension that the second click of
+											// a dblclick triggers — only when we're actually going to handle the
+											// dblclick as a tree-toggle. e.detail counts clicks within the dblclick
+											// interval, so > 1 == "this is the second+ click of a multi-click".
+											if (e.detail > 1 && treeDoubleClickBehavior === "toggle" && _hasChildren) {
+												e.preventDefault()
+											}
+										}}
+									>
+										{#if _hasChildren}
+											<!-- svelte-ignore a11y_consider_explicit_label -->
+											<button
+												type="button"
+												class="tree-chevron"
+												class:expanded={_expanded}
+												onclick={(e) => { e.stopPropagation(); toggleExpand(_path) }}
+												ondblclick={(e) => e.stopPropagation()}
+												title={_expanded ? "Collapse" : "Expand"}
+											>
+												▶
+											</button>
+										{:else}
+											<span class="tree-leaf-spacer" aria-hidden="true"></span>
+										{/if}
+										<div class="tree-cell-body">{@render cellContent()}</div>
+									</div>
+								{:else}
+									{@render cellContent()}
 								{/if}
 							</td>
 						{/each}
@@ -2002,9 +2350,12 @@
 
 	/* Filler column: an empty trailing cell whose sole job is to absorb any leftover
 	   horizontal space so preceding columns keep their defined / auto widths instead
-	   of stretching. No content, no padding, no interaction — it just exists. */
+	   of stretching. `width: 100%` is the classic absorb-leftover trick in auto
+	   table-layout — other columns claim their content/defined widths first and the
+	   filler swallows whatever remains, instead of an arbitrary unspecified column
+	   ballooning to fill the table. */
 	.filler-column {
-		width: auto;
+		width: 100%;
 		padding: 0;
 		background: transparent;
 	}
@@ -2084,6 +2435,27 @@
 		box-shadow: 0 0 0 1px var(--accent-fill-rest, #0078d4);
 	}
 
+	/* Invalid state — surfaced when a column's `filter` callback returned null on the
+	   probe row (i.e. user typed something syntactically incomplete like `>`). Themes
+	   that override `--error-foreground` / `--error-fill-rest` get the right red. */
+	.filter-input.invalid {
+		border-color: var(--error-foreground, #d13438);
+	}
+
+	.filter-input.invalid:focus {
+		border-color: var(--error-foreground, #d13438);
+		box-shadow: 0 0 0 1px var(--error-foreground, #d13438);
+	}
+
+	[data-theme="dark"] .filter-input.invalid {
+		border-color: var(--error-foreground, #f87c86);
+	}
+
+	[data-theme="dark"] .filter-input.invalid:focus {
+		border-color: var(--error-foreground, #f87c86);
+		box-shadow: 0 0 0 1px var(--error-foreground, #f87c86);
+	}
+
 	tbody tr {
 		border-bottom: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 	}
@@ -2106,6 +2478,60 @@
 		padding: calc(var(--design-unit) * 6px);
 		color: var(--neutral-foreground-hint, #707070);
 		font-style: italic;
+	}
+
+	/* Tree column: indentation + expand/collapse chevron.
+	   Use inline-flex (not flex) and don't set flex:1 on the body — otherwise the wrapper
+	   signals "fill all available space" to the table's auto layout and steals width from
+	   sibling columns. */
+	.tree-cell {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.tree-cell-body {
+		min-width: 0;
+	}
+
+	.tree-chevron {
+		all: unset;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 16px;
+		height: 16px;
+		border-radius: 2px;
+		font-size: 9px;
+		color: var(--neutral-foreground-hint, #707070);
+		cursor: pointer;
+		flex-shrink: 0;
+		transition: transform 0.12s ease, background 0.1s ease;
+	}
+
+	.tree-chevron:hover {
+		background: var(--neutral-fill-secondary-hover, #f0f0f0);
+		color: var(--neutral-foreground-rest, #242424);
+	}
+
+	.tree-chevron.expanded {
+		transform: rotate(90deg);
+	}
+
+	.tree-leaf-spacer {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+	}
+
+	[data-theme="dark"] .tree-chevron {
+		color: var(--neutral-foreground-hint, #a0a0a0);
+	}
+
+	[data-theme="dark"] .tree-chevron:hover {
+		background: var(--neutral-fill-secondary-hover, #3a3a3a);
+		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
 	.pagination {

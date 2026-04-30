@@ -326,6 +326,7 @@
 				{label: "QuickGrid", href: "/components/quickgrid"},
 				{label: "QuickGrid Editable", href: "/components/quickgrid-editable"},
 				{label: "QuickGrid Context Menu", href: "/components/quickgrid-contextmenu"},
+				{label: "QuickGrid Tree", href: "/components/quickgrid-tree"},
 				{label: "Toolbar", href: "/components/toolbar"}
 			]
 		}

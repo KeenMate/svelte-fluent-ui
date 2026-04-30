@@ -42,7 +42,7 @@ A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2
 - **Toast Service** - Programmatic notifications with `toast.success()`, `toast.error()`, etc. - 6 positions, progress bars, auto-dismiss
 - **InputFile** - Drag-and-drop file upload with validation and progress tracking
 - **Autocomplete** - Multiple selection with tag/chip display, async search with AbortSignal, initial options, Ctrl+Space to show all
-- **QuickGrid** - Advanced data grid with sorting, filtering, pagination, editable rows, row toolbar, context menu
+- **QuickGrid** - Advanced data grid with sorting, filtering, pagination, editable rows, row toolbar, context menu, tree mode with ltree-style paths, per-column custom filter predicates, and stable row identity via `idMember`
 - **Three-State Checkbox** - Checkbox with indeterminate state support
 - **Responsive Layout** - Complete layout system with Grid, Stack, and responsive components
 
@@ -86,7 +86,7 @@ npm install svelte-fluentui
 
 ### Data Display
 - `DataGrid` / `DataGridRow` / `DataGridCell` - Data table components
-- `QuickGrid` - Advanced data grid with sorting, filtering, and pagination
+- `QuickGrid` - Advanced data grid with sorting, filtering, pagination, inline editing, tree mode, and custom filter predicates
 - `Card` - Content container
 - `Badge` - Status indicators
 - `ProgressBar` - Progress indication
