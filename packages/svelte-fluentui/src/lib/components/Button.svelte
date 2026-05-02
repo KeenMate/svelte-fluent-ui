@@ -7,7 +7,7 @@
 	type Props = {
 		appearance?: string
 		autofocus?: boolean
-		disabled?: string
+		disabled?: boolean
 		form?: string
 		formaction?: string
 		formenctype?: string
@@ -21,6 +21,8 @@
 		end?: SlotType
 		children?: SlotType
 		style?: string
+		class?: string
+		"aria-label"?: string
 		onclick?: (ev: MouseEvent) => void
 	}
 
@@ -41,6 +43,8 @@
 		end = undefined,
 		children = undefined,
 		style= "",
+		class: className = undefined,
+		"aria-label": ariaLabel = undefined,
 		onclick = undefined
 	}: Props = $props()
 </script>
@@ -60,6 +64,8 @@
 	{formtarget}
 	{disabled}
 	{style}
+	class={className}
+	aria-label={ariaLabel}
 	{onclick}
 >
 	{#if start}

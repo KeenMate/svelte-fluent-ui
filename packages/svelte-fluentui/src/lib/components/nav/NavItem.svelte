@@ -24,7 +24,7 @@
 <div
 	role="menuitem"
 	tabindex="0"
-	{disabled}
+	aria-disabled={disabled}
 	class="fluent-nav-item {className || ''}"
 	class:fluent-nav-group={group}
 	class:disabled

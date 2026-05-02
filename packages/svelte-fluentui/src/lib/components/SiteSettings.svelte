@@ -17,14 +17,12 @@
 
 	let localSettings = $derived($settings)
 
-	function handleThemeChange(event: Event) {
-		const target = event.target as HTMLSelectElement
-		settings.setThemeMode(target.value as ThemeMode)
+	function handleThemeChange(detail: {value: string}) {
+		settings.setThemeMode(detail.value as ThemeMode)
 	}
 
-	function handleAccentColorChange(event: Event) {
-		const target = event.target as HTMLSelectElement
-		settings.setAccentColor(target.value)
+	function handleAccentColorChange(detail: {value: string}) {
+		settings.setAccentColor(detail.value)
 	}
 
 	function handleNeutralColorChange(event: Event) {
@@ -32,9 +30,8 @@
 		settings.setNeutralColor(target.value)
 	}
 
-	function handleDirectionChange(event: Event) {
-		const target = event.target as HTMLInputElement
-		settings.setDirection(target.checked ? 'ltr' : 'rtl')
+	function handleDirectionChange(checked: boolean) {
+		settings.setDirection(checked ? 'ltr' : 'rtl')
 	}
 
 	function handleReset() {
@@ -136,7 +133,7 @@
 
 		<!-- Reset Button -->
 		<div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-			<Button appearance="neutral" onClick={handleReset} style="width: 150px;">
+			<Button appearance="neutral" onclick={handleReset} style="width: 150px;">
 				Reset settings
 			</Button>
 			<svg style="width: 24px; fill: var(--accent-fill-rest);" viewBox="0 0 24 24">
@@ -148,7 +145,7 @@
 
 		<!-- OK Button -->
 		<div style="display: flex; justify-content: flex-end;">
-			<Button appearance="accent" onClick={onClose}>OK</Button>
+			<Button appearance="accent" onclick={onClose}>OK</Button>
 		</div>
 	</Stack>
 </Dialog>

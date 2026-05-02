@@ -2,12 +2,15 @@
 
 A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2.6.x), providing a seamless way to use FluentUI components in Svelte applications.
 
-## What's New in v1.0.0-rc14
+## What's New in v1.0.0-rc15
 
-- **`Combobox` / `Autocomplete` `minSearchLength` prop** — keep the dropdown closed until the user has typed N characters. In `Autocomplete` this also short-circuits before the debounce timer, so `onoptionssearch` is never invoked against expensive backends for stray single-character input. `showInitialOptions` and `Ctrl+Space` still override
-- **`Grid` columns mode** — `<Grid columns={N} gap="1rem">` switches from the 12-column flex-spacing system to CSS grid with `repeat(N, minmax(0, 1fr))`, so every `<GridItem>` is locked at 1/N of the container regardless of content (no more one chip-stuffed cell stealing width). Fully backward-compatible: the existing `<Grid spacing={N}>` flow is untouched
-- **Docs pages standardized across the board** — all 41 component demo pages now share one layout (outer `<Stack>`, h1, description, References card, 3-column API grid for Properties/Callbacks/Slots, then a single Examples card with `<h3>` subsections). Every previously-missing component description was backfilled
-- **Changelog viewer no longer auto-registers stray custom elements** — the home and `/changelog` renderers now HTML-escape markdown before converting, so code spans like `` `<fluent-dialog>` `` display as literal text instead of silently painting an empty Fluent dialog on the page
+- **`QuickGrid` tree mode** — pass `treePathMember="path"` and mark one column with `isTree: true` to render hierarchical data with indentation + expand/collapse. Supports PostgreSQL ltree (`"1.2.3"`), POSIX (`"/1/2/3"`), and Windows (`"C:\foo\bar"`) path styles with auto-detection. Optional `treeLevelMember` / `treeParentMember` skip path parsing when those values are pre-computed in the database. `treeDataSorted` skips internal sort. `expandedPaths` is `$bindable`. `defaultExpandDepth` is interpreted relative to the dataset's shallowest level so subtree views always show their roots. Filter is ancestor-aware. Optional `treeDoubleClickBehavior="toggle"` lets users smash the row instead of aiming at the chevron
+- **`QuickGrid` per-column `filter` callback** — `(filterValue: string, row: T) => boolean | null` replaces the built-in substring match for one column. Use for numeric ranges, date ranges, regex, multi-field search. Returning `null` signals "input is syntactically incomplete" — the grid then ignores the filter (all rows pass) AND adds a `.invalid` class to the input so the user gets a red border instead of an empty grid
+- **`QuickGrid` grid-level `onfilterchange`** — `(filters: Record<string, string>) => void` for server-side filtering. When set, internal filtering is fully bypassed; the grid still renders the inputs, fires this on every keystroke, and trusts the caller to update `items`
+- **`QuickGrid` `idMember` prop** — stable row identity. Drafts and invalid-cell markers now key by this value (or `treePathMember` in tree mode, or displayed-row index as a last-resort fallback that triggers a one-shot console warning) so they survive pagination, filter, sort, and tree expand/collapse re-orderings
+- **`QuickGrid` `columnMinWidth` prop** — default `min-width` for any column without its own. Stops content-sized columns from collapsing too far when paired with `fillerColumn`
+- **`QuickGrid` `fillerColumn` actually absorbs leftover space now** — was `width: auto` (a no-op for absorption), now `width: 100%`. Affects every demo using `fillerColumn`, not just tree
+- **BREAKING — `QuickGrid` `invalidCells` shape: `rowIndex` → `rowKey`** — bindable `invalidCells: CellValidationState[]` now carries `rowKey: string` instead of `rowIndex: number`, matching the new stable-id keying. Migration: callers binding `invalidCells` need to read `c.rowKey` instead of `c.rowIndex`. The `onvalidationerror` callback's `detail.rowIndex` is unchanged
 
 ## Features
 

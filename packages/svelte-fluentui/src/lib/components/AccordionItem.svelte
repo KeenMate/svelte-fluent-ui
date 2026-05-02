@@ -41,7 +41,7 @@
 		// console.log("Accordion item change", ev)
 		const target = ev.target as HTMLElement
 
-		onchange?.(ev, target.attributes["expanded"]?.value === "")
+		onchange?.(ev, target.getAttribute("expanded") === "")
 	}
 </script>
 

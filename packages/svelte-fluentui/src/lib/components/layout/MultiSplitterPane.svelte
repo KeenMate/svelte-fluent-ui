@@ -28,7 +28,7 @@
 
 	let element: HTMLDivElement | undefined = $state()
 	let index = $state(-1)
-	let status: PaneStatus = $state("normal")
+	let status = $state<PaneStatus>("normal")
 	let isLast = $state(false)
 
 	const splitter = getContext<{

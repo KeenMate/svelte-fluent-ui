@@ -22,6 +22,7 @@
 		children?: SlotType | null | undefined
 		end?: SlotType | null | undefined
 		style?: string | null | undefined
+		title?: string | null | undefined
 
 		setSelectionRange?: (
 			start: number,
@@ -54,6 +55,7 @@
 		children = undefined,
 		end = undefined,
 		style = "",
+		title = undefined,
 
 		oninput = undefined,
 		onchange = undefined,
@@ -131,7 +133,7 @@
 
 	// Apply autocomplete attribute via shadow DOM
 	$effect(() => {
-		if (autocomplete !== undefined) {
+		if (autocomplete != null) {
 			setAutocompleteOnShadowInput(element, autocomplete)
 		}
 	})
@@ -163,6 +165,7 @@
 	{autofocus}
 	{autocomplete}
 	{style}
+	{title}
 	aria-label={!label && !labelTemplate ? undefined : label || undefined}
 	oninput={handleOnInput}
 	onchange={handleOnChange}

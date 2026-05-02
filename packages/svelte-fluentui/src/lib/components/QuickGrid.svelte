@@ -826,7 +826,7 @@
 
 	// Build editor options for GridCellEditor, wrapping callbacks with row context
 	function getEditorOptionsForCell(column: Column<T>, row: T): Record<string, unknown> {
-		const baseOptions = {
+		const baseOptions: Record<string, unknown> = {
 			...column.editorOptions,
 			options: getOptionsForColumn(column)
 		}
@@ -1362,7 +1362,7 @@
 			// here for cell navigation, allowing users to navigate away with arrow keys.
 
 			const input = e.target as HTMLInputElement
-			const isTextEditor = column.editor === "text" || column.editor === "number" || column.editor === "textarea"
+			const isTextEditor = column.editor === "text" || column.editor === "number"
 
 			// For text-based editors, ArrowLeft/ArrowRight only move cursor, never navigate cells
 			// User must use Tab/Enter to leave cell (prevents accidental navigation)

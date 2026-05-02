@@ -25,7 +25,7 @@
 </script>
 
 <nav
-	orientation={orientation || AppBarOrientation.Vertical}
+	data-orientation={orientation || AppBarOrientation.Vertical}
 	class={computedClasses}
 >
 	{@render children?.()}

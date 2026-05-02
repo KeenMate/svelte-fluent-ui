@@ -12,7 +12,7 @@
 		onClick?: () => void
 	}
 
-	type NavGroup = {
+	type NavGroupItem = {
 		title: string
 		icon: string
 		items: Array<{label: string; href: string}>
@@ -23,7 +23,7 @@
 		brandHref?: string
 		items?: NavItem[]
 		children?: SlotType
-		navigationGroups?: NavGroup[]
+		navigationGroups?: NavGroupItem[]
 		height?: number
 		class?: string
 		style?: string
@@ -62,7 +62,7 @@
 >
 	<div class="topnav-container">
 		<!-- Mobile menu toggle (left side) -->
-		<Button appearance="stealth" class="mobile-menu-toggle" onClick={toggleMobileMenu}>
+		<Button appearance="stealth" class="mobile-menu-toggle" onclick={toggleMobileMenu}>
 			<span class="hamburger-icon">
 				{#if mobileMenuOpen}
 					✕

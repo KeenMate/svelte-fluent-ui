@@ -5,7 +5,7 @@ export class RangeOfDates extends RangeOf<Date> {
 	constructor(start: Date | null, end: Date | null);
 
 	constructor(start?: Date | null, end?: Date | null) {
-		super(start, end);
+		super(start ?? null, end ?? null);
 
 		this.compare = this.compareDates
 	}

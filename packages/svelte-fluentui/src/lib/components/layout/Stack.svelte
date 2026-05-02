@@ -53,7 +53,7 @@
 
 <div
 	class={computedClass}
-	reverse={reversed ? "true" : undefined}
+	data-reverse={reversed ? "true" : undefined}
 	style:gap={gap}
 	style:row-gap={verticalGap}
 	style:column-gap={horizontalGap}

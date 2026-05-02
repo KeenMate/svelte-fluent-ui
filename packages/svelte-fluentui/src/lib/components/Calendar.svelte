@@ -37,6 +37,7 @@
 		/** Fires when the user navigates months/years (prev/next buttons). */
 		onPickerMonthChange?: (month: Date) => void
 		day?: SlotType
+		class?: string
 	}
 
 	let {
@@ -70,7 +71,7 @@
 	let _animationRunning: CalendarVerticalPosition = $state(CalendarVerticalPosition.Unset)
 
 	const canBeAnimated             = $derived(animatePeriodChanges ?? (view !== "days" && view !== "years"))
-	const calendarExtended          = $derived((value, new CalendarExtended(culture, pickerMonth, firstDayOfWeek ?? undefined)))
+	const calendarExtended          = $derived(new CalendarExtended(culture, pickerMonth, firstDayOfWeek ?? undefined))
 	// Merge disabledDateFunc with the inverse of selectableDates so the existing logic stays simple.
 	const effectiveDisabledFunc = $derived<(date: Date) => boolean>((date) => {
 		if (disabledDateFunc?.(date)) return true
@@ -322,11 +323,11 @@
 	}
 
 	function getMonthProperties(year?: number, month?: number) {
-		return new CalendarMonth(calendar, new Date(year, month))
+		return new CalendarMonth(calendar, new Date(year ?? 0, month ?? 0))
 	}
 
 	function getYearProperties(year?: number) {
-		return new CalendarYear(calendar, new Date(year, 0, 1))
+		return new CalendarYear(calendar, new Date(year ?? 0, 0, 1))
 	}
 
 	function pickerMonthSelectAsync(month?: Date) {
@@ -394,25 +395,25 @@
 				</div>
 				<div part="move" class="change-period">
 					{#if titles.previousDisabled}
-						<div class="previous" disabled="true"></div>
+						<div class="previous" aria-disabled="true"></div>
 					{:else}
 						<div
 							class="previous" title="{titles.previousTitle}"
 							role="button" tabindex="0"
 							onclick={onPreviousButtonClicked}
-							onkeydown={onPreviousButtonClicked}
+							onkeydown={(ev) => ev.key === "Enter" || ev.key === " " ? onPreviousButtonClicked(ev as unknown as MouseEvent) : undefined}
 						>
 							{@render arrowUp()}
 						</div>
 					{/if}
 					{#if titles.nextDisabled}
-						<div class="next" disabled="true"></div>
+						<div class="next" aria-disabled="true"></div>
 					{:else}
 						<div
 							class="next" title="{titles.nextTitle}"
 							role="button" tabindex="0"
 							onclick={onNextButtonHandlerAsync}
-							onkeydown={onNextButtonHandlerAsync}
+							onkeydown={(ev) => ev.key === "Enter" || ev.key === " " ? onNextButtonHandlerAsync(ev as unknown as MouseEvent) : undefined}
 						>
 							{@render arrowDown()}
 						</div>
@@ -426,7 +427,7 @@
 					<!-- Titles: Mon, Tue, ... -->
 					<div class="week-days" part="week-days">
 						{#each calendarExtended.getDayNames() as weekDay}
-							<div class="week-day" part="week-day" title={weekDay.name} abbr={weekDay.name}>
+							<div class="week-day" part="week-day" title={weekDay.name} data-abbr={weekDay.name}>
 								{weekDay.shorted}
 							</div>
 						{/each}
@@ -443,18 +444,18 @@
 								<div
 									part="day"
 									class={getAnimationClass('day')}
-									role={dayProperties.isDisabled || dayProperties.isInactive ? null : 'button'}
-									tabindex={dayProperties.isDisabled || dayProperties.isInactive ? null : 0}
-									disabled={dayProperties.isDisabled}
-									inactive={dayProperties.isInactive}
-									today={dayProperties.isToday}
-									selected={dayProperties.isSelected}
-									multi-day={dayProperties.isMultiDaySelected}
-									multi-day-over={multipleSelection.inProgress && _selectedDatesMouseOver.includes(day)}
-									multi-start={multipleSelection.isMultiple && selectMode === "range" && multipleSelection.min === day}
-									multi-end={multipleSelection.isMultiple && selectMode === "range" && multipleSelection.max === day}
+									role={dayProperties.isDisabled || dayProperties.isInactive ? undefined : 'button'}
+									tabindex={dayProperties.isDisabled || dayProperties.isInactive ? undefined : 0}
+									aria-disabled={dayProperties.isDisabled}
+									data-inactive={dayProperties.isInactive}
+									data-today={dayProperties.isToday}
+									aria-selected={dayProperties.isSelected}
+									data-multi-day={dayProperties.isMultiDaySelected}
+									data-multi-day-over={multipleSelection.inProgress && _selectedDatesMouseOver.includes(day)}
+									data-multi-start={multipleSelection.isMultiple && selectMode === "range" && multipleSelection.min === day}
+									data-multi-end={multipleSelection.isMultiple && selectMode === "range" && multipleSelection.max === day}
 									aria-label={dayProperties.title}
-									value={dayProperties.dayIdentifier}
+									data-value={dayProperties.dayIdentifier}
 									onkeydown={ev => onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
 									onclick={ev => onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
 									onmouseover={ev => onSelectDayMouseOverAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
@@ -476,14 +477,14 @@
 
 						<div
 							class={getAnimationClass('month')}
-							selected={monthProperties.isSelected}
-							readonly={monthProperties.isReadOnly}
-							disabled={monthProperties.isDisabled}
+							aria-selected={monthProperties.isSelected}
+							aria-readonly={monthProperties.isReadOnly}
+							aria-disabled={monthProperties.isDisabled}
 							aria-label={monthProperties.title}
 							title={monthProperties.title}
-							value={monthProperties.monthIdentifier}
+							data-value={monthProperties.monthIdentifier}
 							role="button"
-							tabindex={monthProperties.isDisabled || monthProperties.isReadOnly ? null : 0}
+							tabindex={monthProperties.isDisabled || monthProperties.isReadOnly ? undefined : 0}
 							onkeydown={ev => onSelectMonthHandlerAsync(year, month.index, monthProperties.isReadOnly)}
 							onclick={ev => onSelectMonthHandlerAsync(year, month.index, monthProperties.isReadOnly)}
 						>
@@ -500,13 +501,13 @@
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
 							class={getAnimationClass('year')}
-							selected={yearProperties.isSelected}
-							readonly={yearProperties.isReadOnly}
-							disabled={yearProperties.isDisabled}
-							aria-label={year.year}
-							title={year.year}
-							value={yearProperties.yearIdentifier}
-							tabindex={yearProperties.isDisabled || yearProperties.isReadOnly ? null : 0}
+							aria-selected={yearProperties.isSelected}
+							aria-readonly={yearProperties.isReadOnly}
+							aria-disabled={yearProperties.isDisabled}
+							aria-label={String(year.year)}
+							title={String(year.year)}
+							data-value={yearProperties.yearIdentifier}
+							tabindex={yearProperties.isDisabled || yearProperties.isReadOnly ? undefined : 0}
 							onkeydown={ev => onSelectYearHandlerAsync(year.year, yearProperties.isReadOnly)}
 							onclick={ev => onSelectYearHandlerAsync(year.year, yearProperties.isReadOnly)}
 						>
@@ -520,10 +521,10 @@
 
 	{#if _pickerView === "months"}
 		<Calendar
-			View="months"
-			Value={pickerMonth}
-			ValueChanged={pickerMonthSelectAsync}
-			CheckIfSelectedValueHasChanged={false}
+			view="months"
+			value={pickerMonth}
+			onDateSelected={pickerMonthSelectAsync}
+			checkIfSelectedValueHasChanged={false}
 			{readonly}
 			{culture}
 			disabledSelectable={disabledCheckAllDaysOfMonthYear}
@@ -537,7 +538,7 @@
 		<Calendar
 			view="years"
 			value={pickerMonth}
-			valueChanged={pickerYearSelectAsync}
+			onDateSelected={pickerYearSelectAsync}
 			checkIfSelectedValueHasChanged={false}
 			{readonly}
 			{culture}

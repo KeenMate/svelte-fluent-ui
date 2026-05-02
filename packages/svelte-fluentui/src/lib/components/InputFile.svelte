@@ -201,7 +201,7 @@
 
 		if (disabled) return
 
-		const files = event.dataTransfer?.files
+		const files = event.dataTransfer?.files ?? null
 		handleFileSelection(files)
 	}
 
@@ -261,7 +261,7 @@
 						Drag and drop files here, or
 					{/if}
 				</p>
-				<Button appearance="accent" onClick={openFileDialog} {disabled}>
+				<Button appearance="accent" onclick={openFileDialog} {disabled}>
 					Browse
 				</Button>
 				{#if accept}
@@ -273,7 +273,7 @@
 			</div>
 		</div>
 	{:else}
-		<Button appearance="accent" onClick={openFileDialog} {disabled}>
+		<Button appearance="accent" onclick={openFileDialog} {disabled}>
 			Select files
 		</Button>
 	{/if}

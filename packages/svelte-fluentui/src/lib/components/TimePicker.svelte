@@ -417,7 +417,7 @@
 					</div>
 
 					<div class="time-actions">
-						<Button appearance="accent" onClick={handleApply} style="flex: 1;">
+						<Button appearance="accent" onclick={handleApply} style="flex: 1;">
 							OK
 						</Button>
 					</div>

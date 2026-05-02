@@ -727,7 +727,7 @@
 
 	<!-- Dropdown overlay for select/combobox/autocomplete -->
 	{#if dropdownOpen && (type === "select" || type === "combobox" || type === "autocomplete")}
-		<PositioningRegion anchor={cellElement || editorElement} visible={dropdownOpen} placement="bottom-start">
+		<PositioningRegion anchor={cellElement || editorElement} visible={dropdownOpen} position="bottom">
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div bind:this={dropdownElement} class="cell-dropdown" role="listbox" onmousedown={(e) => e.preventDefault()}>
 				{#if type === "combobox"}

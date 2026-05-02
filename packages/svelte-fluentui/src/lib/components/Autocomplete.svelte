@@ -493,7 +493,7 @@
 				readonly={readonly}
 				{required}
 				autofocus={autofocus}
-				autocomplete={autocomplete || 'off'}
+				autocomplete={(autocomplete || 'off') as AutoFill}
 				oninput={handleInput}
 				onkeydown={handleKeyDown}
 				onfocus={handleInputFocus}
