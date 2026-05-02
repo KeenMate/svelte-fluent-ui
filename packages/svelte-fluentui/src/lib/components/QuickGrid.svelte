@@ -1861,6 +1861,7 @@
 	<!-- Row toolbar (uses fixed positioning to float outside container) -->
 	{#if resolvedShowToolbar && hoveredRowIndex !== null && hoveredRowElement}
 		<PositioningRegion anchor={hoveredRowElement} visible={true} position={popupPosition} align={toolbarAlign} style="width: auto;">
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				bind:this={popupElement}
 				class="row-toolbar"
@@ -1941,6 +1942,8 @@
 						{#if menuItem.dividerBefore}
 							<fluent-divider></fluent-divider>
 						{/if}
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<fluent-menu-item
 							disabled={isDisabled || undefined}
 							class:danger={menuItem.danger}
@@ -2304,25 +2307,25 @@
 		white-space: nowrap;
 	}
 
-	[data-theme="dark"] .row-toolbar {
+	:global([data-theme="dark"]) .row-toolbar {
 		background: var(--neutral-layer-floating, #2b2b2b);
 		border-color: var(--neutral-stroke-rest, #5a5a5a);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 	}
 
-	[data-theme="dark"] .row-toolbar-divider {
+	:global([data-theme="dark"]) .row-toolbar-divider {
 		background: var(--neutral-stroke-rest, #5a5a5a);
 	}
 
-	[data-theme="dark"] .row-toolbar-btn {
+	:global([data-theme="dark"]) .row-toolbar-btn {
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] .row-toolbar-btn:hover {
+	:global([data-theme="dark"]) .row-toolbar-btn:hover {
 		background: var(--neutral-fill-secondary-hover, #3a3a3a);
 	}
 
-	[data-theme="dark"] .row-toolbar-btn.danger:hover {
+	:global([data-theme="dark"]) .row-toolbar-btn.danger:hover {
 		background: var(--error-fill-hover, #442726);
 		color: var(--error-foreground, #f87c86);
 	}
@@ -2447,11 +2450,11 @@
 		box-shadow: 0 0 0 1px var(--error-foreground, #d13438);
 	}
 
-	[data-theme="dark"] .filter-input.invalid {
+	:global([data-theme="dark"]) .filter-input.invalid {
 		border-color: var(--error-foreground, #f87c86);
 	}
 
-	[data-theme="dark"] .filter-input.invalid:focus {
+	:global([data-theme="dark"]) .filter-input.invalid:focus {
 		border-color: var(--error-foreground, #f87c86);
 		box-shadow: 0 0 0 1px var(--error-foreground, #f87c86);
 	}
@@ -2525,11 +2528,11 @@
 		flex-shrink: 0;
 	}
 
-	[data-theme="dark"] .tree-chevron {
+	:global([data-theme="dark"]) .tree-chevron {
 		color: var(--neutral-foreground-hint, #a0a0a0);
 	}
 
-	[data-theme="dark"] .tree-chevron:hover {
+	:global([data-theme="dark"]) .tree-chevron:hover {
 		background: var(--neutral-fill-secondary-hover, #3a3a3a);
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
@@ -2581,25 +2584,25 @@
 	}
 
 	/* Dark mode support */
-	[data-theme="dark"] .quickgrid {
+	:global([data-theme="dark"]) .quickgrid {
 		background: var(--neutral-layer-1, #1f1f1f);
 		border-color: var(--neutral-stroke-layer-rest, #3d3d3d);
 	}
 
-	[data-theme="dark"] .column-header {
+	:global([data-theme="dark"]) .column-header {
 		background: var(--neutral-layer-2, #2b2b2b);
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] tbody td {
+	:global([data-theme="dark"]) tbody td {
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] .quickgrid.striped tbody tr:nth-child(even) {
+	:global([data-theme="dark"]) .quickgrid.striped tbody tr:nth-child(even) {
 		background: var(--neutral-layer-2, #262626);
 	}
 
-	[data-theme="dark"] .quickgrid.hoverable tbody tr:hover {
+	:global([data-theme="dark"]) .quickgrid.hoverable tbody tr:hover {
 		background: var(--neutral-layer-3, #333333);
 	}
 
@@ -2622,11 +2625,11 @@
 		pointer-events: none;
 	}
 
-	[data-theme="dark"] .quickgrid.editable .editable-cell:hover {
+	:global([data-theme="dark"]) .quickgrid.editable .editable-cell:hover {
 		background: var(--neutral-fill-secondary-hover, #3a3a3a);
 	}
 
-	[data-theme="dark"] .quickgrid.editable .editable-cell:hover::after {
+	:global([data-theme="dark"]) .quickgrid.editable .editable-cell:hover::after {
 		border-color: var(--neutral-stroke-input-rest, #5a5a5a);
 	}
 
@@ -2657,11 +2660,11 @@
 		border-bottom: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] thead .actions-column {
+	:global([data-theme="dark"]) thead .actions-column {
 		background: var(--neutral-layer-2, #2b2b2b);
 	}
 
-	[data-theme="dark"] .filter-row .actions-column {
+	:global([data-theme="dark"]) .filter-row .actions-column {
 		background: var(--neutral-layer-1, #1f1f1f);
 	}
 
@@ -2684,12 +2687,12 @@
 		color: var(--neutral-foreground-rest, #242424);
 	}
 
-	[data-theme="dark"] .toolbar-trigger-btn {
+	:global([data-theme="dark"]) .toolbar-trigger-btn {
 		color: var(--neutral-foreground-hint, #a0a0a0);
 	}
 
-	[data-theme="dark"] .toolbar-trigger-btn:hover,
-	[data-theme="dark"] .toolbar-trigger-btn.active {
+	:global([data-theme="dark"]) .toolbar-trigger-btn:hover,
+	:global([data-theme="dark"]) .toolbar-trigger-btn.active {
 		background: var(--neutral-fill-secondary-hover, #3a3a3a);
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
@@ -2771,25 +2774,25 @@
 	}
 
 	/* Dark mode for new styles */
-	[data-theme="dark"] .cell-edit-btn {
+	:global([data-theme="dark"]) .cell-edit-btn {
 		background: var(--neutral-layer-2, #2b2b2b);
 		border-color: var(--neutral-stroke-input-rest, #5a5a5a);
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] .cell-edit-btn:hover {
+	:global([data-theme="dark"]) .cell-edit-btn:hover {
 		background: var(--neutral-layer-3, #333333);
 	}
 
-	[data-theme="dark"] .validation-error {
+	:global([data-theme="dark"]) .validation-error {
 		background: var(--error-fill-rest, #442726) !important;
 	}
 
-	[data-theme="dark"] .validation-error-message {
+	:global([data-theme="dark"]) .validation-error-message {
 		color: var(--error-foreground, #f87c86);
 	}
 
-	[data-theme="dark"] .cell-error-indicator {
+	:global([data-theme="dark"]) .cell-error-indicator {
 		color: var(--error-foreground, #f87c86);
 	}
 
@@ -2812,7 +2815,7 @@
 		display: none;
 	}
 
-	[data-theme="dark"] .quickgrid.navigate-mode .editable-cell.focused {
+	:global([data-theme="dark"]) .quickgrid.navigate-mode .editable-cell.focused {
 		background: var(--neutral-fill-secondary-hover, #3a3a3a);
 	}
 
@@ -2823,7 +2826,7 @@
 		outline-offset: -2px;
 	}
 
-	[data-theme="dark"] .quickgrid .editable-cell.editing {
+	:global([data-theme="dark"]) .quickgrid .editable-cell.editing {
 		background: var(--neutral-layer-1, #1f1f1f) !important;
 	}
 
@@ -2853,17 +2856,8 @@
 		display: none;
 	}
 
-	[data-theme="dark"] tbody td:has(.editor-wrapper) {
+	:global([data-theme="dark"]) tbody td:has(.editor-wrapper) {
 		background: var(--neutral-layer-1, #1f1f1f);
-	}
-
-	/* Always-editing mode - different styling */
-	.editable-cell :global(.grid-cell-editor:not(:has(:focus))) {
-		/* When not focused, no border */
-	}
-
-	.editable-cell :global(.grid-cell-editor:has(:focus)) {
-		/* Show accent border when focused in always mode */
 	}
 
 	/* Checkbox display in navigate mode (read-only visual) */
@@ -2891,11 +2885,11 @@
 		background: var(--error-fill-hover, #fde7e9);
 	}
 
-	[data-theme="dark"] .context-menu fluent-menu-item.danger {
+	:global([data-theme="dark"]) .context-menu fluent-menu-item.danger {
 		color: var(--error-foreground, #f87c86);
 	}
 
-	[data-theme="dark"] .context-menu fluent-menu-item.danger:hover {
+	:global([data-theme="dark"]) .context-menu fluent-menu-item.danger:hover {
 		background: var(--error-fill-hover, #442726);
 	}
 </style>

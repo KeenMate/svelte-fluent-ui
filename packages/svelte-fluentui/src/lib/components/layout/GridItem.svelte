@@ -39,7 +39,7 @@
 
 	const grid = getContext<{currentSize: string | undefined; adaptiveRendering: boolean}>("grid")
 
-	const noBreakpointsDefined = xs == null && sm == null && md == null && lg == null && xl == null && xxl == null
+	const noBreakpointsDefined = $derived(xs == null && sm == null && md == null && lg == null && xl == null && xxl == null)
 
 	let shouldRender = $derived(() => {
 		const adaptive = adaptiveRendering ?? grid?.adaptiveRendering

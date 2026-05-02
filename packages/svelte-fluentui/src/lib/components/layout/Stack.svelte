@@ -76,11 +76,11 @@
 		flex-direction: row;
 	}
 
-	.stack-vertical[reverse="true"] {
+	.stack-vertical[data-reverse="true"] {
 		flex-direction: column-reverse;
 	}
 
-	.stack-horizontal[reverse="true"] {
+	.stack-horizontal[data-reverse="true"] {
 		flex-direction: row-reverse;
 	}
 

@@ -60,7 +60,7 @@
 
 	// Set context for child panes
 	setContext("multisplitter", {
-		orientation,
+		get orientation() { return orientation },
 		registerPane: (pane: any) => {
 			panes = [...panes, pane]
 			return panes.length - 1

@@ -71,7 +71,8 @@
 	{#if positionToasts.length > 0}
 		<div id="toast-container-{position}" class="fluent-toast-container fluent-toast-container--{position}">
 			{#each positionToasts as toastItem (toastItem.id)}
-				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<div
 					id={toastItem.id}
 					class="fluent-toast fluent-toast--{toastItem.variant}"

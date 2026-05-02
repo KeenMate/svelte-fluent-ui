@@ -40,6 +40,7 @@
 	let isVisible = $state(false);
 	let isRendered = $state(false);
 	let tooltipPosition = $state({ top: 0, left: 0 });
+	// svelte-ignore state_referenced_locally
 	let actualPosition = $state<Position>(position);
 	let arrowOffset = $state<number | null>(null);
 	let anchorInView = $state(true);

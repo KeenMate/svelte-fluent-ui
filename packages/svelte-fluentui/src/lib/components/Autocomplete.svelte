@@ -446,7 +446,10 @@
 		{/if}
 
 		<!-- Input container -->
-		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<!-- svelte-ignore a11y_role_has_required_aria_props -->
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
 		<div
 			class="autocomplete-input-container"
 			class:inline-mode={tagsPosition === 'inline'}
@@ -483,6 +486,7 @@
 			{/if}
 
 			<!-- Native input element -->
+			<!-- svelte-ignore a11y_autofocus -->
 			<input
 				type="text"
 				class="autocomplete-native-input"

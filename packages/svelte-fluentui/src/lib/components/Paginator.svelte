@@ -50,7 +50,9 @@
 		</div>
 	{/if}
 
-	<nav role="navigation" class="paginator-nav">
+	<nav class="paginator-nav">
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onFirst?.()}
 			disabled={!canGoBack || disabled}
@@ -60,6 +62,8 @@
 			<span>&laquo;</span>
 		</fluent-button>
 
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onPrevious?.()}
 			disabled={!canGoBack || disabled}
@@ -77,6 +81,8 @@
 			{/if}
 		</div>
 
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onNext?.()}
 			disabled={!canGoForwards || disabled}
@@ -86,6 +92,8 @@
 			<span>&rsaquo;</span>
 		</fluent-button>
 
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onLast?.()}
 			disabled={!canGoForwards || disabled}

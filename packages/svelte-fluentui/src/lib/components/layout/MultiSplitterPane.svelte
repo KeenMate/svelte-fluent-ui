@@ -94,7 +94,8 @@
 </div>
 
 {#if !isLast}
-	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="fluent-multi-splitter-bar"
 		data-status={status}
@@ -105,6 +106,7 @@
 		}}
 	>
 		{#if isCollapsible}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<span
 				data-part="collapse"
 				onmousedown={(e) => {
@@ -112,14 +114,15 @@
 					e.stopPropagation()
 					splitter.collapseExec(e, index)
 				}}
-			/>
+			></span>
 		{/if}
 
 		{#if isResizable}
-			<span data-part="resize" />
+			<span data-part="resize"></span>
 		{/if}
 
 		{#if isExpandable}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<span
 				data-part="expand"
 				onmousedown={(e) => {
@@ -127,7 +130,7 @@
 					e.stopPropagation()
 					splitter.expandExec(e, index)
 				}}
-			/>
+			></span>
 		{/if}
 	</div>
 {/if}

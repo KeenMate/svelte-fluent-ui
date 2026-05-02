@@ -169,6 +169,7 @@
 	});
 </script>
 
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-number-field
 	bind:this={element}
 	class={className || null}

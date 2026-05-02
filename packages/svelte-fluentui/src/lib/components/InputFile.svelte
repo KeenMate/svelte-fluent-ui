@@ -240,6 +240,7 @@
 
 	<!-- Drag and drop zone -->
 	{#if showDragDropZone}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="drop-zone"
 			class:disabled

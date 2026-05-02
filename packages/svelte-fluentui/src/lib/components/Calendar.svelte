@@ -477,9 +477,10 @@
 
 						<div
 							class={getAnimationClass('month')}
-							aria-selected={monthProperties.isSelected}
-							aria-readonly={monthProperties.isReadOnly}
+							class:selected={monthProperties.isSelected}
+							class:readonly={monthProperties.isReadOnly}
 							aria-disabled={monthProperties.isDisabled}
+							aria-pressed={monthProperties.isSelected}
 							aria-label={monthProperties.title}
 							title={monthProperties.title}
 							data-value={monthProperties.monthIdentifier}
@@ -501,9 +502,10 @@
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
 							class={getAnimationClass('year')}
-							aria-selected={yearProperties.isSelected}
-							aria-readonly={yearProperties.isReadOnly}
+							class:selected={yearProperties.isSelected}
+							class:readonly={yearProperties.isReadOnly}
 							aria-disabled={yearProperties.isDisabled}
+							aria-pressed={yearProperties.isSelected}
 							aria-label={String(year.year)}
 							title={String(year.year)}
 							data-value={yearProperties.yearIdentifier}

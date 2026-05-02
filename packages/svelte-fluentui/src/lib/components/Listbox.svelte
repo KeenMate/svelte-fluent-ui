@@ -66,6 +66,7 @@
 		  })
 		| undefined = $state()
 
+	// svelte-ignore state_referenced_locally
 	const selectedOptions = createSelectedOptions(value, multi)
 	setContext<SelectedOptionSvelteContext>("selected-options", selectedOptions)
 
@@ -91,6 +92,7 @@
 </script>
 
 {#if label}
+	<!-- svelte-ignore a11y_label_has_associated_control -->
 	<label style="display: block; margin-bottom: 0.25rem;">{label}</label>
 {/if}
 <!-- svelte-ignore a11y_autofocus -->

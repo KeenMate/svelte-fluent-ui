@@ -75,6 +75,7 @@
 	aria-label={ariaLabel || label}
 	{required}
 	current-checked={checked}
+	aria-checked={checked}
 	onchange={handleChange}
 	role="switch"
 >

@@ -92,6 +92,7 @@
 	</label>
 {/if}
 
+<!-- svelte-ignore a11y_autofocus -->
 <fluent-text-area
 	bind:this={element}
 	class={className}

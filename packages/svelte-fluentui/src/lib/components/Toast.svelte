@@ -80,6 +80,7 @@
 	}
 </style>
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div class="fluent-toast" id={id} tabindex="0">
 	<div class="toast-header">
 		<div class="fluent-toast-title">{title}</div>
@@ -92,6 +93,8 @@
 			{:else if topCTAType === 'timestamp' && timestamp}
 				<span class="fluent-toast-small timestamp">{timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
 			{:else if topCTAType === 'action' && topAction}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<fluent-anchor
 					href="#"
 					title={topAction}
@@ -114,6 +117,8 @@
 	{#if primaryAction || secondaryAction}
 		<div class="fluent-toast-actions">
 			{#if primaryAction}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<fluent-anchor
 					href="#"
 					title={primaryAction}
@@ -127,6 +132,8 @@
 				</fluent-anchor>
 			{/if}
 			{#if secondaryAction}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<fluent-anchor
 					href="#"
 					title={secondaryAction}

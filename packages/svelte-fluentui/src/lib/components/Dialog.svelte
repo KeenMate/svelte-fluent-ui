@@ -138,9 +138,9 @@
 		"full": { width: "90vw", height: "90vh" }
 	}
 
-	const dialogWidth = width || sizeMap[size].width
-	const dialogHeight = height || sizeMap[size].height
-	const dialogStyle = `--dialog-width: ${dialogWidth}; --dialog-height: ${dialogHeight};`
+	const dialogWidth = $derived(width || sizeMap[size].width)
+	const dialogHeight = $derived(height || sizeMap[size].height)
+	const dialogStyle = $derived(`--dialog-width: ${dialogWidth}; --dialog-height: ${dialogHeight};`)
 
 	let element: HTMLElement & {
 		show: Function
@@ -222,6 +222,7 @@
 
 {#if visible}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div use:portal class="dialog-overlay" onclick={!preventClose ? handleClose : undefined}></div>
 {/if}
 

@@ -82,7 +82,7 @@
 		<div
 			class="fluent-nav-menu"
 			role="menu"
-			aria-expanded={expanded}
+			data-expanded={expanded}
 		>
 			{@render children?.()}
 		</div>

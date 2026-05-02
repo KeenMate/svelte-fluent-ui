@@ -76,6 +76,7 @@
 	}: Props = $props()
 
 	// Internal state
+	// svelte-ignore state_referenced_locally
 	let internalValue = $state(value)
 
 	// Sync value prop to internalValue when it changes (for always-editable checkboxes)
@@ -672,6 +673,7 @@
 		/>
 	{:else if type === "select"}
 		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+		<!-- svelte-ignore a11y_role_has_required_aria_props -->
 		<div
 			class="cell-select-trigger"
 			tabindex="0"
@@ -729,11 +731,13 @@
 	{#if dropdownOpen && (type === "select" || type === "combobox" || type === "autocomplete")}
 		<PositioningRegion anchor={cellElement || editorElement} visible={dropdownOpen} position="bottom">
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
 			<div bind:this={dropdownElement} class="cell-dropdown" role="listbox" onmousedown={(e) => e.preventDefault()}>
 				{#if type === "combobox"}
 					{@const opts = filteredOptions()}
 					{#each opts as opt, index}
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_interactive_supports_focus -->
 						<div
 							class="cell-dropdown-option"
 							class:highlighted={index === highlightedIndex}
@@ -750,10 +754,13 @@
 				{:else}
 					{#if options.allowEmpty && type === "select"}
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_interactive_supports_focus -->
+						<!-- svelte-ignore a11y_role_has_required_aria_props -->
 						<div
 							class="cell-dropdown-option"
 							class:highlighted={highlightedIndex === -1 && (internalValue === null || internalValue === undefined)}
 							role="option"
+							aria-selected={highlightedIndex === -1 && (internalValue === null || internalValue === undefined)}
 							onclick={() => { internalValue = null; closeDropdown(); oncommit(null); }}
 						>
 							{options.emptyLabel || "-- Select --"}
@@ -761,6 +768,7 @@
 					{/if}
 					{#each dropdownOptions as opt, index}
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_interactive_supports_focus -->
 						<div
 							class="cell-dropdown-option"
 							class:highlighted={index === highlightedIndex}
@@ -973,33 +981,33 @@
 	}
 
 	/* Dark mode */
-	[data-theme="dark"] .cell-input,
-	[data-theme="dark"] .cell-select-trigger,
-	[data-theme="dark"] .cell-combobox-input,
-	[data-theme="dark"] .cell-autocomplete-input {
+	:global([data-theme="dark"]) .cell-input,
+	:global([data-theme="dark"]) .cell-select-trigger,
+	:global([data-theme="dark"]) .cell-combobox-input,
+	:global([data-theme="dark"]) .cell-autocomplete-input {
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] .cell-input::placeholder,
-	[data-theme="dark"] .cell-autocomplete-input::placeholder {
+	:global([data-theme="dark"]) .cell-input::placeholder,
+	:global([data-theme="dark"]) .cell-autocomplete-input::placeholder {
 		color: var(--neutral-foreground-hint, #a0a0a0);
 	}
 
-	[data-theme="dark"] .cell-dropdown {
+	:global([data-theme="dark"]) .cell-dropdown {
 		background: var(--neutral-layer-1, #2d2d2d);
 		border-color: var(--neutral-stroke-rest, #404040);
 	}
 
-	[data-theme="dark"] .cell-dropdown-option {
+	:global([data-theme="dark"]) .cell-dropdown-option {
 		color: var(--neutral-foreground-rest, #e0e0e0);
 	}
 
-	[data-theme="dark"] .cell-dropdown-option:hover,
-	[data-theme="dark"] .cell-dropdown-option.highlighted {
+	:global([data-theme="dark"]) .cell-dropdown-option:hover,
+	:global([data-theme="dark"]) .cell-dropdown-option.highlighted {
 		background: var(--neutral-fill-secondary-hover, #3d3d3d);
 	}
 
-	[data-theme="dark"] .cell-dropdown-empty {
+	:global([data-theme="dark"]) .cell-dropdown-empty {
 		color: var(--neutral-foreground-hint, #a0a0a0);
 	}
 </style>
