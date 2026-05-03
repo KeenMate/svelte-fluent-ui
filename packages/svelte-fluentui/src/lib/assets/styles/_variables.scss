@@ -50,6 +50,13 @@ $footer-bg-light: $neutral-white !default;
 $footer-text-light: $neutral-gray-110 !default;
 $footer-border-light: $neutral-gray-40 !default;
 
+// QuickGrid
+$quickgrid-header-bg-light: $neutral-gray-20 !default;
+$quickgrid-header-hover-bg-light: $neutral-gray-30 !default;
+$quickgrid-header-sorted-bg-light: $neutral-gray-30 !default;
+$quickgrid-stripe-bg-light: $neutral-gray-10 !default;
+$quickgrid-row-hover-bg-light: $neutral-gray-30 !default;
+
 // ===== DARK THEME DEFAULTS =====
 
 // Background colors
@@ -93,6 +100,13 @@ $header-border-dark: $neutral-gray-100 !default;
 $footer-bg-dark: $neutral-gray-150 !default;
 $footer-text-dark: $neutral-gray-20 !default;
 $footer-border-dark: $neutral-gray-100 !default;
+
+// QuickGrid
+$quickgrid-header-bg-dark: $neutral-gray-120 !default;
+$quickgrid-header-hover-bg-dark: $neutral-gray-110 !default;
+$quickgrid-header-sorted-bg-dark: $neutral-gray-110 !default;
+$quickgrid-stripe-bg-dark: $neutral-gray-130 !default;
+$quickgrid-row-hover-bg-dark: $neutral-gray-110 !default;
 
 // ===== COMPONENT-SPECIFIC VARIABLES =====
 

@@ -52,6 +52,13 @@
 	--fluent-footer-text: #{$footer-text-light};
 	--fluent-footer-border: #{$footer-border-light};
 
+	// QuickGrid
+	--fluent-quickgrid-header-bg: #{$quickgrid-header-bg-light};
+	--fluent-quickgrid-header-hover-bg: #{$quickgrid-header-hover-bg-light};
+	--fluent-quickgrid-header-sorted-bg: #{$quickgrid-header-sorted-bg-light};
+	--fluent-quickgrid-stripe-bg: #{$quickgrid-stripe-bg-light};
+	--fluent-quickgrid-row-hover-bg: #{$quickgrid-row-hover-bg-light};
+
 	// Component spacing
 	--fluent-component-padding: #{$component-padding};
 	--fluent-component-margin: #{$component-margin};
@@ -132,6 +139,13 @@
 	--fluent-footer-bg: #{$footer-bg-dark};
 	--fluent-footer-text: #{$footer-text-dark};
 	--fluent-footer-border: #{$footer-border-dark};
+
+	// QuickGrid
+	--fluent-quickgrid-header-bg: #{$quickgrid-header-bg-dark};
+	--fluent-quickgrid-header-hover-bg: #{$quickgrid-header-hover-bg-dark};
+	--fluent-quickgrid-header-sorted-bg: #{$quickgrid-header-sorted-bg-dark};
+	--fluent-quickgrid-stripe-bg: #{$quickgrid-stripe-bg-dark};
+	--fluent-quickgrid-row-hover-bg: #{$quickgrid-row-hover-bg-dark};
 }
 
 [data-theme="dhl"] {

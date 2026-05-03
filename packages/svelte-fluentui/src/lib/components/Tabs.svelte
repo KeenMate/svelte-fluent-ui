@@ -1107,7 +1107,7 @@
 
 	.fluent-tab.active {
 		font-weight: 600;
-		color: var(--neutral-foreground-rest);
+		color: var(--accent-fill-rest, var(--neutral-foreground-rest));
 	}
 
 	.fluent-tab.disabled,

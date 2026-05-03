@@ -7,7 +7,7 @@ export type Theme = "light" | "dark"
 function createThemeStore() {
 	const getInitialTheme = (): Theme => {
 		if (!BROWSER) return "light"
-		const stored = localStorage.getItem("theme")
+		const stored = localStorage.getItem("fluent-theme")
 		console.log('[Svelte FluentUI Theme Store] getInitialTheme:', stored || 'light (default)')
 		return (stored === "light" || stored === "dark") ? stored : "light"
 	}
@@ -31,7 +31,7 @@ function createThemeStore() {
 			update((current) => {
 				const newTheme = current === "light" ? "dark" : "light"
 				if (BROWSER) {
-					localStorage.setItem("theme", newTheme)
+					localStorage.setItem("fluent-theme", newTheme)
 					document.documentElement.setAttribute("data-theme", newTheme)
 					updateFluentUITheme(newTheme)
 				}
@@ -39,7 +39,7 @@ function createThemeStore() {
 			}),
 		set: (theme: Theme) => {
 			if (BROWSER) {
-				localStorage.setItem("theme", theme)
+				localStorage.setItem("fluent-theme", theme)
 				document.documentElement.setAttribute("data-theme", theme)
 				updateFluentUITheme(theme)
 			}

@@ -17,12 +17,12 @@
 
 	let localSettings = $derived($settings)
 
-	function handleThemeChange(value: string) {
-		settings.setThemeMode(value as ThemeMode)
+	function handleThemeChange(detail: {value: string}) {
+		settings.setThemeMode(detail.value as ThemeMode)
 	}
 
-	function handleAccentColorChange(value: string) {
-		settings.setAccentColor(value)
+	function handleAccentColorChange(detail: {value: string}) {
+		settings.setAccentColor(detail.value)
 	}
 
 	function handleNeutralColorChange(event: InputEvent) {
