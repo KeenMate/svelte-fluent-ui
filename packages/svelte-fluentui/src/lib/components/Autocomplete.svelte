@@ -49,6 +49,12 @@
 		headerContent?: Snippet
 		footerContent?: Snippet
 		optionTemplate?: Snippet<[OptionItem<T>]>
+		// Decorative slots inside the input. Render arbitrary content (typically icons or
+		// small buttons) at the start (left) or end (right) of the input. The auto-rendered
+		// clear button and loading spinner take precedence in the end slot — `endIcon`
+		// renders only when neither is active, so a search icon doesn't fight a clear button.
+		startIcon?: Snippet
+		endIcon?: Snippet
 		class?: string
 		style?: string
 		initialSearchQuery?: string
@@ -89,6 +95,8 @@
 		headerContent = undefined,
 		footerContent = undefined,
 		optionTemplate = undefined,
+		startIcon = undefined,
+		endIcon = undefined,
 		class: className = "",
 		style = "",
 		initialSearchQuery = "",
@@ -486,6 +494,13 @@
 			aria-expanded={isOpen}
 			aria-haspopup="listbox"
 		>
+			<!-- Start icon slot (e.g. search magnifying glass) -->
+			{#if startIcon}
+				<div class="input-start">
+					{@render startIcon()}
+				</div>
+			{/if}
+
 			<!-- Tags INLINE (if tagsPosition === 'inline') -->
 			{#if tagsPosition === 'inline' && showTags}
 				{#each selectedOptions as value}
@@ -527,29 +542,35 @@
 				onblur={handleInputBlur}
 			/>
 
-			<!-- End slot: clear button or loading indicator -->
-			<div class="input-end">
-				{#if hasSingleSelection && !disabled && !readonly}
-					<button
-						type="button"
-						class="clear-button"
-						onclick={clearSingleSelection}
-						aria-label="Clear selection"
-						title="Clear selection"
-					>
-						<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-							<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
-						</svg>
-					</button>
-				{:else if showLoading}
-					<div class="loading-indicator">
-						<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="spinner">
-							<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" fill="none" opacity="0.25"/>
-							<path d="M8 1a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-						</svg>
-					</div>
-				{/if}
-			</div>
+			<!-- End slot: clear button OR loading indicator OR custom endIcon (in that priority).
+				 Only renders when something will show inside, so the `:has(.input-end)` padding
+				 rule on the input doesn't reserve space for an empty slot. -->
+			{#if (hasSingleSelection && !disabled && !readonly) || showLoading || endIcon}
+				<div class="input-end">
+					{#if hasSingleSelection && !disabled && !readonly}
+						<button
+							type="button"
+							class="clear-button"
+							onclick={clearSingleSelection}
+							aria-label="Clear selection"
+							title="Clear selection"
+						>
+							<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+								<path d="M2.09 2.22a.75.75 0 0 1 1.06-.13L6 4.94l2.85-2.85a.75.75 0 1 1 1.06 1.06L7.06 6l2.85 2.85a.75.75 0 1 1-1.06 1.06L6 7.06l-2.85 2.85a.75.75 0 0 1-1.06-1.06L4.94 6 2.09 3.15a.75.75 0 0 1-.13-1.06z"/>
+							</svg>
+						</button>
+					{:else if showLoading}
+						<div class="loading-indicator">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="spinner">
+								<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" fill="none" opacity="0.25"/>
+								<path d="M8 1a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+							</svg>
+						</div>
+					{:else if endIcon}
+						{@render endIcon()}
+					{/if}
+				</div>
+			{/if}
 		</div>
 
 		<!-- Tags BELOW (if tagsPosition === 'below') -->
@@ -710,18 +731,26 @@
 		box-shadow: 0 1px 0 0 var(--accent-fill-rest, #0078d4);
 	}
 
-	/* ===== Inline Chips ===== */
+	/* ===== Inline Chips =====
+	   Inline chips share the same height + typography as external chips so picking a value
+	   doesn't visually shrink it on its way into the input. The only intentional difference
+	   is the border: inline chips sit inside the input's own border so adding another would
+	   double up; external chips are standalone elements and need their own.
+
+	   Sizing tokens (`--fluent-autocomplete-chip-*`) drive both inline and external chip
+	   geometry, so theme overrides apply everywhere chips render. Defaults are in rem so
+	   chips scale with the user's root font-size. */
 	.inline-chip {
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
-		padding: 2px 8px;
+		gap: var(--fluent-autocomplete-chip-gap, 0.25rem);
+		padding: var(--fluent-autocomplete-chip-padding-y, 0.125rem) var(--fluent-autocomplete-chip-padding-x, 0.5rem);
 		background: var(--neutral-fill-secondary-rest, #f0f0f0);
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
-		font-size: 12px;
-		line-height: 1.4;
+		font-size: var(--fluent-autocomplete-chip-font-size, 0.875rem);
+		line-height: var(--fluent-autocomplete-chip-line-height, 1.4);
 		white-space: nowrap;
-		max-width: 150px;
+		max-width: var(--fluent-autocomplete-chip-max-width, 9.375rem);
 		color: var(--neutral-foreground-rest, #242424);
 	}
 
@@ -736,10 +765,10 @@
 		justify-content: center;
 		background: transparent;
 		border: none;
-		padding: 2px;
+		padding: var(--fluent-autocomplete-chip-remove-padding, 0.125rem);
 		cursor: pointer;
 		color: var(--neutral-foreground-hint, #717171);
-		border-radius: 2px;
+		border-radius: 0.125rem;
 		flex-shrink: 0;
 		transition: color 0.1s ease, background 0.1s ease;
 	}
@@ -808,12 +837,22 @@
 		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
 	}
 
+	/* ===== Input Start Slot ===== */
+	.input-start {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		padding-right: 4px;
+		color: var(--neutral-foreground-hint, #707070);
+	}
+
 	/* ===== Input End Slot ===== */
 	.input-end {
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
 		padding-left: 4px;
+		color: var(--neutral-foreground-hint, #707070);
 	}
 
 	/* Non-inline mode: position end slot inside input */
@@ -822,6 +861,22 @@
 		right: 8px;
 		top: 50%;
 		transform: translateY(-50%);
+	}
+
+	.autocomplete-input-container:not(.inline-mode) .input-start {
+		position: absolute;
+		left: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	/* Non-inline mode: pad the input so its text doesn't sit underneath the icons */
+	.autocomplete-input-container:not(.inline-mode):has(.input-start) .autocomplete-native-input {
+		padding-left: 32px;
+	}
+
+	.autocomplete-input-container:not(.inline-mode):has(.input-end) .autocomplete-native-input {
+		padding-right: 32px;
 	}
 
 	/* ===== Selected Options Container (above/below modes) ===== */
@@ -834,17 +889,20 @@
 		overflow-y: auto;
 	}
 
-	/* External chips (above/below modes) - FluentUI Blazor style */
+	/* External chips (above/below modes) - FluentUI Blazor style.
+	   Same `--fluent-autocomplete-chip-*` tokens as inline chips. Adds a 1px border
+	   since these aren't sitting inside the input's own border. */
 	.external-chip {
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
-		padding: 2px 8px;
+		gap: var(--fluent-autocomplete-chip-gap, 0.25rem);
+		padding: var(--fluent-autocomplete-chip-padding-y, 0.125rem) var(--fluent-autocomplete-chip-padding-x, 0.5rem);
 		background: var(--neutral-fill-secondary-rest, #f5f5f5);
 		color: var(--neutral-foreground-rest, #242424);
 		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
-		font-size: 14px;
+		font-size: var(--fluent-autocomplete-chip-font-size, 0.875rem);
+		line-height: var(--fluent-autocomplete-chip-line-height, 1.4);
 		font-weight: 400;
 		white-space: nowrap;
 	}
@@ -852,7 +910,7 @@
 	.external-chip .chip-text {
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 200px;
+		max-width: var(--fluent-autocomplete-chip-text-max-width, 12.5rem);
 	}
 
 	.external-chip .chip-remove {
@@ -861,10 +919,10 @@
 		justify-content: center;
 		background: transparent;
 		border: none;
-		padding: 2px;
+		padding: var(--fluent-autocomplete-chip-remove-padding, 0.125rem);
 		cursor: pointer;
 		color: var(--error-foreground-rest, #c42b1c);
-		border-radius: 2px;
+		border-radius: 0.125rem;
 	}
 
 	.external-chip .chip-remove:hover {
