@@ -204,16 +204,20 @@
 	function selectOption(option: OptionItem) {
 		if (disabled || readonly || option.disabled) return
 
-		if (maxSelectedOptions && selectedOptions.length >= maxSelectedOptions) {
+		if (effectiveMultiple && maxSelectedOptions && selectedOptions.length >= maxSelectedOptions) {
 			return
 		}
 
-		selectedOptions = [...selectedOptions, option.value]
+		// Single-select replaces the previous value; multi-select appends.
+		selectedOptions = effectiveMultiple
+			? [...selectedOptions, option.value]
+			: [option.value]
 		searchText = ""
 		filteredOptions = []
 		highlightedIndex = -1
 
-		if (!keepOpen || (maxSelectedOptions && selectedOptions.length >= maxSelectedOptions)) {
+		// Always close after a single-select pick; multi-select honors keepOpen / max-cap.
+		if (!effectiveMultiple || !keepOpen || (maxSelectedOptions && selectedOptions.length >= maxSelectedOptions)) {
 			closeDropdown()
 		}
 
@@ -344,12 +348,31 @@
 		}
 	}
 
-	// Add click outside listener
+	// Close dropdown on outside scroll. The options list itself is scrollable
+	// (max-height + overflow-y: auto) and is portaled out via PositioningRegion,
+	// so scrolling inside the listbox must not trigger this. Scrolling anywhere
+	// else on the page would otherwise leave the dropdown floating at its old
+	// anchor position, since PositioningRegion does not re-anchor on scroll.
+	function handleOutsideScroll(event: Event) {
+		const target = event.target as Node | null
+		if (!target) return
+		// Allow scroll inside our own anchor container (input + inline chips, etc.)
+		if (containerElement && containerElement.contains(target)) return
+		// Allow scroll inside the popover surface (options-list lives in a portal).
+		if (target instanceof Element && target.closest('.options-list, .positioning-region')) return
+		closeDropdown()
+	}
+
+	// Add click-outside and outside-scroll listeners
 	$effect(() => {
 		if (isOpen) {
 			document.addEventListener("click", handleClickOutside)
+			// `capture: true` because most page scroll containers don't bubble
+			// scroll events to document; capture phase reliably catches them.
+			window.addEventListener("scroll", handleOutsideScroll, true)
 			return () => {
 				document.removeEventListener("click", handleClickOutside)
+				window.removeEventListener("scroll", handleOutsideScroll, true)
 			}
 		}
 	})
@@ -652,8 +675,12 @@
 	}
 
 	.autocomplete-input-container.inline-mode.focused:not(.disabled) {
-		border-color: var(--accent-fill-rest, #0078d4);
-		box-shadow: 0 0 0 1px var(--accent-fill-rest, #0078d4);
+		/* FluentUI 2 textfield focus: thin gray border on top/sides stays put,
+		   bottom edge becomes accent + visually 2px thick. We use an inset box-shadow
+		   to add the 1px instead of bumping border-bottom-width — that would shift
+		   the input's content by 1px on focus. */
+		border-bottom-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: inset 0 -1px 0 0 var(--accent-fill-rest, #0078d4);
 	}
 
 	.autocomplete-input-container.inline-mode.disabled {
@@ -769,8 +796,9 @@
 	}
 
 	.autocomplete-input-container:not(.inline-mode) .autocomplete-native-input:focus {
-		border-color: var(--accent-fill-rest, #0078d4);
-		box-shadow: 0 0 0 1px var(--accent-fill-rest, #0078d4);
+		/* See comment on `.inline-mode.focused` — same FluentUI bottom-emphasis pattern. */
+		border-bottom-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: inset 0 -1px 0 0 var(--accent-fill-rest, #0078d4);
 	}
 
 	.autocomplete-input-container:not(.inline-mode).filled .autocomplete-native-input {
