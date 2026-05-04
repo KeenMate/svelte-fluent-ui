@@ -112,6 +112,35 @@
 		}
 	]
 
+	// Sample data extended with long bios for the nowrap demo. Bios are deliberately long
+	// enough to wrap by default so the difference between wrap / nowrap / nowrap+maxWidth is obvious.
+	type PersonWithBio = Person & {bio: string}
+	const sampleDataWithBios: PersonWithBio[] = sampleData.slice(0, 6).map((p, i) => ({
+		...p,
+		bio: [
+			"Senior staff engineer with over a decade of distributed-systems experience and a long history of speaking at conferences",
+			"Product manager focused on developer tools, growth platforms, and quietly making the documentation better than anyone asked for",
+			"Designer turned half-engineer who spends weekends restoring vintage synths and rewriting CSS at 2am",
+			"Researcher in human-computer interaction whose papers nobody reads but whose talks accidentally pack rooms",
+			"Operations lead who keeps the lights on, the runbooks current, and the on-call rotation merciful",
+			"Founding engineer with a deep hatred of YAML and a deeper love of Postgres"
+		][i]
+	}))
+
+	const nowrapColumns = [
+		{field: "id", title: "ID", width: "60px", align: "center" as const},
+		{field: "name", title: "Name", autoWidth: true, nowrap: true},
+		{field: "city", title: "City", autoWidth: true, nowrap: true},
+		{field: "bio", title: "Bio (truncates)", maxWidth: "260px", nowrap: true}
+	]
+
+	const wrapColumns = [
+		{field: "id", title: "ID", width: "60px", align: "center" as const},
+		{field: "name", title: "Name"},
+		{field: "city", title: "City"},
+		{field: "bio", title: "Bio (wraps)", maxWidth: "260px"}
+	]
+
 	const allFeaturesColumns = [
 		{field: "id", title: "ID", width: "80px", sortable: true, align: "center" as const},
 		{field: "name", title: "Name", sortable: true, filterable: true},
@@ -232,6 +261,12 @@
 					<td>Size column to its header content and prevent it from stretching. Pair with grid-level <code>fillerColumn</code> so the freed space is absorbed by a trailing empty column instead of redistributing to other columns</td>
 				</tr>
 				<tr>
+					<td>nowrap</td>
+					<td>boolean</td>
+					<td>undefined</td>
+					<td>Body cells never wrap. With <code>maxWidth</code>, long content truncates with an ellipsis. With <code>autoWidth</code>, sizes the column to <code>max(header, longest cell)</code>. Without <code>maxWidth</code>, very long values will widen the column unbounded — set a <code>maxWidth</code> if you want a hard cap</td>
+				</tr>
+				<tr>
 					<td>align</td>
 					<td>"left" | "center" | "right"</td>
 					<td>"left"</td>
@@ -244,10 +279,10 @@
 					<td>Custom cell formatter</td>
 				</tr>
 				<tr>
-					<td>editable</td>
-					<td>boolean</td>
+					<td>isEditable</td>
+					<td>boolean | (row) =&gt; boolean</td>
 					<td>undefined</td>
-					<td>Enable editing (<a href="/components/quickgrid-editable">see editable docs</a>)</td>
+					<td>Enable editing (<a href="/components/quickgrid-editable">see editable docs</a>). Pass a callback for per-row decisions (e.g. only edit leaf rows in a tree)</td>
 				</tr>
 			</tbody>
 		</table>
@@ -286,6 +321,20 @@
 			pageable
 			pageSize={7}
 		/>
+
+		<h3>Nowrap columns &amp; ellipsis truncation</h3>
+		<p>
+			<code>column.nowrap: true</code> forces body cells onto a single line. Combined with <code>autoWidth</code> the column sizes to
+			<code>max(header text, longest cell value)</code> — useful for ID / code / short name columns. Combined with <code>maxWidth</code>
+			the column is capped and long values truncate with an ellipsis instead of overflowing or wrapping.
+		</p>
+		<p>Compare default wrapping (top) with nowrap + ellipsis (bottom):</p>
+
+		<h4 style="margin: 1rem 0 0.5rem;">Default — wrapping</h4>
+		<QuickGrid items={sampleDataWithBios} columns={wrapColumns} fillerColumn columnMinWidth="6rem" />
+
+		<h4 style="margin: 1.5rem 0 0.5rem;">With <code>nowrap: true</code> — single-line + ellipsis</h4>
+		<QuickGrid items={sampleDataWithBios} columns={nowrapColumns} fillerColumn columnMinWidth="6rem" />
 
 		<h3>No Stripes, No Hover</h3>
 		<p>Grid without alternating row colors or hover effects:</p>

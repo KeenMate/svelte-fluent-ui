@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **`Autocomplete` single-select mode now actually works** - `selectOption` always appended to `selectedOptions` regardless of `effectiveMultiple`. Net effect in single-select mode: first click appeared to work (`selectedOptions = ['cz']`, `hasSingleSelection = true`, input rendered the picked text), but a second click made `selectedOptions = ['cz','de']` — `hasSingleSelection` then required `length === 1` and went false, `displayValue` fell back to the empty `searchText`, and no chips render in single-select (`showTags` requires `effectiveMultiple`), so the input went mysteriously blank with two values silently held in state. Also `maxSelectedOptions` was being checked even in single-select where it makes no sense. Now: single-select replaces (`[option.value]`), multi-select still appends; the `maxSelectedOptions` cap only gates multi-select; and the dropdown auto-closes after a single-select pick regardless of `keepOpen` (a one-pick widget shouldn't stay open).
+- **`Autocomplete` dropdown now closes when the page is scrolled outside it** - `PositioningRegion` anchors the popover to the input on initial open but does not re-anchor on scroll, so scrolling the page would leave the options list floating at its old screen position, visually detached from its anchor. There was a click-outside listener but no scroll-outside listener. Added a `scroll` listener (registered with `capture: true` because most page scroll containers don't bubble scroll events to document) that closes the dropdown when scrolling happens outside both the anchor (`containerElement`) and the popover surface (`.options-list, .positioning-region`). Scrolling inside the options list itself (which is its own scrollable region with `max-height: 300px; overflow-y: auto`) keeps the dropdown open.
+
+## [1.0.0-rc17] - 2026-05-04
+
+### Added
+- **`QuickGrid` `column.nowrap` prop** - Body cells in this column never wrap (`white-space: nowrap`). Three useful combinations:
+  - **`nowrap` alone** — single-line cells, column expands as needed to fit the longest value. Best for short identifiers (SKU, code, ID) where wrapping is just visual noise.
+  - **`nowrap` + `maxWidth: "…"`** — single-line cells with a hard width cap; long values truncate with an ellipsis. Implementation wraps plain-text cell renders in a `<span class="cell-text">` so a flex child can carry the `overflow: hidden; text-overflow: ellipsis; min-width: 0` (text-overflow doesn't propagate from a flex container to a bare text node, so a wrapper element is required for the ellipsis to actually trigger).
+  - **`nowrap` + `autoWidth`** — column sizes to `max(header text, longest cell value)` without either wrapping. Pairs with `fillerColumn` so leftover horizontal space lands on the filler.
+  - The header style mirrors the body's nowrap when `column.nowrap` is set, so a body-nowrap column doesn't end up with a wrapping header above single-line cells.
+  - Demo on the main `/components/quickgrid` page ("Nowrap columns & ellipsis truncation") shows wrapping vs nowrap+ellipsis side-by-side against a `bio` column with deliberately long values, with explicit `<h4>` labels above each grid.
+- **`QuickGrid` per-row-type editability** - Tree grids and any other heterogeneous dataset can now express "only some rows are editable" without the consumer hand-rolling click-handlers around the grid. Two new shapes, both `boolean | ((row: T) => boolean)`:
+  - **Column-level `isEditable` callback** — `column.isEditable: (row) => row.kind === "employee"` lets each editable column decide per-row. Useful when *which* columns are editable depends on the row type (e.g. salary editable on employees, headcount visible-but-read-only on team rows, name editable on both).
+  - **Grid-level `isRowEditable` prop** — single predicate that gates the entire row. Use when every editable column is editable for the same set of rows; cheaper than repeating the predicate on every column.
+  - Three-stage gate: grid-level `editable` master switch → `isRowEditable` row gate → `column.isEditable` cell gate. All three must pass. Static `false` short-circuits without evaluating the next stage.
+  - Navigate-mode `Tab` / `Shift-Tab` traversal is row-aware: `getEditableColumns(row)` is now called per row so the cursor skips read-only cells correctly when stepping through a heterogeneous tree. Cost is one predicate evaluation per row navigated, not per cell rendered.
+  - Demo at `/components/quickgrid-tree` → "Editable per row type — teams vs employees": Platform / Product team rows are read-only summaries; double-click on Role or Salary on an employee row enters edit mode, same cells on a team row do nothing.
+
+### Changed
+- **BREAKING — `QuickGrid` column property `editable` renamed to `isEditable`** - The boolean form is unchanged (`isEditable: true` works exactly like `editable: true` did); the new function form (`isEditable: (row) => boolean`) is purely additive. Migration: rename `editable: true` → `isEditable: true` on every column literal. Demo pages at `/components/quickgrid-editable` and `/components/quickgrid-contextmenu` and the `ai/quickgrid.txt` reference were swept. The grid-level `editable` prop is unchanged — it remains the master "is editing turned on at all" switch.
+
+### Fixed
+- **`QuickGrid` body cells now inherit column width constraints** - `width` / `minWidth` / `maxWidth` / `columnMinWidth` were applied only to the `<th>` header; body `<td>`s carried only `text-align`. In HTML auto table-layout the column's natural width is determined by the *widest* cell across header and body — so a wide body cell (especially one with `nowrap: true`) would drag the column past the header's `max-width`. Net effect on the new nowrap demo: ellipsis wouldn't activate because the column wasn't actually clamped. New `getColumnBodyStyle()` mirrors the same width logic the header uses (including `autoWidth`'s `width: 1%; white-space: nowrap` shrink-to-content trick) onto every body `<td>`, so width caps are now enforced consistently. Side benefit unrelated to nowrap: any grid using `columnMinWidth` will see body cells respect that minimum too, where previously they could squeeze below it.
+
 ## [1.0.0-rc16] - 2026-05-03
 
 ### Added

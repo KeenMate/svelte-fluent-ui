@@ -120,6 +120,11 @@
 		 *  the grid-level `fillerColumn` prop so the freed-up space is absorbed by a trailing empty column
 		 *  instead of redistributing to other columns. */
 		autoWidth?: boolean
+		/** When true, body cells in this column never wrap (`white-space: nowrap`). Pairs with `maxWidth` to
+		 *  truncate long content with an ellipsis. Pairs with `autoWidth` to size the column to the wider of
+		 *  the header text and the longest cell value. Without `maxWidth`, very long values will widen the
+		 *  column unbounded — set a `maxWidth` if you want a hard cap. */
+		nowrap?: boolean
 		align?: "left" | "center" | "right"
 		format?: (value: any, row: T) => string
 		template?: (row: T) => string
@@ -134,7 +139,9 @@
 		// probes the first row to decide validity.
 		filter?: (filterValue: string, row: T) => boolean | null
 		// Editing props
-		editable?: boolean
+		// `true`/`false` for a static gate, or `(row) => boolean` for per-row decisions
+		// (e.g. tree grids where only leaf rows are editable). When omitted, defaults to false.
+		isEditable?: boolean | ((row: T) => boolean)
 		editor?: EditorType
 		editTrigger?: EditTrigger  // Per-column override
 		editorOptions?: EditorOptions
@@ -250,6 +257,10 @@
 		editable?: boolean
 		editTrigger?: EditTrigger
 		dropdownShowOnFocus?: boolean  // Auto-show editor for dropdown types when cell is focused
+		// Row-level editability gate. Evaluated before the per-column `isEditable` so a `false`
+		// here short-circuits all cells in the row (useful for tree grids where parent / category
+		// rows are read-only and only leaves are editable). Defaults to true.
+		isRowEditable?: boolean | ((row: T) => boolean)
 		checkboxAlwaysEditable?: boolean  // Make checkboxes always interactive, even in navigate mode
 		// Invalid cells state (bindable for external tracking)
 		invalidCells?: CellValidationState[]
@@ -310,6 +321,7 @@
 		editable = false,
 		editTrigger = "dblclick",
 		dropdownShowOnFocus = true,
+		isRowEditable = true,
 		checkboxAlwaysEditable = false,
 		invalidCells = $bindable([]),
 		// Row toolbar (new names)
@@ -359,8 +371,11 @@
 			// column to its content. Browser treats the 1% as a lower bound and the nowrap forces
 			// the intrinsic min-width to be the header's no-wrap width, which wins.
 			parts.push("width: 1%", "white-space: nowrap")
-		} else if (column.width) {
-			parts.push(`width: ${column.width}`)
+		} else {
+			if (column.width) parts.push(`width: ${column.width}`)
+			// Mirror body nowrap onto the header so a body-nowrap column doesn't end up with a
+			// wrapping header sitting above single-line cells (visually inconsistent).
+			if (column.nowrap) parts.push("white-space: nowrap")
 		}
 		// Per-column minWidth wins; otherwise fall back to the grid-level default. Skip both
 		// when the column opted into autoWidth — that mode is supposed to shrink to content
@@ -369,6 +384,25 @@
 		else if (columnMinWidth && !column.autoWidth) parts.push(`min-width: ${columnMinWidth}`)
 		if (column.maxWidth) parts.push(`max-width: ${column.maxWidth}`)
 		if (includeAlign) parts.push(`text-align: ${column.align || "left"}`)
+		return parts.join("; ")
+	}
+
+	// Build inline style for a body cell. Mirrors the column's width constraints onto every
+	// `<td>` so the column's max-width / min-width are enforced consistently — without this,
+	// only the header carried the constraints, and in HTML auto table-layout a wide body cell
+	// would drag the column past the header's max-width (and the ellipsis on a `nowrap` cell
+	// could never trigger).
+	function getColumnBodyStyle(column: Column<T>): string {
+		const parts: string[] = [`text-align: ${column.align || "left"}`]
+		if (column.autoWidth) {
+			parts.push("width: 1%", "white-space: nowrap")
+		} else {
+			if (column.width) parts.push(`width: ${column.width}`)
+			if (column.nowrap) parts.push("white-space: nowrap", "overflow: hidden", "text-overflow: ellipsis")
+		}
+		if (column.minWidth) parts.push(`min-width: ${column.minWidth}`)
+		else if (columnMinWidth && !column.autoWidth) parts.push(`min-width: ${columnMinWidth}`)
+		if (column.maxWidth) parts.push(`max-width: ${column.maxWidth}`)
 		return parts.join("; ")
 	}
 
@@ -852,8 +886,13 @@
 		return editingCell?.rowIndex === rowIndex && editingCell?.field === field
 	}
 
-	function isCellEditable(column: Column<T>): boolean {
-		return editable && (column.editable ?? false)
+	function isCellEditable(column: Column<T>, row: T): boolean {
+		if (!editable) return false
+		const rowGate = typeof isRowEditable === "function" ? isRowEditable(row) : isRowEditable
+		if (!rowGate) return false
+		const colGate = column.isEditable
+		if (colGate === undefined) return false
+		return typeof colGate === "function" ? colGate(row) : colGate
 	}
 
 	function getColumnEditTrigger(column: Column<T>): EditTrigger {
@@ -1112,7 +1151,7 @@
 	}
 
 	function handleCellClick(e: MouseEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
-		if (!isCellEditable(column)) return
+		if (!isCellEditable(column, item)) return
 		const trigger = getColumnEditTrigger(column)
 		if (trigger === "click") {
 			startEdit(rowIndex, String(column.field), item, column, colIndex)
@@ -1132,7 +1171,7 @@
 			toggleExpand(getRowPath(item))
 			return
 		}
-		if (!isCellEditable(column)) return
+		if (!isCellEditable(column, item)) return
 		const trigger = getColumnEditTrigger(column)
 		// Double-click should work in both "dblclick" and "navigate" modes
 		if (trigger === "dblclick" || trigger === "navigate") {
@@ -1154,10 +1193,10 @@
 	}
 
 	// Navigation mode functions
-	function getEditableColumns(): { index: number; column: Column<T> }[] {
+	function getEditableColumns(row: T): { index: number; column: Column<T> }[] {
 		return columns
 			.map((col, index) => ({ index, column: col }))
-			.filter(({ column }) => isCellEditable(column))
+			.filter(({ column }) => isCellEditable(column, row))
 	}
 
 	function isCellFocused(rowIndex: number, colIndex: number): boolean {
@@ -1180,7 +1219,7 @@
 			// Auto-start edit for dropdown editors (select/combobox/autocomplete) when dropdownShowOnFocus is enabled
 			if (dropdownShowOnFocus) {
 				const isDropdownEditor = column.editor === "select" || column.editor === "combobox" || column.editor === "autocomplete"
-				if (isDropdownEditor && isCellEditable(column)) {
+				if (isDropdownEditor && isCellEditable(column, item)) {
 					// Skip auto-edit if we just committed from this dropdown (prevents reopen after selection)
 					if (skipNextDropdownAutoEdit) {
 						skipNextDropdownAutoEdit = false
@@ -1203,7 +1242,7 @@
 	function handleNavigationKeyDown(e: KeyboardEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
 		if (!isNavigateMode || editingCell) return
 
-		const editableCols = getEditableColumns()
+		const editableCols = getEditableColumns(item)
 		const currentEditableIndex = editableCols.findIndex(ec => ec.index === colIndex)
 
 		switch (e.key) {
@@ -1281,7 +1320,7 @@
 	async function handleEditorKeyDownInNavigateMode(e: KeyboardEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
 		if (!isNavigateMode) return
 
-		const editableCols = getEditableColumns()
+		const editableCols = getEditableColumns(item)
 		const currentEditableIndex = editableCols.findIndex(ec => ec.index === colIndex)
 
 		if (e.key === "Tab") {
@@ -2058,9 +2097,9 @@
 							<td
 								data-row={rowIndex}
 								data-col={colIndex}
-								tabindex={isNavigateMode && isCellEditable(column) ? 0 : undefined}
-								style={`text-align: ${column.align || "left"}`}
-								class={`${isCellEditable(column) ? "editable-cell" : ""} ${cellInvalid ? "validation-error" : ""} ${isCellFocused(rowIndex, colIndex) ? "focused" : ""} ${isEditing(rowIndex, cellField) ? "editing" : ""}`}
+								tabindex={isNavigateMode && isCellEditable(column, item) ? 0 : undefined}
+								style={getColumnBodyStyle(column)}
+								class={`${isCellEditable(column, item) ? "editable-cell" : ""} ${cellInvalid ? "validation-error" : ""} ${isCellFocused(rowIndex, colIndex) ? "focused" : ""} ${isEditing(rowIndex, cellField) ? "editing" : ""} ${column.nowrap ? "nowrap-cell" : ""}`}
 								onclick={(e) => handleCellClick(e, rowIndex, colIndex, column, item)}
 								ondblclick={(e) => handleCellDblClick(e, rowIndex, colIndex, column, item)}
 								oncontextmenu={(e) => handleCellContextMenu(e, rowIndex, colIndex, column, item)}
@@ -2098,7 +2137,7 @@
 											<div class="validation-error-message">{currentCellError}</div>
 										{/if}
 									{/if}
-								{:else if isCellEditable(column) && getColumnEditTrigger(column) === "always"}
+								{:else if isCellEditable(column, item) && getColumnEditTrigger(column) === "always"}
 									<GridCellEditor
 										type={getEditorType(column)}
 										value={getCellRawValue(item, rowIndex, cellField)}
@@ -2132,12 +2171,12 @@
 												/>
 											{/if}
 										{:else}
-											{getCellValue(item, column, rowIndex)}
+											<span class="cell-text">{getCellValue(item, column, rowIndex)}</span>
 										{/if}
 										{#if cellInvalid}
 											<span class="cell-error-indicator" title={cellError || "Invalid value"}>⚠</span>
 										{/if}
-										{#if isCellEditable(column) && shouldShowEditButton(column)}
+										{#if isCellEditable(column, item) && shouldShowEditButton(column)}
 											<button
 												class="cell-edit-btn"
 												onclick={(e) => handleEditButtonClick(e, rowIndex, colIndex, column, item)}
@@ -2641,6 +2680,19 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 4px;
+	}
+
+	/* Nowrap column: ellipsis-truncate the text span when its column has a
+	   max-width. The span needs `min-width: 0` to shrink below intrinsic
+	   content width as a flex item; `flex: 1 1 auto` lets it claim the
+	   horizontal space the edit button / error icon doesn't use. */
+	td.nowrap-cell .cell-text {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: block;
 	}
 
 	/* Actions column (for button trigger mode) */

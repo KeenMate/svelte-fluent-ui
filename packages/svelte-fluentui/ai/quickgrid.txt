@@ -49,6 +49,8 @@ style: string                 # Inline styles
 
 EDITING PROPS:
 editable: boolean             # Enable editing (default: false)
+isRowEditable: boolean | (row) => boolean  # Row-level gate; return false for read-only
+                              # rows (e.g. tree-grid parent rows). Default: true
 editTrigger: EditTrigger      # How to start editing (default: "dblclick")
 dropdownShowOnFocus: boolean  # Auto-open dropdowns (default: true)
 checkboxAlwaysEditable: bool  # Checkboxes always clickable (default: false)
@@ -75,6 +77,10 @@ type Column<T> = {
   maxWidth?: string           # CSS max-width (e.g. "320px")
   autoWidth?: boolean         # Size column to its header content; don't stretch.
                               # Best paired with grid-level fillerColumn
+  nowrap?: boolean            # Body cells never wrap. With maxWidth, long content
+                              # truncates with an ellipsis. With autoWidth, sizes to
+                              # max(header, longest cell). Without maxWidth, very long
+                              # cells will widen the column unbounded
   align?: "left" | "center" | "right"
 
   # Formatting
@@ -83,7 +89,8 @@ type Column<T> = {
   snippet?: Snippet<[T]>            # Svelte snippet for cell content
 
   # Editing
-  editable?: boolean                # Cell is editable
+  isEditable?: boolean | ((row: T) => boolean)  # Cell is editable. Pass a callback for
+                                    # per-row decisions (e.g. only edit leaf rows in a tree)
   editor?: EditorType               # Editor type
   editTrigger?: EditTrigger         # Per-column trigger override
   editorOptions?: EditorOptions     # Editor configuration
@@ -233,8 +240,8 @@ Basic editable text field:
 <QuickGrid
   items={data}
   columns={[
-    { field: "name", title: "Name", editable: true, editor: "text" },
-    { field: "age", title: "Age", editable: true, editor: "number" }
+    { field: "name", title: "Name", isEditable: true, editor: "text" },
+    { field: "age", title: "Age", isEditable: true, editor: "number" }
   ]}
   editable
 />
@@ -246,7 +253,7 @@ const columns = [
   {
     field: "role",
     title: "Role",
-    editable: true,
+    isEditable: true,
     editor: "select",
     editorOptions: {
       options: [
@@ -265,7 +272,7 @@ const columns = [
   {
     field: "city",
     title: "City",
-    editable: true,
+    isEditable: true,
     editor: "combobox",
     editorOptions: {
       options: [
@@ -285,7 +292,7 @@ const columns = [
   {
     field: "active",
     title: "Active",
-    editable: true,
+    isEditable: true,
     editor: "checkbox"
   }
 ]
@@ -297,7 +304,7 @@ const columns = [
   {
     field: "birthDate",
     title: "Birth Date",
-    editable: true,
+    isEditable: true,
     editor: "date",
     editorOptions: {
       minDate: "1900-01-01",
@@ -314,7 +321,7 @@ const columns = [
   {
     field: "country",
     title: "Country",
-    editable: true,
+    isEditable: true,
     editor: "autocomplete",
     editorOptions: {
       initialOptions: [
@@ -340,7 +347,7 @@ const columns = [
   {
     field: "metadata",
     title: "Metadata",
-    editable: true,
+    isEditable: true,
     editor: "custom",
     showEditButton: true,
     format: (value) => value ? JSON.stringify(value).slice(0, 20) + "..." : "(empty)",
@@ -384,7 +391,7 @@ const columns = [
   {
     field: "age",
     title: "Age",
-    editable: true,
+    isEditable: true,
     editor: "number",
     onbeforecommit: (context) => {
       // context: { value, oldValue, row, rowIndex, field }
@@ -414,7 +421,7 @@ const columns = [
   {
     field: "email",
     title: "Email",
-    editable: true,
+    isEditable: true,
     editor: "text",
     onbeforecommit: async (context) => {
       const exists = await checkEmailExists(context.value)
@@ -531,7 +538,7 @@ const columns = [
   {
     field: "category",
     title: "Category",
-    editable: true,
+    isEditable: true,
     editor: "select",
     editorOptions: {
       loadOptions: async (row, field) => {

@@ -137,6 +137,77 @@
 
 	// Toggle for the dbl-click-to-expand demo (default on)
 	let dblClickToggle = $state(true)
+
+	// === Mixed-editability tree (teams + employees) ===
+	// Heterogeneous tree where parent rows (teams) are read-only summaries and
+	// only the leaves (employees) are editable. Demonstrates `column.isEditable`
+	// as a per-row predicate so role/salary can be edited on employees but not on
+	// the team rows that aggregate them.
+	type TeamRow = {
+		path: string
+		kind: "team" | "employee"
+		name: string
+		role?: string       // employees only
+		salary?: number     // employees only
+		lead?: string       // teams only
+		headcount?: number  // teams only
+	}
+
+	let teamData = $state<TeamRow[]>([
+		{path: "1",     kind: "team",     name: "Platform",  lead: "T. Stark",     headcount: 3},
+		{path: "1.1",   kind: "employee", name: "N. Romanoff", role: "Senior Engineer", salary: 145000},
+		{path: "1.2",   kind: "employee", name: "S. Rogers",   role: "Engineer",        salary: 110000},
+		{path: "1.3",   kind: "employee", name: "P. Parker",   role: "Junior Engineer", salary: 78000},
+		{path: "2",     kind: "team",     name: "Product",   lead: "B. Banner",    headcount: 3},
+		{path: "2.1",   kind: "employee", name: "W. Maximoff", role: "PM",              salary: 130000},
+		{path: "2.2",   kind: "employee", name: "C. Barton",   role: "Designer",        salary: 105000},
+		{path: "2.3",   kind: "employee", name: "S. Strange",  role: "Researcher",      salary: 120000}
+	])
+
+	const isEmployee = (row: TeamRow) => row.kind === "employee"
+
+	const teamColumns = [
+		{field: "name", title: "Name", isTree: true, minWidth: "260px"},
+		{
+			field: "kind",
+			title: "Type",
+			width: "110px",
+			format: (v: string) => v === "team" ? "Team" : "Employee"
+		},
+		{
+			field: "role",
+			title: "Role",
+			width: "180px",
+			isEditable: isEmployee,           // per-row predicate — only employees
+			editor: "text" as const,
+			format: (v: string | undefined) => v ?? "—"
+		},
+		{
+			field: "salary",
+			title: "Salary",
+			width: "140px",
+			align: "right" as const,
+			isEditable: isEmployee,
+			editor: "number" as const,
+			editorOptions: {min: 0, max: 1_000_000, step: 1000},
+			format: (v: number | undefined) => v === undefined ? "—" : "$" + v.toLocaleString()
+		},
+		{
+			field: "headcount",
+			title: "Headcount",
+			width: "120px",
+			align: "right" as const,
+			format: (v: number | undefined) => v === undefined ? "—" : String(v)
+		}
+	]
+
+	let lastTeamChange = $state("")
+
+	function handleTeamRowChange(detail: {row: TeamRow; draftRow: TeamRow; rowIndex: number; field: string; oldValue: unknown; newValue: unknown; isValid: boolean}) {
+		if (!detail.isValid) return
+		teamData[detail.rowIndex] = {...detail.draftRow}
+		lastTeamChange = `${detail.draftRow.name}: ${detail.field} → ${JSON.stringify(detail.newValue)}`
+	}
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -237,6 +308,34 @@
 			treePathMember="path"
 			bind:expandedPaths={expanded}
 			striped
+			fillerColumn
+			columnMinWidth="8rem"
+		/>
+
+		<h3>Editable per row type — teams vs employees</h3>
+		<p>
+			Heterogeneous tree where parent rows (teams) are read-only summaries and only the leaves (employees) are editable.
+			Each editable column carries a per-row predicate via <code>isEditable: (row) =&gt; boolean</code> — here
+			<code>(row) =&gt; row.kind === "employee"</code> — so double-clicking <strong>Role</strong> or
+			<strong>Salary</strong> on an employee row enters edit mode, but the same cells on a team row do nothing.
+			In navigate mode, <kbd>Tab</kbd> traversal also skips read-only rows.
+		</p>
+		<p>
+			For an all-or-nothing row gate that does not vary per column, use the grid-level
+			<code>isRowEditable</code> prop instead — same shape (<code>boolean | (row) =&gt; boolean</code>), one place.
+		</p>
+		{#if lastTeamChange}
+			<p style="font-size: 0.875rem; color: var(--accent-fill-rest);">Last change: {lastTeamChange}</p>
+		{/if}
+		<QuickGrid
+			items={teamData}
+			columns={teamColumns}
+			treePathMember="path"
+			editable
+			idMember="path"
+			onrowchange={handleTeamRowChange}
+			striped
+			hoverable
 			fillerColumn
 			columnMinWidth="8rem"
 		/>

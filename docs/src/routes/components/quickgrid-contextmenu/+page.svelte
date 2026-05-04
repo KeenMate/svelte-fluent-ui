@@ -177,17 +177,17 @@
 	// Editable grid columns
 	const editableColumns = [
 		{field: "id", title: "ID", width: "80px", align: "center" as const},
-		{field: "name", title: "Product Name", sortable: true, editable: true, editor: "text" as const},
-		{field: "category", title: "Category", sortable: true, editable: true, editor: "select" as const, editorOptions: {
+		{field: "name", title: "Product Name", sortable: true, isEditable: true, editor: "text" as const},
+		{field: "category", title: "Category", sortable: true, isEditable: true, editor: "select" as const, editorOptions: {
 			options: [
 				{value: "Electronics", label: "Electronics"},
 				{value: "Furniture", label: "Furniture"},
 				{value: "Accessories", label: "Accessories"}
 			]
 		}},
-		{field: "price", title: "Price", width: "120px", align: "right" as const, editable: true, editor: "number" as const, format: (v: number) => `$${v.toFixed(2)}`},
-		{field: "stock", title: "Stock", width: "100px", align: "center" as const, editable: true, editor: "number" as const},
-		{field: "active", title: "Active", width: "100px", align: "center" as const, editable: true, editor: "checkbox" as const}
+		{field: "price", title: "Price", width: "120px", align: "right" as const, isEditable: true, editor: "number" as const, format: (v: number) => `$${v.toFixed(2)}`},
+		{field: "stock", title: "Stock", width: "100px", align: "center" as const, isEditable: true, editor: "number" as const},
+		{field: "active", title: "Active", width: "100px", align: "center" as const, isEditable: true, editor: "checkbox" as const}
 	]
 
 	// Editable context menu with conditional items
