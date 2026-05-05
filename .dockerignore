@@ -41,6 +41,7 @@ coverage/
 # Documentation (not needed in build)
 *.md
 !README.md
+!CHANGELOG.md
 
 # CI/CD
 .github/

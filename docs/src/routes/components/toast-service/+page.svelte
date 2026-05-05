@@ -329,33 +329,33 @@ const id = toast.success('Operation completed!');
 
 		<h3>Basic Variants</h3>
 		<div class="button-grid">
-			<Button appearance="accent" onClick={showSuccess}>Success Toast</Button>
-			<Button appearance="accent" onClick={showError}>Error Toast</Button>
-			<Button appearance="accent" onClick={showWarning}>Warning Toast</Button>
-			<Button appearance="accent" onClick={showInfo}>Info Toast</Button>
+			<Button appearance="accent" onclick={showSuccess}>Success Toast</Button>
+			<Button appearance="accent" onclick={showError}>Error Toast</Button>
+			<Button appearance="accent" onclick={showWarning}>Warning Toast</Button>
+			<Button appearance="accent" onclick={showInfo}>Info Toast</Button>
 		</div>
 
 		<h3>Custom Options</h3>
 		<div class="button-grid">
-			<Button appearance="accent" onClick={showWithTitle}>Custom Title</Button>
-			<Button appearance="accent" onClick={showPersistent}>Persistent (No Auto-dismiss)</Button>
-			<Button appearance="accent" onClick={showWithProgress}>With Progress Bar</Button>
+			<Button appearance="accent" onclick={showWithTitle}>Custom Title</Button>
+			<Button appearance="accent" onclick={showPersistent}>Persistent (No Auto-dismiss)</Button>
+			<Button appearance="accent" onclick={showWithProgress}>With Progress Bar</Button>
 		</div>
 
 		<h3>Positions</h3>
 		<div class="button-grid">
-			<Button appearance="accent" onClick={showTopLeft}>Top Left</Button>
-			<Button appearance="accent" onClick={showTopCenter}>Top Center</Button>
-			<Button appearance="accent" onClick={showTopRight}>Top Right</Button>
-			<Button appearance="accent" onClick={showBottomLeft}>Bottom Left</Button>
-			<Button appearance="accent" onClick={showBottomCenter}>Bottom Center</Button>
-			<Button appearance="accent" onClick={showBottomRight}>Bottom Right</Button>
+			<Button appearance="accent" onclick={showTopLeft}>Top Left</Button>
+			<Button appearance="accent" onclick={showTopCenter}>Top Center</Button>
+			<Button appearance="accent" onclick={showTopRight}>Top Right</Button>
+			<Button appearance="accent" onclick={showBottomLeft}>Bottom Left</Button>
+			<Button appearance="accent" onclick={showBottomCenter}>Bottom Center</Button>
+			<Button appearance="accent" onclick={showBottomRight}>Bottom Right</Button>
 		</div>
 
 		<h3>Dismiss Actions</h3>
 		<div class="button-grid">
-			<Button appearance="outline" onClick={dismissLast}>Dismiss Last Toast</Button>
-			<Button appearance="outline" onClick={dismissAllToasts}>Dismiss All Toasts</Button>
+			<Button appearance="outline" onclick={dismissLast}>Dismiss Last Toast</Button>
+			<Button appearance="outline" onclick={dismissAllToasts}>Dismiss All Toasts</Button>
 		</div>
 
 		<h3>Usage Examples</h3>

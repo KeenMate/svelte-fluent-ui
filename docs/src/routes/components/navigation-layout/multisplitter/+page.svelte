@@ -168,7 +168,7 @@
 		</div>
 
 		<h3>Vertical Splitter</h3>
-		<Button onClick={() => (orientation = orientation === "horizontal" ? "vertical" : "horizontal")}>
+		<Button onclick={() => (orientation = orientation === "horizontal" ? "vertical" : "horizontal")}>
 			Toggle Orientation (Current: {orientation})
 		</Button>
 

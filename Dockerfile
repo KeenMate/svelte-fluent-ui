@@ -6,8 +6,10 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy workspace root and package files
-COPY package.json package-lock.json README.md ./
+# Copy workspace root and package files. CHANGELOG.md is the source of truth
+# for the docs homepage and /changelog route — they `import '../../../CHANGELOG.md?raw'`
+# at build time, so the file must exist in the Docker context.
+COPY package.json package-lock.json README.md CHANGELOG.md ./
 COPY packages/svelte-fluentui/package.json ./packages/svelte-fluentui/
 COPY docs/package.json ./docs/
 

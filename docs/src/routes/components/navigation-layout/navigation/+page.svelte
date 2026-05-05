@@ -201,7 +201,7 @@
 						Home
 					</NavLinkItem>
 					<NavLinkItem href="/NavMenu">Item 2</NavLinkItem>
-					<NavGroup onClick={onNavClick}>
+					<NavGroup>
 						{#snippet linkText()}
 							<h3>Item 3</h3>
 						{/snippet}

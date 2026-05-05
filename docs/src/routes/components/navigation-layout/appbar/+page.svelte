@@ -118,7 +118,7 @@
 			<div class="example-item">
 				<h3>Regular AppBar</h3>
 
-				<Stack varticalAlign="start" horizontalAlign="start" vertical>
+				<Stack verticalAlign="start" horizontalAlign="start" vertical>
 					<AppBar>
 						<AppBarItem href="https://microsoft.com" rel="noreferer noorigin" target="_blank" icon={commonItemIcon}>
 							Microsoft
@@ -142,7 +142,7 @@
 			<div class="example-item">
 				<h3>Horizontal AppBar menu</h3>
 
-				<Stack varticalAlign="start" horizontalAlign="start" vertical>
+				<Stack verticalAlign="start" horizontalAlign="start" vertical>
 					<AppBar orientation={AppBarOrientation.Horizontal}>
 						<AppBarItem title="Item 1 tooltip" icon={commonItemIcon}>
 							Item 1

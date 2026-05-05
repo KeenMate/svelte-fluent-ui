@@ -25,7 +25,7 @@
 					<div>
 						<span>Selected: {expandedAccordionItem}</span> <br>
 
-						<Button onClick={() => expandedAccordionItem = null}>
+						<Button onclick={() => expandedAccordionItem = null}>
 							Reset
 						</Button>
 					</div>
@@ -45,7 +45,7 @@
 						<br>
 						<div>{@html expandedAccordionItemMulti?.join("<br>")}</div>
 
-						<Button onClick={() => expandedAccordionItemMulti = null}>
+						<Button onclick={() => expandedAccordionItemMulti = null}>
 							Reset
 						</Button>
 					</div>
