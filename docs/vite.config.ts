@@ -29,6 +29,14 @@ export default defineConfig({
 			'svelte-fluentui/styles.scss': path.resolve(__dirname, '../packages/svelte-fluentui/src/lib/main.scss')
 		}
 	},
+	server: {
+		fs: {
+			// Allow Vite to read files from the workspace root (one level above docs/),
+			// so `import '../../../CHANGELOG.md?raw'` in homepage / changelog routes
+			// can resolve to the single source-of-truth CHANGELOG.md at the repo root.
+			allow: [path.resolve(__dirname, '..')]
+		}
+	},
 	ssr: {
 		noExternal: ['@fluentui/web-components']
 	}

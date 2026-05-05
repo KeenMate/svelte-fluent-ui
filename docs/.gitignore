@@ -21,3 +21,9 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Defensive: docs/static/CHANGELOG.md was a manually-synced copy of the workspace-root
+# CHANGELOG.md. Replaced by a Vite `?raw` import in +page.svelte / changelog/+page.svelte.
+# Listed here so anyone running an old script that drops the file in won't accidentally
+# commit a duplicate-source-of-truth back into the repo.
+static/CHANGELOG.md

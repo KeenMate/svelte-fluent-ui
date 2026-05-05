@@ -1456,7 +1456,7 @@ const advancedToolbar = [
 />`}</pre>
 
 		<h3>Row Actions Code Example</h3>
-		<pre>{`<script lang="ts">
+		<pre>{`${'<'}script lang="ts">
   let items = $state([
     { id: 1, name: "Item One", value: 100 },
     { id: 2, name: "Item Two", value: 200 }
@@ -1487,9 +1487,9 @@ const advancedToolbar = [
         break
     }
   }
-</script>
+${'<'}/script>
 
-<QuickGrid
+${'<'}QuickGrid
   {items}
   {columns}
   editable
@@ -1498,7 +1498,7 @@ const advancedToolbar = [
 />
 
 <!-- Or customize which actions to show -->
-<QuickGrid
+${'<'}QuickGrid
   {items}
   {columns}
   showRowActions
@@ -1507,7 +1507,7 @@ const advancedToolbar = [
 />`}</pre>
 
 		<h3>Basic Editable Code Example</h3>
-		<pre>{`<script lang="ts">
+		<pre>{`${'<'}script lang="ts">
   type Person = {
     id: number
     name: string
@@ -1548,9 +1548,9 @@ const advancedToolbar = [
       [detail.field]: detail.newValue
     }
   }
-</script>
+${'<'}/script>
 
-<QuickGrid
+${'<'}QuickGrid
   items={data}
   columns={columns}
   editable
@@ -1618,7 +1618,7 @@ const advancedToolbar = [
 
 		<h3>Custom Editor (Dialog)</h3>
 		<p>Use <code>editor: "custom"</code> with <code>oncelledit</code> callback to implement custom editors like dialogs, JSON editors, color pickers, etc.</p>
-		<pre>{`<script>
+		<pre>{`${'<'}script>
   let showJsonDialog = false
   let jsonEditorContext = null
 
@@ -1642,17 +1642,17 @@ const advancedToolbar = [
     jsonEditorContext?.commit(newJson)  // Fires onrowchange
     showJsonDialog = false
   }
-</script>
+${'<'}/script>
 
-<QuickGrid {items} {columns} editable onrowchange={handleRowChange} />
+${'<'}QuickGrid {items} {columns} editable onrowchange={handleRowChange} />
 
 {#if showJsonDialog}
-  <Dialog open onclose={() => jsonEditorContext?.cancel()}>
-    <JsonEditor
+  ${'<'}Dialog open onclose={() => jsonEditorContext?.cancel()}>
+    ${'<'}JsonEditor
       value={jsonEditorContext?.value}
       onsave={handleJsonSave}
     />
-  </Dialog>
+  ${'<'}/Dialog>
 {/if}`}</pre>
 
 		<h3>onbeforecommit Code Example</h3>

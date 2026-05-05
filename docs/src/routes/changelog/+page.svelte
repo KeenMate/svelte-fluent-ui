@@ -1,22 +1,10 @@
 <script lang="ts">
 	import {Stack} from 'svelte-fluentui';
-	import {onMount} from 'svelte';
+	// Inlined at build time by Vite — see docs/vite.config.ts (server.fs.allow)
+	// for the workspace-root whitelist that lets this path resolve.
+	import changelogMarkdown from '../../../../CHANGELOG.md?raw';
 
-	let changelogHtml = '';
-
-	onMount(async () => {
-		try {
-			// Fetch the changelog markdown file
-			const response = await fetch('/CHANGELOG.md');
-			const markdown = await response.text();
-
-			// Simple markdown to HTML conversion
-			changelogHtml = convertMarkdownToHtml(markdown);
-		} catch (error) {
-			console.error('Failed to load changelog:', error);
-			changelogHtml = '<p>Failed to load changelog</p>';
-		}
-	});
+	const changelogHtml = convertMarkdownToHtml(changelogMarkdown);
 
 	function escapeHtml(s: string): string {
 		return s
