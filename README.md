@@ -2,6 +2,14 @@
 
 A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2.6.x), providing a seamless way to use FluentUI components in Svelte applications.
 
+## What's New in v1.0.0-rc17
+
+- **`QuickGrid` `Ctrl`+`→` / `Ctrl`+`←` tree expand-collapse in navigate mode** — keyboard-only tree traversal. `Ctrl`+`→` expands the focused row; `Ctrl`+`←` collapses it (or walks up to the nearest expanded ancestor and collapses that). Modifier-key shape avoids ambiguity with plain ArrowLeft/Right which navigate columns
+- **`QuickGrid` navigate mode: all cells are now focusable, not only editable ones** — previously only editable cells got `tabindex=0`, so users couldn't land on read-only cells (like the tree column or parent rows in heterogeneous trees) and couldn't trigger `Ctrl`+arrow on them. Now every cell is focusable; Tab still walks through editable cells only (the productive Tab-through-fields UX). Focus indicator extended to all focused cells
+- **`QuickGrid` Tab-while-editing now works in `dblclick` / `click` / `button` modes** — only `navigate` mode had a Tab handler before; the others fell through to browser default and focus disappeared. Tab now commits + auto-opens the editor on the next editable cell (spreadsheet pattern)
+- **`QuickGrid` mode-switcher on the editable-per-row-type demo** — `/components/quickgrid-tree` example gained a radio control to flip between `navigate`, `dblclick`, `click`, and `button` so you can verify keyboard behaviors across all modes
+- **Bug fix — Tab traversal correctly skips rows with zero editable columns** — the row-aware Tab promise in rc16 had a hole in heterogeneous trees where a row has *no* editable columns. New `findNextEditableCell` helper walks past such rows in both directions
+
 ## What's New in v1.0.0-rc16
 
 ### QuickGrid

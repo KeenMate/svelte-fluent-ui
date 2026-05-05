@@ -621,6 +621,22 @@
 		}
 	}
 
+	// Walk ancestors of `path` until we find one that is currently expanded; returns its
+	// path. Used by Ctrl+ArrowLeft to collapse the nearest expanded ancestor when the
+	// focused row is a leaf or an already-collapsed parent. Returns null when the row
+	// has no expanded ancestor (already at a root visible level).
+	function findNearestExpandedAncestor(path: string): string | null {
+		const sep = resolvedTreeSeparator
+		const idx = path.lastIndexOf(sep)
+		let parent = idx >= 0 ? path.slice(0, idx) : ""
+		while (parent) {
+			if (resolvedExpandedPaths.has(parent)) return parent
+			const i = parent.lastIndexOf(sep)
+			parent = i >= 0 ? parent.slice(0, i) : ""
+		}
+		return null
+	}
+
 	// Initialize internal expansion when items first arrive (only if no external binding).
 	// `defaultExpandDepth` is interpreted relative to the shallowest level present in the
 	// dataset, not absolute level 0 — so a partial tree where the shallowest row is level 3
@@ -1199,6 +1215,43 @@
 			.filter(({ column }) => isCellEditable(column, row))
 	}
 
+	// Walk in `direction` from (fromRowIndex, fromColEditableIndex) until we find another
+	// editable cell. `fromColEditableIndex` is the cursor's index within the *current* row's
+	// editable column list — pass -1 for "step into this row from outside" (e.g. forward
+	// arrival on a fresh row should land on the first editable col).
+	//
+	// In heterogeneous trees only some rows have editable columns at all (e.g. team rows
+	// have zero, employees have two), so the next row's editable layout can differ from
+	// the current row's. We re-compute editable columns per row and skip rows that have
+	// none — otherwise Tab from the last employee before a team row falls on a `<td>` that
+	// has no `tabindex` and focus drops to body. Returns null when no further cell exists
+	// in that direction (caller can let Tab bubble out of the grid normally).
+	function findNextEditableCell(
+		fromRowIndex: number,
+		fromColEditableIndex: number,
+		direction: 1 | -1
+	): { rowIndex: number; colIndex: number } | null {
+		const items = displayItems
+		const currentRow = items[fromRowIndex]
+		if (currentRow !== undefined) {
+			const currentCols = getEditableColumns(currentRow)
+			const next = fromColEditableIndex + direction
+			if (next >= 0 && next < currentCols.length) {
+				return { rowIndex: fromRowIndex, colIndex: currentCols[next].index }
+			}
+		}
+		let r = fromRowIndex + direction
+		while (r >= 0 && r < items.length) {
+			const cols = getEditableColumns(items[r])
+			if (cols.length > 0) {
+				const target = direction === 1 ? cols[0] : cols[cols.length - 1]
+				return { rowIndex: r, colIndex: target.index }
+			}
+			r += direction
+		}
+		return null
+	}
+
 	function isCellFocused(rowIndex: number, colIndex: number): boolean {
 		return focusedCell?.rowIndex === rowIndex && focusedCell?.colIndex === colIndex
 	}
@@ -1248,46 +1301,52 @@
 		switch (e.key) {
 			case "ArrowUp":
 				e.preventDefault()
-				if (rowIndex > 0) {
-					focusCell(rowIndex - 1, colIndex)
-				}
+				if (rowIndex > 0) focusCell(rowIndex - 1, colIndex)
 				break
 			case "ArrowDown":
 				e.preventDefault()
-				if (rowIndex < displayItems.length - 1) {
-					focusCell(rowIndex + 1, colIndex)
-				}
+				if (rowIndex < displayItems.length - 1) focusCell(rowIndex + 1, colIndex)
 				break
 			case "ArrowLeft":
 				e.preventDefault()
-				if (currentEditableIndex > 0) {
-					focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
+				// Ctrl/Cmd+ArrowLeft: tree-collapse. If focused row is an expanded parent,
+				// collapse it; otherwise walk up to the nearest expanded ancestor and collapse
+				// that, then refocus the ancestor's row (the current row is about to be hidden).
+				if ((e.ctrlKey || e.metaKey) && isTreeMode) {
+					const path = getRowPath(item)
+					if (rowHasChildren(item) && isPathExpanded(path)) {
+						toggleExpand(path)
+					} else {
+						const ancestor = findNearestExpandedAncestor(path)
+						if (ancestor) {
+							toggleExpand(ancestor)
+							const ancestorRowIndex = displayItems.findIndex(it => getRowPath(it) === ancestor)
+							if (ancestorRowIndex >= 0) focusCell(ancestorRowIndex, colIndex)
+						}
+					}
+					break
 				}
+				if (colIndex > 0) focusCell(rowIndex, colIndex - 1)
 				break
 			case "ArrowRight":
 				e.preventDefault()
-				if (currentEditableIndex < editableCols.length - 1) {
-					focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
+				// Ctrl/Cmd+ArrowRight: tree-expand. Only acts on rows that have children and
+				// are currently collapsed; leaves and already-expanded rows are no-ops (matches
+				// the chevron's affordance — nothing to expand).
+				if ((e.ctrlKey || e.metaKey) && isTreeMode) {
+					if (rowHasChildren(item) && !isPathExpanded(getRowPath(item))) {
+						toggleExpand(getRowPath(item))
+					}
+					break
 				}
+				if (colIndex < columns.length - 1) focusCell(rowIndex, colIndex + 1)
 				break
-			case "Tab":
+			case "Tab": {
 				e.preventDefault()
-				if (e.shiftKey) {
-					// Move to previous cell
-					if (currentEditableIndex > 0) {
-						focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
-					} else if (rowIndex > 0) {
-						focusCell(rowIndex - 1, editableCols[editableCols.length - 1].index)
-					}
-				} else {
-					// Move to next cell
-					if (currentEditableIndex < editableCols.length - 1) {
-						focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
-					} else if (rowIndex < displayItems.length - 1) {
-						focusCell(rowIndex + 1, editableCols[0].index)
-					}
-				}
+				const target = findNextEditableCell(rowIndex, currentEditableIndex, e.shiftKey ? -1 : 1)
+				if (target) focusCell(target.rowIndex, target.colIndex)
 				break
+			}
 			case "Enter":
 			case "F2":
 				e.preventDefault()
@@ -1317,12 +1376,15 @@
 		}
 	}
 
-	async function handleEditorKeyDownInNavigateMode(e: KeyboardEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
-		if (!isNavigateMode) return
-
+	async function handleEditorKeyDown(e: KeyboardEvent, rowIndex: number, colIndex: number, column: Column<T>, item: T) {
 		const editableCols = getEditableColumns(item)
 		const currentEditableIndex = editableCols.findIndex(ec => ec.index === colIndex)
 
+		// Tab works in BOTH navigate mode and dblclick / click / button modes. Without this
+		// override, dblclick mode would fall through to the browser's default Tab — which
+		// blurs the input to whatever focusable element is next on the page (often outside
+		// the grid entirely), and the focus indicator visibly disappeared. The post-commit
+		// advance behavior differs by mode (see comment below).
 		if (e.key === "Tab") {
 			e.preventDefault()
 			e.stopPropagation()  // Prevent bubbling to handleNavigationKeyDown
@@ -1344,21 +1406,34 @@
 
 			isCommittingFromKeyboard = false
 
-			// Move to next/prev cell (allow navigation even with invalid values)
-			if (e.shiftKey) {
-				if (currentEditableIndex > 0) {
-					focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
-				} else if (rowIndex > 0) {
-					focusCell(rowIndex - 1, editableCols[editableCols.length - 1].index)
-				}
+			// Walk to the next / previous editable cell, skipping rows that have no editable
+			// columns (heterogeneous trees: team rows have zero, employee rows have N).
+			const tabTarget = findNextEditableCell(rowIndex, currentEditableIndex, e.shiftKey ? -1 : 1)
+			if (!tabTarget) return
+
+			if (isNavigateMode) {
+				// Navigate mode: focus the next cell as a focusable td (tabindex=0). User
+				// presses Enter / F2 / character to start editing.
+				focusCell(tabTarget.rowIndex, tabTarget.colIndex)
 			} else {
-				if (currentEditableIndex < editableCols.length - 1) {
-					focusCell(rowIndex, editableCols[currentEditableIndex + 1].index)
-				} else if (rowIndex < displayItems.length - 1) {
-					focusCell(rowIndex + 1, editableCols[0].index)
-				}
+				// dblclick / click / button: spreadsheet pattern — auto-open the editor on
+				// the next editable cell. Cells in these modes don't have tabindex, so
+				// `focusCell` would be a no-op; we have to start the next edit directly.
+				// Wait one tick so the previous editor unmounts cleanly before the next mounts —
+				// otherwise the autofocus on the new editor races the blur on the old one.
+				const tabTargetItem = displayItems[tabTarget.rowIndex]
+				const tabTargetColumn = columns[tabTarget.colIndex]
+				await tick()
+				startEdit(tabTarget.rowIndex, String(tabTargetColumn.field), tabTargetItem, tabTargetColumn, tabTarget.colIndex)
 			}
-		} else if (e.key === "Escape") {
+			return
+		}
+
+		// Escape and Enter remain navigate-mode-only — in dblclick / click / button modes
+		// GridCellEditor handles those keys itself (commit on Enter, cancel on Escape).
+		if (!isNavigateMode) return
+
+		if (e.key === "Escape") {
 			e.preventDefault()
 			e.stopPropagation()  // Prevent bubbling to handleNavigationKeyDown
 			cancelEdit(item, rowIndex)
@@ -1383,12 +1458,9 @@
 
 			isCommittingFromKeyboard = false
 
-			// Move to cell below after Enter (allow navigation even with invalid values)
-			if (rowIndex < displayItems.length - 1) {
-				focusCell(rowIndex + 1, colIndex)
-			} else {
-				focusCell(rowIndex, colIndex)
-			}
+			// Move to cell below after Enter (any cell — all are focusable in navigate mode).
+			if (rowIndex < displayItems.length - 1) focusCell(rowIndex + 1, colIndex)
+			else focusCell(rowIndex, colIndex)
 		} else if (e.key === " " && column.editor === "checkbox") {
 			// Space toggles checkbox while in edit mode
 			e.preventDefault()
@@ -1427,11 +1499,17 @@
 
 			isCommittingFromKeyboard = false
 
-			// Move to target cell (allow navigation even with invalid values)
-			if (e.key === "ArrowUp" && rowIndex > 0) {
-				focusCell(rowIndex - 1, colIndex)
-			} else if (e.key === "ArrowDown" && rowIndex < displayItems.length - 1) {
-				focusCell(rowIndex + 1, colIndex)
+			// Move to target cell (allow navigation even with invalid values).
+			// ArrowUp/Down: any cell (all are focusable in navigate mode).
+			// ArrowLeft/Right: stays within the editable column list while editing — user
+			// pressed an arrow inside an open editor, so they're explicitly stepping between
+			// editable cells, not browsing.
+			if (e.key === "ArrowUp") {
+				if (rowIndex > 0) focusCell(rowIndex - 1, colIndex)
+				else focusCell(rowIndex, colIndex)
+			} else if (e.key === "ArrowDown") {
+				if (rowIndex < displayItems.length - 1) focusCell(rowIndex + 1, colIndex)
+				else focusCell(rowIndex, colIndex)
 			} else if (e.key === "ArrowLeft" && currentEditableIndex > 0) {
 				focusCell(rowIndex, editableCols[currentEditableIndex - 1].index)
 			} else if (e.key === "ArrowRight" && currentEditableIndex < editableCols.length - 1) {
@@ -2097,7 +2175,7 @@
 							<td
 								data-row={rowIndex}
 								data-col={colIndex}
-								tabindex={isNavigateMode && isCellEditable(column, item) ? 0 : undefined}
+								tabindex={isNavigateMode ? 0 : undefined}
 								style={getColumnBodyStyle(column)}
 								class={`${isCellEditable(column, item) ? "editable-cell" : ""} ${cellInvalid ? "validation-error" : ""} ${isCellFocused(rowIndex, colIndex) ? "focused" : ""} ${isEditing(rowIndex, cellField) ? "editing" : ""} ${column.nowrap ? "nowrap-cell" : ""}`}
 								onclick={(e) => handleCellClick(e, rowIndex, colIndex, column, item)}
@@ -2117,7 +2195,7 @@
 										<div
 											class="editor-wrapper"
 											class:validating={isValidating}
-											onkeydown={(e) => handleEditorKeyDownInNavigateMode(e, rowIndex, colIndex, column, item)}
+											onkeydown={(e) => handleEditorKeyDown(e, rowIndex, colIndex, column, item)}
 										>
 											<GridCellEditor
 												type={getEditorType(column)}
@@ -2850,26 +2928,30 @@
 		color: var(--error-foreground, #f87c86);
 	}
 
-	/* Navigate mode styles */
+	/* Navigate mode styles. All cells are focusable so the focus indicator applies to
+	   any td.focused, not only `.editable-cell` — read-only cells still need the indicator
+	   so the user can see where their selection is when traversing the tree column or
+	   non-editable rows. `cursor: cell` stays scoped to editable cells (cursor signals
+	   editability, not focusability). */
 	.quickgrid.navigate-mode .editable-cell {
 		cursor: cell;
 	}
 
-	.quickgrid.navigate-mode .editable-cell:focus {
+	.quickgrid.navigate-mode tbody td:focus {
 		outline: none;
 	}
 
-	.quickgrid.navigate-mode .editable-cell.focused {
+	.quickgrid.navigate-mode tbody td.focused {
 		outline: 2px solid var(--accent-fill-rest, #0078d4);
 		outline-offset: -2px;
 		background: var(--neutral-fill-secondary-hover, #f0f0f0);
 	}
 
-	.quickgrid.navigate-mode .editable-cell.focused::after {
+	.quickgrid.navigate-mode tbody td.focused::after {
 		display: none;
 	}
 
-	:global([data-theme="dark"]) .quickgrid.navigate-mode .editable-cell.focused {
+	:global([data-theme="dark"]) .quickgrid.navigate-mode tbody td.focused {
 		background: var(--neutral-fill-secondary-hover, #3a3a3a);
 	}
 

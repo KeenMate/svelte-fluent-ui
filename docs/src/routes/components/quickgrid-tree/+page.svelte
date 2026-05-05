@@ -202,6 +202,7 @@
 	]
 
 	let lastTeamChange = $state("")
+	let teamEditTrigger = $state<"navigate" | "dblclick" | "click" | "button">("navigate")
 
 	function handleTeamRowChange(detail: {row: TeamRow; draftRow: TeamRow; rowIndex: number; field: string; oldValue: unknown; newValue: unknown; isValid: boolean}) {
 		if (!detail.isValid) return
@@ -301,12 +302,19 @@
 		/>
 
 		<h3>Bindable expansion state</h3>
-		<p>Currently expanded: <code>{[...expanded].join(", ") || "(none)"}</code></p>
+		<p>
+			Currently expanded: <code>{[...expanded].join(", ") || "(none)"}</code>.
+			Grid uses <code>editTrigger="navigate"</code> so you can keyboard-traverse the tree:
+			<kbd>Arrow keys</kbd> move between cells, <kbd>Ctrl</kbd>+<kbd>→</kbd> expands the focused row,
+			<kbd>Ctrl</kbd>+<kbd>←</kbd> collapses it (or the nearest expanded ancestor when on a leaf).
+			Watch the <code>expanded</code> set above update reactively.
+		</p>
 		<QuickGrid
 			items={orgs}
 			columns={orgColumns}
 			treePathMember="path"
 			bind:expandedPaths={expanded}
+			editTrigger="navigate"
 			striped
 			fillerColumn
 			columnMinWidth="8rem"
@@ -316,14 +324,38 @@
 		<p>
 			Heterogeneous tree where parent rows (teams) are read-only summaries and only the leaves (employees) are editable.
 			Each editable column carries a per-row predicate via <code>isEditable: (row) =&gt; boolean</code> — here
-			<code>(row) =&gt; row.kind === "employee"</code> — so double-clicking <strong>Role</strong> or
-			<strong>Salary</strong> on an employee row enters edit mode, but the same cells on a team row do nothing.
-			In navigate mode, <kbd>Tab</kbd> traversal also skips read-only rows.
+			<code>(row) =&gt; row.kind === "employee"</code> — so a click on <strong>Role</strong> or
+			<strong>Salary</strong> on an employee row focuses an editable cell, but the same cells on a team row are skipped entirely.
+			Tab / Shift-Tab traversal skips read-only rows in every mode (try tabbing from the last editable cell on Parker — you'll
+			land on Maximoff, jumping over the Product team row).
 		</p>
 		<p>
 			For an all-or-nothing row gate that does not vary per column, use the grid-level
 			<code>isRowEditable</code> prop instead — same shape (<code>boolean | (row) =&gt; boolean</code>), one place.
 		</p>
+		<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 0.75rem; padding: 0.75rem; background: var(--neutral-fill-secondary-rest, #f5f5f5); border-radius: 4px;">
+			<strong style="font-size: 0.875rem;"><code>editTrigger</code></strong>
+			{#each ["navigate", "dblclick", "click", "button"] as mode}
+				<label style="display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.875rem;">
+					<input type="radio" name="team-edit-trigger" value={mode} checked={teamEditTrigger === mode} onchange={() => teamEditTrigger = mode as typeof teamEditTrigger} />
+					<code>{mode}</code>
+				</label>
+			{/each}
+			<span style="font-size: 0.8125rem; color: var(--neutral-foreground-hint, #707070); flex-basis: 100%;">
+				{#if teamEditTrigger === "navigate"}
+					Click any cell to focus; arrow keys move; Enter/F2 starts editing; Tab commits + advances to next editable cell; Escape cancels.
+				{:else if teamEditTrigger === "dblclick"}
+					Double-click any editable cell to open the editor; Tab commits + auto-opens the next editable cell (spreadsheet-style); Enter commits; Escape cancels.
+				{:else if teamEditTrigger === "click"}
+					Single-click an editable cell to open the editor; Tab commits + auto-opens the next editable cell; Enter commits; Escape cancels.
+				{:else if teamEditTrigger === "button"}
+					Hover an editable cell to reveal the edit button; click it to open the editor; Tab commits + auto-opens the next editable cell.
+				{/if}
+				{#if teamEditTrigger === "navigate"}
+					<br /><strong>Tree:</strong> <kbd>Ctrl</kbd>+<kbd>→</kbd> expands the focused row; <kbd>Ctrl</kbd>+<kbd>←</kbd> collapses it (or the nearest expanded ancestor when on a leaf).
+				{/if}
+			</span>
+		</div>
 		{#if lastTeamChange}
 			<p style="font-size: 0.875rem; color: var(--accent-fill-rest);">Last change: {lastTeamChange}</p>
 		{/if}
@@ -332,6 +364,7 @@
 			columns={teamColumns}
 			treePathMember="path"
 			editable
+			editTrigger={teamEditTrigger}
 			idMember="path"
 			onrowchange={handleTeamRowChange}
 			striped
