@@ -1,0 +1,102 @@
+/* ========================================
+   Field — label + control + hint + validation message
+   FluentUI 2 / Blazor convention: Field owns label, hint, and inline validation
+   message rendering. Inner control (TextField, NumberField, etc.) sits in the slot.
+   ======================================== */
+
+.fluent-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+
+	// State color: per-data-state, fall back to error color so unrecognized
+	// states don't render unstyled. Components below read this var.
+	--fluent-field-state-color: transparent;
+
+	&--horizontal {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: 0.5rem 1rem;
+
+		.fluent-field__label {
+			flex: 0 0 auto;
+			padding-top: 0.35rem; // align with input baseline-ish
+			margin-bottom: 0;
+		}
+		.fluent-field__control {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+		.fluent-field__hint,
+		.fluent-field__message {
+			flex-basis: 100%;
+		}
+	}
+
+	&__label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.25;
+		color: var(--neutral-foreground-rest, #424242);
+		margin-bottom: 0;
+	}
+
+	&__required {
+		color: #c50f1f;
+		margin-left: 0.15rem;
+		font-weight: 700;
+	}
+
+	&__control {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		min-width: 0;
+	}
+
+	&__hint {
+		display: block;
+		color: var(--neutral-foreground-hint, #707070);
+		font-size: 0.8rem;
+		line-height: 1.35;
+	}
+
+	&__message {
+		display: block;
+		font-size: 0.8rem;
+		line-height: 1.35;
+		color: var(--fluent-field-state-color);
+	}
+
+	// ===== States =====
+
+	&[data-state="error"] {
+		--fluent-field-state-color: #c50f1f;
+	}
+	&[data-state="warning"] {
+		--fluent-field-state-color: #c87018;
+	}
+	&[data-state="success"] {
+		--fluent-field-state-color: #107c10;
+	}
+
+	// Paint the inner Fluent web component's border to match the field state.
+	// The fluent-* web components expose `root` as the visible bordered box.
+	// FluentUI 2 paints only the bottom border on focus, so we mirror that
+	// convention for the validation accent rather than ringing all four sides.
+	&[data-state="error"],
+	&[data-state="warning"],
+	&[data-state="success"] {
+		fluent-text-field::part(root),
+		fluent-number-field::part(root),
+		fluent-search::part(root),
+		fluent-text-area::part(control),
+		fluent-select::part(control),
+		fluent-combobox::part(control) {
+			border-bottom-color: var(--fluent-field-state-color);
+			box-shadow: inset 0 -1px 0 0 var(--fluent-field-state-color);
+		}
+	}
+}

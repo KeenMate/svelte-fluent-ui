@@ -13,8 +13,16 @@
 		Badge,
 		Divider,
 		Icon,
+		Field,
+		ValidationSummary,
+		type ValidationState,
 		toast
 	} from "svelte-fluentui"
+
+	// Map an error string (or null) to a ValidationState for <Field>
+	function stateOf(error: string | null | undefined): ValidationState {
+		return error ? "error" : "none"
+	}
 
 	// ============================================================
 	// Tiny composable validation helpers
@@ -266,10 +274,11 @@
 
 	<Card>
 		<p>
-			Common validation patterns implemented with the svelte-fluentui form components.
-			None of the FluentUI form wrappers ship with a built-in error slot, so the recommended
-			pattern is to render errors externally as a small message below the field and toggle
-			visibility based on <em>touched</em> (after blur) or <em>submitted</em> state.
+			Common validation patterns built with svelte-fluentui's
+			<code>&lt;Field&gt;</code> wrapper (label + hint + validation message + state border)
+			and <code>&lt;ValidationSummary&gt;</code> (top-of-form error list with
+			jump-to-field links). Each form is independent so you can copy whichever pattern
+			you need.
 		</p>
 		<p>
 			<strong>Patterns covered:</strong> required &amp; format · cross-field
@@ -278,9 +287,8 @@
 		</p>
 		<p>
 			<small
-				>Each form is independent so you can copy whichever pattern you need. The page
-				also defines a tiny <code>runValidators(value, ...validators)</code> helper plus a few
-				composable rules — see the source.</small
+				>The page also defines a tiny <code>runValidators(value, ...validators)</code>
+				helper plus a few composable rules — see the source.</small
 			>
 		</p>
 	</Card>
@@ -301,40 +309,58 @@
 
 			<Grid spacing={3}>
 				<GridItem xs={12} md={6}>
-					<TextField
+					<Field
 						label="Email"
-						type="email"
-						bind:value={su.email}
-						placeholder="jane.doe@example.com"
-						onblur={() => suTouch("email")}
-					/>
-					{#if suErr("email")}<small class="field-error">{suErr("email")}</small>{/if}
+						required
+						validationState={stateOf(suErr("email"))}
+						validationMessage={suErr("email") ?? undefined}
+					>
+						<TextField
+							type="email"
+							bind:value={su.email}
+							placeholder="jane.doe@example.com"
+							onblur={() => suTouch("email")}
+						/>
+					</Field>
 				</GridItem>
 				<GridItem xs={12} md={6}>
-					<TextField
-						label="Password (min 8, must contain a digit)"
-						type="password"
-						bind:value={su.password}
-						onblur={() => suTouch("password")}
-					/>
-					{#if suErr("password")}<small class="field-error">{suErr("password")}</small>{/if}
+					<Field
+						label="Password"
+						required
+						hint="Min 8 characters, must contain a digit"
+						validationState={stateOf(suErr("password"))}
+						validationMessage={suErr("password") ?? undefined}
+					>
+						<TextField
+							type="password"
+							bind:value={su.password}
+							onblur={() => suTouch("password")}
+						/>
+					</Field>
 				</GridItem>
 				<GridItem xs={12} md={6}>
-					<TextField
+					<Field
 						label="Confirm password"
-						type="password"
-						bind:value={su.confirmPassword}
-						onblur={() => suTouch("confirmPassword")}
-					/>
-					{#if suErr("confirmPassword")}<small class="field-error">{suErr("confirmPassword")}</small>{/if}
+						required
+						validationState={stateOf(suErr("confirmPassword"))}
+						validationMessage={suErr("confirmPassword") ?? undefined}
+					>
+						<TextField
+							type="password"
+							bind:value={su.confirmPassword}
+							onblur={() => suTouch("confirmPassword")}
+						/>
+					</Field>
 				</GridItem>
 				<GridItem xs={12} md={6} style="display: flex; align-items: flex-end;">
-					<div>
+					<Field
+						validationState={stateOf(suErr("acceptTerms"))}
+						validationMessage={suErr("acceptTerms") ?? undefined}
+					>
 						<Checkbox bind:checked={su.acceptTerms}>
 							I accept the terms and privacy policy
 						</Checkbox>
-						{#if suErr("acceptTerms")}<small class="field-error">{suErr("acceptTerms")}</small>{/if}
-					</div>
+					</Field>
 				</GridItem>
 			</Grid>
 
@@ -368,24 +394,34 @@
 
 			<Grid spacing={3}>
 				<GridItem xs={12} md={6}>
-					<NumberField
-						label="Age (18 – 120)"
-						bind:value={age}
-						min={18}
-						max={120}
-						onblur={() => (numTouched.age = true)}
-					/>
-					{#if ageErr()}<small class="field-error">{ageErr()}</small>{/if}
+					<Field
+						label="Age"
+						hint="Between 18 and 120"
+						validationState={stateOf(ageErr())}
+						validationMessage={ageErr() ?? undefined}
+					>
+						<NumberField
+							bind:value={age}
+							min={18}
+							max={120}
+							onblur={() => (numTouched.age = true)}
+						/>
+					</Field>
 				</GridItem>
 				<GridItem xs={12} md={6}>
-					<NumberField
-						label="Quantity (positive even number)"
-						bind:value={quantity}
-						min={2}
-						step={2}
-						onblur={() => (numTouched.quantity = true)}
-					/>
-					{#if quantityErr()}<small class="field-error">{quantityErr()}</small>{/if}
+					<Field
+						label="Quantity"
+						hint="Must be a positive even number"
+						validationState={stateOf(quantityErr())}
+						validationMessage={quantityErr() ?? undefined}
+					>
+						<NumberField
+							bind:value={quantity}
+							min={2}
+							step={2}
+							onblur={() => (numTouched.quantity = true)}
+						/>
+					</Field>
 				</GridItem>
 			</Grid>
 		</Stack>
@@ -408,22 +444,27 @@
 
 			<Grid spacing={3}>
 				<GridItem xs={12} md={6}>
-					<TextField
+					<Field
 						label="Username"
-						bind:value={username}
-						placeholder="3+ chars, letters/digits/underscore"
-					/>
-					{#if usernameStatus === "checking"}
-						<small class="field-status">
-							<Icon name="spinner_ios" size={16} /> Checking availability…
-						</small>
-					{:else if usernameStatus === "valid"}
-						<small class="field-status ok">
-							<Icon name="checkmark" size={16} /> "{username}" is available
-						</small>
-					{:else if usernameStatus === "invalid"}
-						<small class="field-error">{usernameError}</small>
-					{/if}
+						hint={usernameStatus === "checking"
+							? "Checking availability…"
+							: undefined}
+						validationState={usernameStatus === "invalid"
+							? "error"
+							: usernameStatus === "valid"
+								? "success"
+								: "none"}
+						validationMessage={usernameStatus === "invalid"
+							? (usernameError ?? undefined)
+							: usernameStatus === "valid"
+								? `"${username}" is available`
+								: undefined}
+					>
+						<TextField
+							bind:value={username}
+							placeholder="3+ chars, letters/digits/underscore"
+						/>
+					</Field>
 				</GridItem>
 			</Grid>
 		</Stack>
@@ -444,31 +485,41 @@
 
 			<Grid spacing={3}>
 				<GridItem xs={12} md={6}>
-					<Select
+					<Field
 						label="Department"
-						bind:value={department}
-						onchange={() => (condTouched.department = true)}
+						required
+						validationState={stateOf(deptErr())}
+						validationMessage={deptErr() ?? undefined}
 					>
-						{#snippet children()}
-							<Option value="">Select…</Option>
-							<Option value="engineering">Engineering</Option>
-							<Option value="sales">Sales</Option>
-							<Option value="marketing">Marketing</Option>
-							<Option value="finance">Finance</Option>
-							<Option value="other">Other</Option>
-						{/snippet}
-					</Select>
-					{#if deptErr()}<small class="field-error">{deptErr()}</small>{/if}
+						<Select
+							bind:value={department}
+							onchange={() => (condTouched.department = true)}
+						>
+							{#snippet children()}
+								<Option value="">Select…</Option>
+								<Option value="engineering">Engineering</Option>
+								<Option value="sales">Sales</Option>
+								<Option value="marketing">Marketing</Option>
+								<Option value="finance">Finance</Option>
+								<Option value="other">Other</Option>
+							{/snippet}
+						</Select>
+					</Field>
 				</GridItem>
 				{#if department === "other"}
 					<GridItem xs={12} md={6}>
-						<TextField
+						<Field
 							label="Please specify"
-							bind:value={otherDepartment}
-							placeholder="e.g. Customer Success"
-							onblur={() => (condTouched.otherDepartment = true)}
-						/>
-						{#if otherDeptErr()}<small class="field-error">{otherDeptErr()}</small>{/if}
+							required
+							validationState={stateOf(otherDeptErr())}
+							validationMessage={otherDeptErr() ?? undefined}
+						>
+							<TextField
+								bind:value={otherDepartment}
+								placeholder="e.g. Customer Success"
+								onblur={() => (condTouched.otherDepartment = true)}
+							/>
+						</Field>
 					</GridItem>
 				{/if}
 			</Grid>
@@ -495,55 +546,60 @@
 				the offending field.
 			</p>
 
-			{#if Object.keys(smErrors).length > 0}
-				<div class="summary-panel">
-					<strong>
-						<Icon name="warning" size={16} />
-						{Object.keys(smErrors).length} error(s) to fix:
-					</strong>
-					<ul>
-						{#each Object.entries(smErrors) as [field, error]}
-							<li>
-								<a
-									class="jump-link"
-									href={"#sm-" + field}
-									onclick={(e: Event) => {
-										e.preventDefault()
-										smJumpTo(field)
-									}}
-								>
-									{smFieldLabels[field] ?? field}
-								</a>
-								— {error}
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{/if}
+			<ValidationSummary
+				errors={smErrors}
+				labels={smFieldLabels}
+				onjumpto={smJumpTo}
+			/>
 
 			<Grid spacing={3}>
 				<GridItem xs={12} md={6}>
 					<div id="sm-fullName">
-						<TextField label="Full name" bind:value={sm.fullName} />
-						{#if smErrors.fullName}<small class="field-error">{smErrors.fullName}</small>{/if}
+						<Field
+							label="Full name"
+							required
+							validationState={stateOf(smErrors.fullName)}
+							validationMessage={smErrors.fullName}
+						>
+							<TextField bind:value={sm.fullName} />
+						</Field>
 					</div>
 				</GridItem>
 				<GridItem xs={12} md={6}>
 					<div id="sm-email">
-						<TextField label="Email" type="email" bind:value={sm.email} />
-						{#if smErrors.email}<small class="field-error">{smErrors.email}</small>{/if}
+						<Field
+							label="Email"
+							required
+							validationState={stateOf(smErrors.email)}
+							validationMessage={smErrors.email}
+						>
+							<TextField type="email" bind:value={sm.email} />
+						</Field>
 					</div>
 				</GridItem>
 				<GridItem xs={12} md={6}>
 					<div id="sm-phone">
-						<TextField label="Phone" bind:value={sm.phone} placeholder="+1 555 123 4567" />
-						{#if smErrors.phone}<small class="field-error">{smErrors.phone}</small>{/if}
+						<Field
+							label="Phone"
+							required
+							validationState={stateOf(smErrors.phone)}
+							validationMessage={smErrors.phone}
+						>
+							<TextField bind:value={sm.phone} placeholder="+1 555 123 4567" />
+						</Field>
 					</div>
 				</GridItem>
 				<GridItem xs={12} md={6}>
 					<div id="sm-age">
-						<NumberField label="Age (18+)" bind:value={sm.age} min={0} max={120} />
-						{#if smErrors.age}<small class="field-error">{smErrors.age}</small>{/if}
+						<Field
+							label="Age"
+							required
+							hint="Must be 18 or older"
+							validationState={stateOf(smErrors.age)}
+							validationMessage={smErrors.age}
+						>
+							<NumberField bind:value={sm.age} min={0} max={120} />
+						</Field>
 					</div>
 				</GridItem>
 			</Grid>
@@ -603,43 +659,6 @@ function runValidators<T>(value: T, ...validators: Validator<T>[]): string | nul
 </Stack>
 
 <style>
-	.field-error {
-		color: #c50f1f;
-		font-size: 0.85rem;
-		margin-top: 0.2rem;
-		display: block;
-	}
-	.field-status {
-		color: var(--neutral-foreground-rest, #424242);
-		font-size: 0.85rem;
-		margin-top: 0.2rem;
-		display: block;
-	}
-	.field-status.ok {
-		color: #107c10;
-	}
-
-	.summary-panel {
-		background: rgba(197, 15, 31, 0.08);
-		border-left: 3px solid #c50f1f;
-		padding: 0.6rem 0.9rem;
-		border-radius: 4px;
-	}
-	.summary-panel ul {
-		margin: 0.4rem 0 0 1.1rem;
-		padding: 0;
-	}
-	.summary-panel li {
-		margin: 0.15rem 0;
-	}
-	.jump-link {
-		color: #c50f1f;
-		text-decoration: underline;
-	}
-	.jump-link:hover {
-		text-decoration: none;
-	}
-
 	.code {
 		background: var(--neutral-fill-secondary-rest, #f5f5f5);
 		padding: 0.75rem 1rem;

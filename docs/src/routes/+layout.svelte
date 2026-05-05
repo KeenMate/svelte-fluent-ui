@@ -252,6 +252,7 @@
 				{label: "Checkbox", href: "/components/checkbox"},
 				{label: "Combobox", href: "/components/forms/combobox"},
 				{label: "DatePicker", href: "/components/datepicker"},
+				{label: "Field & ValidationSummary", href: "/components/forms/field"},
 				{label: "InputFile", href: "/components/inputfile"},
 				{label: "Listbox", href: "/components/listbox"},
 				{label: "NumberField", href: "/components/forms/number-field"},

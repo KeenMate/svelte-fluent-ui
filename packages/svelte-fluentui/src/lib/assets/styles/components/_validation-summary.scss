@@ -1,0 +1,43 @@
+/* ========================================
+   Validation Summary — inline error panel listing all field errors
+   Pairs with <Field> for forms that defer all validation to submit.
+   ======================================== */
+
+.fluent-validation-summary {
+	background: rgba(197, 15, 31, 0.08);
+	border-left: 3px solid #c50f1f;
+	padding: 0.6rem 0.9rem;
+	border-radius: 4px;
+	color: var(--neutral-foreground-rest, #424242);
+
+	&__title {
+		font-weight: 600;
+		margin-bottom: 0.4rem;
+		color: #c50f1f;
+	}
+
+	&__list {
+		margin: 0;
+		padding-left: 1.1rem;
+		list-style: disc;
+	}
+
+	&__item {
+		margin: 0.15rem 0;
+		line-height: 1.4;
+	}
+
+	&__link {
+		color: #c50f1f;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	&__link:hover {
+		text-decoration: none;
+	}
+	&__link:focus-visible {
+		outline: 2px solid var(--accent-fill-rest, #0078d4);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+}
