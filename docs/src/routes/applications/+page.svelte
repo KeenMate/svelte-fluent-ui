@@ -26,6 +26,18 @@
 		</GridItem>
 		<GridItem xs={12} md={6} lg={4}>
 			<Card>
+				<h3>Form Validation</h3>
+				<p>
+					Common validation patterns: required &amp; format, cross-field
+					(passwords match), numeric range, async availability check,
+					conditional required, and submit-time error summary with
+					jump-to-field links.
+				</p>
+				<Anchor href="/applications/form-validation">Open example</Anchor>
+			</Card>
+		</GridItem>
+		<GridItem xs={12} md={6} lg={4}>
+			<Card>
 				<h3>Order Form</h3>
 				<p>
 					A cascading hardware / software order form. Selecting the order type

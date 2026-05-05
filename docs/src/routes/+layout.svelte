@@ -239,6 +239,7 @@
 			items: [
 				{label: "Overview", href: "/applications"},
 				{label: "Filter Card", href: "/applications/filter-card"},
+				{label: "Form Validation", href: "/applications/form-validation"},
 				{label: "Order Form", href: "/applications/order-form"}
 			]
 		},

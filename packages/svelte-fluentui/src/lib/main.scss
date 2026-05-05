@@ -26,6 +26,7 @@
 @use "assets/styles/layout.scss";
 @use "assets/styles/nav.scss";
 @use "assets/styles/components.scss";
+@use "assets/styles/components/toast";
 
 // Use FluentUI Blazor compatibility styles
 @use "assets/styles/fluent-blazor-compat.scss";
