@@ -4,7 +4,12 @@
 	// for the workspace-root whitelist that lets this path resolve.
 	import changelogMarkdown from '../../../../CHANGELOG.md?raw';
 
-	const changelogHtml = convertMarkdownToHtml(changelogMarkdown);
+	// Strip the file's own "# Changelog" H1 and intro paragraphs — the page
+	// template already provides those, so rendering them again would duplicate
+	// the heading. Trim to the first `## ` (the topmost release section).
+	const firstReleaseIdx = changelogMarkdown.indexOf('## ');
+	const trimmed = firstReleaseIdx >= 0 ? changelogMarkdown.slice(firstReleaseIdx) : changelogMarkdown;
+	const changelogHtml = convertMarkdownToHtml(trimmed);
 
 	function escapeHtml(s: string): string {
 		return s
@@ -99,7 +104,20 @@
 	}
 
 	.changelog-content :global(li) {
-		margin: 0.25rem 0;
+		margin: 0.7rem 0;
+	}
+
+	/*
+	 * Leading <strong> in each bullet acts as the entry's mini-title — block
+	 * display + size bump gives shorter bullets (e.g. ValidationSummary)
+	 * equal visual weight to longer ones (e.g. Field with its multi-line
+	 * description). Without this, a 2-line bullet looks "tiny" next to a
+	 * 12-line one even though both describe equally important changes.
+	 */
+	.changelog-content :global(li > strong:first-child) {
+		display: block;
+		font-size: 1.05rem;
+		margin-bottom: 0.2rem;
 	}
 
 	.changelog-content :global(code) {
