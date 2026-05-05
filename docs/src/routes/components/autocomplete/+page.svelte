@@ -684,7 +684,7 @@
 		<h2>Usage Examples</h2>
 
 		<h3>Basic Usage</h3>
-		<pre><code>{`<script lang="ts">
+		<pre><code>{`${'<'}script lang="ts">
   import { Autocomplete } from "svelte-fluentui"
 
   const options = [
@@ -693,10 +693,10 @@
     { value: "3", text: "Option 3" }
   ]
 
-  let selected = $state<string[]>([])
-</script>
+  let selected = $state${'<'}string[]>([])
+${'<'}/script>
 
-<Autocomplete
+${'<'}Autocomplete
   bind:selectedOptions={selected}
   options={options}
   label="Select options"
@@ -704,7 +704,7 @@
 />`}</code></pre>
 
 		<h3>With Async Search</h3>
-		<pre><code>{`<script lang="ts">
+		<pre><code>{`${'<'}script lang="ts">
   async function searchItems(searchText: string) {
     const response = await fetch(\`/api/search?q=\${searchText}\`)
     const data = await response.json()
@@ -714,10 +714,10 @@
     }))
   }
 
-  let selected = $state<string[]>([])
-</script>
+  let selected = $state${'<'}string[]>([])
+${'<'}/script>
 
-<Autocomplete
+${'<'}Autocomplete
   bind:selectedOptions={selected}
   onoptionssearch={searchItems}
   label="Search items"

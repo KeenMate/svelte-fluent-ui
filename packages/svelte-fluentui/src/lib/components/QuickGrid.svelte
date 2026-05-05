@@ -222,16 +222,38 @@
 		cellValue: unknown
 	}
 
+	// Predefined context-menu item types for common actions. The grid wires up the
+	// onclick handler, default label / icon, and a tree-mode visibility gate so the
+	// item only shows up when relevant. Pass either the bare string for built-in
+	// behavior, or a full ContextMenuItem with `type: '<predefined>'` to override
+	// label / icon / etc. while keeping the built-in onclick.
+	//
+	// Naming follows user-facing convention from file explorers / IDEs:
+	// `expand-all` / `collapse-all` operate on the right-clicked row's branch (the
+	// common per-row case); `expand-tree` / `collapse-tree` operate on the entire
+	// dataset (rarer, e.g. a "reset everything" power-user action).
+	type PredefinedContextMenuItemType = 'expand-all' | 'collapse-all' | 'expand-tree' | 'collapse-tree'
+
 	type ContextMenuItem<T> = {
 		id: string
-		label: string | ((context: ContextMenuContext<T>) => string)
+		// Optional because `type` (a predefined item) supplies a default label. For fully
+		// custom items (no `type`), `label` is effectively required at runtime — the menu
+		// renders an empty entry otherwise.
+		label?: string | ((context: ContextMenuContext<T>) => string)
 		icon?: string
 		disabled?: boolean | ((context: ContextMenuContext<T>) => boolean)
 		visible?: boolean | ((context: ContextMenuContext<T>) => boolean)
 		danger?: boolean
 		dividerBefore?: boolean
+		// When set, the grid uses the predefined onclick / visible gate, but any
+		// other field on this object overrides the predefined defaults.
+		type?: PredefinedContextMenuItemType
 		onclick?: (context: ContextMenuContext<T>) => void | Promise<void>
 	}
+
+	// Shorthand: bare string = predefined item with all defaults; full object = custom or
+	// predefined-with-overrides (set `type` to one of PredefinedContextMenuItemType values).
+	type ContextMenuConfig<T> = PredefinedContextMenuItemType | ContextMenuItem<T>
 
 	type Props<T> = {
 		items: T[]
@@ -273,7 +295,7 @@
 		showRowActions?: boolean      // Deprecated: use showRowToolbar
 		rowActions?: RowToolbarConfig<T>[]  // Deprecated: use rowToolbar
 		// Context menu
-		contextMenu?: ContextMenuItem<T>[]
+		contextMenu?: ContextMenuConfig<T>[]
 		oncontextmenuopen?: (context: ContextMenuContext<T>) => void
 		// Stable row identity — keys internal state (drafts, edits) so they survive
 		// re-orderings (pagination, filter, tree expand/collapse). When omitted, the grid
@@ -619,6 +641,14 @@
 			else next.add(path)
 			internalExpandedPaths = next
 		}
+	}
+
+	// Replace the entire expanded-paths set, respecting the bound vs internal split that
+	// `toggleExpand` uses. Centralized so every bulk mutation (expand-all, collapse-all,
+	// subtree variants) goes through one code path.
+	function setExpandedPaths(next: Set<string>) {
+		if (expandedPaths !== undefined) expandedPaths = next
+		else internalExpandedPaths = next
 	}
 
 	// Walk ancestors of `path` until we find one that is currently expanded; returns its
@@ -1887,6 +1917,82 @@
 		closeContextMenu()
 	}
 
+	// Resolve a predefined context-menu type to a fully-formed ContextMenuItem. The
+	// onclick / visible closures capture reactive state (`isTreeMode`, `treeParentPathSet`,
+	// `resolvedExpandedPaths`, `resolvedTreeSeparator`, `items`) — they re-read on each
+	// invocation, so the menu reacts to state changes correctly.
+	function predefinedContextMenuItem(predefinedType: PredefinedContextMenuItemType): ContextMenuItem<T> {
+		switch (predefinedType) {
+			case 'expand-all':
+				// Per-row branch action — expand the right-clicked row and every descendant.
+				// Visibility gates on `rowHasChildren` so leaf rows don't get a useless menu item.
+				return {
+					id: 'expand-all',
+					label: 'Expand all',
+					icon: '⊞',
+					visible: (ctx) => isTreeMode && rowHasChildren(ctx.row),
+					onclick: (ctx) => {
+						const root = getRowPath(ctx.row)
+						const sep = resolvedTreeSeparator
+						const prefix = root + sep
+						const next = new Set(resolvedExpandedPaths)
+						for (const it of items) {
+							const p = getRowPath(it)
+							// Only paths that have children are meaningfully "expandable" — leaf
+							// rows in expandedPaths would just be noise.
+							if ((p === root || p.startsWith(prefix)) && treeParentPathSet.has(p)) {
+								next.add(p)
+							}
+						}
+						setExpandedPaths(next)
+					}
+				}
+			case 'collapse-all':
+				// Per-row branch action — collapse the right-clicked row and every descendant.
+				return {
+					id: 'collapse-all',
+					label: 'Collapse all',
+					icon: '⊟',
+					visible: (ctx) => isTreeMode && rowHasChildren(ctx.row),
+					onclick: (ctx) => {
+						const root = getRowPath(ctx.row)
+						const sep = resolvedTreeSeparator
+						const prefix = root + sep
+						const next = new Set([...resolvedExpandedPaths].filter(p => p !== root && !p.startsWith(prefix)))
+						setExpandedPaths(next)
+					}
+				}
+			case 'expand-tree':
+				// Whole-dataset action — rarer; "reset to everything visible" power-user move.
+				return {
+					id: 'expand-tree',
+					label: 'Expand entire tree',
+					icon: '⊞',
+					visible: () => isTreeMode && treeParentPathSet.size > 0,
+					onclick: () => setExpandedPaths(new Set(treeParentPathSet))
+				}
+			case 'collapse-tree':
+				// Whole-dataset action — collapse everything down to top-level rows only.
+				return {
+					id: 'collapse-tree',
+					label: 'Collapse entire tree',
+					icon: '⊟',
+					visible: () => isTreeMode && resolvedExpandedPaths.size > 0,
+					onclick: () => setExpandedPaths(new Set())
+				}
+		}
+	}
+
+	// Convert any context-menu config entry (string shorthand OR full object) into a
+	// fully-formed ContextMenuItem the renderer can use uniformly. When a full object
+	// has `type: '<predefined>'`, the predefined defaults are merged in but the
+	// caller's overrides win (e.g. custom icon or label, but built-in onclick).
+	function normalizeContextMenuItem(config: ContextMenuConfig<T>): ContextMenuItem<T> {
+		if (typeof config === 'string') return predefinedContextMenuItem(config)
+		if (config.type) return { ...predefinedContextMenuItem(config.type), ...config }
+		return config
+	}
+
 	function closeContextMenu() {
 		contextMenuVisible = false
 		contextMenuContext = null
@@ -2045,7 +2151,8 @@
 			style="position: fixed; left: {contextMenuPosition.x}px; top: {contextMenuPosition.y}px;"
 		>
 			<fluent-menu>
-				{#each contextMenu as menuItem}
+				{#each contextMenu as configItem}
+					{@const menuItem = normalizeContextMenuItem(configItem)}
 					{@const isVisible = typeof menuItem.visible === 'function'
 						? menuItem.visible(contextMenuContext)
 						: menuItem.visible ?? true}

@@ -307,7 +307,10 @@
 			Grid uses <code>editTrigger="navigate"</code> so you can keyboard-traverse the tree:
 			<kbd>Arrow keys</kbd> move between cells, <kbd>Ctrl</kbd>+<kbd>→</kbd> expands the focused row,
 			<kbd>Ctrl</kbd>+<kbd>←</kbd> collapses it (or the nearest expanded ancestor when on a leaf).
-			Watch the <code>expanded</code> set above update reactively.
+			Right-click any row to access predefined tree commands: <code>expand-all</code> / <code>collapse-all</code>
+			act on the right-clicked row's branch (visible only when the row has children — convention from file explorers / IDEs);
+			<code>expand-tree</code> / <code>collapse-tree</code> act on the entire dataset. Watch the <code>expanded</code> set above
+			update reactively.
 		</p>
 		<QuickGrid
 			items={orgs}
@@ -315,6 +318,7 @@
 			treePathMember="path"
 			bind:expandedPaths={expanded}
 			editTrigger="navigate"
+			contextMenu={["expand-all", "collapse-all", "expand-tree", "collapse-tree"]}
 			striped
 			fillerColumn
 			columnMinWidth="8rem"
@@ -332,6 +336,11 @@
 		<p>
 			For an all-or-nothing row gate that does not vary per column, use the grid-level
 			<code>isRowEditable</code> prop instead — same shape (<code>boolean | (row) =&gt; boolean</code>), one place.
+		</p>
+		<p>
+			Right-click any row to access predefined tree commands: <code>expand-all</code> / <code>collapse-all</code>
+			act on the right-clicked row's branch (visible when the row has children — so they show on team rows but not on
+			employee rows); <code>expand-tree</code> / <code>collapse-tree</code> below the divider always act on the entire dataset.
 		</p>
 		<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 0.75rem; padding: 0.75rem; background: var(--neutral-fill-secondary-rest, #f5f5f5); border-radius: 4px;">
 			<strong style="font-size: 0.875rem;"><code>editTrigger</code></strong>
@@ -367,6 +376,12 @@
 			editTrigger={teamEditTrigger}
 			idMember="path"
 			onrowchange={handleTeamRowChange}
+			contextMenu={[
+				"expand-all",
+				"collapse-all",
+				{id: "expand-tree", type: "expand-tree", dividerBefore: true},
+				"collapse-tree"
+			]}
 			striped
 			hoverable
 			fillerColumn

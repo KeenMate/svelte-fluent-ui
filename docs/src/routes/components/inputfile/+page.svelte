@@ -212,7 +212,7 @@
 		</Stack>
 
 		<h3>Custom Upload Handler Example</h3>
-		<pre><code>{`<script lang="ts">
+		<pre><code>{`${'<'}script lang="ts">
   import { InputFile } from "svelte-fluentui"
   import type { FileUploadHandler } from "svelte-fluentui"
 
@@ -244,9 +244,9 @@
       xhr.send(formData)
     })
   }
-</script>
+${'<'}/script>
 
-<InputFile
+${'<'}InputFile
   multiple={true}
   accept="image/*"
   maxFileSize={5 * 1024 * 1024}
