@@ -98,5 +98,14 @@
 			border-bottom-color: var(--fluent-field-state-color);
 			box-shadow: inset 0 -1px 0 0 var(--fluent-field-state-color);
 		}
+
+		// InputFile is a custom div, not a fluent-* element with shadow parts.
+		// Paint the drop zone / chips row / minimal trigger to mirror the state.
+		.fluent-inputfile .drop-zone,
+		.fluent-inputfile .chips-row,
+		.fluent-inputfile .minimal-trigger {
+			border-color: var(--fluent-field-state-color);
+			box-shadow: 0 0 0 1px var(--fluent-field-state-color);
+		}
 	}
 }

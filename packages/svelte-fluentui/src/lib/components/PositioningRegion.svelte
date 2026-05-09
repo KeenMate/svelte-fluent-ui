@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte'
 	import type {SlotType} from "../types/index.js"
 	import {portal} from "../actions/portal.js"
+	import {
+		computePosition,
+		flip,
+		shift,
+		offset,
+		size,
+		autoUpdate,
+		type Placement
+	} from "@floating-ui/dom"
 
 	type PositionType = "bottom" | "left" | "right" | "top"
 	type AlignType = "center" | "top"
@@ -12,9 +20,13 @@
 		style?: string
 		title?: string
 		position?: PositionType
-		align?: AlignType  // Vertical alignment for left/right positions
-		/** When true (default), the overlay width is forced to the anchor's width.
-		 *  Set to false for popups that should size to their content (e.g. calendar). */
+		/** Vertical alignment for left/right positions. "top" anchors the
+		 * overlay's bottom edge to the anchor's bottom (so it extends upward);
+		 * "center" centers it on the anchor (default). */
+		align?: AlignType
+		/** When true (default), the overlay width is forced to match the anchor's
+		 * width via Floating UI's `size` middleware. Useful for dropdowns whose
+		 * options should align under the input. */
 		matchWidth?: boolean
 		children?: SlotType
 	}
@@ -22,7 +34,7 @@
 	let {
 		anchor = undefined,
 		visible = false,
-		style = '',
+		style = "",
 		title = undefined,
 		position: positionProp = "bottom",
 		align: alignProp = "center",
@@ -30,147 +42,93 @@
 		children = undefined
 	}: Props = $props()
 
-	// svelte-ignore non_reactive_update
-	let overlayElement: HTMLDivElement | undefined = undefined
-	let coords = $state({ top: 0, left: 0, width: 0 })
+	const placement = $derived<Placement>(
+		positionProp === "bottom"
+			? "bottom-start"
+			: positionProp === "top"
+				? "top-start"
+				: positionProp === "left"
+					? alignProp === "top"
+						? "left-end"
+						: "left"
+					: alignProp === "top"
+						? "right-end"
+						: "right"
+	)
 
-	// Update position - synchronous calculation
-	function updatePosition() {
-		if (!anchor || !overlayElement || !visible) return
-
-		const anchorRect = anchor.getBoundingClientRect()
-		const overlayRect = overlayElement.getBoundingClientRect()
-		const viewportHeight = window.innerHeight
-		const viewportWidth = window.innerWidth
-
-		let top = 0
-		let left = 0
-		let width = anchorRect.width
-
-		if (positionProp === "left") {
-			// Position to the left of the anchor
-			if (alignProp === "top") {
-				top = anchorRect.bottom - overlayRect.height
-			} else {
-				top = anchorRect.top + (anchorRect.height / 2) - (overlayRect.height / 2)
-			}
-			left = anchorRect.left - overlayRect.width
-			width = overlayRect.width
-
-			// Cascade: left → right → top
-			if (left < 0) {
-				// Try right side
-				left = anchorRect.right
-				if (left + overlayRect.width > viewportWidth) {
-					// Neither side fits, use top
-					top = anchorRect.top - overlayRect.height
-					left = anchorRect.left
-					width = overlayRect.width
-					// If would go off top, position below
-					if (top < 0) {
-						top = anchorRect.bottom
-					}
-				}
-			}
-		} else if (positionProp === "right") {
-			// Position to the right of the anchor
-			if (alignProp === "top") {
-				top = anchorRect.bottom - overlayRect.height
-			} else {
-				top = anchorRect.top + (anchorRect.height / 2) - (overlayRect.height / 2)
-			}
-			left = anchorRect.right
-			width = overlayRect.width
-
-			// Cascade: right → left → top
-			if (left + overlayRect.width > viewportWidth) {
-				// Try left side
-				left = anchorRect.left - overlayRect.width
-				if (left < 0) {
-					// Neither side fits, use top
-					top = anchorRect.top - overlayRect.height
-					left = anchorRect.left
-					width = overlayRect.width
-					// If would go off top, position below
-					if (top < 0) {
-						top = anchorRect.bottom
-					}
-				}
-			}
-		} else if (positionProp === "top") {
-			// Position above the anchor
-			top = anchorRect.top - overlayRect.height
-			left = anchorRect.left
-			width = anchorRect.width
-
-			// If would go off top, position below instead
-			if (top < 0) {
-				top = anchorRect.bottom
-			}
-		} else {
-			// Default: position below the anchor
-			top = anchorRect.bottom
-			left = anchorRect.left
-			width = anchorRect.width
-
-			// If dropdown would go off bottom of viewport, position above instead
-			if (anchorRect.bottom + overlayRect.height > viewportHeight) {
-				top = anchorRect.top - overlayRect.height
-			}
-		}
-
-		coords = { top, left, width }
+	type PositionParams = {
+		anchor: HTMLElement
+		placement: Placement
+		matchWidth: boolean
 	}
 
-	// Update position when visible or anchor changes
-	$effect(() => {
-		if (visible && anchor) {
-			// Use tick to ensure element is mounted before calculating position
-			tick().then(() => updatePosition())
-		}
-	})
+	function position(node: HTMLElement, params: PositionParams) {
+		let cleanup: () => void = () => {}
 
-	onMount(() => {
-		if (visible && anchor) {
-			updatePosition()
+		function attach(p: PositionParams) {
+			cleanup()
+			async function update() {
+				const middleware = [
+					offset(0),
+					flip(),
+					shift({padding: 8})
+				]
+				if (p.matchWidth) {
+					middleware.push(
+						size({
+							apply({rects, elements}) {
+								elements.floating.style.width = `${rects.reference.width}px`
+							}
+						})
+					)
+				}
+				const result = await computePosition(p.anchor, node, {
+					placement: p.placement,
+					strategy: "fixed",
+					middleware
+				})
+				node.style.left = `${result.x}px`
+				node.style.top = `${result.y}px`
+			}
+			cleanup = autoUpdate(p.anchor, node, update)
 		}
-	})
+
+		attach(params)
+
+		return {
+			update(newParams: PositionParams) {
+				attach(newParams)
+			},
+			destroy() {
+				cleanup()
+			}
+		}
+	}
 </script>
 
 {#if anchor}
-	<!-- Positioned overlay mode (for dropdowns, tooltips) -->
 	{#if visible}
 		<div
 			use:portal
-			bind:this={overlayElement}
+			use:position={{anchor, placement, matchWidth}}
 			class="positioning-region positioning-region-floating"
 			{title}
-			style="
-				position: fixed;
-				top: {coords.top}px;
-				left: {coords.left}px;
-				{matchWidth ? `width: ${coords.width}px;` : ''}
-				{style}
-			"
+			style="position: fixed; top: 0; left: 0; {style}"
 		>
 			{@render children?.()}
 		</div>
 	{/if}
 {:else}
-	<!-- Static wrapper mode (for NavLink, etc.) - always render -->
-	<div
-		class="positioning-region"
-		{title}
-		style={style}
-	>
+	<!-- Static wrapper mode (NavLink, NavExpander) — no anchor, just a layout passthrough. -->
+	<div class="positioning-region" {title} {style}>
 		{@render children?.()}
 	</div>
 {/if}
 
 <style>
-	/* Only the portalled floating variant needs to sit above page content.
-	 * The static wrapper mode is used inside NavLink etc. — applying z-index
-	 * there would lift every nav item above modals/dialog overlays. */
+	/* Floating variant lifts above page content. The static wrapper mode is
+	 * used inside NavLink etc. — applying z-index there would lift every nav
+	 * item above modals. */
 	.positioning-region-floating {
 		z-index: var(--fluent-z-popover, 1060);
 	}

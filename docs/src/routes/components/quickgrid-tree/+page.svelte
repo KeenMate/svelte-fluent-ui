@@ -190,7 +190,7 @@
 			isEditable: isEmployee,
 			editor: "number" as const,
 			editorOptions: {min: 0, max: 1_000_000, step: 1000},
-			format: (v: number | undefined) => v === undefined ? "—" : "$" + v.toLocaleString()
+			format: (v: number | null | undefined) => v == null ? "—" : "$" + v.toLocaleString()
 		},
 		{
 			field: "headcount",

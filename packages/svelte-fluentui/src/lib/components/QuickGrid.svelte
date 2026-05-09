@@ -934,6 +934,13 @@
 
 	function isCellEditable(column: Column<T>, row: T): boolean {
 		if (!editable) return false
+		// Tree column is structural (chevron + indentation) — never editable,
+		// regardless of column.isEditable. Inline editing the cell that owns
+		// the expand affordance creates ambiguous click targets and was the
+		// source of repeat regressions (rc17/rc18). Consumers who need a
+		// "rename" affordance should expose it via a separate column or a
+		// context-menu / button action.
+		if (column.isTree) return false
 		const rowGate = typeof isRowEditable === "function" ? isRowEditable(row) : isRowEditable
 		if (!rowGate) return false
 		const colGate = column.isEditable
@@ -1380,19 +1387,28 @@
 			case "Enter":
 			case "F2":
 				e.preventDefault()
+				// Gate on isCellEditable: rc17 made all cells focusable (was: editable
+				// cells only), so this handler now fires on read-only cells too. Without
+				// this guard, Enter / F2 would open an editor on the tree column or any
+				// other cell on a read-only row (e.g. team rows in the teams+employees
+				// demo). Click handlers gate already; the keyboard path was overlooked.
+				if (!isCellEditable(column, item)) break
 				startEdit(rowIndex, String(column.field), item, column, colIndex)
 				break
 			case " ":
-				// Space toggles checkbox immediately
-				if (column.editor === "checkbox") {
+				// Space toggles checkbox immediately. Same gate as Enter/F2 — read-only
+				// cells with a checkbox-editor column shouldn't toggle.
+				if (column.editor === "checkbox" && isCellEditable(column, item)) {
 					e.preventDefault()
 					const newValue = !item[column.field as keyof T]
 					commitEditDirect(rowIndex, column, newValue, item, colIndex)
 				}
 				break
 			default:
-				// Any printable character starts editing (for text/number/autocomplete/combobox/select fields)
-				if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+				// Any printable character starts editing (for text/number/autocomplete/combobox/select fields).
+				// Same gate — without it, typing on a read-only cell would open a default-text editor
+				// because the `|| !column.editor` branch matches columns with no editor configured at all.
+				if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey && isCellEditable(column, item)) {
 					if (column.editor === "text" || column.editor === "number" || !column.editor) {
 						startEdit(rowIndex, String(column.field), item, column, colIndex)
 						// Don't prevent default - let the character be typed
@@ -1466,7 +1482,16 @@
 		if (e.key === "Escape") {
 			e.preventDefault()
 			e.stopPropagation()  // Prevent bubbling to handleNavigationKeyDown
+			// Set the same flag we use for keyboard-driven commits so the editor's blur,
+			// which fires during the unmount triggered by editingCell = null, skips its
+			// commit-on-blur path. Without this, clearing a number cell then pressing Esc
+			// commits null instead of canceling — Esc cancels in QuickGrid, but the editor
+			// also commits during teardown via blur, and the commit wins. The flag must
+			// stay true across the async unmount (blur is async), hence `await tick()`.
+			isCommittingFromKeyboard = true
 			cancelEdit(item, rowIndex)
+			await tick()
+			isCommittingFromKeyboard = false
 			focusCell(rowIndex, colIndex)
 		} else if (e.key === "Enter") {
 			e.preventDefault()

@@ -88,6 +88,11 @@
 	})
 
 	let editorElement: HTMLElement | undefined = $state()
+	// Set when Escape fires so the cascading blur (Esc removes focus from <input>
+	// in most browsers) doesn't sneak in a commit of whatever was in the field.
+	// Without this, clearing a number field then pressing Esc commits null instead
+	// of canceling — the row gets mutated and onrowchange fires with the cleared value.
+	let cancelledViaEscape = false
 	let loadedOptions = $state<EditorOption[]>([])
 	let isLoadingOptions = $state(false)
 	let hasLoadedOnDropdown = $state(false)
@@ -281,6 +286,7 @@
 				if (dropdownOpen) {
 					closeDropdown()
 				} else {
+					cancelledViaEscape = true
 					oncancel()
 				}
 				break
@@ -541,12 +547,13 @@
 			commit()
 		} else if (e.key === "Escape") {
 			e.preventDefault()
+			cancelledViaEscape = true
 			oncancel()
 		}
 	}
 
 	function handleBlur(e: FocusEvent) {
-		if (skipBlurCommit) {
+		if (skipBlurCommit || cancelledViaEscape) {
 			return
 		}
 
