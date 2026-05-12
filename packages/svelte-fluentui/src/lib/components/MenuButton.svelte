@@ -282,12 +282,27 @@
 	 * computePosition(), and keeps the menu pinned to viewport coordinates
 	 * (no ancestor-transform surprises).
 	 */
+	/*
+	 * Wrapper is the Floating-UI target — `size` middleware caps its
+	 * max-height for viewport fit, so it owns the `overflow-y: auto`
+	 * scroll. The inner `<fluent-menu>` has rounded corners; without a
+	 * matching `border-radius` here, the wrapper's square corners (or
+	 * its scrollbar gutter) would peek out behind the rounded menu and
+	 * show as gray pixels. `background: transparent` is explicit so
+	 * nothing in a future theme/global rule can repaint it.
+	 */
 	.fluent-menu-button-menu {
 		position: fixed;
 		top: 0;
 		left: 0;
 		z-index: var(--fluent-z-popover, 1060);
 		overflow-y: auto;
+		background: transparent;
+		border-radius: calc(var(--layer-corner-radius, var(--control-corner-radius, 4)) * 1px);
+		/* fluent-menu's built-in elevation is barely visible on dark themes —
+		 * paint the popover shadow on the wrapper instead so the menu reads
+		 * as a distinct surface. Matches the elevation used by ContextMenu. */
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
 	}
 
 	.fluent-menu-button-menu :global(fluent-menu) {

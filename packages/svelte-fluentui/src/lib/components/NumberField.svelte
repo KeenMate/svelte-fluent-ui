@@ -6,6 +6,7 @@
 	provideFluentDesignSystem().register(fluentNumberField());
 
 	type Props = {
+		id?: string | null | undefined;
 		value?: string;
 		placeholder?: string;
 		appearance?: "outline" | "filled";
@@ -14,6 +15,7 @@
 		required?: boolean;
 		name?: string;
 		label?: string;
+		labelTemplate?: SlotType | null | undefined;
 		autofocus?: boolean;
 		autocomplete?: string;
 		step?: number;
@@ -43,6 +45,7 @@
 	};
 
 	let {
+		id = undefined,
 		value = $bindable<string>(),
 		placeholder,
 		appearance,
@@ -51,6 +54,7 @@
 		required,
 		name,
 		label,
+		labelTemplate = undefined,
 		autofocus,
 		autocomplete = "off",
 		step,
@@ -169,9 +173,21 @@
 	});
 </script>
 
+{#if label || labelTemplate}
+	<label for={id} class="fluent-label">
+		{#if label}
+			{label}
+		{/if}
+		{#if labelTemplate}
+			{@render labelTemplate?.()}
+		{/if}
+	</label>
+{/if}
+
 <!-- svelte-ignore a11y_autofocus -->
 <fluent-number-field
 	bind:this={element}
+	{id}
 	class={className || null}
 	style={computedStyle}
 	placeholder={placeholder || null}
@@ -190,7 +206,7 @@
 	list={list || null}
 	hide-step={hideStep || null}
 	name={name || null}
-	aria-label={ariaLabel || null}
+	aria-label={ariaLabel ?? (label || null)}
 	value={value ?? ""}
 	{...titleProps}
 	oninput={handleOnInput}
@@ -205,10 +221,14 @@
 	{/if}
 	{#if children}
 		{@render children()}
-	{:else if label}
-		{label}
 	{/if}
 	{#if end}
 		<span slot="end">{@render end()}</span>
 	{/if}
 </fluent-number-field>
+
+<style>
+	:global(fluent-number-field::part(label)) {
+		display: none;
+	}
+</style>

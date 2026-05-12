@@ -1054,9 +1054,17 @@
 		flex: 0 1 auto;
 	}
 
-	/* Overflow menu — reuses the context-menu look from QuickGrid. */
+	/* Overflow menu — reuses the context-menu look from QuickGrid.
+	 * Transparent wrapper + matching border-radius so the inner
+	 * `<fluent-menu>`'s rounded corners aren't framed by gray pixels. */
 	.fluent-tabs-overflow-menu {
 		z-index: var(--fluent-z-popover, 1060);
+		background: transparent;
+		border-radius: calc(var(--layer-corner-radius, var(--control-corner-radius, 4)) * 1px);
+		/* Popover elevation on the wrapper for visible separation on dark
+		 * themes (fluent-menu's own shadow is too subtle). Matches
+		 * ContextMenu's elevation. */
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
 	}
 
 	.fluent-tabs-overflow-menu fluent-menu {

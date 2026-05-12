@@ -15,6 +15,7 @@
 		name?: string
 		ariaLabel?: string
 		label?: string
+		labelPosition?: "top" | "start"
 		checked?: boolean
 		required?: boolean
 		checkedMessage?: string | SlotType
@@ -34,6 +35,7 @@
 		name = undefined,
 		ariaLabel = undefined,
 		label = undefined,
+		labelPosition = "top",
 		checked = $bindable(),
 		required = undefined,
 		checkedMessage = undefined,
@@ -63,56 +65,70 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y_autofocus -->
-<fluent-switch
-	class={className}
-	{style}
-	{readonly}
-	{id}
-	{disabled}
-	{autofocus}
-	{name}
-	aria-label={ariaLabel || label}
-	{required}
-	current-checked={checked}
-	aria-checked={checked}
-	onchange={handleChange}
-	role="switch"
->
-	{#if label}
-		{label}
+<span class="fluent-switch-wrapper" data-label-position={labelPosition}>
+	{#if label || labelTemplate || children}
+		<label for={id} class="fluent-label">
+			{#if label}{label}{/if}
+			{#if labelTemplate}{@render labelTemplate?.()}{/if}
+			{#if children}{@render children?.()}{/if}
+		</label>
 	{/if}
 
-	{#if labelTemplate}
-		{@render labelTemplate?.()}
-	{/if}
+	<!-- svelte-ignore a11y_autofocus -->
+	<fluent-switch
+		class={className}
+		{style}
+		{readonly}
+		{id}
+		{disabled}
+		{autofocus}
+		{name}
+		aria-label={ariaLabel || label}
+		{required}
+		current-checked={checked}
+		aria-checked={checked}
+		onchange={handleChange}
+		role="switch"
+	>
+		{#if checkedMessage}
+			<span slot="checked-message" class="switch-message">
+				{#if isCheckedMessageSnippet}
+					{@render (checkedMessage as SlotType)?.()}
+				{:else}
+					{checkedMessage}
+				{/if}
+			</span>
+		{/if}
 
-	{#if children}
-		{@render children?.()}
-	{/if}
-
-	{#if checkedMessage}
-		<span slot="checked-message" class="switch-message">
-			{#if isCheckedMessageSnippet}
-				{@render (checkedMessage as SlotType)?.()}
-			{:else}
-				{checkedMessage}
-			{/if}
-		</span>
-	{/if}
-
-	{#if uncheckedMessage}
-		<span slot="unchecked-message" class="switch-message">
-			{#if isUncheckedMessageSnippet}
-				{@render (uncheckedMessage as SlotType)?.()}
-			{:else}
-				{uncheckedMessage}
-			{/if}
-		</span>
-	{/if}
-</fluent-switch>
+		{#if uncheckedMessage}
+			<span slot="unchecked-message" class="switch-message">
+				{#if isUncheckedMessageSnippet}
+					{@render (uncheckedMessage as SlotType)?.()}
+				{:else}
+					{uncheckedMessage}
+				{/if}
+			</span>
+		{/if}
+	</fluent-switch>
+</span>
 
 <style>
+	:global(fluent-switch::part(label)) {
+		display: none;
+	}
+
+	.fluent-switch-wrapper {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.fluent-switch-wrapper[data-label-position="top"] {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+	}
+
 	.switch-message {
 		margin-left: 0.5rem;
 	}

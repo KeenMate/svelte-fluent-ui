@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { Switch, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
+	import { Switch, RadioGroup, Radio, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
 	let switchState = false;
+	let insuranceChecked = $state(false);
+	let labelPosition = $state<"top" | "start">("top");
 
 	type Property = {
 		name: string
@@ -17,6 +19,7 @@
 		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the switch"},
 		{name: "id", type: "string", default: "undefined", description: ""},
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
+		{name: "labelPosition", type: '"top" | "start"', default: '"top"', description: "Where the main label is rendered relative to the toggle"},
 		{name: "name", type: "string", default: "undefined", description: "Form name"},
 		{name: "readonly", type: "boolean", default: "undefined", description: "Prevents user changes"},
 		{name: "required", type: "boolean", default: "undefined", description: "Required for form submission"},
@@ -86,6 +89,52 @@
 	<Card>
 
 		<h2>Examples</h2>
+
+		<h3>Label position</h3>
+		<p style="font-size: 0.875rem; color: var(--neutral-foreground-hint);">
+			Inspect each <code>&lt;fluent-switch&gt;</code> shadow root — internal <code>::part(label)</code> is hidden by CSS; the visible label is rendered externally above (<code>top</code>) or before (<code>start</code>) the toggle.
+		</p>
+
+		<Stack orientation="vertical" gap="0.75rem">
+			<RadioGroup bind:value={labelPosition} orientation="horizontal" label="labelPosition">
+				<Radio value="top">top</Radio>
+				<Radio value="start">start</Radio>
+			</RadioGroup>
+
+			<Switch
+				label="Do you want insurance?"
+				{labelPosition}
+				checkedMessage="Yes"
+				uncheckedMessage="No"
+				bind:checked={insuranceChecked}
+			/>
+			<small>checked: {insuranceChecked}</small>
+		</Stack>
+
+		<h3>Both positions side-by-side</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<strong>labelPosition="top"</strong>
+				<Switch
+					label="Do you want insurance?"
+					labelPosition="top"
+					checkedMessage="Yes"
+					uncheckedMessage="No"
+				/>
+			</GridItem>
+			<GridItem>
+				<strong>labelPosition="start"</strong>
+				<Switch
+					label="Do you want insurance?"
+					labelPosition="start"
+					checkedMessage="Yes"
+					uncheckedMessage="No"
+				/>
+			</GridItem>
+		</Grid>
+
+		<h3>No label (verifies empty shadow ::part(label) is hidden)</h3>
+		<Switch ariaLabel="Toggle without visible label" checkedMessage="On" uncheckedMessage="Off" />
 
 		<h3>Basic switch</h3>
 		<p>

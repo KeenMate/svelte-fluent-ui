@@ -3136,9 +3136,17 @@
 		accent-color: var(--accent-fill-rest, #0078d4);
 	}
 
-	/* Context menu styles */
+	/* Context menu styles. Wrapper is transparent + rounded so the inner
+	 * `<fluent-menu>`'s rounded corners don't reveal gray pixels behind
+	 * them (the wrapper would otherwise be a rectangular surface). */
 	.context-menu {
 		z-index: var(--fluent-z-popover, 1060);
+		background: transparent;
+		border-radius: calc(var(--layer-corner-radius, var(--control-corner-radius, 4)) * 1px);
+		/* Popover elevation — paint shadow on the wrapper so the menu reads
+		 * as a distinct surface on dark themes (fluent-menu's own shadow is
+		 * too subtle there). Matches ContextMenu's elevation. */
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
 	}
 
 	.context-menu fluent-menu {
