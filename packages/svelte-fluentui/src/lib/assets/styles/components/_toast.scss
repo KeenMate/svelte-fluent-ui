@@ -4,7 +4,7 @@
    Programmatic toast service styled with FluentUI design tokens
    ======================================== */
 
-@import "../tokens";
+@use "../tokens" as *;
 
 // ===== TOAST CONTAINER =====
 
