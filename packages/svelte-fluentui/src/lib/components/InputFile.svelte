@@ -62,6 +62,10 @@
 		selectFiles: string
 		accepted: (accept: string) => string
 		maxSize: (size: string) => string
+		minSize: (size: string) => string
+		totalMaxSize: (size: string) => string
+		maxFilesHint: (n: number) => string
+		minFilesHint: (n: number) => string
 		clearAll: string
 		uploadAll: string
 		addMore: string
@@ -81,6 +85,7 @@
 		cancel: string
 		download: string
 		fileTooLarge: (max: string) => string
+		totalSizeExceeded: (max: string) => string
 		fileTooSmall: (min: string) => string
 		fileTypeNotAccepted: (accept: string) => string
 		tooManyFiles: (max: number) => string
@@ -101,6 +106,10 @@
 		selectFiles: "Select files",
 		accepted: (a) => `Accepted: ${a}`,
 		maxSize: (s) => `Max size: ${s}`,
+		minSize: (s) => `Min size: ${s}`,
+		totalMaxSize: (s) => `Total max size: ${s}`,
+		maxFilesHint: (n) => `Max files: ${n}`,
+		minFilesHint: (n) => `Min files: ${n}`,
 		clearAll: "Clear all",
 		uploadAll: "Upload all",
 		addMore: "+ Add more",
@@ -120,6 +129,7 @@
 		cancel: "Cancel upload",
 		download: "Download",
 		fileTooLarge: (m) => `File size exceeds ${m}`,
+		totalSizeExceeded: (m) => `Total size would exceed ${m}`,
 		fileTooSmall: (m) => `File size below ${m}`,
 		fileTypeNotAccepted: (a) => `File type not accepted. Accepted: ${a}`,
 		tooManyFiles: (m) => `Maximum ${m} files allowed`,
@@ -177,6 +187,7 @@
 		// Validation
 		maxFileSize?: number
 		minFileSize?: number
+		totalMaxSize?: number
 		maxFileCount?: number
 		maxFiles?: number
 		minFiles?: number
@@ -201,6 +212,19 @@
 
 		// i18n
 		labels?: Partial<InputFileLabels>
+
+		// Limits hint composition. When provided and returns a non-empty string,
+		// replaces ALL per-limit hint lines (max/min size, max/min files) with a
+		// single composed message under the Browse button. The Accepted-types
+		// line is unaffected.
+		formatLimits?: (info: {
+			minFileSize: number
+			maxFileSize: number
+			totalMaxSize: number
+			maxFiles: number
+			minFiles: number
+			multiple: boolean
+		}) => string | null | undefined
 
 		// a11y
 		id?: string
@@ -247,6 +271,7 @@
 		initialItems = undefined,
 		maxFileSize = 10 * 1024 * 1024,
 		minFileSize = 0,
+		totalMaxSize = 0,
 		maxFileCount = 10,
 		maxFiles: maxFilesProp = undefined,
 		minFiles = 0,
@@ -265,6 +290,7 @@
 		maxVisible = undefined,
 		listMaxHeight = undefined,
 		labels: labelsProp = undefined,
+		formatLimits = undefined,
 		id = undefined,
 		"aria-label": ariaLabel = undefined,
 		"aria-describedby": ariaDescribedBy = undefined,
@@ -287,6 +313,16 @@
 	const effectiveMaxFiles = $derived(maxFilesProp ?? maxFileCount)
 	const effectiveAppearance = $derived<InputFileAppearance>(
 		appearanceProp ?? (showDragDropZone ? "card" : "button")
+	)
+	const limitsHint = $derived(
+		formatLimits?.({
+			minFileSize,
+			maxFileSize,
+			totalMaxSize,
+			maxFiles: effectiveMaxFiles,
+			minFiles,
+			multiple
+		}) ?? null
 	)
 
 	let fileInput: HTMLInputElement | undefined = $state()
@@ -514,6 +550,10 @@
 			if (incoming.length === 0) return
 		}
 
+		let runningTotal = totalMaxSize > 0
+			? items.reduce((sum, i) => (i.status === "error" ? sum : sum + i.size), 0)
+			: 0
+
 		const accepted: InputFileItem[] = []
 		for (const file of incoming) {
 			if (await isDuplicate(file)) {
@@ -525,6 +565,11 @@
 				emitRejection(file, err)
 				continue
 			}
+			if (totalMaxSize > 0 && runningTotal + file.size > totalMaxSize) {
+				emitRejection(file, labels.totalSizeExceeded(formatInputFileSize(totalMaxSize)))
+				continue
+			}
+			runningTotal += file.size
 			accepted.push({
 				id: genId(),
 				file,
@@ -984,8 +1029,24 @@
 				{#if accept}
 					<p class="drop-zone-hint">{labels.accepted(accept)}</p>
 				{/if}
-				{#if maxFileSize}
-					<p class="drop-zone-hint">{labels.maxSize(formatInputFileSize(maxFileSize))}</p>
+				{#if limitsHint}
+					<p class="drop-zone-hint">{limitsHint}</p>
+				{:else}
+					{#if maxFileSize}
+						<p class="drop-zone-hint">{labels.maxSize(formatInputFileSize(maxFileSize))}</p>
+					{/if}
+					{#if minFileSize}
+						<p class="drop-zone-hint">{labels.minSize(formatInputFileSize(minFileSize))}</p>
+					{/if}
+					{#if totalMaxSize > 0}
+						<p class="drop-zone-hint">{labels.totalMaxSize(formatInputFileSize(totalMaxSize))}</p>
+					{/if}
+					{#if multiple && effectiveMaxFiles}
+						<p class="drop-zone-hint">{labels.maxFilesHint(effectiveMaxFiles)}</p>
+					{/if}
+					{#if minFiles > 0}
+						<p class="drop-zone-hint">{labels.minFilesHint(minFiles)}</p>
+					{/if}
 				{/if}
 			</div>
 		</div>

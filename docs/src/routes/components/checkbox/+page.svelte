@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Checkbox, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
+	import { Checkbox, Radio, RadioGroup, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
 
 	// Default examples
 	let apples = $state(true);
@@ -55,6 +55,12 @@
 	let labelPropValue = $state(false);
 	let childrenValue = $state(false);
 
+	// Label position examples
+	let labelPosition = $state<"top" | "start">("start");
+	let interactivePosValue = $state(false);
+	let topPosValue = $state(true);
+	let startPosValue = $state(true);
+
 	// Callback example
 	let callbackValue = $state(false);
 	let callbackMessage = $state("");
@@ -78,8 +84,10 @@
 		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
 		{name: "required", type: "boolean", default: "false", description: "Required for form validation"},
 		{name: "autofocus", type: "boolean", default: "false", description: "Auto-focus on mount"},
+		{name: "id", type: "string", default: "undefined", description: "Element id (also used by the external label's for attribute)"},
 		{name: "name", type: "string", default: "undefined", description: "Form field name"},
 		{name: "label", type: "string", default: "undefined", description: "Label text"},
+		{name: "labelPosition", type: '"top" | "start"', default: '"start"', description: "Where the label is rendered relative to the checkbox"},
 		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label (aria-label)"},
 		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
 		{name: "style", type: "string", default: '""', description: "Inline styles"}
@@ -90,7 +98,8 @@
 	]
 
 	const slots: Property[] = [
-		{name: "children", type: "Snippet", default: "undefined", description: "Label content rendered inside the checkbox. Takes precedence over the label prop when both are provided"}
+		{name: "children", type: "Snippet", default: "undefined", description: "Label content rendered in the external label wrapper. Combined with the label prop and labelTemplate when provided"},
+		{name: "labelTemplate", type: "Snippet", default: "undefined", description: "Custom label content snippet, rendered in the external label wrapper alongside label and children"}
 	]
 
 	const propertyColumns = [
@@ -285,6 +294,33 @@
 					<Checkbox bind:checked={childrenValue}>
 						<span style="font-weight: bold; color: var(--accent-foreground-rest);">Custom styled label</span>
 					</Checkbox>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Label position</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.75rem">
+					<strong>Interactive</strong>
+					<RadioGroup bind:value={labelPosition} orientation="horizontal" label="labelPosition">
+						<Radio value="start">start</Radio>
+						<Radio value="top">top</Radio>
+					</RadioGroup>
+					<Checkbox bind:checked={interactivePosValue} label="Accept terms" {labelPosition} />
+					<small>checked: {interactivePosValue}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="1rem">
+					<div>
+						<strong>labelPosition="start" (default)</strong>
+						<Checkbox bind:checked={startPosValue} label="Accept terms" labelPosition="start" />
+					</div>
+					<div>
+						<strong>labelPosition="top"</strong>
+						<Checkbox bind:checked={topPosValue} label="Accept terms" labelPosition="top" />
+					</div>
 				</Stack>
 			</GridItem>
 		</Grid>

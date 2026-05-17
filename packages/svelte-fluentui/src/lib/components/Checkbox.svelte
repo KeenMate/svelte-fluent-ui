@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {fluentCheckbox, provideFluentDesignSystem} from "@fluentui/web-components"
+	import type {SlotType} from "../types/index.js"
 
 	if (!customElements.get('fluent-checkbox')) {
 		provideFluentDesignSystem().register(fluentCheckbox())
@@ -10,12 +11,15 @@
 		withIntermediate?: boolean;
 		threeStateOrderUncheckToIntermediate?: boolean;
 		autofocus?: boolean;
-		children?: any;
+		children?: SlotType;
 		disabled?: boolean;
 		readonly?: boolean;
 		required?: boolean;
+		id?: string;
 		name?: string;
 		label?: string;
+		labelTemplate?: SlotType;
+		labelPosition?: "top" | "start";
 		ariaLabel?: string;
 		class?: string;
 		style?: string;
@@ -30,8 +34,11 @@
 		disabled = undefined,
 		readonly = undefined,
 		required = undefined,
+		id = undefined,
 		name = undefined,
 		label = undefined,
+		labelTemplate = undefined,
+		labelPosition = "start",
 		ariaLabel = undefined,
 		class: className = "",
 		style = "",
@@ -102,26 +109,49 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_autofocus -->
-<fluent-checkbox
-	bind:this={element}
-	checked={checked === true}
-	indeterminate={checked === null}
-	{autofocus}
-	{readonly}
-	{disabled}
-	{required}
-	{name}
-	aria-label={ariaLabel || null}
-	class={className || null}
-	style={style || null}
-	onclick={handleOnClick}
->
-	{#if children}
-		{@render children()}
-	{:else if label}
-		{label}
+<span class="fluent-checkbox-wrapper" data-label-position={labelPosition}>
+	{#if label || labelTemplate || children}
+		<label for={id} class="fluent-label">
+			{#if label}{label}{/if}
+			{#if labelTemplate}{@render labelTemplate?.()}{/if}
+			{#if children}{@render children?.()}{/if}
+		</label>
 	{/if}
-</fluent-checkbox>
+
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_autofocus -->
+	<fluent-checkbox
+		bind:this={element}
+		checked={checked === true}
+		indeterminate={checked === null}
+		{autofocus}
+		{readonly}
+		{disabled}
+		{required}
+		{id}
+		{name}
+		aria-label={ariaLabel || label || null}
+		class={className || null}
+		style={style || null}
+		onclick={handleOnClick}
+	></fluent-checkbox>
+</span>
+
+<style>
+	:global(fluent-checkbox::part(label)) {
+		display: none;
+	}
+
+	.fluent-checkbox-wrapper {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.fluent-checkbox-wrapper[data-label-position="top"] {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+	}
+</style>

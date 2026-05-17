@@ -30,6 +30,8 @@ export default defineConfig({
 		}
 	},
 	server: {
+		port: 12900,
+		strictPort: true,
 		fs: {
 			// Allow Vite to read files from the workspace root (one level above docs/),
 			// so `import '../../../CHANGELOG.md?raw'` in homepage / changelog routes

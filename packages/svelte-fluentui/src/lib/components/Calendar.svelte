@@ -83,8 +83,11 @@
 		calendarExtended,
 		culture:                         culture,
 		dayFormat,
-		disabledCheckAllDaysOfMonthYear: false,
-		disabledSelectable:              false,
+		// Default to true so a month/year is only marked disabled when EVERY day in it is.
+		// With false (Blazor parity), date-range restrictions like min/maxDate make Jan 1 of every
+		// year fail the disabledDateFunc check, blocking the year picker entirely.
+		disabledCheckAllDaysOfMonthYear: disabledCheckAllDaysOfMonthYear ?? true,
+		disabledSelectable:              disabledSelectable ?? false,
 		readOnly:                        readonly ?? false,
 		selectMode,
 		value:                           value,
@@ -433,7 +436,7 @@
 						{/each}
 					</div>
 
-					{#each {length: 5} as _, i}
+					{#each {length: 6} as _, i}
 						<!-- A week of 7 days -->
 						<div class="week">
 							{#each calendarExtended.getDaysOfWeek(i) as day}
@@ -529,7 +532,7 @@
 			checkIfSelectedValueHasChanged={false}
 			{readonly}
 			{culture}
-			disabledSelectable={disabledCheckAllDaysOfMonthYear}
+			{disabledSelectable}
 			{animatePeriodChanges}
 			disabledCheckAllDaysOfMonthYear={disabledCheckAllDaysOfMonthYear}
 			{disabledDateFunc}

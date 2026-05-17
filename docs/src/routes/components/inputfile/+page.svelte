@@ -33,6 +33,7 @@
 		{name: "showDragDropZone", type: "boolean", default: "true", description: "Legacy. False is equivalent to appearance=\"button\"."},
 		{name: "maxFileSize", type: "number", default: "10485760", description: "Max bytes per file (default 10MB)."},
 		{name: "minFileSize", type: "number", default: "0", description: "Min bytes per file."},
+		{name: "totalMaxSize", type: "number", default: "0", description: "Max combined bytes across all accepted files. 0 disables. Files that would push the running total over the cap are rejected per rejectionMode."},
 		{name: "maxFileCount / maxFiles", type: "number", default: "10", description: "Max number of files. Extras are rejected per rejectionMode."},
 		{name: "minFiles", type: "number", default: "0", description: "Field-level minimum. Surfaces via onValidityChange."},
 		{name: "customValidator", type: "(file) => string | null | Promise<...>", default: "undefined", description: "Custom per-file validator. Return error message or null."},
@@ -48,6 +49,7 @@
 		{name: "allowFolderDrop", type: "boolean", default: "false", description: "Recursively traverse dropped folders."},
 		{name: "allowReorder", type: "boolean", default: "false", description: "Drag-to-reorder file rows."},
 		{name: "labels", type: "Partial<InputFileLabels>", default: "undefined", description: "Override any built-in string for i18n."},
+		{name: "formatLimits", type: "(info) => string | null", default: "undefined", description: "Compose the limits hint shown under Browse. Receives {minFileSize, maxFileSize, totalMaxSize, maxFiles, minFiles, multiple} (maxFileSize is per file). Replaces ALL size/count lines; the Accepted-types line is unaffected. Return null/empty to keep the default per-limit lines."},
 		{name: "id / aria-label / aria-describedby / aria-labelledby", type: "string", default: "undefined", description: "Standard a11y plumbing. Pair id with <Field id=\"\"> for label-for."},
 		{name: "class", type: "string", default: "\"\"", description: "Additional CSS classes."},
 		{name: "style", type: "string", default: "\"\"", description: "Inline styles."}
@@ -229,11 +231,16 @@
 		resume: "Pokračovat",
 		cancel: "Zrušit",
 		fileTooLarge: (m) => `Soubor je větší než ${m}`,
+		totalSizeExceeded: (m) => `Celková velikost by překročila ${m}`,
 		tooManyFiles: (m) => `Maximálně ${m} souborů`,
 		duplicate: "Duplicitní soubor",
 		fileCount: (n) => `${n} ${n === 1 ? "soubor" : n < 5 ? "soubory" : "souborů"}`,
 		accepted: (a) => `Povolené typy: ${a}`,
-		maxSize: (s) => `Max velikost: ${s}`
+		maxSize: (s) => `Max velikost: ${s}`,
+		minSize: (s) => `Min velikost: ${s}`,
+		totalMaxSize: (s) => `Celková max velikost: ${s}`,
+		maxFilesHint: (n) => `Max souborů: ${n}`,
+		minFilesHint: (n) => `Min souborů: ${n}`
 	}
 
 	function submitForm() {
@@ -522,7 +529,28 @@
 
 		<GridItem xs={12} md={6} xl={6}>
 			<Card>
-				<h3>13. Long file list — maxVisible + listMaxHeight</h3>
+				<h3>13. Single-line limits hint — formatLimits</h3>
+				<small>xl=6 (50%) — collapse min/max files + per-file + total into one line</small>
+				<InputFile
+					multiple
+					maxFileSize={5 * 1024 * 1024}
+					maxFileCount={3}
+					minFiles={1}
+					totalMaxSize={10 * 1024 * 1024}
+					formatLimits={({maxFiles, minFiles, maxFileSize, totalMaxSize}) =>
+						`Up to ${maxFiles} files (min ${minFiles}), ${formatInputFileSize(maxFileSize)} each, ${formatInputFileSize(totalMaxSize)} total`}
+					uploadFileCallback={simulateUpload}
+				/>
+				<small>
+					Returning <code>null</code> from <code>formatLimits</code> falls back to the
+					default per-limit lines.
+				</small>
+			</Card>
+		</GridItem>
+
+		<GridItem xs={12} md={6} xl={6}>
+			<Card>
+				<h3>14. Long file list — maxVisible + listMaxHeight</h3>
 				<small>xl=6 (50%) — 34 seeded files, collapses to 6 visible, list scrolls to 18rem when expanded</small>
 				<InputFile
 					bind:items={bigBatchItems}

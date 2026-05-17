@@ -11,6 +11,7 @@
 	import Calendar from "./Calendar.svelte"
 	import PositioningRegion from "./PositioningRegion.svelte"
 	import type {SlotType} from "../types/index.js"
+	import type DayFormat from "../fluent-ui/calendar/day-format.js"
 
 	type Props = {
 		id?: string
@@ -27,8 +28,18 @@
 		dateFormat?: Intl.DateTimeFormatOptions
 		minDate?: Date
 		maxDate?: Date
-		/** Custom date-disable predicate (composes with minDate/maxDate). */
+		/** Custom date-disable predicate (composes with minDate/maxDate and selectableDates). */
 		disabledDateFunc?: (date: Date) => boolean
+		/** Inverse of disabledDateFunc — return true to allow a date. Composes with disabledDateFunc. */
+		selectableDates?: (date: Date) => boolean
+		/** Apply disabled styling to unselectable dates. Default true. */
+		disabledSelectable?: boolean
+		/** When true, treat a month/year as disabled only if every contained day is disabled. */
+		disabledCheckAllDaysOfMonthYear?: boolean
+		/** Day cell format. "two_digit" renders "01" instead of "1". */
+		dayFormat?: typeof DayFormat["TwoDigit"] | null
+		/** Animate transitions between months/years. By default only the Months view animates. */
+		animatePeriodChanges?: boolean
 		/** First day of the week (0=Sunday…6=Saturday). Overrides culture default. */
 		firstDayOfWeek?: number | null
 		/** When true (default), the popup closes after a date is picked. */
@@ -39,8 +50,12 @@
 		title?: string
 		class?: string
 		style?: string
+		/** Custom render for each day cell in the calendar popup. Receives CalendarDay properties. */
+		day?: SlotType
 		onValueChange?: (value: Date | null) => void
 		onOpenChange?: (open: boolean) => void
+		/** Fires when the user navigates months/years inside the calendar popup. */
+		onPickerMonthChange?: (month: Date) => void
 	}
 
 	let {
@@ -59,6 +74,11 @@
 		minDate = undefined,
 		maxDate = undefined,
 		disabledDateFunc = undefined,
+		selectableDates = undefined,
+		disabledSelectable = undefined,
+		disabledCheckAllDaysOfMonthYear = undefined,
+		dayFormat = undefined,
+		animatePeriodChanges = undefined,
 		firstDayOfWeek = undefined,
 		autoClose = true,
 		open = $bindable(false),
@@ -66,8 +86,10 @@
 		title = undefined,
 		class: className = "",
 		style = "",
+		day: daySnippet = undefined,
 		onValueChange = undefined,
-		onOpenChange = undefined
+		onOpenChange = undefined,
+		onPickerMonthChange = undefined
 	}: Props = $props()
 
 	let inputValue = $state("")
@@ -123,11 +145,12 @@
 		inputValue = formatDate(value)
 	})
 
-	// Check if date is disabled
+	// Check if date is disabled — composes minDate/maxDate, disabledDateFunc, and selectableDates.
 	function isDateDisabled(date: Date): boolean {
 		if (minDate && date < minDate) return true
 		if (maxDate && date > maxDate) return true
 		if (disabledDateFunc?.(date)) return true
+		if (selectableDates && !selectableDates(date)) return true
 		return false
 	}
 
@@ -239,8 +262,14 @@
 						pickerMonth={value || new Date()}
 						{culture}
 						{firstDayOfWeek}
+						{disabledSelectable}
+						{disabledCheckAllDaysOfMonthYear}
+						{dayFormat}
+						{animatePeriodChanges}
 						disabledDateFunc={isDateDisabled}
 						onDateSelected={handleDateSelected}
+						{onPickerMonthChange}
+						day={daySnippet}
 					/>
 				</div>
 			</PositioningRegion>

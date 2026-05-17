@@ -119,10 +119,8 @@ export class CalendarExtended {
 			}
 		})
 
-		const firstDay = new Intl.DateTimeFormat(this.culture.toString(), {
-			weekday: "short",
-		}).resolvedOptions().weekday
-		const firstDayIndex = 0 // Can't reliably extract this, so default to Sunday
+		// weekInfo.firstDay uses ISO (Mon=1 … Sun=7); names[] is Sunday-first, so % 7 maps Sun→0.
+		const firstDayIndex = this.weekInfo.firstDay % 7
 		return this.shift(names, firstDayIndex)
 	}
 
