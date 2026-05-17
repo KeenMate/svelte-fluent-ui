@@ -21,6 +21,14 @@
 		{name: "showSeconds", type: "boolean", default: "false", description: "When true, shows a seconds column in the time picker popup."},
 		{name: "minuteStep", type: "number", default: "1", description: "Step interval for the minutes column (e.g. 15 shows 00, 15, 30, 45)."},
 		{name: "hourStep", type: "number", default: "1", description: "Step interval for the hours column."},
+		{name: "secondStep", type: "number", default: "1", description: "Step interval for the seconds column."},
+		{name: "minTime", type: "string", default: "undefined", description: "Minimum allowed time in HH:mm or HH:mm:ss format."},
+		{name: "maxTime", type: "string", default: "undefined", description: "Maximum allowed time in HH:mm or HH:mm:ss format."},
+		{name: "disabledTimeFunc", type: "(h, m, s) => boolean", default: "undefined", description: "Custom predicate marking a specific (h, m, s) triplet as disabled. Composes with minTime/maxTime and disabledTimes."},
+		{name: "disabledTimes", type: "string[]", default: "undefined", description: 'Convenience shorthand for booked / blocked slots, e.g. ["10:15", "10:30"]. Composes with disabledTimeFunc.'},
+		{name: "autoClose", type: "boolean", default: "true", description: "When true, the popup closes when the user clicks OK."},
+		{name: "open", type: "boolean", default: "false", description: "Bindable open state of the popup."},
+		{name: "useAmPm", type: "boolean | null", default: "undefined", description: "When set, forces AM/PM on (true) or off (false). Overrides use24Hours."},
 		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the root element."},
 		{name: "style", type: "string", default: '""', description: "Inline styles applied to the root element."}
 	]
@@ -43,6 +51,7 @@
 	let timeWithSeconds = $state<string | null>("14:30:45")
 	let timeWithSteps = $state<string | null>("09:00")
 	let disabledTime = $state<string | null>("12:00")
+	let bookingTime = $state<string | null>("10:00")
 </script>
 
 <Stack orientation="vertical" gap="1rem">
@@ -139,6 +148,27 @@
 				hourStep={2}
 			/>
 			<p style="margin: 0;">Selected: {timeWithSteps || 'None'}</p>
+		</Stack>
+
+		<h3>TimePicker with disabled slots (booking-style)</h3>
+		<p>
+			15-minute slots in the 9–12 window. <code>disabledTimes</code> blocks specific slots already booked
+			(here: 10:15 and 10:30). The hour column also dims an hour when no valid minute remains for it
+			under the current other-column choices.
+		</p>
+
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<TimePicker
+				bind:value={bookingTime}
+				label="Pick a free slot"
+				placeholder="HH:mm"
+				use24Hours={true}
+				minuteStep={15}
+				minTime="09:00"
+				maxTime="12:00"
+				disabledTimes={["10:15", "10:30", "11:45"]}
+			/>
+			<p style="margin: 0;">Selected: {bookingTime || 'None'}</p>
 		</Stack>
 
 		<h3>TimePicker States</h3>

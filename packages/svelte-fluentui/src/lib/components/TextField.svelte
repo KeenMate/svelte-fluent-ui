@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {fluentTextField, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {SlotType} from "../types/index.js"
-	import {setAutocompleteOnShadowInput} from "../utils/shadow-dom.js"
+	import {setAutocompleteOnShadowInput, setAttributeOnShadowInput} from "../utils/shadow-dom.js"
 
 	provideFluentDesignSystem().register(fluentTextField())
 
@@ -19,7 +19,16 @@
 		labelTemplate?: SlotType | null | undefined
 		autofocus?: boolean | null | undefined
 		autocomplete?: string | null | undefined
+		/** Max length of the typed value. Forwarded to the shadow-DOM `<input>` since fluent-text-field doesn't expose it. */
+		maxlength?: number | null | undefined
+		/** Min length required for the typed value. Forwarded to the shadow-DOM `<input>`. */
+		minlength?: number | null | undefined
+		/** Regex pattern attribute on the inner `<input>` — participates in native form validity (ValidityState.patternMismatch). */
+		pattern?: string | null | undefined
 		children?: SlotType | null | undefined
+		/** Leading content (icon, prefix) rendered inside the input via the underlying `<fluent-text-field>`'s `start` slot. */
+		start?: SlotType | null | undefined
+		/** Trailing content (icon, suffix, action) rendered inside the input via the underlying `<fluent-text-field>`'s `end` slot. */
 		end?: SlotType | null | undefined
 		style?: string | null | undefined
 		title?: string | null | undefined
@@ -52,7 +61,11 @@
 		labelTemplate = undefined,
 		autofocus = undefined,
 		autocomplete = "off",
+		maxlength = undefined,
+		minlength = undefined,
+		pattern = undefined,
 		children = undefined,
+		start = undefined,
 		end = undefined,
 		style = "",
 		title = undefined,
@@ -137,6 +150,18 @@
 			setAutocompleteOnShadowInput(element, autocomplete)
 		}
 	})
+
+	// fluent-text-field 2.6 doesn't forward maxlength/minlength/pattern to its shadow `<input>`,
+	// so set (or remove) them directly via the same shadow-DOM helper.
+	$effect(() => {
+		setAttributeOnShadowInput(element, "maxlength", maxlength)
+	})
+	$effect(() => {
+		setAttributeOnShadowInput(element, "minlength", minlength)
+	})
+	$effect(() => {
+		setAttributeOnShadowInput(element, "pattern", pattern)
+	})
 </script>
 
 {#if label || labelTemplate}
@@ -177,6 +202,11 @@
 >
 	{#if children}
 		{@render children()}
+	{/if}
+	{#if start}
+		<div slot="start">
+			{@render start()}
+		</div>
 	{/if}
 	{#if end}
 		<div slot="end">

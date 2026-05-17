@@ -38,6 +38,10 @@
 		disabledCheckAllDaysOfMonthYear?: boolean
 		/** Day cell format. "two_digit" renders "01" instead of "1". */
 		dayFormat?: typeof DayFormat["TwoDigit"] | null
+		/** Day-cell edge length for the calendar popup (default 28px). Resizes the whole grid proportionally. */
+		cellSize?: string | number
+		/** Gap between cells in the calendar popup (default 2px). */
+		gap?: string | number
 		/** Animate transitions between months/years. By default only the Months view animates. */
 		animatePeriodChanges?: boolean
 		/** First day of the week (0=Sunday…6=Saturday). Overrides culture default. */
@@ -78,6 +82,8 @@
 		disabledSelectable = undefined,
 		disabledCheckAllDaysOfMonthYear = undefined,
 		dayFormat = undefined,
+		cellSize = undefined,
+		gap = undefined,
 		animatePeriodChanges = undefined,
 		firstDayOfWeek = undefined,
 		autoClose = true,
@@ -265,6 +271,8 @@
 						{disabledSelectable}
 						{disabledCheckAllDaysOfMonthYear}
 						{dayFormat}
+						{cellSize}
+						{gap}
 						{animatePeriodChanges}
 						disabledDateFunc={isDateDisabled}
 						onDateSelected={handleDateSelected}

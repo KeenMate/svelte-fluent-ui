@@ -23,6 +23,8 @@
 		style?: string
 		class?: string
 		"aria-label"?: string
+		/** Native HTML `title` — text shown as a browser tooltip when hovering the button. */
+		title?: string
 		onclick?: (ev: MouseEvent) => void
 	}
 
@@ -45,6 +47,7 @@
 		style= "",
 		class: className = undefined,
 		"aria-label": ariaLabel = undefined,
+		title = undefined,
 		onclick = undefined
 	}: Props = $props()
 </script>
@@ -68,6 +71,7 @@
 	{style}
 	class={className}
 	aria-label={ariaLabel}
+	{title}
 	{onclick}
 >
 	{#if start}

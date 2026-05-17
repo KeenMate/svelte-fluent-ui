@@ -119,6 +119,7 @@
 		const styles: string[] = [];
 		styles.push(`height: ${calculatedHeight}`);
 		styles.push('overflow: auto');
+		styles.push('overscroll-behavior: contain');
 		styles.push('padding: 0px 0.1rem');
 		styles.push('display: inline-block');
 		if (width) styles.push(`width: ${width}`);

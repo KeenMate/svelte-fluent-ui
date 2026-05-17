@@ -952,6 +952,7 @@
 		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
 		max-height: 200px;
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		width: 100%;
 		box-sizing: border-box;
 		z-index: var(--fluent-z-popover, 1060);

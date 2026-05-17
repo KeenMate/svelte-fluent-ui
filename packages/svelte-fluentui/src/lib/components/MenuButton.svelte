@@ -297,6 +297,7 @@
 		left: 0;
 		z-index: var(--fluent-z-popover, 1060);
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		background: transparent;
 		border-radius: calc(var(--layer-corner-radius, var(--control-corner-radius, 4)) * 1px);
 		/* fluent-menu's built-in elevation is barely visible on dark themes —

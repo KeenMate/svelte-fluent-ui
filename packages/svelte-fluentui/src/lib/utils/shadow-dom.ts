@@ -29,14 +29,32 @@ export function setAutocompleteOnShadowInput(
 	autocomplete: string,
 	selector: string = "input"
 ): void {
+	setAttributeOnShadowInput(element, "autocomplete", autocomplete, selector)
+}
+
+/**
+ * Sets (or removes, when value is `null`/`undefined`) an arbitrary attribute on the input/textarea
+ * inside a FluentUI web component's open shadow root. Same retry-on-not-ready strategy as
+ * `setAutocompleteOnShadowInput`.
+ *
+ * Use this when FluentUI 2.6 doesn't forward a native attribute to the inner input (e.g. `maxlength`,
+ * `minlength`, `pattern`, `inputmode`, `step`). Most consumers won't need this directly — the wrapper
+ * components expose props that call this internally.
+ */
+export function setAttributeOnShadowInput(
+	element: HTMLElement | undefined,
+	name: string,
+	value: string | number | null | undefined,
+	selector: string = "input"
+): void {
 	if (!element) return
 
 	const trySetAttribute = () => {
 		const input = element.shadowRoot?.querySelector(selector)
 		if (input) {
-			input.setAttribute("autocomplete", autocomplete)
+			if (value == null) input.removeAttribute(name)
+			else input.setAttribute(name, String(value))
 		} else if (element.shadowRoot === null) {
-			// Shadow root not ready yet, try again after a short delay
 			setTimeout(trySetAttribute, 10)
 		}
 	}

@@ -12,6 +12,8 @@
 		width?: string
 		height?: string
 		reversed?: boolean
+		/** Allow children to wrap onto multiple lines when they overflow the main axis. */
+		wrap?: boolean
 		class?: string
 		style?: string
 	}
@@ -35,6 +37,7 @@
 		width = undefined,
 		height = undefined,
 		reversed = false,
+		wrap = false,
 		class: className = "",
 		style = ""
 	}: Props = $props()
@@ -54,6 +57,7 @@
 <div
 	class={computedClass}
 	data-reverse={reversed ? "true" : undefined}
+	style:flex-wrap={wrap ? "wrap" : undefined}
 	style:gap={gap}
 	style:row-gap={verticalGap}
 	style:column-gap={horizontalGap}

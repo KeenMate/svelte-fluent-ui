@@ -34,6 +34,10 @@
 		minTime?: string
 		/** Maximum allowed time in HH:mm or HH:mm:ss format. */
 		maxTime?: string
+		/** Custom predicate marking a specific (h, m, s) triplet as disabled. Composes with minTime/maxTime/disabledTimes. */
+		disabledTimeFunc?: (hour: number, minute: number, second: number) => boolean
+		/** Convenience shorthand for booked / blocked time slots. Each entry in "HH:mm" or "HH:mm:ss" form. */
+		disabledTimes?: string[]
 		/** When true (default), the popup closes when the user clicks OK. */
 		autoClose?: boolean
 		/** Bindable popup open state. */
@@ -65,6 +69,8 @@
 		secondStep = 1,
 		minTime = undefined,
 		maxTime = undefined,
+		disabledTimeFunc = undefined,
+		disabledTimes = undefined,
 		autoClose = true,
 		open = $bindable(false),
 		openClockIconAriaLabel = "Open time picker",
@@ -99,12 +105,60 @@
 	}
 	const minTotal = $derived(toTotalSeconds(minTime))
 	const maxTotal = $derived(toTotalSeconds(maxTime))
+
+	// Normalize "10:15" / "10:15:0" / "10:15:30" → "10:15:0" / "10:15:30" (no zero-padding) so a Set lookup hits.
+	function normalizeTimeKey(s: string): string | null {
+		const v = toTotalSeconds(s)
+		if (v == null) return null
+		return `${Math.floor(v / 3600)}:${Math.floor((v % 3600) / 60)}:${v % 60}`
+	}
+	const disabledTimesSet = $derived(
+		new Set((disabledTimes ?? []).map(normalizeTimeKey).filter((s): s is string => s != null))
+	)
+
 	function isTimeDisabled(h: number, m: number, s: number): boolean {
 		const total = h * 3600 + m * 60 + s
 		if (minTotal != null && total < minTotal) return true
 		if (maxTotal != null && total > maxTotal) return true
+		if (disabledTimeFunc?.(h, m, s)) return true
+		if (disabledTimesSet.has(`${h}:${m}:${s}`)) return true
 		return false
 	}
+
+	// Convert a displayed hour + period to its effective 24h form for predicate evaluation.
+	function toEffective24Hour(displayHour: number, period: "AM" | "PM" = selectedPeriod): number {
+		if (effective24h) return displayHour
+		let h = displayHour
+		if (period === "PM" && h !== 12) h += 12
+		else if (period === "AM" && h === 12) h = 0
+		return h
+	}
+
+	// Column-aware disabled checks — each column evaluates the triplet using the other columns' current values.
+	function isHourCellDisabled(hour: number): boolean {
+		const h = toEffective24Hour(hour)
+		const s = showSeconds ? selectedSecond : 0
+		return isTimeDisabled(h, selectedMinute, s)
+	}
+	function isMinuteCellDisabled(minute: number): boolean {
+		const h = toEffective24Hour(selectedHour)
+		const s = showSeconds ? selectedSecond : 0
+		return isTimeDisabled(h, minute, s)
+	}
+	function isSecondCellDisabled(second: number): boolean {
+		const h = toEffective24Hour(selectedHour)
+		return isTimeDisabled(h, selectedMinute, second)
+	}
+	function isPeriodCellDisabled(period: "AM" | "PM"): boolean {
+		const h = toEffective24Hour(selectedHour, period)
+		const s = showSeconds ? selectedSecond : 0
+		return isTimeDisabled(h, selectedMinute, s)
+	}
+	const currentSelectionDisabled = $derived.by(() => {
+		const h = toEffective24Hour(selectedHour)
+		const s = showSeconds ? selectedSecond : 0
+		return isTimeDisabled(h, selectedMinute, s)
+	})
 
 	// Close on outside click / Escape
 	$effect(() => {
@@ -130,6 +184,21 @@
 		return () => {
 			document.removeEventListener("pointerdown", handlePointerDown, true)
 			document.removeEventListener("keydown", handleKeyDown, true)
+		}
+	})
+
+	// When the popup opens, center each column's selected option (or the first enabled option if nothing
+	// is selected) so the user doesn't land in a pile of disabled / out-of-range items. Uses manual
+	// scrollTop math rather than scrollIntoView to avoid potentially scrolling the outer page.
+	$effect(() => {
+		if (!isOpen || !popupElement) return
+		for (const list of popupElement.querySelectorAll<HTMLElement>(".time-list")) {
+			const target =
+				list.querySelector<HTMLElement>(".time-option.selected:not(:disabled)") ??
+				list.querySelector<HTMLElement>(".time-option.selected") ??
+				list.querySelector<HTMLElement>(".time-option:not(:disabled)")
+			if (!target) continue
+			list.scrollTop = target.offsetTop - list.clientHeight / 2 + target.clientHeight / 2
 		}
 	})
 	let selectedHour = $state(12)
@@ -214,6 +283,17 @@
 		if (!disabled && !readonly) {
 			setOpen(!isOpen)
 		}
+	}
+
+	// The wrapper has its own onclick for "click anywhere in field to open"; without these the click bubbles
+	// from the inner button → wrapper, toggling the popup twice (clock) or re-opening after clear (clear).
+	function handleClockButtonClick(e: MouseEvent) {
+		e.stopPropagation()
+		handleInputClick(e)
+	}
+	function handleClearClick(e: MouseEvent) {
+		e.stopPropagation()
+		handleClear()
 	}
 
 	// Stop propagation to prevent closing when clicking inside popup
@@ -302,7 +382,7 @@
 				<button
 					type="button"
 					class="clock-button"
-					onclick={handleInputClick}
+					onclick={handleClockButtonClick}
 					disabled={disabled}
 					aria-label={openClockIconAriaLabel}
 				>
@@ -316,7 +396,7 @@
 					<button
 						type="button"
 						class="clear-button"
-						onclick={handleClear}
+						onclick={handleClearClick}
 						aria-label="Clear time"
 					>
 						<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
@@ -344,11 +424,13 @@
 							<div class="column-label">Hour</div>
 							<div class="time-list">
 								{#each hours as hour}
+									{@const hourDisabled = isHourCellDisabled(hour)}
 									<button
 										type="button"
 										class="time-option"
 										class:selected={selectedHour === hour}
-										onclick={() => selectedHour = hour}
+										disabled={hourDisabled}
+										onclick={() => { if (!hourDisabled) selectedHour = hour }}
 									>
 										{hour.toString().padStart(2, "0")}
 									</button>
@@ -361,11 +443,13 @@
 							<div class="column-label">Minute</div>
 							<div class="time-list">
 								{#each minutes as minute}
+									{@const minuteDisabled = isMinuteCellDisabled(minute)}
 									<button
 										type="button"
 										class="time-option"
 										class:selected={selectedMinute === minute}
-										onclick={() => selectedMinute = minute}
+										disabled={minuteDisabled}
+										onclick={() => { if (!minuteDisabled) selectedMinute = minute }}
 									>
 										{minute.toString().padStart(2, "0")}
 									</button>
@@ -379,11 +463,13 @@
 								<div class="column-label">Second</div>
 								<div class="time-list">
 									{#each seconds as second}
+										{@const secondDisabled = isSecondCellDisabled(second)}
 										<button
 											type="button"
 											class="time-option"
 											class:selected={selectedSecond === second}
-											onclick={() => selectedSecond = second}
+											disabled={secondDisabled}
+											onclick={() => { if (!secondDisabled) selectedSecond = second }}
 										>
 											{second.toString().padStart(2, "0")}
 										</button>
@@ -394,6 +480,8 @@
 
 						<!-- AM/PM selector (12-hour format) -->
 						{#if !effective24h}
+							{@const amDisabled = isPeriodCellDisabled("AM")}
+							{@const pmDisabled = isPeriodCellDisabled("PM")}
 							<div class="time-column period-column">
 								<div class="column-label">Period</div>
 								<div class="time-list">
@@ -401,7 +489,8 @@
 										type="button"
 										class="time-option"
 										class:selected={selectedPeriod === "AM"}
-										onclick={() => selectedPeriod = "AM"}
+										disabled={amDisabled}
+										onclick={() => { if (!amDisabled) selectedPeriod = "AM" }}
 									>
 										AM
 									</button>
@@ -409,7 +498,8 @@
 										type="button"
 										class="time-option"
 										class:selected={selectedPeriod === "PM"}
-										onclick={() => selectedPeriod = "PM"}
+										disabled={pmDisabled}
+										onclick={() => { if (!pmDisabled) selectedPeriod = "PM" }}
 									>
 										PM
 									</button>
@@ -419,7 +509,7 @@
 					</div>
 
 					<div class="time-actions">
-						<Button appearance="accent" onclick={handleApply} style="flex: 1;">
+						<Button appearance="accent" onclick={handleApply} disabled={currentSelectionDisabled} style="flex: 1;">
 							OK
 						</Button>
 					</div>
@@ -514,6 +604,7 @@
 		gap: 2px;
 		max-height: 200px;
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		border: 1px solid var(--neutral-stroke-rest);
 		border-radius: 4px;
 		padding: 0.25rem;
@@ -530,7 +621,7 @@
 		text-align: center;
 	}
 
-	.time-option:hover {
+	.time-option:not(:disabled):hover {
 		background: var(--neutral-fill-secondary-hover);
 	}
 
@@ -538,6 +629,13 @@
 		background: var(--accent-fill-rest);
 		color: var(--neutral-foreground-on-accent);
 		font-weight: 600;
+	}
+
+	.time-option:disabled {
+		color: var(--neutral-stroke-focus);
+		cursor: default;
+		text-decoration: line-through;
+		opacity: 0.6;
 	}
 
 	.time-actions {

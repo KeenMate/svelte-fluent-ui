@@ -1,6 +1,6 @@
 {
 	"name": "svelte-fluentui",
-	"version": "1.0.0-rc19",
+	"version": "1.0.0-rc20",
 	"description": "A Svelte wrapper library for Microsoft FluentUI web components",
 	"license": "MIT",
 	"author": "KeenMate",

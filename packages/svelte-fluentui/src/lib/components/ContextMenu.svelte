@@ -489,6 +489,7 @@
 		left: 0;
 		z-index: var(--fluent-z-popover, 1060);
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		min-width: 200px;
 		padding: 0.25rem 0;
 		background: var(--neutral-layer-1, #ffffff);

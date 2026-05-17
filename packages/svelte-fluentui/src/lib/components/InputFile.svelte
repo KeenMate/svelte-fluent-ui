@@ -1526,6 +1526,7 @@
 		padding: 0.75rem;
 		z-index: var(--fluent-z-popover, 1060);
 		overflow-y: auto;
+		overscroll-behavior: contain;
 	}
 	.minimal-popover .file-list {
 		gap: 0.4rem;

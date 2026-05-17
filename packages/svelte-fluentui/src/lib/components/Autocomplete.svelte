@@ -602,7 +602,7 @@
 			<PositioningRegion
 				anchor={containerElement}
 				visible={isOpen}
-				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto;"
+				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto; overscroll-behavior: contain;"
 			>
 				<div class="options-list">
 					{#if headerContent}

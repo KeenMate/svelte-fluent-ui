@@ -30,6 +30,10 @@
 		animatePeriodChanges?: boolean
 		disabledSelectable?: boolean
 		dayFormat?: typeof DayFormat["TwoDigit"] | null
+		/** Day-cell edge length in CSS units (default 28px). Resizes the whole grid proportionally. */
+		cellSize?: string | number
+		/** Gap between cells in CSS units (default 2px). */
+		gap?: string | number
 		readonly?: boolean
 		selectDatesHover?: ((date: Date) => Date[]) | null | undefined
 		onDatesSelected?: (values: Date[]) => void
@@ -54,6 +58,8 @@
 		    selectMode                      = "single",
 		    checkIfSelectedValueHasChanged  = undefined,
 		    dayFormat                       = undefined,
+		    cellSize                        = undefined,
+		    gap                             = undefined,
 		    disabledDateFunc                = undefined,
 		    selectableDates                 = undefined,
 		    selectDatesHover                = undefined,
@@ -98,6 +104,20 @@
 	const titles                    = $derived(new CalendarTitles(calendar))
 	const multipleSelection         = $derived(getMultipleSelection())
 	const year                      = $derived(pickerMonth.getFullYear())
+
+	// CSS variable overrides for cell size / gap. Accepts a number (interpreted as px) or any CSS length string.
+	const sizeStyle = $derived.by(() => {
+		const parts: string[] = []
+		if (cellSize !== undefined && cellSize !== null) {
+			const v = typeof cellSize === "number" ? `${cellSize}px` : cellSize
+			parts.push(`--calendar-cell-size: ${v}; --month-cell-size: ${v}; --year-cell-size: ${v}`)
+		}
+		if (gap !== undefined && gap !== null) {
+			const v = typeof gap === "number" ? `${gap}px` : gap
+			parts.push(`--calendar-gap: ${v}; --month-gap: ${v}; --year-gap: ${v}`)
+		}
+		return parts.join("; ")
+	})
 
 	function getMultipleSelection() {
 		let inProgress = selectDatesHover !== null
@@ -378,11 +398,13 @@
 {/snippet}
 
 <div
-	
+
 	class="{restProps.class || ''}"
 	class:fluent-calendar={view === "days"}
 	class:fluent-month={view === "months"}
 	class:fluent-year={view === "years"}
+	aria-readonly={readonly ? "true" : null}
+	style={sizeStyle || null}
 >
 	{#if !_pickerView || _pickerView === "days"}
 		<div>
@@ -536,6 +558,8 @@
 			{animatePeriodChanges}
 			disabledCheckAllDaysOfMonthYear={disabledCheckAllDaysOfMonthYear}
 			{disabledDateFunc}
+			{cellSize}
+			{gap}
 		/>
 	{/if}
 
@@ -551,6 +575,8 @@
 			{animatePeriodChanges}
 			disabledCheckAllDaysOfMonthYear={disabledCheckAllDaysOfMonthYear}
 			{disabledDateFunc}
+			{cellSize}
+			{gap}
 		/>
 	{/if}
 </div>

@@ -48,6 +48,8 @@
 		{name: "disabledSelectable", type: "boolean", default: "undefined", description: "When true, disabled days still receive disabled styling rather than being hidden."},
 		{name: "disabledCheckAllDaysOfMonthYear", type: "boolean", default: "undefined", description: "When true, a month/year is treated as disabled only if every day inside it is disabled."},
 		{name: "dayFormat", type: '"two_digit" | null', default: "undefined", description: 'Day cell format. "two_digit" renders "01" instead of "1".'},
+		{name: "cellSize", type: "string | number", default: "undefined", description: 'Day-cell edge length for the calendar popup (default 28px). Numbers are treated as px; strings pass through as-is (e.g. "2.5rem", "32px"). Resizes the whole grid proportionally.'},
+		{name: "gap", type: "string | number", default: "undefined", description: "Gap between cells in the calendar popup (default 2px). Same accepted forms as cellSize."},
 		{name: "animatePeriodChanges", type: "boolean", default: "undefined", description: "Animate transitions between months/years inside the popup. By default only the Months view animates."},
 		{name: "firstDayOfWeek", type: "number | null", default: "undefined", description: "First day of the week (0=Sunday … 6=Saturday). Overrides the culture default."},
 		{name: "autoClose", type: "boolean", default: "true", description: "When true, the popup closes immediately after a date is picked."},
@@ -204,6 +206,18 @@
 				onPickerMonthChange={(m) => pickerMonthLabel = m.toLocaleDateString(undefined, {year: 'numeric', month: 'long'})}
 			/>
 			<p style="margin: 0;">Currently viewing: {pickerMonthLabel || '(open the popup and click ▲/▼)'}</p>
+		</Stack>
+
+		<h3>DatePicker with larger cells (cellSize + gap)</h3>
+		<p>Override the cell edge length and inter-cell gap. Numbers are interpreted as px; strings pass through.</p>
+
+		<Stack orientation="vertical" gap="1rem" style="max-width: 400px;">
+			<DatePicker
+				label="Roomier calendar"
+				placeholder="Choose a date"
+				cellSize={40}
+				gap={4}
+			/>
 		</Stack>
 
 		<h3>DatePicker with two-digit day format</h3>
