@@ -88,7 +88,7 @@
 	}
 
 	.badge-circular {
-		border-radius: 999px;
+		border-radius: var(--fluent-border-radius-pill);
 		min-width: 20px;
 		padding: 2px 6px;
 	}

@@ -260,7 +260,7 @@
 				anchor={wrapperElement}
 				visible={isOpen}
 				matchWidth={false}
-				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12);"
+				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: var(--fluent-border-radius-md); padding: 1rem; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12);"
 			>
 				<div bind:this={popupElement}>
 					<Calendar
@@ -317,7 +317,7 @@
 		justify-content: center;
 		padding: 0.25rem;
 		color: var(--neutral-foreground-rest);
-		border-radius: 4px;
+		border-radius: var(--fluent-border-radius-md);
 	}
 
 	.calendar-button:hover:not(:disabled),

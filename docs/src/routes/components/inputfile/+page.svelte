@@ -8,12 +8,20 @@
 		GridItem,
 		Field,
 		Button,
+		Checkbox,
+		Select,
+		Option,
 		formatInputFileSize
 	} from "svelte-fluentui"
 	import type {
 		FileUploadHandler,
+		FileUploadResult,
 		InputFileItem,
-		InputFileLabels
+		InputFileLabels,
+		InputFileSelectorAppearance,
+		InputFileListAppearance,
+		InputFileCardSize,
+		InputFileChipsPosition
 	} from "svelte-fluentui"
 
 	type Property = {
@@ -29,8 +37,11 @@
 		{name: "accept", type: "string", default: "undefined", description: "File types to accept (e.g. \".jpg,.png\" or \"image/*\")."},
 		{name: "multiple", type: "boolean", default: "false", description: "Allow multiple file selection."},
 		{name: "disabled", type: "boolean", default: "false", description: "Disable the component."},
-		{name: "appearance", type: "\"card\" | \"button\" | \"minimal\" | \"compact-chips\"", default: "\"card\"", description: "Visual variant. Compact-chips fits inside Field next to other inputs."},
-		{name: "showDragDropZone", type: "boolean", default: "true", description: "Legacy. False is equivalent to appearance=\"button\"."},
+		{name: "selectorAppearance", type: "\"card\" | \"button\" | \"minimal\"", default: "\"card\"", description: "Visual variant of the file picker (drop-zone card, plain button, or compact icon)."},
+		{name: "listAppearance", type: "\"list\" | \"chips\" | \"popover\" | \"none\"", default: "\"list\"", description: "How the selected files are displayed: vertical rows, inline chips, anchored popover, or hidden."},
+		{name: "cardSize", type: "\"minimal\" | \"compact\" | \"big\"", default: "\"compact\"", description: "Card density when selectorAppearance=\"card\". minimal=single line, compact=horizontal row + wrapping hints, big=full vertical showcase."},
+		{name: "expandOnDrag", type: "boolean", default: "false", description: "When true, an overlay covers the selector (or `expandOnDragTarget`) with a `big` drop layout as soon as a file is dragged anywhere on the document. No layout shift — overlay is portalled above content."},
+		{name: "expandOnDragTarget", type: "HTMLElement | string", default: "undefined", description: "CSS selector or element ref the drag-expand overlay should cover. Defaults to the selector itself. Use to size the overlay to a parent form/section."},
 		{name: "maxFileSize", type: "number", default: "10485760", description: "Max bytes per file (default 10MB)."},
 		{name: "minFileSize", type: "number", default: "0", description: "Min bytes per file."},
 		{name: "totalMaxSize", type: "number", default: "0", description: "Max combined bytes across all accepted files. 0 disables. Files that would push the running total over the cap are rejected per rejectionMode."},
@@ -61,7 +72,8 @@
 		{name: "onFileError", type: "(file, error, item?) => void", default: "undefined", description: "Validation or upload failure."},
 		{name: "onCompleted", type: "() => void", default: "undefined", description: "All uploads finished (success or error)."},
 		{name: "onValidityChange", type: "(valid, reasons) => void", default: "undefined", description: "Field-level validity changed (minFiles, maxFiles, item errors)."},
-		{name: "onItemsChange", type: "(items) => void", default: "undefined", description: "Items array mutated."}
+		{name: "onItemsChange", type: "(items) => void", default: "undefined", description: "Items array mutated."},
+		{name: "onItemRemove", type: "(item) => void", default: "undefined", description: "Fires per item on removal (removeAt / removeById / clear / × button). Receives the removed item with final status and metadata — use it to send server-side cleanup like DELETE /api/files/:guid."}
 	]
 
 	const slots: Property[] = [
@@ -137,6 +149,71 @@
 				reject(new DOMException("Aborted", "AbortError"))
 			})
 		})
+	}
+
+	let playgroundSelector = $state<InputFileSelectorAppearance>("card")
+	let playgroundList = $state<InputFileListAppearance>("list")
+	let playgroundCardSize = $state<InputFileCardSize>("compact")
+	let playgroundChipsPosition = $state<InputFileChipsPosition>("below")
+	let playgroundExpandOnDrag = $state(false)
+	let playgroundMultiple = $state(true)
+	let playgroundDisabled = $state(false)
+	let playgroundItems = $state<InputFileItem[]>([])
+
+	// Fake server state for demo 16 (server-sync flow). A real app would talk
+	// to /api/upload + /api/files/:guid; here we simulate with an in-memory
+	// Map keyed by guid and a parallel log so you can see when "DELETE" fires.
+	type ServerRecord = {guid: string; name: string; size: number; uploadedAt: number}
+	type ServerLogEntry = {time: string; action: "UPLOAD" | "DELETE"; guid: string; name: string}
+	let serverFiles = $state<ServerRecord[]>([])
+	let serverLog = $state<ServerLogEntry[]>([])
+	let serverSyncItems = $state<InputFileItem[]>([])
+
+	function nowHms(): string {
+		const d = new Date()
+		return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`
+	}
+
+	const serverSyncUpload: FileUploadHandler = async (file, onProgress, signal) => {
+		return new Promise<FileUploadResult>((resolve, reject) => {
+			let progress = 0
+			const interval = setInterval(() => {
+				if (signal?.aborted) {
+					clearInterval(interval)
+					reject(new DOMException("Aborted", "AbortError"))
+					return
+				}
+				progress += 12
+				onProgress(progress)
+				if (progress >= 100) {
+					clearInterval(interval)
+					const guid = (crypto.randomUUID?.() ?? `g-${Math.random().toString(36).slice(2)}`)
+					serverFiles = [...serverFiles, {guid, name: file.name, size: file.size, uploadedAt: Date.now()}]
+					const entry: ServerLogEntry = {time: nowHms(), action: "UPLOAD", guid, name: file.name}
+					serverLog = [entry, ...serverLog].slice(0, 20)
+					// The handler return is merged into the InputFileItem after success
+					// (see FileUploadResult). The server guid lands in metadata so
+					// onItemRemove can read it back later when the user removes
+					// the item from the list.
+					resolve({metadata: {serverGuid: guid, uploadedAt: Date.now()}})
+				}
+			}, 180)
+			signal?.addEventListener("abort", () => {
+				clearInterval(interval)
+				reject(new DOMException("Aborted", "AbortError"))
+			})
+		})
+	}
+
+	function handleServerSyncRemove(item: InputFileItem) {
+		// Only completed items have a server-side counterpart to delete. Pending
+		// or errored items were never persisted, so there's nothing to clean up.
+		if (item.status !== "completed") return
+		const guid = item.metadata?.serverGuid as string | undefined
+		if (!guid) return
+		serverFiles = serverFiles.filter((r) => r.guid !== guid)
+		const entry: ServerLogEntry = {time: nowHms(), action: "DELETE", guid, name: item.name}
+		serverLog = [entry, ...serverLog].slice(0, 20)
 	}
 
 	let basicItems = $state<InputFileItem[]>([])
@@ -316,6 +393,77 @@
 	</p>
 
 	<Grid spacing={3}>
+		<GridItem xs={12}>
+			<Card>
+				<h3>0. Playground — selector × list</h3>
+				<small>Mix selectorAppearance and listAppearance to preview every combination live.</small>
+				<Stack orientation="vertical" gap="1rem">
+					<Stack orientation="horizontal" gap="1rem" horizontalAlign="start" verticalAlign="end" wrap={true}>
+						<Select label="selectorAppearance" bind:value={playgroundSelector}>
+							{#snippet children()}
+								<Option value="card">card</Option>
+								<Option value="button">button</Option>
+								<Option value="minimal">minimal</Option>
+							{/snippet}
+						</Select>
+						<Select label="listAppearance" bind:value={playgroundList}>
+							{#snippet children()}
+								<Option value="list">list</Option>
+								<Option value="chips">chips</Option>
+								<Option value="popover">popover</Option>
+								<Option value="none">none</Option>
+							{/snippet}
+						</Select>
+						<Select label="cardSize" bind:value={playgroundCardSize} disabled={playgroundSelector !== "card"}>
+							{#snippet children()}
+								<Option value="minimal">minimal</Option>
+								<Option value="compact">compact</Option>
+								<Option value="big">big</Option>
+							{/snippet}
+						</Select>
+						<Select label="chipsPosition" bind:value={playgroundChipsPosition} disabled={playgroundList !== "chips"}>
+							{#snippet children()}
+								<Option value="end">end</Option>
+								<Option value="below">below</Option>
+							{/snippet}
+						</Select>
+						<Checkbox bind:checked={playgroundMultiple}>multiple</Checkbox>
+						<Checkbox bind:checked={playgroundDisabled}>disabled</Checkbox>
+						<Checkbox bind:checked={playgroundExpandOnDrag}>expandOnDrag</Checkbox>
+					</Stack>
+					<InputFile
+						bind:items={playgroundItems}
+						multiple={playgroundMultiple}
+						disabled={playgroundDisabled}
+						selectorAppearance={playgroundSelector}
+						listAppearance={playgroundList}
+						cardSize={playgroundCardSize}
+						chipsPosition={playgroundChipsPosition}
+						expandOnDrag={playgroundExpandOnDrag}
+						uploadFileCallback={simulateUpload}
+					/>
+					<Stack orientation="horizontal" gap="0.75rem" verticalAlign="center" horizontalAlign="space-between">
+						<small>
+							Current combo:
+							<code>selectorAppearance="{playgroundSelector}"</code>
+							·
+							<code>listAppearance="{playgroundList}"</code>
+							{#if playgroundSelector === "card"}· <code>cardSize="{playgroundCardSize}"</code>{/if}
+							{#if playgroundList === "chips"}· <code>chipsPosition="{playgroundChipsPosition}"</code>{/if}
+							{#if playgroundExpandOnDrag}· <code>expandOnDrag</code>{/if}
+							· {playgroundItems.length} item{playgroundItems.length === 1 ? "" : "s"}
+						</small>
+						<Button appearance="outline" disabled={playgroundItems.length === 0} onclick={() => (playgroundItems = [])}>Reset items</Button>
+					</Stack>
+					{#if playgroundExpandOnDrag}
+						<small style="color: var(--neutral-foreground-hint);">
+							Tip: drag any file from your OS onto this page to see the overlay expand.
+						</small>
+					{/if}
+				</Stack>
+			</Card>
+		</GridItem>
+
 		<GridItem xs={12} md={6} xl={4}>
 			<Card>
 				<h3>1. Basic auto-upload</h3>
@@ -438,7 +586,8 @@
 				<Field label="Quick attach" hint="Chips appear inline.">
 					<InputFile
 						bind:items={chipsItems}
-						appearance="compact-chips"
+						selectorAppearance="button"
+						listAppearance="chips"
 						multiple
 						accept="image/*,.pdf"
 						uploadFileCallback={simulateUpload}
@@ -455,7 +604,8 @@
 					<span>Attach:</span>
 					<InputFile
 						multiple
-						appearance="minimal"
+						selectorAppearance="minimal"
+						listAppearance="popover"
 						initialItems={initialMinimalSeed}
 						uploadFileCallback={simulateUpload}
 					/>
@@ -479,8 +629,8 @@
 		<GridItem xs={12} md={6} xl={3}>
 			<Card>
 				<h3>10. Button-only</h3>
-				<small>xl=3 (25%) — appearance="button"</small>
-				<InputFile multiple appearance="button" uploadFileCallback={simulateUpload} />
+				<small>xl=3 (25%) — selectorAppearance="button"</small>
+				<InputFile multiple selectorAppearance="button" uploadFileCallback={simulateUpload} />
 			</Card>
 		</GridItem>
 
@@ -530,20 +680,28 @@
 		<GridItem xs={12} md={6} xl={6}>
 			<Card>
 				<h3>13. Single-line limits hint — formatLimits</h3>
-				<small>xl=6 (50%) — collapse min/max files + per-file + total into one line</small>
+				<small>xl=6 (50%) — one line that updates live as you add/remove files</small>
 				<InputFile
 					multiple
 					maxFileSize={5 * 1024 * 1024}
 					maxFileCount={3}
 					minFiles={1}
 					totalMaxSize={10 * 1024 * 1024}
-					formatLimits={({maxFiles, minFiles, maxFileSize, totalMaxSize}) =>
-						`Up to ${maxFiles} files (min ${minFiles}), ${formatInputFileSize(maxFileSize)} each, ${formatInputFileSize(totalMaxSize)} total`}
+					formatLimits={({
+						maxFiles,
+						minFiles,
+						maxFileSize,
+						totalMaxSize,
+						currentCount,
+						currentTotalSize
+					}) =>
+						`${currentCount}/${maxFiles} files (min ${minFiles}), ${formatInputFileSize(maxFileSize)} each, ${formatInputFileSize(currentTotalSize)} / ${formatInputFileSize(totalMaxSize)} total`}
 					uploadFileCallback={simulateUpload}
 				/>
 				<small>
-					Returning <code>null</code> from <code>formatLimits</code> falls back to the
-					default per-limit lines.
+					Composer receives <code>currentCount</code> and <code>currentTotalSize</code> in
+					addition to the static limits, so the hint reflects what's already accepted.
+					Returning <code>null</code> falls back to the default per-limit lines.
 				</small>
 			</Card>
 		</GridItem>
@@ -565,6 +723,78 @@
 					the list shows 6 + a "Show 28 more" toggle; once expanded, <code>listMaxHeight</code>
 					scopes the scroll to one panel.
 				</small>
+			</Card>
+		</GridItem>
+
+		<GridItem xs={12} md={6} xl={6}>
+			<Card>
+				<h3>15. totalMaxSize — cumulative byte cap with running counter</h3>
+				<small>xl=6 (50%) — default hint rendering shows "X MB · Y MB left"</small>
+				<InputFile
+					multiple
+					maxFileSize={5 * 1024 * 1024}
+					maxFileCount={10}
+					totalMaxSize={8 * 1024 * 1024}
+					uploadFileCallback={simulateUpload}
+				/>
+				<small>
+					<code>maxFileSize</code> caps each file at 5 MB; <code>totalMaxSize</code> caps the
+					whole batch at 8 MB. Add a couple of files and watch the
+					<code>Total max size:</code> line tick down — files that would push the running
+					total over 8 MB are rejected per <code>rejectionMode</code>.
+				</small>
+			</Card>
+		</GridItem>
+
+		<GridItem xs={12}>
+			<Card>
+				<h3>16. Server sync — return guid from handler, fire DELETE on remove</h3>
+				<small>xl=12 (full) — handler returns <code>FileUploadResult</code> with metadata; <code>onItemRemove</code> cleans up server-side</small>
+				<Stack orientation="horizontal" gap="1rem" wrap>
+					<div style="flex: 1 1 22rem; min-width: 18rem;">
+						<InputFile
+							bind:items={serverSyncItems}
+							multiple
+							maxFileCount={5}
+							uploadFileCallback={serverSyncUpload}
+							onItemRemove={handleServerSyncRemove}
+						/>
+						<small style="display: block; margin-top: 0.5rem;">
+							Upload a few files, then remove them. Each handler return spreads
+							into the matching <code>InputFileItem</code> on success — here
+							<code>{`{metadata: {serverGuid}}`}</code> — and <code>onItemRemove</code>
+							reads that guid back to "delete" from the fake server. Errored or
+							pending items are skipped (nothing was persisted).
+						</small>
+					</div>
+					<div style="flex: 1 1 18rem; min-width: 16rem; display: flex; flex-direction: column; gap: 0.75rem;">
+						<div>
+							<strong style="font-size: 0.85rem;">Files on server ({serverFiles.length})</strong>
+							<ul style="margin: 0.25rem 0 0; padding-left: 1rem; font-size: 0.75rem; font-family: ui-monospace, monospace; max-height: 8rem; overflow-y: auto;">
+								{#each serverFiles as r (r.guid)}
+									<li title={r.guid}>{r.name} <span style="color: var(--neutral-foreground-hint);">({r.guid.slice(0, 8)}…, {formatInputFileSize(r.size)})</span></li>
+								{:else}
+									<li style="list-style: none; color: var(--neutral-foreground-hint); font-style: italic;">empty</li>
+								{/each}
+							</ul>
+						</div>
+						<div>
+							<strong style="font-size: 0.85rem;">Activity log</strong>
+							<ul style="margin: 0.25rem 0 0; padding-left: 1rem; font-size: 0.75rem; font-family: ui-monospace, monospace; max-height: 10rem; overflow-y: auto;">
+								{#each serverLog as e, i (i + e.time + e.guid)}
+									<li>
+										<span style="color: var(--neutral-foreground-hint);">{e.time}</span>
+										<span style="color: {e.action === 'UPLOAD' ? 'var(--success-foreground-rest, #107c10)' : 'var(--error-foreground-rest, #c50f1f)'}; font-weight: 600;">{e.action}</span>
+										{e.name}
+										<span style="color: var(--neutral-foreground-hint);">{e.guid.slice(0, 8)}…</span>
+									</li>
+								{:else}
+									<li style="list-style: none; color: var(--neutral-foreground-hint); font-style: italic;">no activity yet</li>
+								{/each}
+							</ul>
+						</div>
+					</div>
+				</Stack>
 			</Card>
 		</GridItem>
 	</Grid>

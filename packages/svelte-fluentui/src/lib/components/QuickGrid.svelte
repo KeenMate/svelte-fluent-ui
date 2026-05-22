@@ -2755,7 +2755,7 @@
 		justify-content: center;
 		width: 16px;
 		height: 16px;
-		border-radius: 2px;
+		border-radius: var(--fluent-border-radius-sm);
 		font-size: 9px;
 		color: var(--neutral-foreground-hint, #707070);
 		cursor: pointer;
@@ -2872,7 +2872,7 @@
 		position: absolute;
 		inset: 2px;
 		border: 1px dashed var(--neutral-stroke-input-rest, #d1d1d1);
-		border-radius: 2px;
+		border-radius: var(--fluent-border-radius-sm);
 		pointer-events: none;
 	}
 

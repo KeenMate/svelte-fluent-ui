@@ -1146,7 +1146,7 @@
 		justify-content: center;
 		width: 16px;
 		height: 16px;
-		border-radius: 4px;
+		border-radius: var(--fluent-border-radius-md);
 		color: var(--neutral-foreground-hint);
 		cursor: pointer;
 		margin-left: 4px;
@@ -1159,7 +1159,7 @@
 
 	.editable-label {
 		padding: 3px 5px;
-		border-radius: 2px;
+		border-radius: var(--fluent-border-radius-sm);
 	}
 
 	.editable-label:focus {
@@ -1182,11 +1182,11 @@
 		background-color: var(--accent-fill-rest);
 		pointer-events: none;
 		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), width 0.2s cubic-bezier(0.4, 0, 0.2, 1), height 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
-		border-radius: 2px 2px 0 0;
+		border-radius: var(--fluent-border-radius-sm) var(--fluent-border-radius-sm) 0 0;
 	}
 
 	.fluent-tabs-vertical .fluent-tabs-active-indicator {
-		border-radius: 2px 0 0 2px;
+		border-radius: var(--fluent-border-radius-sm) 0 0 var(--fluent-border-radius-sm);
 	}
 
 	/*

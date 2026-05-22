@@ -183,7 +183,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.5rem 0.75rem;
-		border-radius: 4px;
+		border-radius: var(--fluent-border-radius-md);
 		transition: background-color 0.2s;
 	}
 

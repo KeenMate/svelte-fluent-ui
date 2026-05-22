@@ -602,7 +602,7 @@
 			<PositioningRegion
 				anchor={containerElement}
 				visible={isOpen}
-				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto; overscroll-behavior: contain;"
+				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: var(--fluent-border-radius-md); box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto; overscroll-behavior: contain;"
 			>
 				<div class="options-list">
 					{#if headerContent}
@@ -768,7 +768,7 @@
 		padding: var(--fluent-autocomplete-chip-remove-padding, 0.125rem);
 		cursor: pointer;
 		color: var(--neutral-foreground-hint, #717171);
-		border-radius: 0.125rem;
+		border-radius: var(--fluent-border-radius-sm);
 		flex-shrink: 0;
 		transition: color 0.1s ease, background 0.1s ease;
 	}
@@ -922,7 +922,7 @@
 		padding: var(--fluent-autocomplete-chip-remove-padding, 0.125rem);
 		cursor: pointer;
 		color: var(--error-foreground-rest, #c42b1c);
-		border-radius: 0.125rem;
+		border-radius: var(--fluent-border-radius-sm);
 	}
 
 	.external-chip .chip-remove:hover {
@@ -944,7 +944,7 @@
 		align-items: center;
 		justify-content: center;
 		color: var(--neutral-foreground-hint, #717171);
-		border-radius: 2px;
+		border-radius: var(--fluent-border-radius-sm);
 		transition: background 0.1s ease, color 0.1s ease;
 	}
 
@@ -1002,7 +1002,7 @@
 		padding: 0.5rem 0.75rem;
 		text-align: left;
 		cursor: pointer;
-		border-radius: 4px;
+		border-radius: var(--fluent-border-radius-md);
 		color: var(--neutral-foreground-rest, #242424);
 		font-size: 0.875rem;
 	}

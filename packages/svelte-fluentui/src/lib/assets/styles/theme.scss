@@ -75,8 +75,20 @@
 	--fluent-heading-font-weight: #{$heading-font-weight};
 
 	// Borders
+	// Component-default radius (alias for the md tier). Kept for back-compat.
 	--fluent-border-radius: #{$component-border-radius};
 	--fluent-border-width: #{$component-border-width};
+
+	// Border-radius scale (theme-independent — kept here so authors can use var() anywhere).
+	// Use sm for tight indicators (progress bars), md for default UI (buttons, fields),
+	// lg/xl for container surfaces (popovers, drop-zones, chips). Pill for fully rounded
+	// badges; circle for round dots/spinners.
+	--fluent-border-radius-sm:     #{$border-radius-sm};
+	--fluent-border-radius-md:     #{$border-radius-md};
+	--fluent-border-radius-lg:     #{$border-radius-lg};
+	--fluent-border-radius-xl:     #{$border-radius-xl};
+	--fluent-border-radius-pill:   #{$border-radius-pill};
+	--fluent-border-radius-circle: #{$border-radius-circle};
 
 	// Transitions
 	--fluent-transition: #{$component-transition};

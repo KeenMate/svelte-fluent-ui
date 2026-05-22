@@ -50,14 +50,18 @@ export type {
 	InputFileItem,
 	InputFileStatus,
 	InputFileLabels,
-	InputFileAppearance,
+	InputFileSelectorAppearance,
+	InputFileListAppearance,
+	InputFileCardSize,
+	InputFileChipsPosition,
 	InputFileValidator,
 	InputFileValidationResult,
 	InputFileRejectionMode,
 	InputFileDedupeMode,
 	InputFileRetryPolicy,
 	FileUploadHandler,
-	FileUploadChunk
+	FileUploadChunk,
+	FileUploadResult
 } from "./components/InputFile.svelte"
 export {default as Paginator} from "./components/Paginator.svelte"
 export {default as PositioningRegion} from "./components/PositioningRegion.svelte"

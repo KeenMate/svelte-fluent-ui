@@ -365,7 +365,7 @@
 		cursor: pointer;
 		padding: 0.5rem;
 		color: var(--neutral-foreground-rest);
-		border-radius: 4px;
+		border-radius: var(--fluent-border-radius-md);
 		display: flex;
 		align-items: center;
 		justify-content: center;

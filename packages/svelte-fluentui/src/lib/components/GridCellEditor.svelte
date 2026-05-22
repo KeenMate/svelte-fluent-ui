@@ -948,7 +948,7 @@
 	.cell-dropdown {
 		background: var(--neutral-layer-1, #ffffff);
 		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
-		border-radius: 4px;
+		border-radius: var(--fluent-border-radius-md);
 		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
 		max-height: 200px;
 		overflow-y: auto;

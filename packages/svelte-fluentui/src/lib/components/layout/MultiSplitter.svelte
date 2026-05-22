@@ -218,7 +218,7 @@
 		cursor: pointer;
 		background-color: var(--neutral-fill-rest, #ffffff);
 		border: 1px solid var(--neutral-stroke-rest, #8a8886);
-		border-radius: 50%;
+		border-radius: var(--fluent-border-radius-circle);
 		margin: 2px;
 	}
 
