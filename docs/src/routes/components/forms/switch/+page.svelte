@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Switch, RadioGroup, Radio, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 	let switchState = false;
 	let insuranceChecked = $state(false);
 	let labelPosition = $state<"top" | "start">("top");
@@ -50,6 +50,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Switch"
+		description="A Svelte wrapper for FluentUI's switch web component — a two-state toggle with optional checked/unchecked labels and form integration."
+		keywords="svelte, fluentui, switch, toggle, form, input, web components"
+	/>
+
 	<h1>Switch</h1>
 
 	<p>

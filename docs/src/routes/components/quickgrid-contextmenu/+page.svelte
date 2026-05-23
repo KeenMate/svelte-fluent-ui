@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type PropertyRow = {
 		name: string
@@ -289,6 +289,12 @@
 </Dialog>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="QuickGrid Context Menu"
+		description="Cell and row-aware right-click context menus for QuickGrid, with dynamic labels, conditional visibility, and disabled states based on row data."
+		keywords="svelte, fluentui, quickgrid, context menu, right click, data grid"
+	/>
+
 	<h1>QuickGrid Context Menu</h1>
 
 	<p>

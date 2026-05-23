@@ -18,6 +18,7 @@
 		type ValidationState,
 		toast
 	} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	// Map an error string (or null) to a ValidationState for <Field>
 	function stateOf(error: string | null | undefined): ValidationState {
@@ -270,6 +271,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Form Validation"
+		description="Common validation patterns in Svelte FluentUI using Field for inline state, ValidationSummary for top-of-form errors, and jump-to-field links."
+		keywords="svelte, fluentui, form validation, field, validation summary, error, example"
+	/>
+
 	<h1>Form Validation</h1>
 
 	<Card>

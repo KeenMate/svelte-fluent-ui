@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {ContextMenu, Stack, Card, Grid, GridItem, QuickGrid, Slider} from "svelte-fluentui"
 	import type {MenuButtonItem} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -139,6 +139,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="ContextMenu"
+		description="Right-click anywhere inside wrapped children to open a floating menu at the cursor, auto-flipping and shifting away from viewport edges."
+		keywords="svelte, fluentui, context menu, right click, popup, menu, contextmenu"
+	/>
+
 	<h1>ContextMenu</h1>
 
 	<p>

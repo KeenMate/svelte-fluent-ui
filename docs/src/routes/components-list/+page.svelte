@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Grid, GridItem, Card, QuickGrid} from "svelte-fluentui"
-	import {PageLayout} from "$lib/components"
+	import {PageLayout, Meta} from "$lib/components"
 
 	type Component = {
 		group: string
@@ -96,6 +96,12 @@
 		{field: "description", title: "Description", filterable: true}
 	]
 </script>
+
+<Meta
+	title="Component Library"
+	description="Complete list of Svelte FluentUI components across forms, buttons, layout, navigation, display, feedback, and data — all in one searchable table."
+	keywords="svelte, fluentui, components, library, list, catalog, web components"
+/>
 
 <PageLayout title="Component Library">
 	<Grid spacing={4}>

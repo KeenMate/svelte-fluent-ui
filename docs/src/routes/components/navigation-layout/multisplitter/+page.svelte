@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button} from "svelte-fluentui"
 	import type {MultiSplitterEventArgs, MultiSplitterResizeEventArgs} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let lastEvent = $state<string>("None")
 	let orientation: "horizontal" | "vertical" = $state("horizontal")
@@ -72,6 +72,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="MultiSplitter"
+		description="A resizable multi-panel splitter for Svelte with draggable bars between panes. Based on the FluentUI Blazor implementation."
+		keywords="svelte, fluentui, multisplitter, splitter, resizable, panels, layout"
+	/>
+
 	<h1>MultiSplitter</h1>
 
 	<p>

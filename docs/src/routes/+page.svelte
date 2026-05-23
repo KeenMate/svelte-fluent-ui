@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Stack} from 'svelte-fluentui';
+	import {Meta} from '$lib/components';
 	// Inlined at build time by Vite — see docs/vite.config.ts (server.fs.allow)
 	// for the workspace-root whitelist that lets this path resolve.
 	import changelogMarkdown from '../../../CHANGELOG.md?raw';
@@ -57,11 +58,13 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Changelog - Svelte FluentUI</title>
-</svelte:head>
-
 <Stack orientation="vertical" gap="2rem">
+	<Meta
+		title="Changelog"
+		description="Release notes for Svelte FluentUI — a Svelte 5 wrapper library for Microsoft FluentUI web components."
+		keywords="svelte, fluentui, changelog, release notes, svelte 5"
+	/>
+
 	<div>
 		<h1 style="margin-top: 0;">Changelog</h1>
 		<p>All notable changes to Svelte FluentUI are documented here.</p>

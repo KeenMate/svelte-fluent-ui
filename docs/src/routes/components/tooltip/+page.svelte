@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Tooltip, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -36,6 +36,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Tooltip"
+		description="A Svelte wrapper for FluentUI's tooltip web component — a floating hint anchored to an element with configurable position, delay, and max width."
+		keywords="svelte, fluentui, tooltip, hint, popup, hover, web components"
+	/>
+
 	<h1>Tooltip</h1>
 
 	<p>

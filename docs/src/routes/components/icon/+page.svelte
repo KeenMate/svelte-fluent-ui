@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, Stack, Card, QuickGrid, Grid, GridItem } from 'svelte-fluentui';
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	type Property = {
 		name: string
@@ -36,6 +36,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Icon"
+		description="Renders SVG icons from the @fluentui/svg-icons package on demand, with multiple sizes, variants (regular, filled), and hover effects."
+		keywords="svelte, fluentui, icon, svg, fluentui icons, symbols"
+	/>
+
 	<h1>Icon</h1>
 
 	<p class="description">

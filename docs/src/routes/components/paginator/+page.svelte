@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Paginator, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let currentPage = 0
 	let lastPage = 9
@@ -61,6 +61,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Paginator"
+		description="A standalone Svelte pagination control with first, previous, next, and last buttons plus customizable summary templates. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, paginator, pagination, pager, navigation"
+	/>
+
 	<h1>Paginator</h1>
 
 	<p>

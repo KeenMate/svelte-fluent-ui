@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {MenuButton, Stack, Card, Grid, GridItem, QuickGrid, Icon} from "svelte-fluentui"
 	import type {MenuButtonItem} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -90,6 +90,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="MenuButton"
+		description="A Svelte button that opens a dropdown context menu on click, sharing the same visual language as QuickGrid context menus and Tabs overflow menus."
+		keywords="svelte, fluentui, menu button, dropdown, menu, action, popup"
+	/>
+
 	<h1>MenuButton</h1>
 
 	<p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Toolbar, Button, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -33,6 +33,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Toolbar"
+		description="A Svelte wrapper for FluentUI's toolbar web component — a horizontal container that groups buttons, menus, and dividers with keyboard navigation."
+		keywords="svelte, fluentui, toolbar, buttons, actions, web components"
+	/>
+
 	<h1>Toolbar</h1>
 
 	<p>

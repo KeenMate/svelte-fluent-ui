@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Grid, GridItem, QuickGrid, Stack, Card, Button, Badge} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let currentBreakpoint = $state<string>("unknown")
 
@@ -63,6 +63,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Grid"
+		description="A responsive 12-column grid system for Svelte with responsive breakpoints, used together with GridItem for fluid page layouts."
+		keywords="svelte, fluentui, grid, griditem, layout, responsive, columns"
+	/>
+
 	<h1>Grid</h1>
 
 	<p>Grid supports two layout modes:</p>

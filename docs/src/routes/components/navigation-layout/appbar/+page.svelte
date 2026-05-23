@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {AppBar, AppBarItem, ResourcesIcon, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 	import {AppBarOrientation} from "svelte-fluentui/constants"
 
 	function onAppBarItemClicked(ev: Event) {
@@ -55,6 +55,12 @@
 {/snippet}
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="AppBar"
+		description="A persistent application bar of icon-and-label items for top-level Svelte navigation, rendered vertically or horizontally. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, appbar, app bar, navigation, sidebar, layout"
+	/>
+
 	<h1>AppBar</h1>
 
 	<p>

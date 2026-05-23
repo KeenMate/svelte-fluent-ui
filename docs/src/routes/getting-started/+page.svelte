@@ -1,8 +1,15 @@
 <script lang="ts">
 	import {Stack, Card} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 </script>
 
 <Stack orientation="vertical" gap="2rem">
+	<Meta
+		title="Getting Started"
+		description="Install Svelte FluentUI in your SvelteKit or Svelte app — npm install instructions, style setup, and your first component example."
+		keywords="svelte, fluentui, getting started, install, setup, sveltekit, npm"
+	/>
+
 	<div>
 		<h1>Getting Started</h1>
 		<p>Learn how to install and use Svelte FluentUI in your project.</p>

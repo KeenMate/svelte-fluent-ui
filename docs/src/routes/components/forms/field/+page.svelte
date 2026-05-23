@@ -16,7 +16,7 @@
 		Checkbox,
 		Button
 	} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	// ===== Demo state =====
 	let demoText = $state("")
@@ -85,6 +85,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Field & ValidationSummary"
+		description="Form-field wrapper with label, hint, and validation state. ValidationSummary lists errors with jump-to-field links."
+		keywords="svelte, fluentui, field, validation, form, label, error"
+	/>
+
 	<h1>Field &amp; ValidationSummary</h1>
 
 	<p>

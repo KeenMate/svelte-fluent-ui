@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Button} from "svelte-fluentui"
 	import {toast} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let lastToastId = ""
 
@@ -261,6 +261,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Toast Service"
+		description="Programmatic toast notifications for Svelte with FluentUI styling — drop a ToastContainer in your layout, then call toast.success() from anywhere."
+		keywords="svelte, fluentui, toast, notification, snackbar, message, service"
+	/>
+
 	<h1>Toast Service</h1>
 
 	<p>

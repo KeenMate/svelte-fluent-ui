@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Autocomplete, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 	import { countries } from "$lib/demo-data/datasets"
 
 	const colors = [
@@ -175,6 +175,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Autocomplete"
+		description="Multi-select Svelte component with tag chips, custom filtering, and initial-options support for popular items before async search."
+		keywords="svelte, fluentui, autocomplete, tags, chips, multi-select, search"
+	/>
+
 	<h1>Autocomplete</h1>
 
 	<p>

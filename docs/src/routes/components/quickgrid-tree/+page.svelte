@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Org = {
 		path: string
@@ -213,6 +213,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="QuickGrid Tree"
+		description="Hierarchical data rendering in QuickGrid via ltree-style path strings, with indentation, expand/collapse, and ancestor-aware filtering."
+		keywords="svelte, fluentui, quickgrid, tree, hierarchy, data grid, ltree"
+	/>
+
 	<h1>QuickGrid Tree</h1>
 
 	<p>

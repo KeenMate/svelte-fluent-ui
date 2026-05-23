@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Anchor, QuickGrid, Stack, Grid, GridItem, Card } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	function handleAnchorClick(event: MouseEvent) {
 		alert("Anchor clicked!");
@@ -49,6 +49,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Anchor"
+		description="A Svelte wrapper for FluentUI's anchor web component — a styled hyperlink with multiple appearances and start/end icon slots."
+		keywords="svelte, fluentui, anchor, link, hyperlink, navigation, web components"
+	/>
+
 	<h1>Anchor</h1>
 
 	<p>

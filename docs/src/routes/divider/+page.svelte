@@ -1,6 +1,13 @@
 <script lang="ts">
 	import {Divider} from 'svelte-fluentui'
+	import {Meta} from '$lib/components'
 </script>
+
+<Meta
+	title="Divider HMR Test"
+	description="Development sandbox page used to verify hot module replacement of the Divider component in Svelte FluentUI."
+	keywords="svelte, fluentui, divider, hmr, test, development"
+/>
 
 <div style="padding: 2rem;">
 	<h1>🔥 Divider HMR Test</h1>

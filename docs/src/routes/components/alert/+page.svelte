@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Alert, Card, QuickGrid, Stack, Grid, GridItem, Icon} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -41,6 +41,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Alert"
+		description="A contextual banner showing informational, success, warning, or error messages with an optional dismiss action. Inspired by FluentUI Blazor MessageBar."
+		keywords="svelte, fluentui, alert, message bar, notification, banner, dismiss"
+	/>
+
 	<h1>Alert</h1>
 
 	<p>

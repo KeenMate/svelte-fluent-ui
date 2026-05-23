@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Grid, GridItem, Card} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	const categories = [
 		{
@@ -48,6 +49,12 @@
 </script>
 
 <div>
+	<Meta
+		title="Components"
+		description="Browse all Svelte FluentUI components organized by category — forms, buttons, layout, navigation, display, feedback, and data."
+		keywords="svelte, fluentui, components, library, ui, web components, catalog"
+	/>
+
 	<h1>Components</h1>
 	<p class="page-description">
 		Browse all available components organized by category. Use the sidebar to navigate.

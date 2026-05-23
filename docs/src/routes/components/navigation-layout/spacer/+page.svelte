@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Spacer, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -28,6 +28,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Spacer"
+		description="A Svelte utility that adds fixed or flexible empty space between siblings in a Stack or flex container. Inspired by FluentUI Blazor Spacer."
+		keywords="svelte, fluentui, spacer, layout, spacing, flex, gap"
+	/>
+
 	<h1>Spacer</h1>
 
 	<p>

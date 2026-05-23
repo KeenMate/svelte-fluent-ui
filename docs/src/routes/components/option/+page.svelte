@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Listbox, Option, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let selectedValue: string = "banana";
 
@@ -38,6 +38,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Option"
+		description="A Svelte wrapper for FluentUI's option web component — a single selectable item used inside Listbox, Combobox, and Select components."
+		keywords="svelte, fluentui, option, listbox, combobox, select, item"
+	/>
+
 	<h1>Option</h1>
 
 	<p>

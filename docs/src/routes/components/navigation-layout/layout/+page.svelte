@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Layout, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -32,6 +32,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Layout"
+		description="A page-level flex container that arranges Header, AppBar, BodyContent, and Footer along a horizontal or vertical axis. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, layout, page, header, footer, application shell"
+	/>
+
 	<h1>Layout</h1>
 
 	<p>

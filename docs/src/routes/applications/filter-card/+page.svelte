@@ -13,6 +13,7 @@
 		QuickGrid,
 		Icon
 	} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	type Product = {
 		id: number
@@ -90,6 +91,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Filter Card"
+		description="A Svelte FluentUI example combining TextField, Select, and Autocomplete filters with a reactive QuickGrid in a single filter card layout."
+		keywords="svelte, fluentui, filter, card, autocomplete, quickgrid, example"
+	/>
+
 	<h1>Filter Card</h1>
 
 	<Card>

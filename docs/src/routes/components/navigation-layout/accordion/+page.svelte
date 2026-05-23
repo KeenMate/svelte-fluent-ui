@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Accordion, AccordionItem, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 	let accordionValue: string | string[] | null = null
 
 	type Property = {
@@ -51,6 +51,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Accordion"
+		description="A Svelte wrapper for FluentUI's accordion web components — a stack of collapsible panels with single or multiple-expand modes."
+		keywords="svelte, fluentui, accordion, collapsible, expander, panel, web components"
+	/>
+
 	<h1>Accordion</h1>
 
 	<p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Breadcrumb, BreadcrumbItem, ChevronDoubleRight, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let count = $state(0)
 
@@ -37,6 +37,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Breadcrumb"
+		description="A Svelte wrapper for FluentUI's breadcrumb web components — a navigation trail showing the user's location within a hierarchy with configurable separators."
+		keywords="svelte, fluentui, breadcrumb, breadcrumbs, navigation, hierarchy, web components"
+	/>
+
 	<h1>Breadcrumb</h1>
 
 	<p>

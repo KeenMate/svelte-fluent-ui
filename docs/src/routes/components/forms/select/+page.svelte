@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Select, Option, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	// Two-way binding example
 	let selectedFruit = $state("apple");
@@ -117,6 +117,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Select"
+		description="A Svelte wrapper for FluentUI's select web component — a dropdown select field for choosing one value from a list, with form integration."
+		keywords="svelte, fluentui, select, dropdown, form, input, web components"
+	/>
+
 	<h1>Select</h1>
 
 	<p>

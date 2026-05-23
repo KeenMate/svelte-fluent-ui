@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Listbox, Option, QuickGrid, Stack, Grid, GridItem, Card, Icon } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	type Property = {
 		name: string
@@ -90,6 +90,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Listbox"
+		description="A Svelte wrapper for FluentUI's listbox web component — a scrollable list of selectable options with keyboard navigation."
+		keywords="svelte, fluentui, listbox, list, options, select, web components"
+	/>
+
 	<h1>Listbox</h1>
 
 	<p>

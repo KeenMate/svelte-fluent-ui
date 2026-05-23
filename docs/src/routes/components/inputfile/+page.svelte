@@ -23,7 +23,7 @@
 		InputFileCardSize,
 		InputFileChipsPosition
 	} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -377,6 +377,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="InputFile"
+		description="File upload Svelte component with drag and drop, validation, progress, retry, pause/resume, chunking, deduplication, thumbnails, and full i18n."
+		keywords="svelte, fluentui, inputfile, file upload, drag drop, upload, form"
+	/>
+
 	<h1>InputFile</h1>
 
 	<p>

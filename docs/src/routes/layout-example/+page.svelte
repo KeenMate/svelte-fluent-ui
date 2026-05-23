@@ -1,8 +1,15 @@
 <script lang="ts">
 	import {Stack, Card} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 </script>
 
 <Stack orientation="vertical" gap="2rem">
+	<Meta
+		title="Layout Example"
+		description="A complete application layout walkthrough using Svelte FluentUI's Layout, BodyContent, Footer, Grid, NavMenu, and related components."
+		keywords="svelte, fluentui, layout, example, application, page, template"
+	/>
+
 	<div>
 		<h1>Layout Example</h1>
 		<p>Learn how to build application layouts using Svelte FluentUI components.</p>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {onMount} from "svelte"
 	import {TextField, Grid, GridItem, Card, Stack, QuickGrid} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let textValue = $state("")
 	let textField: HTMLElement & {select: Function}
@@ -64,6 +64,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Text field"
+		description="A Svelte wrapper for FluentUI's text-field web component — a single-line text input with multiple types, outline/filled looks, and form integration."
+		keywords="svelte, fluentui, text field, textfield, input, form, web components"
+	/>
+
 	<h1>Text field</h1>
 
 	<p>

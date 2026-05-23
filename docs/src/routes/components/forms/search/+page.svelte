@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Search, Stack, Grid, GridItem, Card, QuickGrid, Icon, Button, Checkbox } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	// US States data for interactive examples
 	const states = [
@@ -128,6 +128,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Search"
+		description="A Svelte wrapper for FluentUI's search web component — a search input with outline and filled appearances and standard form integration."
+		keywords="svelte, fluentui, search, input, search field, form, web components"
+	/>
+
 	<h1>Search</h1>
 
 	<p>

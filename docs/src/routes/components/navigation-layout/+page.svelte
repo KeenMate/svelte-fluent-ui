@@ -2,6 +2,7 @@
 	import {
 		Accordion, AccordionItem, Button,
 	} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	let expandedAccordionItem: string | null        = $state("my-accordion-3")
 	let expandedAccordionItemMulti: string[] | null = $state([
@@ -11,6 +12,12 @@
 </script>
 
 <div class="navigation-layout">
+	<Meta
+		title="Navigation & Layout"
+		description="Svelte FluentUI navigation and layout components — Accordion, AppBar, Grid, Layout, Stack, MultiSplitter, Spacer, and NavMenu primitives."
+		keywords="svelte, fluentui, navigation, layout, accordion, appbar, grid, stack"
+	/>
+
 	<h1>Navigation & Layout</h1>
 
 	<div class="components">

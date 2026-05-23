@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Textarea, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	type Property = {
 		name: string
@@ -54,6 +54,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="TextArea"
+		description="A Svelte wrapper for FluentUI's text-area web component — a multi-line text input with outline and filled appearances and form integration."
+		keywords="svelte, fluentui, textarea, text area, multiline, form, input"
+	/>
+
 	<h1>TextArea</h1>
 
 	<p>

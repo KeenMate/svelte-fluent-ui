@@ -5,6 +5,7 @@
 		fluentButton,
 		provideFluentDesignSystem
 	} from "@fluentui/web-components";
+	import {Meta} from "$lib/components";
 
 	provideFluentDesignSystem().register(
 		fluentAnchor(),
@@ -66,6 +67,12 @@
 		max-width: 400px;
 	}
 </style>
+
+<Meta
+	title="Pages Demo"
+	description="Sample page layout built directly on the FluentUI web components to demonstrate basic navigation, sidebar, and form usage."
+	keywords="svelte, fluentui, demo, page layout, sidebar, form"
+/>
 
 <!-- Top Navigation -->
 <nav>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Calendar, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	const now                     = new Date()
 	const disabledDates: string[] = [
@@ -80,6 +80,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Calendar"
+		description="Inline date picker for Svelte with single, multiple, and range selection modes, disabled-date rules, and localized formatting. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, calendar, date picker, range, multi-select, form"
+	/>
+
 	<h1>Calendar</h1>
 
 	<p>

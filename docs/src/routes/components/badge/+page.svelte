@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Badge, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -34,6 +34,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Badge"
+		description="A Svelte wrapper for FluentUI's badge web component — a small visual indicator highlighting status, counts, or labels next to other content."
+		keywords="svelte, fluentui, badge, status, count, label, web components"
+	/>
+
 	<h1>Badge</h1>
 
 	<p>

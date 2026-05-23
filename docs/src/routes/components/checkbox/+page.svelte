@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Checkbox, Radio, RadioGroup, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	// Default examples
 	let apples = $state(true);
@@ -112,6 +112,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Checkbox"
+		description="A Svelte wrapper for FluentUI's checkbox web component with support for checked, unchecked, and indeterminate states."
+		keywords="svelte, fluentui, checkbox, indeterminate, form, input, web components"
+	/>
+
 	<h1>Checkbox</h1>
 
 	<p>

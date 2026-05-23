@@ -6,6 +6,7 @@
 		TextField,
 		Combobox
 	} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	let gpuSelectedValue: string[] | null | undefined = $state(null)
 	let comboboxSelectedValue: string[] | null | undefined = $state(null)
@@ -16,6 +17,12 @@
 </script>
 
 <div class="forms">
+	<Meta
+		title="Form components"
+		description="Form input components in Svelte FluentUI — text fields, checkboxes, radios, listboxes, comboboxes, and more for building forms."
+		keywords="svelte, fluentui, forms, input, textfield, checkbox, select, combobox"
+	/>
+
 	<h1>Form components</h1>
 
 	<div class="components">

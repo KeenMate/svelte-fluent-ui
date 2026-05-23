@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Radio, RadioGroup, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	// State for examples
 	let defaultValue = $state<string | null>(null)
@@ -82,6 +82,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Radio"
+		description="A Svelte wrapper for FluentUI's radio web component — a single-choice button used inside a RadioGroup for mutually exclusive selection."
+		keywords="svelte, fluentui, radio, radio button, form, input, web components"
+	/>
+
 	<h1>Radio</h1>
 
 	<p>

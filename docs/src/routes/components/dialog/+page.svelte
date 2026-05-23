@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Button, Dialog, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let dialog: Dialog
 	let smallDialog = $state(false)
@@ -54,6 +54,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Dialog"
+		description="Modal or non-modal overlay built on FluentUI's dialog web component, with focus trapping, dismiss behavior, preset sizes, and an actions slot."
+		keywords="svelte, fluentui, dialog, modal, overlay, popup, web components"
+	/>
+
 	<h1>Dialog</h1>
 
 	<p>

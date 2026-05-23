@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button, Select, Option} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	// === API Documentation ===
 
@@ -830,6 +830,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="QuickGrid Editable"
+		description="Inline editing in QuickGrid with multiple editor types, edit triggers, validation, and advanced callbacks for add, update, and delete flows."
+		keywords="svelte, fluentui, quickgrid, editable, inline edit, data grid, validation"
+	/>
+
 	<h1>QuickGrid Editable</h1>
 
 	<p>

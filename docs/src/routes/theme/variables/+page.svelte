@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Card} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	type CSSVariable = {
 		name: string
@@ -273,6 +274,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="CSS Variables"
+		description="Complete reference of CSS custom properties for theming Svelte FluentUI — backgrounds, text, borders, accents, navbar, sidebar, header, and footer."
+		keywords="svelte, fluentui, css variables, theme, theming, design tokens, customization"
+	/>
+
 	<h1>CSS Variables</h1>
 
 	<Card>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {BodyContent, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -28,6 +28,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Body content"
+		description="The main content region inside a Svelte FluentUI Layout, sitting between header/navigation and footer. Inspired by FluentUI Blazor BodyContent."
+		keywords="svelte, fluentui, body content, bodycontent, layout, page, content"
+	/>
+
 	<h1>Body content</h1>
 
 	<p>

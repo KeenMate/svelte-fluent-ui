@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Card, QuickGrid, Stack, Grid, GridItem} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -35,6 +35,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Card"
+		description="A Svelte content container that groups related information with FluentUI styling, padding, and surface treatment. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, card, container, surface, layout"
+	/>
+
 	<h1>Card</h1>
 
 	<p>

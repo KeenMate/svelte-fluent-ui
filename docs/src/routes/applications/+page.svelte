@@ -1,8 +1,15 @@
 <script lang="ts">
 	import {Card, Stack, Grid, GridItem, Anchor} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Applications"
+		description="Real-life Svelte FluentUI examples combining multiple components into common UI patterns — filter cards, form validation, order forms, and more."
+		keywords="svelte, fluentui, applications, examples, patterns, demos, real world"
+	/>
+
 	<h1>Applications</h1>
 	<Card>
 		<p>

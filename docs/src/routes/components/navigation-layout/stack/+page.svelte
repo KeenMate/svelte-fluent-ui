@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Stack, QuickGrid, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -34,6 +34,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Stack"
+		description="A flexbox container for Svelte that arranges children vertically or horizontally with configurable gap, alignment, and wrapping."
+		keywords="svelte, fluentui, stack, flexbox, layout, vertical, horizontal"
+	/>
+
 	<h1>Stack</h1>
 
 	<p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {TimePicker, Card, Stack, Grid, GridItem, QuickGrid} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -56,6 +56,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="TimePicker"
+		description="Svelte time selection with hour, minute, and second pickers, 12/24-hour format support, and custom step intervals. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, timepicker, time picker, time, form, input"
+	/>
+
 	<h1>TimePicker</h1>
 
 	<p>

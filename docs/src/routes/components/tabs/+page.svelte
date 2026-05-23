@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge, Slider} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let verticalStripWidth = $state(200)
 
@@ -95,6 +95,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Tabs"
+		description="Svelte tabbed interface built on fluent-tab with horizontal/vertical orientations, overflow handling, closable/editable tabs, and swipe navigation."
+		keywords="svelte, fluentui, tabs, tab, panel, navigation, web components"
+	/>
+
 	<h1>Tabs</h1>
 
 	<p>

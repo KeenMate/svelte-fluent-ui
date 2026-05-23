@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {DataGrid, DataGridRow, DataGridCell, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	const sampleData = [
 		{name: "Adam", age: 1},
@@ -42,6 +42,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="DataGrid"
+		description="A low-level Svelte wrapper for FluentUI's data-grid web components. For sorting, filtering, and pagination use QuickGrid instead."
+		keywords="svelte, fluentui, datagrid, data grid, table, web components"
+	/>
+
 	<h1>DataGrid</h1>
 
 	<p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {NavMenu, NavGroup, NavLinkItem, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	function onNavClick(ev: Event) {
 		console.log("Nav link/group clicked", ev)
@@ -84,6 +84,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Navigation"
+		description="Svelte navigation primitives — NavMenu, NavGroup, NavLinkItem, and NavItem — for building sidebar and grouped navigation menus."
+		keywords="svelte, fluentui, navigation, navmenu, navgroup, navlinkitem, sidebar"
+	/>
+
 	<h1>Navigation</h1>
 
 	<p>

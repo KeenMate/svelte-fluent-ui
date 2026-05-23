@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {DatePicker, Card, Stack, Button, Grid, GridItem, QuickGrid} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let basicDate = $state<Date | null>(new Date())
 	let minMaxDate = $state<Date | null>(null)
@@ -80,6 +80,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="DatePicker"
+		description="Date picker with popup calendar, keyboard input, locale-aware formatting, and disabled-date predicates. Built on top of the Calendar component."
+		keywords="svelte, fluentui, datepicker, date picker, calendar, date input, form"
+	/>
+
 	<h1>DatePicker</h1>
 
 	<p>

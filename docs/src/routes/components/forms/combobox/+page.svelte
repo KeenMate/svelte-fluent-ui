@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 	import { songs } from "$lib/demo-data/datasets";
 
 	// Sample data - sizes
@@ -125,6 +125,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Combobox"
+		description="A Svelte wrapper for FluentUI's combobox web component — an input widget with a popup that lets users pick a value from a collection."
+		keywords="svelte, fluentui, combobox, dropdown, autocomplete, select, form"
+	/>
+
 	<h1>Combobox</h1>
 
 	<p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Toast, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 	let showToast = false
 	let toastId = "demo-toast"
 
@@ -54,6 +54,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Toast"
+		description="Declarative Svelte notification card with title, subtitle, timestamp, and primary/secondary actions, rendered in place. Inspired by FluentUI Blazor."
+		keywords="svelte, fluentui, toast, notification, snackbar, message, alert"
+	/>
+
 	<h1>Toast (Declarative Component)</h1>
 
 	<p>

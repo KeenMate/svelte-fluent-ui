@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -161,6 +161,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="QuickGrid"
+		description="A lightweight, flexible Svelte data grid with sorting, filtering, and pagination support. Inspired by ASP.NET QuickGrid."
+		keywords="svelte, fluentui, quickgrid, data grid, table, sortable, filterable, pagination"
+	/>
+
 	<h1>QuickGrid</h1>
 
 	<p>

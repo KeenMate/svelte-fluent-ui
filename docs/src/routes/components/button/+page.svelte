@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Button, Stack, Card, Grid, GridItem, QuickGrid} from "svelte-fluentui"
-	import {References} from "$lib/components"
+	import {References, Meta} from "$lib/components"
 
 	let loading1 = $state(false)
 	let loading2 = $state(false)
@@ -65,6 +65,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Button"
+		description="A Svelte wrapper for FluentUI's button web component with multiple appearances, form integration, and start/end icon slots."
+		keywords="svelte, fluentui, button, click, action, web components, form"
+	/>
+
 	<h1>Button</h1>
 
 	<p>

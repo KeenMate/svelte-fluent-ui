@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NumberField, Button, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui";
-	import {References} from "$lib/components";
+	import {References, Meta} from "$lib/components";
 
 	// State for examples
 	let integerValue = $state<string>("");
@@ -128,6 +128,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Number field"
+		description="A Svelte wrapper for FluentUI's number-field web component — numeric input with step controls, outline and filled appearances, and form integration."
+		keywords="svelte, fluentui, number field, numberfield, numeric input, form"
+	/>
+
 	<h1>Number field</h1>
 
 	<p>

@@ -27,6 +27,7 @@
 		AccordionItem,
 		toast
 	} from "svelte-fluentui"
+	import {Meta} from "$lib/components"
 
 	type OrderType = "" | "mobile" | "hardware" | "software"
 	type HardwareType = "" | "printer" | "computer" | "monitor"
@@ -236,6 +237,12 @@
 </script>
 
 <Stack orientation="vertical" gap="1rem">
+	<Meta
+		title="Order Form"
+		description="Cascading order-form example built with Svelte FluentUI showing dynamic mobile, hardware, and software request fields."
+		keywords="svelte, fluentui, order form, cascading form, example, application"
+	/>
+
 	<h1>Order Form — New Hardware / Software Request</h1>
 
 	<Card>
