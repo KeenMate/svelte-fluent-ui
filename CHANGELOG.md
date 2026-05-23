@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-rc22] - 2026-05-23 [PUBLISHED]
+
+### Added
+- **`InputFile` — chips mode now renders the same overall progress footer (`Pause all` / `Resume all` / `Retry all`) as the list/popover modes** - When `listAppearance === "chips"`, batch upload state previously had no visible aggregate — the user could see individual chip progress percentages but had no way to pause every upload at once, no overall progress bar, no "X of Y done · sizes" summary. The list and popover modes already render that footer (progress bar + stats line + conditional batch action buttons) but chips mode skipped it entirely. Extracted the existing `.file-list-footer` JSX into a reusable `overallFooter` snippet and rendered it as a sibling below the `chips-row` so it works for both `chipsPosition: "end"` and `chipsPosition: "below"`. Same gating as list mode (`uploadFileCallback && items.length > 0`), same CSS, same conditional buttons. Per-chip × buttons handle removal so Clear all / Upload all stay confined to list-mode's header — chips footer matches the list-mode footer exactly.
+- **`InputFile` playground on `/components/inputfile` — selector/list/cardSize/chipsPosition/multiple/disabled/expandOnDrag values persist across page reloads via `localStorage`** - The playground at the top of the page lets consumers mix selector and list appearances to preview every combination live, but every reload reset it back to `card + list + compact + below + multiple` — so any consumer landing on the page from a deep link or refresh had to re-pick their last configuration. New `loadPlaygroundConfig()` helper reads the `svelte-fluentui:inputfile-playground` localStorage key (with `try/catch` + `typeof window` guards for SSR / private-mode / quota-exceeded safety) and merges the parsed value over the defaults so partial saves still hydrate cleanly. A `$effect` writes the current 7-field config back on every change. `playgroundItems` is deliberately not persisted — `File` objects don't round-trip through JSON, and the chips/list state without the underlying files would just look broken on reload.
+
+### Changed
+- **`package.json` `homepage` → docs site** - Was pointing at `https://github.com/KeenMate/svelte-fluentui#readme` (the GitHub README anchor), which made the npm package page's "Homepage" sidebar link duplicate the "Repository" link — both went to GitHub. Pointed `homepage` at `https://svelte-fluentui.keenmate.dev` so the npm sidebar now surfaces two distinct destinations: Repository → GitHub source, Homepage → live docs site with playgrounds and component pages. `repository.url` and `bugs.url` keep their GitHub URLs unchanged. Discovered while reviewing the rc21 npm page.
+
 ## [1.0.0-rc21] - 2026-05-22 [PUBLISHED]
 
 ### Added

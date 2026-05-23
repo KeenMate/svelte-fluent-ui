@@ -117,7 +117,7 @@
 				onProgress(progress)
 				if (progress >= 100) {
 					clearInterval(interval)
-					if (Math.random() > 0.2) resolve()
+					if (Math.random() > 0.45) resolve()
 					else reject(new Error("Upload failed"))
 				}
 			}, 200)
@@ -151,14 +151,64 @@
 		})
 	}
 
-	let playgroundSelector = $state<InputFileSelectorAppearance>("card")
-	let playgroundList = $state<InputFileListAppearance>("list")
-	let playgroundCardSize = $state<InputFileCardSize>("compact")
-	let playgroundChipsPosition = $state<InputFileChipsPosition>("below")
-	let playgroundExpandOnDrag = $state(false)
-	let playgroundMultiple = $state(true)
-	let playgroundDisabled = $state(false)
+	const PLAYGROUND_STORAGE_KEY = "svelte-fluentui:inputfile-playground"
+	type PlaygroundConfig = {
+		selector: InputFileSelectorAppearance
+		list: InputFileListAppearance
+		cardSize: InputFileCardSize
+		chipsPosition: InputFileChipsPosition
+		expandOnDrag: boolean
+		multiple: boolean
+		disabled: boolean
+	}
+	const PLAYGROUND_DEFAULTS: PlaygroundConfig = {
+		selector: "card",
+		list: "list",
+		cardSize: "compact",
+		chipsPosition: "below",
+		expandOnDrag: false,
+		multiple: true,
+		disabled: false
+	}
+	function loadPlaygroundConfig(): PlaygroundConfig {
+		if (typeof window === "undefined") return PLAYGROUND_DEFAULTS
+		try {
+			const raw = window.localStorage.getItem(PLAYGROUND_STORAGE_KEY)
+			if (!raw) return PLAYGROUND_DEFAULTS
+			const parsed = JSON.parse(raw) as Partial<PlaygroundConfig>
+			return {...PLAYGROUND_DEFAULTS, ...parsed}
+		} catch {
+			return PLAYGROUND_DEFAULTS
+		}
+	}
+	const initialPlayground = loadPlaygroundConfig()
+
+	let playgroundSelector = $state<InputFileSelectorAppearance>(initialPlayground.selector)
+	let playgroundList = $state<InputFileListAppearance>(initialPlayground.list)
+	let playgroundCardSize = $state<InputFileCardSize>(initialPlayground.cardSize)
+	let playgroundChipsPosition = $state<InputFileChipsPosition>(initialPlayground.chipsPosition)
+	let playgroundExpandOnDrag = $state(initialPlayground.expandOnDrag)
+	let playgroundMultiple = $state(initialPlayground.multiple)
+	let playgroundDisabled = $state(initialPlayground.disabled)
 	let playgroundItems = $state<InputFileItem[]>([])
+
+	$effect(() => {
+		if (typeof window === "undefined") return
+		const cfg: PlaygroundConfig = {
+			selector: playgroundSelector,
+			list: playgroundList,
+			cardSize: playgroundCardSize,
+			chipsPosition: playgroundChipsPosition,
+			expandOnDrag: playgroundExpandOnDrag,
+			multiple: playgroundMultiple,
+			disabled: playgroundDisabled
+		}
+		try {
+			window.localStorage.setItem(PLAYGROUND_STORAGE_KEY, JSON.stringify(cfg))
+		} catch {
+			// quota exceeded / private mode — silently ignore
+		}
+	})
 
 	// Fake server state for demo 16 (server-sync flow). A real app would talk
 	// to /api/upload + /api/files/:guid; here we simulate with an in-memory

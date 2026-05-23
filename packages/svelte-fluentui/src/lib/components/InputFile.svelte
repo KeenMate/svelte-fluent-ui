@@ -1461,6 +1461,75 @@
 		{/if}
 	{/snippet}
 
+	{#snippet overallFooter()}
+		{#if uploadFileCallback && items.length > 0}
+			<div class="file-list-footer">
+				<div
+					class="footer-progress"
+					role="progressbar"
+					aria-valuenow={Math.round(overallProgress)}
+					aria-valuemin="0"
+					aria-valuemax="100"
+				>
+					<div class="footer-progress-fill" style:width="{overallProgress}%"></div>
+				</div>
+				<div class="footer-stats">
+					<span class="footer-stats-text">
+						{labels.totalProgress({
+							completed: completedCount,
+							failed: failedCount,
+							total: items.length,
+							uploadedBytes,
+							totalBytes,
+							percent: overallProgress
+						})}
+					</span>
+					{#if anyUploading || anyPaused || anyFailed}
+						<div class="footer-actions">
+							{#if anyUploading}
+								<button
+									type="button"
+									class="footer-action-button"
+									onclick={(e) => {
+										e.stopPropagation()
+										pauseAll()
+									}}
+								>
+									{labels.pauseAll}
+								</button>
+							{/if}
+							{#if anyPaused}
+								<button
+									type="button"
+									class="footer-action-button"
+									onclick={(e) => {
+										e.stopPropagation()
+										resumeAll()
+									}}
+								>
+									{labels.resumeAll}
+								</button>
+							{/if}
+							{#if anyFailed}
+								<button
+									type="button"
+									class="footer-action-button"
+									onclick={(e) => {
+										e.stopPropagation()
+										retryAll()
+									}}
+								>
+									{labels.retryAll}
+								</button>
+							{/if}
+						</div>
+					{/if}
+					<span class="footer-stats-percent">{Math.round(overallProgress)}%</span>
+				</div>
+			</div>
+		{/if}
+	{/snippet}
+
 	{#if listAppearance === "chips" && items.length > 0}
 		<!-- chips-row only renders when there are items to show. With zero items,
 		     fall through to the plain selector-wrap so the card stays at its
@@ -1481,6 +1550,7 @@
 				{@render chipsList()}
 			</div>
 		</div>
+		{@render overallFooter()}
 	{:else}
 		<div class="fluent-inputfile__selector-wrap" bind:this={selectorWrapEl}>
 			{@render selectorBlock()}
@@ -1687,72 +1757,7 @@
 				{/if}
 			</div>
 
-			{#if uploadFileCallback && items.length > 0}
-				<div class="file-list-footer">
-					<div
-						class="footer-progress"
-						role="progressbar"
-						aria-valuenow={Math.round(overallProgress)}
-						aria-valuemin="0"
-						aria-valuemax="100"
-					>
-						<div class="footer-progress-fill" style:width="{overallProgress}%"></div>
-					</div>
-					<div class="footer-stats">
-						<span class="footer-stats-text">
-							{labels.totalProgress({
-								completed: completedCount,
-								failed: failedCount,
-								total: items.length,
-								uploadedBytes,
-								totalBytes,
-								percent: overallProgress
-							})}
-						</span>
-						{#if anyUploading || anyPaused || anyFailed}
-							<div class="footer-actions">
-								{#if anyUploading}
-									<button
-										type="button"
-										class="footer-action-button"
-										onclick={(e) => {
-											e.stopPropagation()
-											pauseAll()
-										}}
-									>
-										{labels.pauseAll}
-									</button>
-								{/if}
-								{#if anyPaused}
-									<button
-										type="button"
-										class="footer-action-button"
-										onclick={(e) => {
-											e.stopPropagation()
-											resumeAll()
-										}}
-									>
-										{labels.resumeAll}
-									</button>
-								{/if}
-								{#if anyFailed}
-									<button
-										type="button"
-										class="footer-action-button"
-										onclick={(e) => {
-											e.stopPropagation()
-											retryAll()
-										}}
-									>
-										{labels.retryAll}
-									</button>
-								{/if}
-							</div>
-						{/if}
-						<span class="footer-stats-percent">{Math.round(overallProgress)}%</span>
-					</div>
-				</div>
-			{/if}
+			{@render overallFooter()}
 		</div>
 	{/snippet}
 
