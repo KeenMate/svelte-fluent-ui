@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button} from "svelte-fluentui"
 	import type {MultiSplitterEventArgs, MultiSplitterResizeEventArgs} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	let lastEvent = $state<string>("None")
 	let orientation: "horizontal" | "vertical" = $state("horizontal")
@@ -78,56 +79,10 @@
 		panels.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Splitter" target="_blank" rel="noopener noreferrer">FluentUI Blazor Splitter</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitter Properties</h2>
-				<QuickGrid items={multiSplitterProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitter Callbacks</h2>
-				<QuickGrid items={multiSplitterCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitter Slots</h2>
-				<QuickGrid items={multiSplitterSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitterPane Properties</h2>
-				<QuickGrid items={multiSplitterPaneProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitterPane Callbacks</h2>
-				<QuickGrid items={multiSplitterPaneCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitterPane Slots</h2>
-				<QuickGrid items={multiSplitterPaneSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", na: true},
+		{label: "FluentUI Blazor Splitter", href: "https://www.fluentui-blazor.net/Splitter"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -243,6 +198,48 @@ function hello() {
 			</MultiSplitter>
 		</div>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>MultiSplitter Properties</h2>
+				<QuickGrid items={multiSplitterProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>MultiSplitter Callbacks</h2>
+				<QuickGrid items={multiSplitterCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>MultiSplitter Slots</h2>
+				<QuickGrid items={multiSplitterSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>MultiSplitterPane Properties</h2>
+				<QuickGrid items={multiSplitterPaneProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>MultiSplitterPane Callbacks</h2>
+				<QuickGrid items={multiSplitterPaneCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>MultiSplitterPane Slots</h2>
+				<QuickGrid items={multiSplitterPaneSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

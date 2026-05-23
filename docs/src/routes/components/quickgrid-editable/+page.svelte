@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button, Select, Option} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	// === API Documentation ===
 
@@ -835,338 +836,13 @@
 		QuickGrid supports inline editing with multiple editor types, edit triggers, validation, and advanced callbacks. This page covers all editable features.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="/components/quickgrid">QuickGrid (Basic)</a>
-			|
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">QuickGrid Editable (Custom)</span>
-			|
-			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
-		</p>
-	</Card>
+	<References links={[
+		{label: "QuickGrid (Basic)", href: "/components/quickgrid"},
+		{label: "QuickGrid Editable", custom: true},
+		{label: "QuickGrid Context Menu", href: "/components/quickgrid-contextmenu"}
+	]} />
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Properties</h2><QuickGrid items={editableProperties} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Callbacks</h2><QuickGrid items={editableCallbacks} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card><h2>Slots</h2><QuickGrid items={editableSlots} columns={propertyColumns} sortable filterable striped /></Card>
-		</GridItem>
-	</Grid>
 
-	<Card>
-		<h2>Column Editing Props</h2>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Default</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>isEditable</td>
-					<td>boolean | (row) =&gt; boolean</td>
-					<td>undefined</td>
-					<td>Enable editing for this column. Pass a callback for per-row decisions (e.g. only leaf rows in a tree)</td>
-				</tr>
-				<tr>
-					<td>editor</td>
-					<td>"text" | "number" | "checkbox" | "select" | "date" | "autocomplete" | "custom"</td>
-					<td>"text"</td>
-					<td>Editor type for this column</td>
-				</tr>
-				<tr>
-					<td>editTrigger</td>
-					<td>"click" | "dblclick" | "button" | "always" | "navigate"</td>
-					<td>grid default</td>
-					<td>Per-column edit trigger override</td>
-				</tr>
-				<tr>
-					<td>editorOptions</td>
-					<td>object</td>
-					<td>undefined</td>
-					<td>Editor options (min/max, options, loadOptions, etc.)</td>
-				</tr>
-				<tr>
-					<td>onbeforecommit</td>
-					<td>(context) =&gt; ValidationResult | boolean | string | null | Promise</td>
-					<td>undefined</td>
-					<td>Validate and optionally transform value before commit</td>
-				</tr>
-				<tr>
-					<td>validate</td>
-					<td>(value, row) =&gt; string | null | Promise</td>
-					<td>undefined</td>
-					<td>Legacy validation (use onbeforecommit instead)</td>
-				</tr>
-				<tr>
-					<td>oncelledit</td>
-					<td>(context) =&gt; void</td>
-					<td>undefined</td>
-					<td>Custom editor callback (for editor="custom")</td>
-				</tr>
-				<tr>
-					<td>showEditButton</td>
-					<td>boolean</td>
-					<td>false</td>
-					<td>Show edit button in cell</td>
-				</tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>Edit Triggers</h2>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Trigger</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>dblclick</td>
-					<td>Double-click to enter edit mode (default)</td>
-				</tr>
-				<tr>
-					<td>click</td>
-					<td>Single-click to enter edit mode</td>
-				</tr>
-				<tr>
-					<td>button</td>
-					<td>Click the edit button to enter edit mode</td>
-				</tr>
-				<tr>
-					<td>always</td>
-					<td>Cell is always in edit mode (spreadsheet-like)</td>
-				</tr>
-				<tr>
-					<td>navigate</td>
-					<td>Arrow key navigation with type-to-edit (Excel-like)</td>
-				</tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>Row Actions Props</h2>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Default</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>showRowActions</td>
-					<td>boolean</td>
-					<td>false</td>
-					<td>Show row action popup on hover</td>
-				</tr>
-				<tr>
-					<td>rowActions</td>
-					<td>RowActionType[]</td>
-					<td>['add', 'delete', 'duplicate']</td>
-					<td>Which actions to show in the popup</td>
-				</tr>
-				<tr>
-					<td>onrowaction</td>
-					<td>(detail) =&gt; void</td>
-					<td>undefined</td>
-					<td>Callback when an action button is clicked</td>
-				</tr>
-			</tbody>
-		</table>
-		<h3>RowActionType</h3>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Action</th>
-					<th>Icon</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>'add'</td><td>+</td><td>Add a new row below</td></tr>
-				<tr><td>'delete'</td><td>−</td><td>Delete the row (shown in red on hover)</td></tr>
-				<tr><td>'duplicate'</td><td>⧉</td><td>Duplicate the row</td></tr>
-				<tr><td>'moveUp'</td><td>↑</td><td>Move the row up</td></tr>
-				<tr><td>'moveDown'</td><td>↓</td><td>Move the row down</td></tr>
-			</tbody>
-		</table>
-		<h3>RowActionClickDetail</h3>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>action</td><td>RowActionType</td><td>The action that was clicked</td></tr>
-				<tr><td>rowIndex</td><td>number</td><td>Index of the hovered row</td></tr>
-				<tr><td>row</td><td>T</td><td>The row data</td></tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>CustomEditorContext</h2>
-		<p>The context object passed to <code>oncelledit</code>:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>value</td><td>any</td><td>Current cell value</td></tr>
-				<tr><td>row</td><td>T</td><td>Full row data</td></tr>
-				<tr><td>rowIndex</td><td>number</td><td>Row index in current view</td></tr>
-				<tr><td>field</td><td>string</td><td>Field name being edited</td></tr>
-				<tr><td>commit</td><td>(newValue) =&gt; void</td><td>Call to save new value (fires onrowchange)</td></tr>
-				<tr><td>cancel</td><td>() =&gt; void</td><td>Call to cancel editing</td></tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>EditorOptions</h2>
-		<p>Options available in <code>editorOptions</code> depending on editor type:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Editors</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>options</td><td>EditorOption[]</td><td>select, autocomplete</td><td>Static options array</td></tr>
-				<tr><td>loadOptions</td><td>(row, field) =&gt; Promise&lt;EditorOption[]&gt;</td><td>select, autocomplete</td><td>Dynamic options loader</td></tr>
-				<tr><td>optionsLoadTrigger</td><td>"immediate" | "oneditstart" | "ondropdownopen"</td><td>select, autocomplete</td><td>When to load dynamic options</td></tr>
-				<tr><td>min</td><td>number</td><td>number</td><td>Minimum value</td></tr>
-				<tr><td>max</td><td>number</td><td>number</td><td>Maximum value</td></tr>
-				<tr><td>step</td><td>number</td><td>number</td><td>Step increment</td></tr>
-				<tr><td>maxLength</td><td>number</td><td>text</td><td>Maximum character length</td></tr>
-				<tr><td>onSearch</td><td>(query, row) =&gt; Promise&lt;EditorOption[]&gt;</td><td>autocomplete</td><td>Search callback for autocomplete</td></tr>
-				<tr><td>valueMember</td><td>string</td><td>select, autocomplete</td><td>Property to use as value (default: "value")</td></tr>
-				<tr><td>displayMember</td><td>string</td><td>select, autocomplete</td><td>Property to use for display (default: "label")</td></tr>
-				<tr><td>allowEmpty</td><td>boolean</td><td>select, autocomplete</td><td>Allow null/empty selection</td></tr>
-				<tr><td>emptyLabel</td><td>string</td><td>select</td><td>Label for empty option (default: "-- Select --")</td></tr>
-				<tr><td>placeholder</td><td>string</td><td>text, number, autocomplete</td><td>Input placeholder text</td></tr>
-				<tr><td>initialOptions</td><td>EditorOption[]</td><td>autocomplete</td><td>Options shown before search</td></tr>
-				<tr><td>minSearchLength</td><td>number</td><td>autocomplete</td><td>Min chars before search (default: 1)</td></tr>
-				<tr><td>debounceMs</td><td>number</td><td>autocomplete</td><td>Search debounce delay (default: 300)</td></tr>
-				<tr><td>trueValue</td><td>any</td><td>checkbox</td><td>Value to store when checked (default: true)</td></tr>
-				<tr><td>falseValue</td><td>any</td><td>checkbox</td><td>Value to store when unchecked (default: false)</td></tr>
-				<tr><td>minDate</td><td>Date | string</td><td>date</td><td>Minimum selectable date</td></tr>
-				<tr><td>maxDate</td><td>Date | string</td><td>date</td><td>Maximum selectable date</td></tr>
-				<tr><td>outputFormat</td><td>"date" | "iso" | "timestamp"</td><td>date</td><td>How to store the date value</td></tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>RowChangeDetail</h2>
-		<p>The detail object passed to <code>onrowchange</code>:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>row</td><td>T</td><td>Original row data (unchanged)</td></tr>
-				<tr><td>draftRow</td><td>T</td><td>Draft row with user's changes (including invalid values)</td></tr>
-				<tr><td>rowIndex</td><td>number</td><td>Row index in current view</td></tr>
-				<tr><td>field</td><td>string</td><td>Field name that changed</td></tr>
-				<tr><td>oldValue</td><td>any</td><td>Previous value</td></tr>
-				<tr><td>newValue</td><td>any</td><td>New value (may be transformed)</td></tr>
-				<tr><td>isValid</td><td>boolean</td><td>True if validation passed</td></tr>
-				<tr><td>validationError</td><td>string | null</td><td>Error message if validation failed</td></tr>
-			</tbody>
-		</table>
-		<p><strong>Note:</strong> Invalid values persist in <code>draftRow</code> and are displayed in the cell, allowing users to see and fix their invalid input. Use <code>draftRow</code> when applying changes to your data.</p>
-	</Card>
-
-	<Card>
-		<h2>BeforeCommitContext</h2>
-		<p>The context object passed to <code>onbeforecommit</code>:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>value</td><td>unknown</td><td>The new value being committed</td></tr>
-				<tr><td>oldValue</td><td>unknown</td><td>The previous value</td></tr>
-				<tr><td>row</td><td>T</td><td>Full row data</td></tr>
-				<tr><td>rowIndex</td><td>number</td><td>Row index in current view</td></tr>
-				<tr><td>field</td><td>string</td><td>Field name being edited</td></tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>ValidationResult</h2>
-		<p><code>onbeforecommit</code> can return various types:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Return Value</th>
-					<th>Meaning</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td><code>true</code> / <code>null</code> / <code>undefined</code></td><td>Valid - commit proceeds</td></tr>
-				<tr><td><code>false</code></td><td>Invalid - shows "Validation failed"</td></tr>
-				<tr><td><code>"Error message"</code></td><td>Invalid - shows the error message</td></tr>
-				<tr><td><code>{'{'}valid: true{'}'}</code></td><td>Valid - commit proceeds</td></tr>
-				<tr><td><code>{'{'}valid: false, message: "Error"{'}'}</code></td><td>Invalid - shows the error message</td></tr>
-				<tr><td><code>{'{'}valid: true, transformedValue: x{'}'}</code></td><td>Valid - commit with transformed value</td></tr>
-			</tbody>
-		</table>
-	</Card>
-
-	<Card>
-		<h2>CellValidationState</h2>
-		<p>The <code>invalidCells</code> array contains objects with this shape:</p>
-		<table class="member-table">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td>rowIndex</td><td>number</td><td>Row index of the invalid cell</td></tr>
-				<tr><td>field</td><td>string</td><td>Field name of the invalid cell</td></tr>
-				<tr><td>error</td><td>string</td><td>Validation error message</td></tr>
-			</tbody>
-		</table>
-	</Card>
 
 	<!-- JSON Editor Dialog -->
 	<Dialog
@@ -1727,6 +1403,328 @@ function clearError(rowIndex, field) {
     !(c.rowIndex === rowIndex && c.field === field)
   )
 }`}</pre>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Properties</h2><QuickGrid items={editableProperties} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Callbacks</h2><QuickGrid items={editableCallbacks} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card><h2>Slots</h2><QuickGrid items={editableSlots} columns={propertyColumns} sortable filterable striped /></Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Column Editing Props</h2>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Default</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>isEditable</td>
+					<td>boolean | (row) =&gt; boolean</td>
+					<td>undefined</td>
+					<td>Enable editing for this column. Pass a callback for per-row decisions (e.g. only leaf rows in a tree)</td>
+				</tr>
+				<tr>
+					<td>editor</td>
+					<td>"text" | "number" | "checkbox" | "select" | "date" | "autocomplete" | "custom"</td>
+					<td>"text"</td>
+					<td>Editor type for this column</td>
+				</tr>
+				<tr>
+					<td>editTrigger</td>
+					<td>"click" | "dblclick" | "button" | "always" | "navigate"</td>
+					<td>grid default</td>
+					<td>Per-column edit trigger override</td>
+				</tr>
+				<tr>
+					<td>editorOptions</td>
+					<td>object</td>
+					<td>undefined</td>
+					<td>Editor options (min/max, options, loadOptions, etc.)</td>
+				</tr>
+				<tr>
+					<td>onbeforecommit</td>
+					<td>(context) =&gt; ValidationResult | boolean | string | null | Promise</td>
+					<td>undefined</td>
+					<td>Validate and optionally transform value before commit</td>
+				</tr>
+				<tr>
+					<td>validate</td>
+					<td>(value, row) =&gt; string | null | Promise</td>
+					<td>undefined</td>
+					<td>Legacy validation (use onbeforecommit instead)</td>
+				</tr>
+				<tr>
+					<td>oncelledit</td>
+					<td>(context) =&gt; void</td>
+					<td>undefined</td>
+					<td>Custom editor callback (for editor="custom")</td>
+				</tr>
+				<tr>
+					<td>showEditButton</td>
+					<td>boolean</td>
+					<td>false</td>
+					<td>Show edit button in cell</td>
+				</tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>Edit Triggers</h2>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Trigger</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>dblclick</td>
+					<td>Double-click to enter edit mode (default)</td>
+				</tr>
+				<tr>
+					<td>click</td>
+					<td>Single-click to enter edit mode</td>
+				</tr>
+				<tr>
+					<td>button</td>
+					<td>Click the edit button to enter edit mode</td>
+				</tr>
+				<tr>
+					<td>always</td>
+					<td>Cell is always in edit mode (spreadsheet-like)</td>
+				</tr>
+				<tr>
+					<td>navigate</td>
+					<td>Arrow key navigation with type-to-edit (Excel-like)</td>
+				</tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>Row Actions Props</h2>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Default</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>showRowActions</td>
+					<td>boolean</td>
+					<td>false</td>
+					<td>Show row action popup on hover</td>
+				</tr>
+				<tr>
+					<td>rowActions</td>
+					<td>RowActionType[]</td>
+					<td>['add', 'delete', 'duplicate']</td>
+					<td>Which actions to show in the popup</td>
+				</tr>
+				<tr>
+					<td>onrowaction</td>
+					<td>(detail) =&gt; void</td>
+					<td>undefined</td>
+					<td>Callback when an action button is clicked</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>RowActionType</h3>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Action</th>
+					<th>Icon</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>'add'</td><td>+</td><td>Add a new row below</td></tr>
+				<tr><td>'delete'</td><td>−</td><td>Delete the row (shown in red on hover)</td></tr>
+				<tr><td>'duplicate'</td><td>⧉</td><td>Duplicate the row</td></tr>
+				<tr><td>'moveUp'</td><td>↑</td><td>Move the row up</td></tr>
+				<tr><td>'moveDown'</td><td>↓</td><td>Move the row down</td></tr>
+			</tbody>
+		</table>
+		<h3>RowActionClickDetail</h3>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>action</td><td>RowActionType</td><td>The action that was clicked</td></tr>
+				<tr><td>rowIndex</td><td>number</td><td>Index of the hovered row</td></tr>
+				<tr><td>row</td><td>T</td><td>The row data</td></tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>CustomEditorContext</h2>
+		<p>The context object passed to <code>oncelledit</code>:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>value</td><td>any</td><td>Current cell value</td></tr>
+				<tr><td>row</td><td>T</td><td>Full row data</td></tr>
+				<tr><td>rowIndex</td><td>number</td><td>Row index in current view</td></tr>
+				<tr><td>field</td><td>string</td><td>Field name being edited</td></tr>
+				<tr><td>commit</td><td>(newValue) =&gt; void</td><td>Call to save new value (fires onrowchange)</td></tr>
+				<tr><td>cancel</td><td>() =&gt; void</td><td>Call to cancel editing</td></tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>EditorOptions</h2>
+		<p>Options available in <code>editorOptions</code> depending on editor type:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Editors</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>options</td><td>EditorOption[]</td><td>select, autocomplete</td><td>Static options array</td></tr>
+				<tr><td>loadOptions</td><td>(row, field) =&gt; Promise&lt;EditorOption[]&gt;</td><td>select, autocomplete</td><td>Dynamic options loader</td></tr>
+				<tr><td>optionsLoadTrigger</td><td>"immediate" | "oneditstart" | "ondropdownopen"</td><td>select, autocomplete</td><td>When to load dynamic options</td></tr>
+				<tr><td>min</td><td>number</td><td>number</td><td>Minimum value</td></tr>
+				<tr><td>max</td><td>number</td><td>number</td><td>Maximum value</td></tr>
+				<tr><td>step</td><td>number</td><td>number</td><td>Step increment</td></tr>
+				<tr><td>maxLength</td><td>number</td><td>text</td><td>Maximum character length</td></tr>
+				<tr><td>onSearch</td><td>(query, row) =&gt; Promise&lt;EditorOption[]&gt;</td><td>autocomplete</td><td>Search callback for autocomplete</td></tr>
+				<tr><td>valueMember</td><td>string</td><td>select, autocomplete</td><td>Property to use as value (default: "value")</td></tr>
+				<tr><td>displayMember</td><td>string</td><td>select, autocomplete</td><td>Property to use for display (default: "label")</td></tr>
+				<tr><td>allowEmpty</td><td>boolean</td><td>select, autocomplete</td><td>Allow null/empty selection</td></tr>
+				<tr><td>emptyLabel</td><td>string</td><td>select</td><td>Label for empty option (default: "-- Select --")</td></tr>
+				<tr><td>placeholder</td><td>string</td><td>text, number, autocomplete</td><td>Input placeholder text</td></tr>
+				<tr><td>initialOptions</td><td>EditorOption[]</td><td>autocomplete</td><td>Options shown before search</td></tr>
+				<tr><td>minSearchLength</td><td>number</td><td>autocomplete</td><td>Min chars before search (default: 1)</td></tr>
+				<tr><td>debounceMs</td><td>number</td><td>autocomplete</td><td>Search debounce delay (default: 300)</td></tr>
+				<tr><td>trueValue</td><td>any</td><td>checkbox</td><td>Value to store when checked (default: true)</td></tr>
+				<tr><td>falseValue</td><td>any</td><td>checkbox</td><td>Value to store when unchecked (default: false)</td></tr>
+				<tr><td>minDate</td><td>Date | string</td><td>date</td><td>Minimum selectable date</td></tr>
+				<tr><td>maxDate</td><td>Date | string</td><td>date</td><td>Maximum selectable date</td></tr>
+				<tr><td>outputFormat</td><td>"date" | "iso" | "timestamp"</td><td>date</td><td>How to store the date value</td></tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>RowChangeDetail</h2>
+		<p>The detail object passed to <code>onrowchange</code>:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>row</td><td>T</td><td>Original row data (unchanged)</td></tr>
+				<tr><td>draftRow</td><td>T</td><td>Draft row with user's changes (including invalid values)</td></tr>
+				<tr><td>rowIndex</td><td>number</td><td>Row index in current view</td></tr>
+				<tr><td>field</td><td>string</td><td>Field name that changed</td></tr>
+				<tr><td>oldValue</td><td>any</td><td>Previous value</td></tr>
+				<tr><td>newValue</td><td>any</td><td>New value (may be transformed)</td></tr>
+				<tr><td>isValid</td><td>boolean</td><td>True if validation passed</td></tr>
+				<tr><td>validationError</td><td>string | null</td><td>Error message if validation failed</td></tr>
+			</tbody>
+		</table>
+		<p><strong>Note:</strong> Invalid values persist in <code>draftRow</code> and are displayed in the cell, allowing users to see and fix their invalid input. Use <code>draftRow</code> when applying changes to your data.</p>
+	</Card>
+
+	<Card>
+		<h2>BeforeCommitContext</h2>
+		<p>The context object passed to <code>onbeforecommit</code>:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>value</td><td>unknown</td><td>The new value being committed</td></tr>
+				<tr><td>oldValue</td><td>unknown</td><td>The previous value</td></tr>
+				<tr><td>row</td><td>T</td><td>Full row data</td></tr>
+				<tr><td>rowIndex</td><td>number</td><td>Row index in current view</td></tr>
+				<tr><td>field</td><td>string</td><td>Field name being edited</td></tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>ValidationResult</h2>
+		<p><code>onbeforecommit</code> can return various types:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Return Value</th>
+					<th>Meaning</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td><code>true</code> / <code>null</code> / <code>undefined</code></td><td>Valid - commit proceeds</td></tr>
+				<tr><td><code>false</code></td><td>Invalid - shows "Validation failed"</td></tr>
+				<tr><td><code>"Error message"</code></td><td>Invalid - shows the error message</td></tr>
+				<tr><td><code>{'{'}valid: true{'}'}</code></td><td>Valid - commit proceeds</td></tr>
+				<tr><td><code>{'{'}valid: false, message: "Error"{'}'}</code></td><td>Invalid - shows the error message</td></tr>
+				<tr><td><code>{'{'}valid: true, transformedValue: x{'}'}</code></td><td>Valid - commit with transformed value</td></tr>
+			</tbody>
+		</table>
+	</Card>
+
+	<Card>
+		<h2>CellValidationState</h2>
+		<p>The <code>invalidCells</code> array contains objects with this shape:</p>
+		<table class="member-table">
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>rowIndex</td><td>number</td><td>Row index of the invalid cell</td></tr>
+				<tr><td>field</td><td>string</td><td>Field name of the invalid cell</td></tr>
+				<tr><td>error</td><td>string</td><td>Validation error message</td></tr>
+			</tbody>
+		</table>
 	</Card>
 </Stack>
 

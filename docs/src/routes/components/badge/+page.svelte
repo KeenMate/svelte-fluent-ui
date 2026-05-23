@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Badge, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -40,37 +41,10 @@
 		status, counts, or labels next to other content.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-badge-badge--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Badge" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Stack orientation="vertical" gap="1rem">
-				<Card>
-					<h2>Callbacks</h2>
-					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-				</Card>
-			</Stack>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-badge-badge--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Badge"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -183,4 +157,27 @@
 			<Badge circular color="success">99+</Badge>
 		</Stack>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Stack orientation="vertical" gap="1rem">
+				<Card>
+					<h2>Callbacks</h2>
+					<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+				</Card>
+			</Stack>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>

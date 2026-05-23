@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Anchor, QuickGrid, Stack, Grid, GridItem, Card } from "svelte-fluentui";
+	import {References} from "$lib/components";
 
 	function handleAnchorClick(event: MouseEvent) {
 		alert("Anchor clicked!");
@@ -55,13 +56,16 @@
 		appearances and optional start/end icon slots while behaving like a standard anchor.
 	</p>
 
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-button-anchor--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Anchor"}
+	]} />
+
 	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-button-anchor--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Anchor" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
+		<h2 class="content-subhead">Examples</h2>
+
+		<h3>Basic Anchor</h3>
+		<Anchor href="#">example</Anchor>
 	</Card>
 
 	<Grid spacing={3}>
@@ -86,11 +90,4 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Examples</h2>
-
-		<h3>Basic Anchor</h3>
-		<Anchor href="#">example</Anchor>
-	</Card>
 </Stack>

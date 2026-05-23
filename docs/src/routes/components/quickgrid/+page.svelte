@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -166,17 +167,68 @@
 		A lightweight, flexible data grid component with sorting, filtering, and pagination support. Inspired by ASP.NET QuickGrid.
 	</p>
 
+	<References links={[
+		{label: "QuickGrid", custom: true},
+		{label: "ASP.NET QuickGrid (Inspiration)", href: "https://aspnet.github.io/quickgridsamples/"},
+		{label: "QuickGrid Editable", href: "/components/quickgrid-editable"},
+		{label: "QuickGrid Context Menu", href: "/components/quickgrid-contextmenu"}
+	]} />
+
 	<Card>
+		<h2>Examples</h2>
+
+		<h3>Basic Grid</h3>
+		<p>Simple grid with default settings:</p>
+		<QuickGrid items={sampleData} columns={basicColumns} />
+
+		<h3>Sortable Grid</h3>
+		<p>Click column headers to sort (supports string, number, and mixed types):</p>
+		<QuickGrid items={sampleData} columns={sortableColumns} sortable />
+
+		<h3>Filterable Grid</h3>
+		<p>Type in the filter inputs to search (case-insensitive):</p>
+		<QuickGrid items={sampleData} columns={filterableColumns} filterable />
+
+		<h3>Paginated Grid</h3>
+		<p>Grid with pagination (5 items per page):</p>
+		<QuickGrid items={sampleData} columns={basicColumns} pageable pageSize={5} />
+
+		<h3>Custom Formatting</h3>
+		<p>Use format function to customize cell display:</p>
+		<QuickGrid items={sampleData} columns={formattedColumns} />
+
+		<h3>All Features Combined</h3>
+		<p>Sorting, filtering, pagination, and custom formatting:</p>
+		<QuickGrid
+			items={sampleData}
+			columns={allFeaturesColumns}
+			sortable
+			filterable
+			pageable
+			pageSize={7}
+		/>
+
+		<h3>Nowrap columns &amp; ellipsis truncation</h3>
 		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">QuickGrid (Custom)</span>
-			|
-			<a href="https://aspnet.github.io/quickgridsamples/" target="_blank" rel="noopener noreferrer">ASP.NET QuickGrid (Inspiration)</a>
-			|
-			<a href="/components/quickgrid-editable">QuickGrid Editable</a>
-			|
-			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
+			<code>column.nowrap: true</code> forces body cells onto a single line. Combined with <code>autoWidth</code> the column sizes to
+			<code>max(header text, longest cell value)</code> — useful for ID / code / short name columns. Combined with <code>maxWidth</code>
+			the column is capped and long values truncate with an ellipsis instead of overflowing or wrapping.
 		</p>
+		<p>Compare default wrapping (top) with nowrap + ellipsis (bottom):</p>
+
+		<h4 style="margin: 1rem 0 0.5rem;">Default — wrapping</h4>
+		<QuickGrid items={sampleDataWithBios} columns={wrapColumns} fillerColumn columnMinWidth="6rem" />
+
+		<h4 style="margin: 1.5rem 0 0.5rem;">With <code>nowrap: true</code> — single-line + ellipsis</h4>
+		<QuickGrid items={sampleDataWithBios} columns={nowrapColumns} fillerColumn columnMinWidth="6rem" />
+
+		<h3>No Stripes, No Hover</h3>
+		<p>Grid without alternating row colors or hover effects:</p>
+		<QuickGrid items={sampleData} columns={basicColumns} striped={false} hoverable={false} />
+
+		<h3>Editable Grid</h3>
+		<p>QuickGrid supports inline editing with multiple editor types, validation, dynamic options loading, and custom editors.</p>
+		<p><a href="/components/quickgrid-editable">See QuickGrid Editable documentation</a> for examples and full API reference.</p>
 	</Card>
 
 	<Grid spacing={3}>
@@ -286,62 +338,5 @@
 				</tr>
 			</tbody>
 		</table>
-	</Card>
-
-	<Card>
-		<h2>Examples</h2>
-
-		<h3>Basic Grid</h3>
-		<p>Simple grid with default settings:</p>
-		<QuickGrid items={sampleData} columns={basicColumns} />
-
-		<h3>Sortable Grid</h3>
-		<p>Click column headers to sort (supports string, number, and mixed types):</p>
-		<QuickGrid items={sampleData} columns={sortableColumns} sortable />
-
-		<h3>Filterable Grid</h3>
-		<p>Type in the filter inputs to search (case-insensitive):</p>
-		<QuickGrid items={sampleData} columns={filterableColumns} filterable />
-
-		<h3>Paginated Grid</h3>
-		<p>Grid with pagination (5 items per page):</p>
-		<QuickGrid items={sampleData} columns={basicColumns} pageable pageSize={5} />
-
-		<h3>Custom Formatting</h3>
-		<p>Use format function to customize cell display:</p>
-		<QuickGrid items={sampleData} columns={formattedColumns} />
-
-		<h3>All Features Combined</h3>
-		<p>Sorting, filtering, pagination, and custom formatting:</p>
-		<QuickGrid
-			items={sampleData}
-			columns={allFeaturesColumns}
-			sortable
-			filterable
-			pageable
-			pageSize={7}
-		/>
-
-		<h3>Nowrap columns &amp; ellipsis truncation</h3>
-		<p>
-			<code>column.nowrap: true</code> forces body cells onto a single line. Combined with <code>autoWidth</code> the column sizes to
-			<code>max(header text, longest cell value)</code> — useful for ID / code / short name columns. Combined with <code>maxWidth</code>
-			the column is capped and long values truncate with an ellipsis instead of overflowing or wrapping.
-		</p>
-		<p>Compare default wrapping (top) with nowrap + ellipsis (bottom):</p>
-
-		<h4 style="margin: 1rem 0 0.5rem;">Default — wrapping</h4>
-		<QuickGrid items={sampleDataWithBios} columns={wrapColumns} fillerColumn columnMinWidth="6rem" />
-
-		<h4 style="margin: 1.5rem 0 0.5rem;">With <code>nowrap: true</code> — single-line + ellipsis</h4>
-		<QuickGrid items={sampleDataWithBios} columns={nowrapColumns} fillerColumn columnMinWidth="6rem" />
-
-		<h3>No Stripes, No Hover</h3>
-		<p>Grid without alternating row colors or hover effects:</p>
-		<QuickGrid items={sampleData} columns={basicColumns} striped={false} hoverable={false} />
-
-		<h3>Editable Grid</h3>
-		<p>QuickGrid supports inline editing with multiple editor types, validation, dynamic options loading, and custom editors.</p>
-		<p><a href="/components/quickgrid-editable">See QuickGrid Editable documentation</a> for examples and full API reference.</p>
 	</Card>
 </Stack>

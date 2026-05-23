@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Org = {
 		path: string
@@ -219,42 +220,11 @@
 		Mark one column with <code>isTree: true</code> and the grid handles indentation, expand/collapse, ancestor-aware filtering, and optional double-click-to-toggle.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="/components/quickgrid">QuickGrid</a>
-			|
-			<a href="/components/quickgrid-editable">QuickGrid Editable</a>
-			|
-			<a href="/components/quickgrid-contextmenu">QuickGrid Context Menu</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped fillerColumn />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped fillerColumn />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} striped fillerColumn />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Card>
-		<h2>Column Properties</h2>
-		<QuickGrid items={columnProperties} columns={propertyColumns} sortable filterable striped fillerColumn />
-	</Card>
+	<References links={[
+		{label: "QuickGrid", href: "/components/quickgrid"},
+		{label: "QuickGrid Editable", href: "/components/quickgrid-editable"},
+		{label: "QuickGrid Context Menu", href: "/components/quickgrid-contextmenu"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -387,5 +357,31 @@
 			fillerColumn
 			columnMinWidth="8rem"
 		/>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped fillerColumn />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped fillerColumn />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} striped fillerColumn />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Column Properties</h2>
+		<QuickGrid items={columnProperties} columns={propertyColumns} sortable filterable striped fillerColumn />
 	</Card>
 </Stack>

@@ -364,6 +364,87 @@
 	function openPalette() {
 		window.dispatchEvent(new CustomEvent("open-command-palette"))
 	}
+
+	// ---- Anchored headings + share button ----
+	const headingLinkSvg = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="currentColor"><path d="M7.05 5.05a3.5 3.5 0 0 1 4.95 0l1 1a3.5 3.5 0 0 1-4.95 4.95l-.5-.5a.75.75 0 0 1 1.06-1.06l.5.5a2 2 0 0 0 2.83-2.83l-1-1a2 2 0 0 0-2.83 0l-.5.5a.75.75 0 1 1-1.06-1.06l.5-.5zM4.95 10.95a3.5 3.5 0 0 1 0-4.95l1-1a3.5 3.5 0 0 1 4.95 0 .75.75 0 1 1-1.06 1.06 2 2 0 0 0-2.83 0l-1 1a2 2 0 0 0 2.83 2.83l.5-.5a.75.75 0 1 1 1.06 1.06l-.5.5a3.5 3.5 0 0 1-4.95 0z"/></svg>`
+	const headingCheckSvg = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7 7a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06L6.25 10.69l6.47-6.47a.75.75 0 0 1 1.06 0z"/></svg>`
+
+	function slugifyHeading(text: string): string {
+		return text
+			.toLowerCase()
+			.trim()
+			.replace(/[^\w\s-]/g, "")
+			.replace(/\s+/g, "-")
+			.replace(/-+/g, "-")
+			.replace(/^-+|-+$/g, "")
+	}
+
+	async function decorateHeadings() {
+		if (typeof window === "undefined") return
+		await tick()
+		const root = document.querySelector(".content")
+		if (!root) return
+		const used = new Set<string>()
+		const headings = root.querySelectorAll<HTMLHeadingElement>("h1, h2, h3")
+		headings.forEach((h) => {
+			if (h.dataset.anchored === "true") {
+				if (h.id) used.add(h.id)
+				return
+			}
+			const rawText = (h.textContent ?? "").trim()
+			if (!rawText) return
+			const base = h.id || slugifyHeading(rawText)
+			if (!base) return
+			let slug = base
+			let i = 2
+			while (used.has(slug)) {
+				slug = `${base}-${i++}`
+			}
+			used.add(slug)
+			h.id = slug
+			h.dataset.anchored = "true"
+			h.classList.add("anchored-heading")
+
+			const btn = document.createElement("button")
+			btn.type = "button"
+			btn.className = "heading-share-btn"
+			btn.setAttribute("aria-label", "Copy link to this section")
+			btn.title = "Copy link to this section"
+			btn.innerHTML = headingLinkSvg
+			btn.addEventListener("click", async (ev) => {
+				ev.preventDefault()
+				ev.stopPropagation()
+				const url = `${window.location.origin}${window.location.pathname}#${slug}`
+				try {
+					await navigator.clipboard.writeText(url)
+					history.replaceState(null, "", `#${slug}`)
+					btn.classList.add("copied")
+					btn.innerHTML = headingCheckSvg
+					setTimeout(() => {
+						btn.classList.remove("copied")
+						btn.innerHTML = headingLinkSvg
+					}, 1200)
+				} catch {
+					window.location.hash = slug
+				}
+			})
+			h.appendChild(btn)
+		})
+
+		if (window.location.hash) {
+			const id = decodeURIComponent(window.location.hash.slice(1))
+			const target = document.getElementById(id)
+			if (target) {
+				target.scrollIntoView({behavior: "auto", block: "start"})
+			}
+		}
+	}
+
+	$effect(() => {
+		// Re-decorate whenever the route changes
+		void $page.url.pathname
+		decorateHeadings()
+	})
 </script>
 
 <Layout orientation="vertical" style="min-height: 100vh;">
@@ -576,6 +657,42 @@
 
 	.content {
 		padding: 2rem;
+	}
+
+	.content :global(.anchored-heading) {
+		scroll-margin-top: 72px;
+	}
+
+	.content :global(.heading-share-btn) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-left: 0.5rem;
+		padding: 0.25rem;
+		background: transparent;
+		border: none;
+		border-radius: 4px;
+		color: var(--neutral-foreground-hint, #888);
+		cursor: pointer;
+		opacity: 0;
+		transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
+		vertical-align: middle;
+		line-height: 0;
+	}
+
+	.content :global(.anchored-heading:hover .heading-share-btn),
+	.content :global(.heading-share-btn:focus-visible) {
+		opacity: 1;
+	}
+
+	.content :global(.heading-share-btn:hover) {
+		background: var(--neutral-fill-secondary-hover, #ebebeb);
+		color: var(--accent-fill-rest, #0078d4);
+	}
+
+	.content :global(.heading-share-btn.copied) {
+		opacity: 1;
+		color: var(--accent-fill-rest, #0078d4);
 	}
 
 

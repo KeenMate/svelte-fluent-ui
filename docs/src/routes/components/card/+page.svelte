@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Card, QuickGrid, Stack, Grid, GridItem} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -41,13 +42,28 @@
 		treatment. Inspired by the FluentUI Blazor Card component.
 	</p>
 
+	<References links={[
+		{label: "Card", custom: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Card"}
+	]} />
+
 	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">Card (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Card" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
+		<h2 class="content-subhead">Examples</h2>
+		<div class="examples-container">
+		<Card class="flex-card">
+			<p>
+				Some card content
+			</p>
+		</Card>
+		<Card width="200px" height="200px">
+			<p>200x200 content</p>
+		</Card>
+		<Card class="flex-card">
+			<p>
+				Some card content
+			</p>
+		</Card>
+		</div>
 	</Card>
 
 	<Grid spacing={3}>
@@ -70,25 +86,6 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Examples</h2>
-		<div class="examples-container">
-		<Card class="flex-card">
-			<p>
-				Some card content
-			</p>
-		</Card>
-		<Card width="200px" height="200px">
-			<p>200x200 content</p>
-		</Card>
-		<Card class="flex-card">
-			<p>
-				Some card content
-			</p>
-		</Card>
-		</div>
-	</Card>
 </Stack>
 
 <style>

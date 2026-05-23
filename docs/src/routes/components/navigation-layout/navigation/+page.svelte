@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {NavMenu, NavGroup, NavLinkItem, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	function onNavClick(ev: Event) {
 		console.log("Nav link/group clicked", ev)
@@ -93,98 +94,10 @@
 		<span class="component-name">NavItem</span>.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">NavMenu (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/NavMenu" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavMenu Properties</h2>
-				<QuickGrid items={navMenuProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavMenu Callbacks</h2>
-				<QuickGrid items={navMenuCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavMenu Slots</h2>
-				<QuickGrid items={navMenuSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavGroup Properties</h2>
-				<QuickGrid items={navGroupProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavGroup Callbacks</h2>
-				<QuickGrid items={navGroupCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavGroup Slots</h2>
-				<QuickGrid items={navGroupSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavLinkItem Properties</h2>
-				<QuickGrid items={navLinkItemProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavLinkItem Callbacks</h2>
-				<QuickGrid items={navLinkItemCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavLinkItem Slots</h2>
-				<QuickGrid items={navLinkItemSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavItem Properties</h2>
-				<QuickGrid items={navItemProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavItem Callbacks</h2>
-				<QuickGrid items={navItemCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>NavItem Slots</h2>
-				<QuickGrid items={navItemSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "NavMenu", custom: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/NavMenu"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -333,6 +246,90 @@
 			</NavMenu>
 		</div>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavMenu Properties</h2>
+				<QuickGrid items={navMenuProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavMenu Callbacks</h2>
+				<QuickGrid items={navMenuCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavMenu Slots</h2>
+				<QuickGrid items={navMenuSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavGroup Properties</h2>
+				<QuickGrid items={navGroupProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavGroup Callbacks</h2>
+				<QuickGrid items={navGroupCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavGroup Slots</h2>
+				<QuickGrid items={navGroupSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavLinkItem Properties</h2>
+				<QuickGrid items={navLinkItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavLinkItem Callbacks</h2>
+				<QuickGrid items={navLinkItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavLinkItem Slots</h2>
+				<QuickGrid items={navLinkItemSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavItem Properties</h2>
+				<QuickGrid items={navItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavItem Callbacks</h2>
+				<QuickGrid items={navItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>NavItem Slots</h2>
+				<QuickGrid items={navItemSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

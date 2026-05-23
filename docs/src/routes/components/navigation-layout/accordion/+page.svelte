@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Accordion, AccordionItem, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 	let accordionValue: string | string[] | null = null
 
 	type Property = {
@@ -57,56 +58,10 @@
 		<code>&lt;fluent-accordion-item&gt;</code> elements, with single or multiple-expand modes.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-accordion-accordion--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Accordion" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Accordion Properties</h2>
-				<QuickGrid items={accordionProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Accordion Callbacks</h2>
-				<QuickGrid items={accordionCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Accordion Slots</h2>
-				<QuickGrid items={accordionSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AccordionItem Properties</h2>
-				<QuickGrid items={accordionItemProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AccordionItem Callbacks</h2>
-				<QuickGrid items={accordionItemCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AccordionItem Slots</h2>
-				<QuickGrid items={accordionItemSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-accordion-accordion--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Accordion"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -170,6 +125,48 @@
 			</GridItem>
 		</Grid>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Accordion Properties</h2>
+				<QuickGrid items={accordionProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Accordion Callbacks</h2>
+				<QuickGrid items={accordionCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Accordion Slots</h2>
+				<QuickGrid items={accordionSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AccordionItem Properties</h2>
+				<QuickGrid items={accordionItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AccordionItem Callbacks</h2>
+				<QuickGrid items={accordionItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AccordionItem Slots</h2>
+				<QuickGrid items={accordionItemSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

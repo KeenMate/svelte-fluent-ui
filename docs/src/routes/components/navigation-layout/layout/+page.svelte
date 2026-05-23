@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Layout, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -39,12 +40,19 @@
 		the FluentUI Blazor Layout component.
 	</p>
 
+	<References links={[
+		{label: "Layout", custom: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Layout"}
+	]} />
+
 	<Card>
+		<h2>Examples</h2>
 		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">Layout (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Layout" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
+			<Layout>
+				<p>
+					Inner content of layout
+				</p>
+			</Layout>
 		</p>
 	</Card>
 
@@ -68,15 +76,4 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2>Examples</h2>
-		<p>
-			<Layout>
-				<p>
-					Inner content of layout
-				</p>
-			</Layout>
-		</p>
-	</Card>
 </Stack>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Autocomplete, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui"
+	import {References} from "$lib/components"
 	import { countries } from "$lib/demo-data/datasets"
 
 	const colors = [
@@ -181,44 +182,10 @@
 		Inspired by the FluentUI Blazor Autocomplete component.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Autocomplete" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Card>
-		<h2>OptionItem Type</h2>
-		<pre><code>{`type OptionItem<T = any> = {
-  value: T          // Unique identifier
-  text: string      // Display text
-  disabled?: boolean // Optional disabled state
-}`}</code></pre>
-	</Card>
+	<References links={[
+		{label: "FluentUI Web Component", na: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Autocomplete"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -737,6 +704,36 @@ ${'<'}Autocomplete
     </div>
   {/snippet}
 </Autocomplete>`}</code></pre>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>OptionItem Type</h2>
+		<pre><code>{`type OptionItem<T = any> = {
+  value: T          // Unique identifier
+  text: string      // Display text
+  disabled?: boolean // Optional disabled state
+}`}</code></pre>
 	</Card>
 </Stack>
 

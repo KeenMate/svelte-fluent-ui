@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {QuickGrid, Stack, Grid, GridItem, Card, Dialog, Button} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type PropertyRow = {
 		name: string
@@ -296,14 +297,10 @@
 		disabled states based on row/cell data.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="/components/quickgrid">QuickGrid (Basic)</a>
-			|
-			<a href="/components/quickgrid-editable">QuickGrid Editable</a>
-		</p>
-	</Card>
+	<References links={[
+		{label: "QuickGrid (Basic)", href: "/components/quickgrid"},
+		{label: "QuickGrid Editable", href: "/components/quickgrid-editable"}
+	]} />
 
 	{#if lastAction}
 		<div class="action-message">
@@ -311,36 +308,7 @@
 		</div>
 	{/if}
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
 
-	<Card>
-		<h2>ContextMenuItem Properties</h2>
-		<QuickGrid items={contextMenuItems} columns={contextMenuItemColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h2>ContextMenuContext Properties</h2>
-		<QuickGrid items={contextMenuContext} columns={contextMenuContextColumns} sortable filterable striped />
-	</Card>
 
 	<Card>
 		<h2>Examples</h2>
@@ -400,6 +368,37 @@
     }
   ]}
 />`}</code></pre>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>ContextMenuItem Properties</h2>
+		<QuickGrid items={contextMenuItems} columns={contextMenuItemColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h2>ContextMenuContext Properties</h2>
+		<QuickGrid items={contextMenuContext} columns={contextMenuContextColumns} sortable filterable striped />
 	</Card>
 </Stack>
 

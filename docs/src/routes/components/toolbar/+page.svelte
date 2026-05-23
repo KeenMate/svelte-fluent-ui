@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Toolbar, Button, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -39,13 +40,25 @@
 		controls — buttons, menus, dividers — with keyboard navigation between them.
 	</p>
 
+	<References links={[
+		{label: "FluentUI Web Component", na: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Toolbar"}
+	]} />
+
 	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Toolbar" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
+		<h2>Examples</h2>
+
+		<h3>Basic toolbar</h3>
+		<Toolbar>
+			<Button>First</Button>
+			<Button>Second</Button>
+		</Toolbar>
+
+		<h3>Vertical toolbar</h3>
+		<Toolbar orientation="vertical">
+			<Button>First</Button>
+			<Button>Second</Button>
+		</Toolbar>
 	</Card>
 
 	<Grid spacing={3}>
@@ -68,20 +81,4 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2>Examples</h2>
-
-		<h3>Basic toolbar</h3>
-		<Toolbar>
-			<Button>First</Button>
-			<Button>Second</Button>
-		</Toolbar>
-
-		<h3>Vertical toolbar</h3>
-		<Toolbar orientation="vertical">
-			<Button>First</Button>
-			<Button>Second</Button>
-		</Toolbar>
-	</Card>
 </Stack>

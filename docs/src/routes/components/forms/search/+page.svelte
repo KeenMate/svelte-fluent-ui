@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Search, Stack, Grid, GridItem, Card, QuickGrid, Icon, Button, Checkbox } from "svelte-fluentui";
+	import {References} from "$lib/components";
 
 	// US States data for interactive examples
 	const states = [
@@ -137,51 +138,10 @@
 		<code>fluent-search</code> wraps the <code>&lt;input type=&quot;search&quot;&gt;</code> element, a web component implementation of a search element leveraging the Fluent UI design system.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components Storybook">FluentUI Web Component (N/A)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Search" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Card>
-		<h2>Methods</h2>
-		<QuickGrid items={methods} columns={propertyColumns} sortable filterable striped />
-	</Card>
-
-	<Card>
-		<h2>Placeholders and autofill</h2>
-		<p>The <code>placeholder</code> parameter is used to set the placeholder text for the input field. This is a short hint that describes the expected value of the input field, it is displayed when the input field is empty and not focused.</p>
-		<p>The placeholder value affects the autofill suggestion feature in Microsoft Edge and Google Chrome. Even if you set the <code>autocomplete</code> parameter to off, the browser may still display autofill suggestions based on the placeholder value.</p>
-		<p style="margin-bottom: 1rem;">Here are certain placeholder values which you should avoid to prevent the browser from showing autofill suggestions:</p>
-
-		<QuickGrid items={placeholderData} columns={placeholderColumns} striped />
-
-		<p class="hint" style="margin-top: 1rem;">If you still want to use these placeholder values, then you need to disable autofill in your browser settings completely.</p>
-	</Card>
+	<References links={[
+		{label: "FluentUI Web Component", na: "Not available in FluentUI Web Components Storybook"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Search"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -409,6 +369,43 @@
 				</Stack>
 			</GridItem>
 		</Grid>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Methods</h2>
+		<QuickGrid items={methods} columns={propertyColumns} sortable filterable striped />
+	</Card>
+
+	<Card>
+		<h2>Placeholders and autofill</h2>
+		<p>The <code>placeholder</code> parameter is used to set the placeholder text for the input field. This is a short hint that describes the expected value of the input field, it is displayed when the input field is empty and not focused.</p>
+		<p>The placeholder value affects the autofill suggestion feature in Microsoft Edge and Google Chrome. Even if you set the <code>autocomplete</code> parameter to off, the browser may still display autofill suggestions based on the placeholder value.</p>
+		<p style="margin-bottom: 1rem;">Here are certain placeholder values which you should avoid to prevent the browser from showing autofill suggestions:</p>
+
+		<QuickGrid items={placeholderData} columns={placeholderColumns} striped />
+
+		<p class="hint" style="margin-top: 1rem;">If you still want to use these placeholder values, then you need to disable autofill in your browser settings completely.</p>
 	</Card>
 </Stack>
 

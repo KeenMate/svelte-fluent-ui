@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {ContextMenu, Stack, Card, Grid, GridItem, QuickGrid, Slider} from "svelte-fluentui"
 	import type {MenuButtonItem} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -155,37 +156,10 @@
 		being cut off.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
-			|
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Blazor">FluentUI Blazor (N/A)</span>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} />
-			</Card>
-		</GridItem>
-
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} />
-			</Card>
-		</GridItem>
-
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", na: true},
+		{label: "FluentUI Blazor", na: "Not available in FluentUI Blazor"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -335,6 +309,29 @@
 			</div>
 		</ContextMenu>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} />
+			</Card>
+		</GridItem>
+
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} />
+			</Card>
+		</GridItem>
+
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

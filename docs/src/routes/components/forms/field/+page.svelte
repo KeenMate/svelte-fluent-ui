@@ -14,9 +14,9 @@
 		Search,
 		Combobox,
 		Checkbox,
-		Button,
-		Anchor
+		Button
 	} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	// ===== Demo state =====
 	let demoText = $state("")
@@ -87,33 +87,22 @@
 <Stack orientation="vertical" gap="1rem">
 	<h1>Field &amp; ValidationSummary</h1>
 
-	<Card>
-		<p>
-			<code>&lt;Field&gt;</code> is a wrapper that owns the label, helper text,
-			validation message, and validation-state border for any form control. It
-			matches the FluentUI 2 / Blazor convention of factoring validation
-			presentation out of the individual controls.
-		</p>
-		<p>
-			<code>&lt;ValidationSummary&gt;</code> renders a top-of-form panel listing
-			all errors with clickable jump-to-field links. Pairs cleanly with Field on
-			submit-time validation flows.
-		</p>
-		<p>
-			<small
-				>References:
-				<Anchor
-					href="https://react.fluentui.dev/?path=/docs/components-field--default"
-					target="_blank">FluentUI 2 React Field</Anchor
-				>
-				·
-				<Anchor
-					href="https://www.fluentui-blazor.net/Form#validation"
-					target="_blank">FluentUI Blazor Form Validation</Anchor
-				></small
-			>
-		</p>
-	</Card>
+	<p>
+		<code>&lt;Field&gt;</code> is a wrapper that owns the label, helper text,
+		validation message, and validation-state border for any form control. It
+		matches the FluentUI 2 / Blazor convention of factoring validation
+		presentation out of the individual controls.
+	</p>
+	<p>
+		<code>&lt;ValidationSummary&gt;</code> renders a top-of-form panel listing
+		all errors with clickable jump-to-field links. Pairs cleanly with Field on
+		submit-time validation flows.
+	</p>
+
+	<References links={[
+		{label: "FluentUI 2 React Field", href: "https://react.fluentui.dev/?path=/docs/components-field--default"},
+		{label: "FluentUI Blazor Form Validation", href: "https://www.fluentui-blazor.net/Form#validation"}
+	]} />
 
 	<!-- ========================================================
 	  Validation states

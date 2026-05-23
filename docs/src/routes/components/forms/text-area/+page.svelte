@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Textarea, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
+	import {References} from "$lib/components";
 
 	type Property = {
 		name: string
@@ -60,13 +61,22 @@
 		and filled appearances and standard form integration.
 	</p>
 
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-textarea--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/TextArea"}
+	]} />
+
 	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-textarea--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/TextArea" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
+		<h2>Examples</h2>
+
+		<h3>Basic Textarea</h3>
+		<Textarea placeholder="Type here..." resize="both" />
+
+		<h3>Textarea with max length</h3>
+		<Textarea maxlength={10} placeholder="Max 10 chars" />
+
+		<h3>Disabled Textarea with label</h3>
+		<Textarea label="Not editable" disabled={true} value="Read-only content" />
 	</Card>
 
 	<Grid spacing={3}>
@@ -89,17 +99,4 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2>Examples</h2>
-
-		<h3>Basic Textarea</h3>
-		<Textarea placeholder="Type here..." resize="both" />
-
-		<h3>Textarea with max length</h3>
-		<Textarea maxlength={10} placeholder="Max 10 chars" />
-
-		<h3>Disabled Textarea with label</h3>
-		<Textarea label="Not editable" disabled={true} value="Read-only content" />
-	</Card>
 </Stack>

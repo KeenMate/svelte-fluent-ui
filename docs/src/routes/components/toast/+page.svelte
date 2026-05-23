@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Toast, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 	let showToast = false
 	let toastId = "demo-toast"
 
@@ -67,34 +68,12 @@
 			For programmatic toasts (call <code>toast.success()</code> from anywhere), see the
 			<a href="/components/toast-service"><strong>Toast Service</strong></a> instead.
 		</p>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-messagebar-messagebar--docs" target="_blank" rel="noopener noreferrer">MessageBar</a>
-			|
-			<a href="https://www.fluentui-blazor.net/MessageBar" target="_blank" rel="noopener noreferrer">FluentUI Blazor MessageBar</a>
-		</p>
 	</Card>
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "MessageBar", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-messagebar-messagebar--docs"},
+		{label: "FluentUI Blazor MessageBar", href: "https://www.fluentui-blazor.net/MessageBar"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -122,6 +101,27 @@
 			</div>
 		{/if}
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

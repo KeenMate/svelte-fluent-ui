@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Listbox, Option, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	let selectedValue: string = "banana";
 
@@ -44,13 +45,28 @@
 		<code>Listbox</code>, <code>Combobox</code>, and <code>Select</code> components.
 	</p>
 
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-dropdown-option--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Option"}
+	]} />
+
 	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-dropdown-option--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Option" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
+		<h2 class="content-subhead">Examples</h2>
+
+		<h3>Basic option in listbox</h3>
+		<Listbox bind:value={selectedValue}>
+			<Option value="apple">Apple</Option>
+			<Option value="banana">Banana</Option>
+			<Option value="cherry">Cherry</Option>
+		</Listbox>
+		<p>Selected: {selectedValue}</p>
+
+		<h3>Disabled option</h3>
+		<Listbox value="banana">
+			<Option value="apple">Apple</Option>
+			<Option value="banana" disabled={true}>Banana (disabled)</Option>
+			<Option value="cherry">Cherry</Option>
+		</Listbox>
 	</Card>
 
 	<Grid spacing={3}>
@@ -73,23 +89,4 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2 class="content-subhead">Examples</h2>
-
-		<h3>Basic option in listbox</h3>
-		<Listbox bind:value={selectedValue}>
-			<Option value="apple">Apple</Option>
-			<Option value="banana">Banana</Option>
-			<Option value="cherry">Cherry</Option>
-		</Listbox>
-		<p>Selected: {selectedValue}</p>
-
-		<h3>Disabled option</h3>
-		<Listbox value="banana">
-			<Option value="apple">Apple</Option>
-			<Option value="banana" disabled={true}>Banana (disabled)</Option>
-			<Option value="cherry">Cherry</Option>
-		</Listbox>
-	</Card>
 </Stack>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {BodyContent, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -34,13 +35,16 @@
 		the footer. Inspired by the FluentUI Blazor BodyContent component.
 	</p>
 
+	<References links={[
+		{label: "BodyContent", custom: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/BodyContent"}
+	]} />
+
 	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">BodyContent (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/BodyContent" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
+		<h2>Examples</h2>
+		<BodyContent>
+			This is some content displayed in a FluentBodyContent component
+		</BodyContent>
 	</Card>
 
 	<Grid spacing={3}>
@@ -63,11 +67,4 @@
 			</Card>
 		</GridItem>
 	</Grid>
-
-	<Card>
-		<h2>Examples</h2>
-		<BodyContent>
-			This is some content displayed in a FluentBodyContent component
-		</BodyContent>
-	</Card>
 </Stack>

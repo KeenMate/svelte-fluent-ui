@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge, Slider} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	let verticalStripWidth = $state(200)
 
@@ -102,56 +103,10 @@
 		swipe navigation between panels.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-tablist--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Tabs" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Tabs Properties</h2>
-				<QuickGrid items={tabsProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Tabs Callbacks</h2>
-				<QuickGrid items={tabsCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Tabs Slots</h2>
-				<QuickGrid items={tabsSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Tab Properties</h2>
-				<QuickGrid items={tabProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Tab Callbacks</h2>
-				<QuickGrid items={tabCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Tab Slots</h2>
-				<QuickGrid items={tabSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-tablist--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Tabs"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -498,4 +453,46 @@
 			{/snippet}
 		</Tabs>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tabs Properties</h2>
+				<QuickGrid items={tabsProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tabs Callbacks</h2>
+				<QuickGrid items={tabsCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tabs Slots</h2>
+				<QuickGrid items={tabsSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tab Properties</h2>
+				<QuickGrid items={tabProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tab Callbacks</h2>
+				<QuickGrid items={tabCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Tab Slots</h2>
+				<QuickGrid items={tabSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>

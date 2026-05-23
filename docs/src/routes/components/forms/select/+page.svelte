@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Select, Option, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui";
+	import {References} from "$lib/components";
 
 	// Two-way binding example
 	let selectedFruit = $state("apple");
@@ -122,41 +123,10 @@
 		An implementation of an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select" target="_blank" rel="noopener noreferrer">HTML select element</a> as a component supporting the Fluent UI design system.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-select--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Select" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={selectProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Card>
-		<h2>Option Properties</h2>
-		<p>Props on the <code>&lt;Option&gt;</code> child component.</p>
-		<QuickGrid items={optionProperties} columns={propertyColumns} sortable filterable striped />
-	</Card>
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-select--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Select"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -368,5 +338,32 @@
 				{/each}
 			{/snippet}
 		</Select>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={selectProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>Option Properties</h2>
+		<p>Props on the <code>&lt;Option&gt;</code> child component.</p>
+		<QuickGrid items={optionProperties} columns={propertyColumns} sortable filterable striped />
 	</Card>
 </Stack>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {AppBar, AppBarItem, ResourcesIcon, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {References} from "$lib/components"
 	import {AppBarOrientation} from "svelte-fluentui/constants"
 
 	function onAppBarItemClicked(ev: Event) {
@@ -61,56 +62,10 @@
 		used for top-level navigation. Inspired by the FluentUI Blazor AppBar component.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">AppBar (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/AppBar" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AppBar Properties</h2>
-				<QuickGrid items={appBarProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AppBar Callbacks</h2>
-				<QuickGrid items={appBarCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AppBar Slots</h2>
-				<QuickGrid items={appBarSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AppBarItem Properties</h2>
-				<QuickGrid items={appBarItemProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AppBarItem Callbacks</h2>
-				<QuickGrid items={appBarItemCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>AppBarItem Slots</h2>
-				<QuickGrid items={appBarItemSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "AppBar", custom: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/AppBar"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -158,6 +113,48 @@
 			</div>
 		</div>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBar Properties</h2>
+				<QuickGrid items={appBarProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBar Callbacks</h2>
+				<QuickGrid items={appBarCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBar Slots</h2>
+				<QuickGrid items={appBarSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBarItem Properties</h2>
+				<QuickGrid items={appBarItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBarItem Callbacks</h2>
+				<QuickGrid items={appBarItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>AppBarItem Slots</h2>
+				<QuickGrid items={appBarItemSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

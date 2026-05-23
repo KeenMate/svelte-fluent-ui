@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Grid, GridItem, QuickGrid, Stack, Card, Button, Badge} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	let currentBreakpoint = $state<string>("unknown")
 
@@ -70,56 +71,10 @@
 		<li><strong>Columns mode</strong>: pass <code>columns={'{N}'}</code> (plus optional <code>gap</code>) for a CSS-grid layout with N equal-width tracks. Simpler, and immune to content-based width stealing between cells.</li>
 	</ul>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">FluentUI Web Component (N/A)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/Grid" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Grid Properties</h2>
-				<QuickGrid items={gridProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Grid Callbacks</h2>
-				<QuickGrid items={gridCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Grid Slots</h2>
-				<QuickGrid items={gridSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>GridItem Properties</h2>
-				<QuickGrid items={gridItemProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>GridItem Callbacks</h2>
-				<QuickGrid items={gridItemCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>GridItem Slots</h2>
-				<QuickGrid items={gridItemSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", na: "Custom component"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Grid"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -306,6 +261,48 @@
 			</GridItem>
 		</Grid>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Grid Properties</h2>
+				<QuickGrid items={gridProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Grid Callbacks</h2>
+				<QuickGrid items={gridCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Grid Slots</h2>
+				<QuickGrid items={gridSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>GridItem Properties</h2>
+				<QuickGrid items={gridItemProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>GridItem Callbacks</h2>
+				<QuickGrid items={gridItemCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>GridItem Slots</h2>
+				<QuickGrid items={gridItemSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

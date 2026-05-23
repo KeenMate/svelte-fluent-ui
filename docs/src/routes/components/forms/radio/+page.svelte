@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Radio, RadioGroup, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	// State for examples
 	let defaultValue = $state<string | null>(null)
@@ -88,50 +89,10 @@
 		The <code>Radio</code> wraps the <code>&lt;fluent-radio&gt;</code> element, a web component implementation of a radio element leveraging the Fluent UI design system.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-radio--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/Radio" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>RadioGroup Properties</h2>
-				<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>RadioGroup Callbacks</h2>
-				<QuickGrid items={radioCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>RadioGroup Slots</h2>
-				<QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Radio Properties</h2>
-				<QuickGrid items={radioProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Radio Slots</h2>
-				<QuickGrid items={radioSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-radio--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/Radio"}
+	]} />
 
 	<Card>
 		<h2>Examples</h2>
@@ -227,6 +188,42 @@
 			</GridItem>
 		</Grid>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>RadioGroup Properties</h2>
+				<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>RadioGroup Callbacks</h2>
+				<QuickGrid items={radioCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>RadioGroup Slots</h2>
+				<QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Radio Properties</h2>
+				<QuickGrid items={radioProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Radio Slots</h2>
+				<QuickGrid items={radioSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

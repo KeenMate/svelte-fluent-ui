@@ -23,6 +23,7 @@
 		InputFileCardSize,
 		InputFileChipsPosition
 	} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -385,56 +386,10 @@
 		equivalent exists).
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Not available in FluentUI Web Components">FluentUI Web Component (N/A)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/InputFile" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Snippets</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6}>
-			<Card>
-				<h2>Instance API (bind:this)</h2>
-				<QuickGrid items={instanceMethods} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Card>
-		<h2>FileUploadHandler Type</h2>
-		<pre><code>{`type FileUploadHandler = (
-  file: File,
-  onProgress: (percent: number) => void,
-  signal?: AbortSignal,
-  chunk?: { offset: number; size: number; total: number; data: Blob }
-) => Promise<void>`}</code></pre>
-		<p>
-			<code>signal</code> is fired when the user pauses or cancels — your handler should abort
-			its in-flight request. <code>chunk</code> is supplied only when <code>chunkSize</code> is
-			set on the component, in which case your handler is called once per chunk.
-		</p>
-	</Card>
+	<References links={[
+		{label: "FluentUI Web Component", na: true},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/InputFile"}
+	]} />
 
 	<h2>Examples</h2>
 	<p>
@@ -881,6 +836,48 @@
   retryPolicy={{attempts: 3, delayMs: 1000, backoff: 2}}
   uploadFileCallback={chunkedUpload}
 />`}</code></pre>
+	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6}>
+			<Card>
+				<h2>Snippets</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6}>
+			<Card>
+				<h2>Instance API (bind:this)</h2>
+				<QuickGrid items={instanceMethods} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
+
+	<Card>
+		<h2>FileUploadHandler Type</h2>
+		<pre><code>{`type FileUploadHandler = (
+  file: File,
+  onProgress: (percent: number) => void,
+  signal?: AbortSignal,
+  chunk?: { offset: number; size: number; total: number; data: Blob }
+) => Promise<void>`}</code></pre>
+		<p>
+			<code>signal</code> is fired when the user pauses or cancels — your handler should abort
+			its in-flight request. <code>chunk</code> is supplied only when <code>chunkSize</code> is
+			set on the component, in which case your handler is called once per chunk.
+		</p>
 	</Card>
 </Stack>
 

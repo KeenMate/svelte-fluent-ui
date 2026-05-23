@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Radio, RadioGroup, Stack, Grid, GridItem, Card, QuickGrid, Toolbar, Button} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	// State for examples
 	let numbersValue = $state<string | null>(null)
@@ -58,40 +59,17 @@
 		element and enforces single-selection semantics with keyboard navigation between options.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<a href="https://storybooks.fluentui.dev/web-components/?path=/docs/components-radio-group--docs" target="_blank" rel="noopener noreferrer">FluentUI Web Component</a>
-			|
-			<a href="https://www.fluentui-blazor.net/RadioGroup" target="_blank" rel="noopener noreferrer">FluentUI Blazor</a>
-		</p>
-	</Card>
+	<References links={[
+		{label: "FluentUI Web Component", href: "https://storybooks.fluentui.dev/web-components/?path=/docs/components-radio-group--docs"},
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/RadioGroup"}
+	]} />
 
 	<p>
 		A radio group is a set of checkable buttons, known as radio buttons, where no more than one of the buttons can be checked at a time.
 		The <code>RadioGroup</code> wraps the <code>&lt;fluent-radio-group&gt;</code> element, a web component implementation of a radio group leveraging the Fluent UI design system.
 	</p>
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={radioGroupCallbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+
 
 	<Card>
 		<h2>Examples</h2>
@@ -181,6 +159,27 @@
 			</GridItem>
 		</Grid>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={radioGroupProperties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={radioGroupCallbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={radioGroupSlots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
 
 <style>

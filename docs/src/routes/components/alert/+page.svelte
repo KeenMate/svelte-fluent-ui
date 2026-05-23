@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Alert, Card, QuickGrid, Stack, Grid, GridItem, Icon} from "svelte-fluentui"
+	import {References} from "$lib/components"
 
 	type Property = {
 		name: string
@@ -47,35 +48,12 @@
 		dismiss action. Inspired by the FluentUI Blazor MessageBar component.
 	</p>
 
-	<Card>
-		<p>
-			<strong>References:</strong>
-			<span style="color: #999; cursor: not-allowed;" title="Custom component">Alert (Custom)</span>
-			|
-			<a href="https://www.fluentui-blazor.net/MessageBar" target="_blank" rel="noopener noreferrer">FluentUI Blazor (MessageBar)</a>
-		</p>
-	</Card>
+	<References links={[
+		{label: "Alert", custom: true},
+		{label: "FluentUI Blazor (MessageBar)", href: "https://www.fluentui-blazor.net/MessageBar"}
+	]} />
 
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Properties</h2>
-				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Slots</h2>
-				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>Callbacks</h2>
-				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
+
 
 	<Card>
 		<h2 class="content-subhead">Intent Levels</h2>
@@ -136,4 +114,25 @@
 			</Alert>
 		</Stack>
 	</Card>
+
+	<Grid spacing={3}>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Properties</h2>
+				<QuickGrid items={properties} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Slots</h2>
+				<QuickGrid items={slots} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+		<GridItem xs={12} xl={6} xxl={4}>
+			<Card>
+				<h2>Callbacks</h2>
+				<QuickGrid items={callbacks} columns={propertyColumns} sortable filterable striped />
+			</Card>
+		</GridItem>
+	</Grid>
 </Stack>
