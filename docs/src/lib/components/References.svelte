@@ -39,7 +39,7 @@
 				<span class="reference-disabled" title={tooltip(link)}>{displayLabel(link)}</span>
 			{/if}
 			{#if i < links.length - 1}
-				|
+				<span class="reference-separator" aria-hidden="true">|</span>
 			{/if}
 		{/each}
 	</p>
@@ -49,5 +49,10 @@
 	.reference-disabled {
 		color: var(--neutral-foreground-hint, #999);
 		cursor: not-allowed;
+	}
+
+	.reference-separator {
+		margin: 0 0.4em;
+		color: var(--neutral-foreground-hint, #999);
 	}
 </style>
