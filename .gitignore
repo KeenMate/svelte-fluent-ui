@@ -36,6 +36,15 @@ pnpm-debug.log*
 # Testing
 coverage/
 .nyc_output/
+test-results/
+playwright-report/
+
+# Claude Code
+.claude/
+
+# Local working notes / diagnostic dumps
+ALERT_SESSION_NOTES.md
+check-errors*.txt
 
 # Temporary files
 *.tmp

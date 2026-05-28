@@ -1,0 +1,41 @@
+/*
+ * Styling for the e2e test fixture pages in docs/src/routes/test/.
+ *
+ * Deliberately minimal — no marketing chrome. Just enough to lay out the
+ * component instances so the Playwright specs can interact with them.
+ * These routes are dev-server-only (excluded from production prerender).
+ */
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	padding: 16px;
+	font: 14px/1.4 system-ui, -apple-system, sans-serif;
+	color: #1a1a1a;
+}
+
+h1 {
+	font-size: 18px;
+	margin: 0 0 4px;
+}
+
+p {
+	margin: 4px 0 12px;
+	color: #555;
+}
+
+.fixture {
+	margin-bottom: 24px;
+}
+
+.fixture-label {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #6b7280;
+	margin-bottom: 6px;
+}
