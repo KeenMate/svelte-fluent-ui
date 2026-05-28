@@ -2,7 +2,23 @@
 
 A comprehensive Svelte wrapper library for Microsoft FluentUI web components (v2.6.x), providing a seamless way to use FluentUI components in Svelte applications.
 
-## What's New in v1.0.0-rc22
+## What's New in v1.0.0
+
+The first stable release. Headline changes since the rc series:
+
+- **`Calendar` — generic `highlightDates` + `selectDates` function-prop split (replaces `selectDatesHover`)** — two consumer-supplied pure functions of shape `(date: Date) => Date[]` drive the hover preview and the click selection separately, so you can preview a week on hover but commit only 3 days on click. Multiple mode UNIONS the returned group with the existing array (clicked day toggles the whole group); range mode replaces. Consumer functions are authoritative — the calendar no longer re-filters against `disabledDateFunc`, so consumers are free to skip disabled days, jump past them to reach a target count, or include them deliberately for special highlighting. Two new demos: "Range with SelectOneWeek" (hovering any day highlights Mon→Sun, click commits the whole week) and "Multiple with Select3Days" (hover/click selects the day ± 1 neighbor).
+- **`Calendar` — `maxSelectableDays` + `onSelectionError` callback with structured payload** — multiple/range modes now gate every selection against an upper bound. Overflow does NOT modify `selectedDates`; instead fires `onSelectionError({code, message, attempted, current, max})` with a discriminated-union `code` (`"max_selectable_days_exceeded"` for now, future codes won't break consumer dispatch). New exported `CalendarSelectionError` type. Demo "Multiple (max 5 days)" shows the Alert-remount pattern for repeat-error feedback.
+- **`Calendar` — `onDayHover?(date: Date | null) => void` pure-observation callback** — fires with the hovered `Date` regardless of `selectMode` / disabled state (so tooltips can react to inactive days too), and with `null` when the cursor leaves the grid. Distinct from `highlightDates` (which DRIVES rendering); `onDayHover` is for tooltips, analytics, "currently hovering" readouts.
+- **`Calendar` — public type re-exports** — `CalendarView`, `CalendarSelectMode`, `CalendarSelectionError`, `CalendarSelectionErrorCode` now importable from the package entry point.
+- **`Checkbox` — three state-driven message props (`checkedMessage` / `uncheckedMessage` / `intermediateMessage`)** — Switch already had `checkedMessage` / `uncheckedMessage`; Checkbox catches up plus the three-state variant for `withIntermediate`. All three accept `string | Snippet`, rendered as a sibling `.checkbox-message` after the box.
+- **`Checkbox` — `labelPosition="end"` (now the default)** — was `"start"` (label on the LEFT, atypical for forms). New default puts the label after the box `[☐] Label text`. Implemented via flex `order` so a trailing status message stays after the [box, label] pair without flipping.
+- **Docs — per-page SEO metadata via shared `<Meta>` component on all 63 routes** — every page now emits its own `<title>`, description, keywords, canonical, Open Graph, and Twitter Card tags. Browser tabs, bookmarks, and JS-capable crawlers (Google) get the per-page tags; non-JS crawlers (Slack, Discord, Facebook, LinkedIn, X) still see the static `app.html` fallback since the docs site runs as a pure SPA.
+- **Docs — every `<h1>` / `<h2>` / `<h3>` in component pages is now a shareable anchor with a copy-link button on hover** — pure post-render DOM decoration at the layout level, so it works on every existing and future component page automatically. Stable slugified ids, `-2`/`-3` suffixes on collisions, copy-to-clipboard with flash feedback.
+- **Docs — shared `<References>` component replaces hand-rolled references cards on 48 pages** — single source of truth for the references block; `na: true` / `custom: true` variants for "Not available in FluentUI Web Components" and "Custom component" disabled spans with tooltips. Format tweaks now live in one file instead of 48.
+- **Docs — API tables relocated to the BOTTOM of every component page, AFTER the Examples** — the previous layout forced visitors to scroll past dense reference material to reach the examples. New order: `[title + description] → [References] → [Examples] → [API tables]`.
+- **`InputFile` — 2547-line component split across six files for maintainability** — types extracted to `InputFile.types.ts`, utilities + default labels to `InputFile.utils.ts`, ~725 lines of inline CSS to an external SCSS partial, and the three `selectorAppearance` variants pulled into `InputFileSelectorCard.svelte` / `InputFileSelectorButton.svelte` / `InputFileSelectorMinimal.svelte`. Public API unchanged; type-check clean.
+
+### Previously (rc22)
 
 - **`InputFile` chips mode now has an overall progress footer** — the same `Pause all` / `Resume all` / `Retry all` controls plus the aggregate progress bar that list/popover modes already had. Works for both `chipsPosition` values; rendered as a sibling below the chips so layout stays sane regardless of position.
 - **`package.json` `homepage` points at the docs site** — npm's "Homepage" sidebar link now goes to `svelte-fluentui.keenmate.dev` instead of duplicating the GitHub repo link. Two distinct destinations on the package page.
@@ -460,7 +476,7 @@ npm install svelte-fluentui
 ```js
 // In any browser console, after the page has loaded svelte-fluentui:
 window.components["svelte-fluentui"].version()
-// => "1.0.0-rc08"
+// => "1.0.0"
 ```
 
 Also available as a direct import:

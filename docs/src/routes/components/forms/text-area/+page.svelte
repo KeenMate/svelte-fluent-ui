@@ -1,6 +1,12 @@
 <script lang="ts">
-	import { Textarea, Stack, Grid, GridItem, Card, QuickGrid } from "svelte-fluentui";
-	import {References, Meta} from "$lib/components";
+	import {Textarea, Button, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui"
+	import {References, Meta} from "$lib/components"
+
+	let focusTarget: {focus: () => void} | undefined = $state()
+
+	function focusAsync() {
+		focusTarget?.focus()
+	}
 
 	type Property = {
 		name: string
@@ -10,39 +16,43 @@
 	}
 
 	const properties: Property[] = [
-		{name: "appearance", type: "\"outline\" | \"filled\"", default: "undefined", description: "Visual style"},
+		{name: "appearance", type: "\"outline\" | \"filled\"", default: "\"outline\"", description: "Visual style"},
 		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
+		{name: "autocomplete", type: "string", default: "\"off\"", description: "Browser autocomplete attribute (applied to inner <textarea> via shadow DOM)"},
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Focus on mount"},
 		{name: "class", type: "string", default: "\"\"", description: "CSS class"},
-		{name: "cols", type: "number", default: "undefined", description: "Number of columns"},
+		{name: "cols", type: "number", default: "undefined", description: "Number of character columns"},
 		{name: "disabled", type: "boolean", default: "undefined", description: "Disable input"},
-		{name: "form", type: "string", default: "undefined", description: "Form owner"},
-		{name: "id", type: "string", default: "undefined", description: "Unique ID"},
-		{name: "label", type: "string", default: "undefined", description: "Visible label"},
-		{name: "list", type: "string", default: "undefined", description: "Datalist id"},
-		{name: "maxlength", type: "number", default: "undefined", description: "Max character length"},
-		{name: "minlength", type: "number", default: "undefined", description: "Min character length"},
-		{name: "name", type: "string", default: "undefined", description: "Form name"},
+		{name: "form", type: "string", default: "undefined", description: "Associated form id"},
+		{name: "fullWidth", type: "boolean", default: "false", description: "Stretch the host to fill its container. By default the host sizes to its content (matches Blazor)."},
+		{name: "id", type: "string", default: "undefined", description: "Element id"},
+		{name: "label", type: "string", default: "undefined", description: "Visible label rendered above the textarea"},
+		{name: "list", type: "string", default: "undefined", description: "Datalist id to associate"},
+		{name: "maxlength", type: "number", default: "undefined", description: "Maximum number of characters"},
+		{name: "minlength", type: "number", default: "undefined", description: "Minimum number of characters"},
+		{name: "name", type: "string", default: "undefined", description: "Form field name"},
 		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
 		{name: "readonly", type: "boolean", default: "undefined", description: "Read-only mode"},
-		{name: "required", type: "boolean", default: "undefined", description: "Form required"},
+		{name: "required", type: "boolean", default: "undefined", description: "Required for form submission"},
 		{name: "resize", type: "\"none\" | \"both\" | \"horizontal\" | \"vertical\"", default: "undefined", description: "Resize behavior"},
-		{name: "rows", type: "number", default: "undefined", description: "Number of rows"},
+		{name: "rows", type: "number", default: "undefined", description: "Number of character rows"},
 		{name: "spellcheck", type: "boolean", default: "undefined", description: "Enable spellcheck"},
 		{name: "style", type: "string", default: "\"\"", description: "Inline style"},
-		{name: "value", type: "string", default: "\"\"", description: "Text value"}
+		{name: "value", type: "string", default: "undefined", description: "Text value (bindable)"}
 	]
 
-	const actions: Property[] = []
-
 	const callbacks: Property[] = [
-		{name: "onChange", type: "(ev: Event) => void", default: "undefined", description: "Fires when value changes on blur"},
-		{name: "onInput", type: "(ev: InputEvent) => void", default: "undefined", description: "Fires as value is typed"}
+		{name: "oninput", type: "(value: string) => void", default: "undefined", description: "Fires as value is typed"},
+		{name: "onchange", type: "(value: string) => void", default: "undefined", description: "Fires when value changes on blur"}
 	]
 
 	const slots: Property[] = [
-		{name: "children", type: "SlotType", default: "undefined", description: "Additional content"},
+		{name: "children", type: "SlotType", default: "undefined", description: "Additional content rendered inside <fluent-text-area>"},
 		{name: "labelTemplate", type: "SlotType", default: "undefined", description: "Custom label markup"}
+	]
+
+	const actions: Property[] = [
+		{name: "focus", type: "() => void", default: "-", description: "Focus the textarea (via bind:this, calls native HTMLElement.focus())"}
 	]
 
 	const propertyColumns = [
@@ -73,16 +83,94 @@
 	]} />
 
 	<Card>
-		<h2>Examples</h2>
+		<h2>Default</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<Stack orientation="horizontal" gap="0.5rem" verticalAlign="center">
+				<span>Without label:</span>
+				<Textarea />
+			</Stack>
+			<Textarea label="With label:" />
+		</Stack>
+	</Card>
 
-		<h3>Basic Textarea</h3>
-		<Textarea placeholder="Type here..." resize="both" />
+	<Card>
+		<h2>Rows and Cols</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<Textarea label="12 rows:" rows={12} />
+			<Textarea label="60 cols:" cols={60} />
+		</Stack>
+	</Card>
 
-		<h3>Textarea with max length</h3>
-		<Textarea maxlength={10} placeholder="Max 10 chars" />
+	<Card>
+		<h2>Displays</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<Textarea label="Full width:" fullWidth />
+			<Textarea label="Placeholder:" placeholder="Placeholder" />
+		</Stack>
+	</Card>
 
-		<h3>Disabled Textarea with label</h3>
-		<Textarea label="Not editable" disabled={true} value="Read-only content" />
+	<Card>
+		<h2>States</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<Textarea label="Required:" required />
+			<Stack orientation="horizontal" gap="1rem">
+				<Textarea disabled />
+				<Textarea label="label" disabled />
+				<Textarea disabled placeholder="placeholder" />
+			</Stack>
+			<Stack orientation="horizontal" gap="1rem">
+				<Textarea readonly value="Readonly text area" />
+				<Textarea label="label" readonly value="Readonly text area" />
+			</Stack>
+		</Stack>
+	</Card>
+
+	<Card>
+		<h2>Resize</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<Textarea label="Both:" resize="both" />
+			<Textarea label="Horizontal:" resize="horizontal" />
+			<Textarea label="Vertical:" resize="vertical" />
+		</Stack>
+	</Card>
+
+	<Card>
+		<h2>Focus</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<div>
+				<h3>Autofocus</h3>
+				<p>Commented out to prevent the page from jumping to this location on load. See example code for usage:</p>
+				<pre><code>&lt;Textarea autofocus /&gt;</code></pre>
+			</div>
+			<div>
+				<h3>Focus via bind:this</h3>
+				<Stack orientation="horizontal" gap="0.5rem" verticalAlign="center">
+					<Button onclick={focusAsync}>FocusAsync</Button>
+					<Textarea bind:this={focusTarget} />
+				</Stack>
+			</div>
+		</Stack>
+	</Card>
+
+	<Card>
+		<h2>Filled appearance</h2>
+		<Stack orientation="vertical" gap="1rem">
+			<Stack orientation="horizontal" gap="1rem">
+				<Textarea appearance="filled" />
+				<Textarea appearance="filled" label="label" />
+			</Stack>
+			<Textarea appearance="filled" placeholder="Placeholder" />
+			<Textarea appearance="filled" label="Required:" required />
+			<Stack orientation="horizontal" gap="1rem">
+				<Textarea appearance="filled" disabled />
+				<Textarea appearance="filled" label="label" disabled />
+				<Textarea appearance="filled" disabled placeholder="placeholder" />
+			</Stack>
+			<Stack orientation="horizontal" gap="1rem">
+				<Textarea appearance="filled" readonly value="Read only text area" />
+				<Textarea appearance="filled" label="label" readonly value="Read only text area" />
+			</Stack>
+		</Stack>
 	</Card>
 
 	<Grid spacing={3}>
@@ -105,4 +193,9 @@
 			</Card>
 		</GridItem>
 	</Grid>
+
+	<Card>
+		<h2>Actions</h2>
+		<QuickGrid items={actions} columns={propertyColumns} sortable filterable striped />
+	</Card>
 </Stack>

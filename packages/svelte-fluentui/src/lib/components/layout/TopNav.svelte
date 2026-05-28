@@ -4,6 +4,7 @@
 	import NavMenu from "../nav/NavMenu.svelte"
 	import NavGroup from "../nav/NavGroup.svelte"
 	import NavLinkItem from "../nav/NavLinkItem.svelte"
+	import DismissIcon from "../icons/DismissIcon.svelte"
 
 	type NavItem = {
 		label: string
@@ -65,7 +66,7 @@
 		<Button appearance="stealth" class="mobile-menu-toggle" onclick={toggleMobileMenu}>
 			<span class="hamburger-icon">
 				{#if mobileMenuOpen}
-					✕
+					<DismissIcon size={20} />
 				{:else}
 					☰
 				{/if}

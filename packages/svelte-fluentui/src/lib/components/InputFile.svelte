@@ -5,207 +5,27 @@
 -->
 
 <script lang="ts" module>
-	export type InputFileStatus =
-		| "pending"
-		| "uploading"
-		| "paused"
-		| "completed"
-		| "error"
-		| "cancelled"
-
-	export type InputFileItem = {
-		id: string
-		file: File | null
-		name: string
-		size: number
-		type: string
-		progress: number
-		status: InputFileStatus
-		error?: string | null
-		thumbnailUrl?: string | null
-		downloadUrl?: string | null
-		metadata?: Record<string, unknown>
-	}
-
-	export type FileUploadChunk = {
-		offset: number
-		size: number
-		total: number
-		data: Blob
-	}
-
-	/**
-	 * Fields the upload handler can return to be merged into the InputFileItem
-	 * after a successful upload. Restricted on purpose: handlers should not be
-	 * able to overwrite internal lifecycle fields (id, file, size, status,
-	 * progress, error) by accident. Use `metadata` for arbitrary server payload
-	 * (e.g. `{serverGuid, etag}`) so it survives in the item for later use
-	 * (e.g. firing a DELETE when the user removes the item from the list).
-	 */
-	export type FileUploadResult = Partial<
-		Pick<InputFileItem, "metadata" | "downloadUrl" | "thumbnailUrl" | "name">
-	>
-
-	export type FileUploadHandler = (
-		file: File,
-		onProgress: (percent: number) => void,
-		signal?: AbortSignal,
-		chunk?: FileUploadChunk
-	) => Promise<void | FileUploadResult>
-
-	export type InputFileValidationResult = string | null | undefined
-	export type InputFileValidator = (
-		file: File
-	) => InputFileValidationResult | Promise<InputFileValidationResult>
-
-	export type InputFileRejectionMode = "list" | "callback" | "silent"
-	export type InputFileDedupeMode = "name" | "name-size" | "hash" | false
-
-	export type InputFileRetryPolicy = {
-		attempts?: number
-		delayMs?: number
-		backoff?: number
-	}
-
-	export type InputFileLabels = {
-		dropHere: string
-		dragAndDrop: string
-		browse: string
-		selectFiles: string
-		accepted: (accept: string) => string
-		maxSize: (size: string) => string
-		minSize: (size: string) => string
-		// `remaining` is supplied only when items are already present, so a fresh
-		// drop-zone reads "Total max size: 10 MB" and an in-progress one reads
-		// "Total max size: 10 MB · 7 MB left" (default formatting; override
-		// freely to change the separator/order).
-		totalMaxSize: (size: string, remaining?: string) => string
-		maxFilesHint: (max: number, remaining?: number) => string
-		minFilesHint: (n: number) => string
-		clearAll: string
-		uploadAll: string
-		addMore: string
-		showMore: (n: number) => string
-		showLess: string
-		viewFiles: string
-		pending: string
-		uploading: string
-		paused: string
-		completed: string
-		error: string
-		cancelled: string
-		remove: string
-		retry: string
-		pause: string
-		resume: string
-		pauseAll: string
-		resumeAll: string
-		retryAll: string
-		cancel: string
-		download: string
-		fileTooLarge: (max: string) => string
-		totalSizeExceeded: (max: string) => string
-		fileTooSmall: (min: string) => string
-		fileTypeNotAccepted: (accept: string) => string
-		tooManyFiles: (max: number) => string
-		tooFewFiles: (min: number) => string
-		duplicate: string
-		fileCount: (n: number) => string
-		// Footer text below the file-list progress bar. Receives the running
-		// totals so any composition is possible (size-first, percentage-first,
-		// hide-when-idle, localized number formatting, etc).
-		totalProgress: (info: {
-			completed: number
-			failed: number
-			total: number
-			uploadedBytes: number
-			totalBytes: number
-			percent: number
-		}) => string
-		emptyState: string
-		uploadedAnnouncement: (name: string) => string
-		failedAnnouncement: (name: string, err: string) => string
-	}
-
-	export type InputFileSelectorAppearance = "card" | "button" | "minimal"
-	export type InputFileListAppearance = "list" | "chips" | "popover" | "none"
-	export type InputFileCardSize = "minimal" | "compact" | "big"
-	export type InputFileChipsPosition = "end" | "below"
-
-	const DEFAULT_LABELS: InputFileLabels = {
-		dropHere: "Drop files here",
-		dragAndDrop: "Drag and drop files here, or",
-		browse: "Browse",
-		selectFiles: "Select files",
-		accepted: (a) => `Accepted: ${a}`,
-		maxSize: (s) => `Max size: ${s}`,
-		minSize: (s) => `Min size: ${s}`,
-		totalMaxSize: (s, remaining) =>
-			remaining != null ? `Total max size: ${s} · ${remaining} left` : `Total max size: ${s}`,
-		maxFilesHint: (max, remaining) =>
-			remaining != null ? `Max files: ${max} · ${remaining} more` : `Max files: ${max}`,
-		minFilesHint: (n) => `Min files: ${n}`,
-		clearAll: "Clear all",
-		uploadAll: "Upload all",
-		addMore: "+ Add more",
-		showMore: (n) => `Show ${n} more`,
-		showLess: "Show less",
-		viewFiles: "View files",
-		pending: "Pending",
-		uploading: "Uploading",
-		paused: "Paused",
-		completed: "Completed",
-		error: "Error",
-		cancelled: "Cancelled",
-		remove: "Remove file",
-		retry: "Retry upload",
-		pause: "Pause upload",
-		resume: "Resume upload",
-		pauseAll: "Pause all",
-		resumeAll: "Resume all",
-		retryAll: "Retry all",
-		cancel: "Cancel upload",
-		download: "Download",
-		fileTooLarge: (m) => `File size exceeds ${m}`,
-		totalSizeExceeded: (m) => `Total size would exceed ${m}`,
-		fileTooSmall: (m) => `File size below ${m}`,
-		fileTypeNotAccepted: (a) => `File type not accepted. Accepted: ${a}`,
-		tooManyFiles: (m) => `Maximum ${m} files allowed`,
-		tooFewFiles: (m) => `At least ${m} file${m === 1 ? "" : "s"} required`,
-		duplicate: "Duplicate file",
-		fileCount: (n) => `${n} file${n === 1 ? "" : "s"}`,
-		totalProgress: ({completed, failed, total, uploadedBytes, totalBytes}) => {
-			const sizes = `${formatInputFileSize(uploadedBytes)} / ${formatInputFileSize(totalBytes)}`
-			const counts = failed > 0
-				? `${completed} of ${total} done · ${failed} failed`
-				: `${completed} of ${total} done`
-			return `${counts} · ${sizes}`
-		},
-		emptyState: "No files selected",
-		uploadedAnnouncement: (n) => `Uploaded ${n}`,
-		failedAnnouncement: (n, e) => `Failed to upload ${n}: ${e}`
-	}
-
-	let __nextId = 0
-	function genId() {
-		return `if-${++__nextId}-${Date.now().toString(36)}`
-	}
-
-	export function formatInputFileSize(bytes: number): string {
-		if (bytes === 0) return "0 Bytes"
-		const k = 1024
-		const sizes = ["Bytes", "KB", "MB", "GB"]
-		const i = Math.floor(Math.log(bytes) / Math.log(k))
-		return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
-	}
-
-	async function hashFile(file: File): Promise<string> {
-		const buf = await file.arrayBuffer()
-		const hashBuf = await crypto.subtle.digest("SHA-1", buf)
-		return Array.from(new Uint8Array(hashBuf))
-			.map((b) => b.toString(16).padStart(2, "0"))
-			.join("")
-	}
+	// Re-export types/utils for back-compat with any consumer that imports
+	// them straight from "./InputFile.svelte". The canonical locations are
+	// InputFile.types.ts and InputFile.utils.ts.
+	export type {
+		InputFileStatus,
+		InputFileItem,
+		FileUploadChunk,
+		FileUploadResult,
+		FileUploadHandler,
+		InputFileValidationResult,
+		InputFileValidator,
+		InputFileRejectionMode,
+		InputFileDedupeMode,
+		InputFileRetryPolicy,
+		InputFileLabels,
+		InputFileSelectorAppearance,
+		InputFileListAppearance,
+		InputFileCardSize,
+		InputFileChipsPosition
+	} from "./InputFile.types.js"
+	export {formatInputFileSize} from "./InputFile.utils.js"
 </script>
 
 <script lang="ts">
@@ -214,6 +34,34 @@
 	import {computePosition, flip, shift, offset, size, autoUpdate} from "@floating-ui/dom"
 	import {portal} from "../actions/portal.js"
 	import Button from "./Button.svelte"
+	import DismissIcon from "./icons/DismissIcon.svelte"
+	import InputFileSelectorCard from "./InputFileSelectorCard.svelte"
+	import InputFileSelectorButton from "./InputFileSelectorButton.svelte"
+	import InputFileSelectorMinimal from "./InputFileSelectorMinimal.svelte"
+	import type {
+		InputFileItem,
+		InputFileLabels,
+		InputFileStatus,
+		InputFileSelectorAppearance,
+		InputFileListAppearance,
+		InputFileCardSize,
+		InputFileChipsPosition,
+		InputFileValidator,
+		InputFileRejectionMode,
+		InputFileDedupeMode,
+		InputFileRetryPolicy,
+		FileUploadHandler,
+		FileUploadResult
+	} from "./InputFile.types.js"
+	import {
+		DEFAULT_LABELS,
+		clampPercent,
+		formatInputFileSize,
+		genId,
+		hashFile,
+		iconCategory,
+		isAcceptedType
+	} from "./InputFile.utils.js"
 
 	type Props = {
 		// Bindable rich state — source of truth.
@@ -440,10 +288,10 @@
 			currentTotalSize
 		}) ?? null
 	)
-	// Same content as the drop-zone hint paragraphs, but flattened into a
-	// single-line array for popover-mode rendering (no card → no drop-zone
-	// hints visible, so the popover header surfaces them instead).
-	const limitPartsForPopover = $derived.by(() => {
+	// Drop-zone hint lines (file-type, size caps, file-count caps). Rendered
+	// as <p> rows under the card selector, and as a single "·"-joined line in
+	// the popover header where the card (and its inline hints) isn't visible.
+	const dropZoneHints = $derived.by(() => {
 		const parts: string[] = []
 		if (accept) parts.push(labels.accepted(accept))
 		if (limitsHint) {
@@ -700,27 +548,12 @@
 		}
 	}
 
-	function isAcceptedType(file: File): boolean {
-		if (!accept) return true
-		const types = accept
-			.split(",")
-			.map((t) => t.trim())
-			.filter(Boolean)
-		const ext = "." + (file.name.split(".").pop()?.toLowerCase() ?? "")
-		const mime = file.type
-		return types.some((t) => {
-			if (t.startsWith(".")) return ext === t.toLowerCase()
-			if (t.endsWith("/*")) return mime.startsWith(t.slice(0, -1))
-			return mime === t
-		})
-	}
-
 	async function validateFile(file: File): Promise<string | null> {
 		if (maxFileSize && file.size > maxFileSize)
 			return labels.fileTooLarge(formatInputFileSize(maxFileSize))
 		if (minFileSize && file.size < minFileSize)
 			return labels.fileTooSmall(formatInputFileSize(minFileSize))
-		if (!isAcceptedType(file)) return labels.fileTypeNotAccepted(accept ?? "")
+		if (!isAcceptedType(file, accept)) return labels.fileTypeNotAccepted(accept ?? "")
 		if (customValidator) {
 			const r = await customValidator(file)
 			if (r) return r
@@ -773,12 +606,6 @@
 	}
 
 	export async function addFiles(files: File[]) {
-		console.log("[InputFile] addFiles entry", {
-			count: files.length,
-			disabled,
-			multiple,
-			currentItems: items.length
-		})
 		if (disabled || !files.length) return
 		const incoming = multiple ? [...files] : files.slice(0, 1)
 
@@ -823,11 +650,6 @@
 			})
 		}
 
-		console.log("[InputFile] addFiles result", {
-			accepted: accepted.length,
-			rejected: incoming.length - accepted.length,
-			willAutoUpload: !!(autoUpload && uploadFileCallback && accepted.length > 0)
-		})
 		if (accepted.length > 0) {
 			items = [...items, ...accepted]
 			onFileSelected?.(accepted.map((a) => a.file).filter((f): f is File => !!f))
@@ -900,11 +722,6 @@
 		} finally {
 			controllers.delete(itemId)
 		}
-	}
-
-	function clampPercent(p: number): number {
-		if (!Number.isFinite(p)) return 0
-		return Math.max(0, Math.min(100, Math.round(p)))
 	}
 
 	async function uploadInChunks(
@@ -997,23 +814,20 @@
 			if (i.status === "uploading") pause(i.id)
 		}
 	}
-	export async function resumeAll() {
+	async function restartItemsWithStatus(status: InputFileStatus) {
 		for (const i of items) {
-			if (i.status === "paused") {
+			if (i.status === status) {
 				pausedSet.delete(i.id)
 				patchItem(i.id, {status: "pending", progress: 0, error: null})
 			}
 		}
 		await uploadAll()
 	}
+	export async function resumeAll() {
+		await restartItemsWithStatus("paused")
+	}
 	export async function retryAll() {
-		for (const i of items) {
-			if (i.status === "error") {
-				pausedSet.delete(i.id)
-				patchItem(i.id, {status: "pending", progress: 0, error: null})
-			}
-		}
-		await uploadAll()
+		await restartItemsWithStatus("error")
 	}
 
 	export function removeAt(index: number) {
@@ -1062,10 +876,6 @@
 	function handleInputChange(event: Event) {
 		const target = event.target as HTMLInputElement
 		const fileList = target.files
-		console.log("[InputFile] input change event fired", {
-			filesCount: fileList?.length ?? 0,
-			fileNames: fileList ? Array.from(fileList).map((f) => f.name) : []
-		})
 		if (fileList) addFiles(Array.from(fileList))
 		target.value = ""
 	}
@@ -1125,21 +935,13 @@
 
 	let __lastDialogOpenAt = 0
 	function openFileDialog() {
-		if (disabled) {
-			console.log("[InputFile] openFileDialog skipped: disabled")
-			return
-		}
+		if (disabled) return
 		const now = performance.now()
-		const sinceLast = now - __lastDialogOpenAt
-		if (sinceLast < 250) {
-			console.log(
-				"[InputFile] openFileDialog SUPPRESSED — double-trigger guard",
-				{sinceLast: Math.round(sinceLast) + "ms"}
-			)
-			return
-		}
+		// Guard against the dialog being opened twice in quick succession
+		// (e.g. when a click target both triggers `openFileDialog` and
+		// bubbles to a parent that does the same).
+		if (now - __lastDialogOpenAt < 250) return
 		__lastDialogOpenAt = now
-		console.log("[InputFile] openFileDialog → fileInput.click()")
 		fileInput?.click()
 	}
 
@@ -1233,19 +1035,6 @@
 		}
 	}
 
-	function iconCategory(item: InputFileItem): string {
-		const ext = (item.name.split(".").pop() ?? "").toLowerCase()
-		const t = item.type
-		if (t.startsWith("image/")) return "image"
-		if (t.startsWith("video/")) return "video"
-		if (t.startsWith("audio/")) return "audio"
-		if (t.includes("pdf") || ext === "pdf") return "pdf"
-		if (t.includes("zip") || ["zip", "rar", "7z", "tar", "gz"].includes(ext)) return "zip"
-		if (["xls", "xlsx", "csv"].includes(ext)) return "spreadsheet"
-		if (["doc", "docx"].includes(ext)) return "doc"
-		if (["ppt", "pptx"].includes(ext)) return "slides"
-		return "file"
-	}
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -1306,42 +1095,11 @@
 					{labels.browse}
 				</Button>
 			</div>
-			{#if accept || limitsHint || maxFileSize || minFileSize || totalMaxSize > 0 || (multiple && effectiveMaxFiles) || minFiles > 0}
+			{#if dropZoneHints.length > 0}
 				<div class="drop-zone-hints">
-					{#if accept}
-						<p class="drop-zone-hint">{labels.accepted(accept)}</p>
-					{/if}
-					{#if limitsHint}
-						<p class="drop-zone-hint">{limitsHint}</p>
-					{:else}
-						{#if maxFileSize}
-							<p class="drop-zone-hint">{labels.maxSize(formatInputFileSize(maxFileSize))}</p>
-						{/if}
-						{#if minFileSize}
-							<p class="drop-zone-hint">{labels.minSize(formatInputFileSize(minFileSize))}</p>
-						{/if}
-						{#if totalMaxSize > 0}
-							<p class="drop-zone-hint">
-								{labels.totalMaxSize(
-									formatInputFileSize(totalMaxSize),
-									items.length > 0
-										? formatInputFileSize(Math.max(0, totalMaxSize - currentTotalSize))
-										: undefined
-								)}
-							</p>
-						{/if}
-						{#if multiple && effectiveMaxFiles}
-							<p class="drop-zone-hint">
-								{labels.maxFilesHint(
-									effectiveMaxFiles,
-									items.length > 0 ? Math.max(0, effectiveMaxFiles - items.length) : undefined
-								)}
-							</p>
-						{/if}
-						{#if minFiles > 0}
-							<p class="drop-zone-hint">{labels.minFilesHint(minFiles)}</p>
-						{/if}
-					{/if}
+					{#each dropZoneHints as hint}
+						<p class="drop-zone-hint">{hint}</p>
+					{/each}
 				</div>
 			{/if}
 		</div>
@@ -1351,69 +1109,45 @@
 		{#if dropZone}
 			{@render dropZone({openFileDialog, isDragging})}
 		{:else if selectorAppearance === "card"}
-			<div
-				class="drop-zone drop-zone--{cardSize}"
-				class:disabled
-				class:dragging={isDragging}
+			<InputFileSelectorCard
+				{cardSize}
+				{isDragging}
+				{disabled}
+				popoverExpanded={listAppearance === "popover" && items.length > 0
+					? popoverOpen
+					: undefined}
+				ariaLabel={labels.browse}
 				ondragenter={handleDragEnter}
 				ondragover={handleDragOver}
 				ondragleave={handleDragLeave}
-				ondrop={(e) => {
-					e.stopPropagation()
-					handleDrop(e)
-				}}
-				tabindex={disabled ? -1 : 0}
-				role="button"
-				aria-label={labels.browse}
-				aria-expanded={listAppearance === "popover" && items.length > 0
+				ondrop={handleDrop}
+				onclick={handleSelectorClick}
+				onkeydown={handleDropZoneKeyDown}
+				content={cardContent}
+			/>
+		{:else if selectorAppearance === "button"}
+			<InputFileSelectorButton
+				{disabled}
+				label={labels.selectFiles}
+				onclick={handleSelectorClick}
+			/>
+		{:else if selectorAppearance === "minimal"}
+			<InputFileSelectorMinimal
+				{disabled}
+				itemsLength={items.length}
+				popoverExpanded={listAppearance === "popover" && items.length > 0
 					? popoverOpen
 					: undefined}
-				onkeydown={handleDropZoneKeyDown}
-				onclick={handleSelectorClick}
-			>
-				{@render cardContent()}
-			</div>
-		{:else if selectorAppearance === "button"}
-			<Button appearance="accent" onclick={handleSelectorClick} {disabled}>
-				{labels.selectFiles}
-			</Button>
-		{:else if selectorAppearance === "minimal"}
-			<button
-				type="button"
-				class="minimal-trigger"
+				ariaLabel={items.length > 0 ? labels.viewFiles : labels.browse}
+				title={items.length > 0
+					? `${labels.fileCount(items.length)} — ${statusLabel(minimalBadgeStatus as InputFileStatus)}`
+					: labels.browse}
+				badgeStatus={minimalBadgeStatus as InputFileStatus}
 				onclick={(e) => {
 					e.stopPropagation()
 					handleSelectorClick()
 				}}
-				{disabled}
-				aria-label={items.length > 0 ? labels.viewFiles : labels.browse}
-				aria-expanded={listAppearance === "popover" && items.length > 0
-					? popoverOpen
-					: undefined}
-				title={items.length > 0
-					? `${labels.fileCount(items.length)} — ${statusLabel(minimalBadgeStatus as InputFileStatus)}`
-					: labels.browse}
-			>
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="currentColor"
-					aria-hidden="true"
-				>
-					<path
-						d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm0 7V3.5L19.5 9H14z"
-					/>
-				</svg>
-				{#if items.length > 0}
-					<span class="minimal-badge minimal-badge--{minimalBadgeStatus}">
-						{#if minimalBadgeStatus === "uploading"}
-							<span class="minimal-badge-spinner" aria-hidden="true"></span>
-						{/if}
-						{items.length}
-					</span>
-				{/if}
-			</button>
+			/>
 		{/if}
 	{/snippet}
 
@@ -1438,7 +1172,7 @@
 					aria-label={labels.remove}
 					title={labels.remove}
 				>
-					×
+					<DismissIcon size={14} />
 				</button>
 			</span>
 		{/each}
@@ -1591,8 +1325,8 @@
 				{/if}
 			</div>
 
-			{#if inPopover && limitPartsForPopover.length > 0}
-				<div class="file-list-limits">{limitPartsForPopover.join(" · ")}</div>
+			{#if inPopover && dropZoneHints.length > 0}
+				<div class="file-list-limits">{dropZoneHints.join(" · ")}</div>
 			{/if}
 			</div>
 
@@ -1693,7 +1427,7 @@
 										onclick={() => cancel(item.id)}
 										aria-label={labels.cancel}
 									>
-										✕
+										<DismissIcon size={14} />
 									</button>
 								{:else if item.status === "paused"}
 									<button
@@ -1721,17 +1455,7 @@
 									{disabled}
 									aria-label={labels.remove}
 								>
-									<svg
-										width="16"
-										height="16"
-										viewBox="0 0 16 16"
-										fill="currentColor"
-										aria-hidden="true"
-									>
-										<path
-											d="M2.09 2.22a.75.75 0 011.06-.13L8 6.94l4.85-4.85a.75.75 0 111.06 1.06L9.06 8l4.85 4.85a.75.75 0 11-1.06 1.06L8 9.06l-4.85 4.85a.75.75 0 01-1.06-1.06L6.94 8 2.09 3.15a.75.75 0 01-.13-1.06z"
-										/>
-									</svg>
+									<DismissIcon size={16} />
 								</button>
 							</div>
 						</div>
@@ -1768,48 +1492,57 @@
 			{@render emptyState()}
 		{/if}
 	{:else if listAppearance === "popover" && popoverOpen && items.length > 0 && selectorWrapEl}
-		<div
-			bind:this={popoverEl}
-			use:portal
-			use:positionPopover={selectorWrapEl}
-			class="minimal-popover"
-			aria-label={labels.viewFiles}
-		>
-			{@render fileListPanel(true)}
+		<!-- The .fluent-inputfile wrapper restores the CSS scope for the portal'd
+		     popover. Component styles are nested under `.fluent-inputfile X`, so
+		     descendants of the popover only match if the popover sits inside a
+		     .fluent-inputfile root. We portal the wrapper (rather than the popover
+		     itself) and let positionPopover place the inner element. -->
+		<div class="fluent-inputfile" use:portal>
+			<div
+				bind:this={popoverEl}
+				use:positionPopover={selectorWrapEl}
+				class="minimal-popover"
+				aria-label={labels.viewFiles}
+			>
+				{@render fileListPanel(true)}
+			</div>
 		</div>
 	{/if}
 
 	{#if expandOnDrag && isExternalDragActive && selectorAppearance === "card" && !disabled}
 		{@const overlayAnchor = resolveExpandTarget() ?? selectorWrapEl}
 		{#if overlayAnchor}
-			<div
-				bind:this={dragOverlayEl}
-				use:portal
-				use:positionOverlay={overlayAnchor}
-				class="drop-zone drop-zone--big drag-overlay"
-				class:dragging={isDragging}
-				ondragenter={handleDragEnter}
-				ondragover={handleDragOver}
-				ondragleave={(e) => {
-					// `target === currentTarget` is true even when the cursor moves
-					// from the overlay's padding into a descendant (dragleave fires
-					// like mouseout). Use relatedTarget containment instead so the
-					// overlay only clears its drag-highlight when the cursor really
-					// leaves the overlay subtree. Don't toggle isExternalDragActive
-					// here — document-level handlers own that lifecycle.
-					const overlay = e.currentTarget as HTMLElement
-					const related = e.relatedTarget as Node | null
-					if (!related || !overlay.contains(related)) {
-						isDragging = false
-					}
-				}}
-				ondrop={(e) => {
-					handleDrop(e)
-					isExternalDragActive = false
-				}}
-				role="presentation"
-			>
-				{@render cardContent()}
+			<!-- See popover note above — the .fluent-inputfile wrapper restores
+			     the CSS scope for the portal'd overlay's nested rules. -->
+			<div class="fluent-inputfile" use:portal>
+				<div
+					bind:this={dragOverlayEl}
+					use:positionOverlay={overlayAnchor}
+					class="drop-zone drop-zone--big drag-overlay"
+					class:dragging={isDragging}
+					ondragenter={handleDragEnter}
+					ondragover={handleDragOver}
+					ondragleave={(e) => {
+						// `target === currentTarget` is true even when the cursor moves
+						// from the overlay's padding into a descendant (dragleave fires
+						// like mouseout). Use relatedTarget containment instead so the
+						// overlay only clears its drag-highlight when the cursor really
+						// leaves the overlay subtree. Don't toggle isExternalDragActive
+						// here — document-level handlers own that lifecycle.
+						const overlay = e.currentTarget as HTMLElement
+						const related = e.relatedTarget as Node | null
+						if (!related || !overlay.contains(related)) {
+							isDragging = false
+						}
+					}}
+					ondrop={(e) => {
+						handleDrop(e)
+						isExternalDragActive = false
+					}}
+					role="presentation"
+				>
+					{@render cardContent()}
+				</div>
 			</div>
 		{/if}
 	{/if}
@@ -1817,732 +1550,3 @@
 	<div class="sr-only" aria-live="polite" role="status">{liveAnnouncement}</div>
 </div>
 
-<style>
-	.fluent-inputfile {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-	.fluent-inputfile.disabled {
-		opacity: 0.6;
-	}
-
-	.fluent-inputfile__input {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
-	}
-
-	.drop-zone {
-		border: 2px dashed var(--neutral-stroke-rest);
-		border-radius: var(--fluent-border-radius-xl);
-		background: var(--neutral-layer-2);
-		transition:
-			border-color 0.2s ease,
-			background 0.2s ease,
-			box-shadow 0.2s ease;
-		cursor: pointer;
-		outline: none;
-	}
-	.drop-zone:hover:not(.disabled),
-	.drop-zone:focus-visible {
-		border-color: var(--accent-fill-rest);
-		background: var(--neutral-layer-3);
-	}
-	.drop-zone:focus-visible {
-		box-shadow: 0 0 0 2px var(--accent-fill-rest);
-	}
-	.drop-zone.dragging {
-		border-color: var(--accent-fill-rest);
-		background: var(--accent-fill-subtle, var(--neutral-layer-3));
-	}
-	.drop-zone.disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.drop-zone-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--neutral-foreground-hint);
-	}
-	.upload-icon {
-		color: inherit;
-		display: block;
-	}
-	.drop-zone-text {
-		margin: 0;
-		font-size: 1rem;
-		color: var(--neutral-foreground-rest);
-	}
-	.drop-zone-hint {
-		margin: 0;
-		font-size: 0.875rem;
-		color: var(--neutral-foreground-hint);
-	}
-	.drop-zone-action {
-		display: inline-flex;
-	}
-
-	/* big — full-height vertical stack (original layout) */
-	.drop-zone--big {
-		padding: 2rem;
-	}
-	.drop-zone--big .drop-zone-content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1rem;
-	}
-	.drop-zone--big .upload-icon {
-		width: 48px;
-		height: 48px;
-	}
-	.drop-zone--big .drop-zone-hints {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.25rem;
-	}
-
-	/* compact — horizontal main row + wrapping hints row */
-	.drop-zone--compact {
-		padding: 1rem 1.25rem;
-	}
-	.drop-zone--compact .drop-zone-content {
-		display: grid;
-		grid-template-areas:
-			"icon message action"
-			"hints hints hints";
-		grid-template-columns: auto 1fr auto;
-		align-items: center;
-		column-gap: 1rem;
-		row-gap: 0.5rem;
-	}
-	.drop-zone--compact .drop-zone-icon {
-		grid-area: icon;
-	}
-	.drop-zone--compact .drop-zone-text {
-		grid-area: message;
-	}
-	.drop-zone--compact .drop-zone-action {
-		grid-area: action;
-	}
-	.drop-zone--compact .drop-zone-hints {
-		grid-area: hints;
-		display: flex;
-		flex-flow: row wrap;
-		gap: 0.25rem 1rem;
-	}
-	.drop-zone--compact .upload-icon {
-		width: 28px;
-		height: 28px;
-	}
-
-	/* minimal — message + hints + button all inline on one wrapping row */
-	.drop-zone--minimal {
-		padding: 0.5rem 0.875rem;
-	}
-	.drop-zone--minimal .drop-zone-content {
-		display: flex;
-		flex-flow: row wrap;
-		align-items: center;
-		gap: 0.4rem 0.75rem;
-	}
-	.drop-zone--minimal .drop-zone-text {
-		font-size: 0.9rem;
-	}
-	/* dissolve the hints wrapper so each hint becomes a sibling of text/icon/action */
-	.drop-zone--minimal .drop-zone-hints {
-		display: contents;
-	}
-	.drop-zone--minimal .drop-zone-hint {
-		font-size: 0.85rem;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-	.drop-zone--minimal .drop-zone-hint::before {
-		content: "·";
-		color: var(--neutral-foreground-hint);
-		opacity: 0.6;
-	}
-	.drop-zone--minimal .drop-zone-action {
-		order: 99;
-		margin-left: auto;
-	}
-	.drop-zone--minimal .upload-icon {
-		width: 18px;
-		height: 18px;
-	}
-
-	/* drag-expand overlay — centred on the selector, expands symmetrically */
-	.drag-overlay {
-		z-index: var(--fluent-z-popover, 1060);
-		background: var(--neutral-layer-2);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-		border-color: var(--accent-fill-rest);
-		min-height: 12rem;
-		max-width: 90vw;
-		max-height: 90vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 1.5rem;
-	}
-	.drag-overlay.dragging {
-		background: var(--accent-fill-subtle, var(--neutral-layer-3));
-	}
-
-	.minimal-wrap {
-		position: relative;
-		display: inline-block;
-	}
-	.minimal-trigger {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 2.25rem;
-		height: 2.25rem;
-		background: transparent;
-		border: 1px solid var(--neutral-stroke-rest);
-		border-radius: var(--fluent-border-radius-md);
-		color: var(--neutral-foreground-rest);
-		cursor: pointer;
-	}
-	.minimal-trigger:hover:not(:disabled) {
-		background: var(--neutral-fill-secondary-hover, var(--neutral-layer-2));
-	}
-	.minimal-trigger:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-	.minimal-trigger[aria-expanded="true"] {
-		background: var(--neutral-layer-3);
-		border-color: var(--accent-fill-rest);
-	}
-	.minimal-badge {
-		position: absolute;
-		top: -4px;
-		right: -4px;
-		min-width: 1.1rem;
-		height: 1.1rem;
-		padding: 0 0.3rem;
-		background: var(--neutral-foreground-hint);
-		color: white;
-		border-radius: var(--fluent-border-radius-pill);
-		font-size: 0.7rem;
-		font-weight: 700;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.2rem;
-		border: 1.5px solid var(--neutral-layer-1, white);
-	}
-	.minimal-badge--pending {
-		background: var(--neutral-foreground-hint);
-	}
-	.minimal-badge--uploading {
-		background: var(--accent-fill-rest);
-		color: var(--foreground-on-accent-rest, white);
-	}
-	.minimal-badge--completed {
-		background: var(--success-foreground-rest, #107c10);
-		color: white;
-	}
-	.minimal-badge--error {
-		background: var(--error-foreground-rest, #c50f1f);
-		color: white;
-	}
-	.minimal-badge-spinner {
-		width: 0.5rem;
-		height: 0.5rem;
-		border-radius: var(--fluent-border-radius-circle);
-		border: 1.5px solid currentColor;
-		border-top-color: transparent;
-		animation: minimal-spin 0.8s linear infinite;
-	}
-	@keyframes minimal-spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-
-	/* Width, min-height, and max-height are exposed as CSS vars so consumers can
-	   override per theme or per instance (e.g. `style="--fluent-inputfile-popover-width: 32rem"`).
-	   Without these bounds, a single long filename would stretch the popover
-	   to whatever width that filename needs, and stacked items would let it
-	   grow vertically without limit — both produce a jumpy, oversized panel.
-	   min-height keeps the box from shrinking on short lists so adding/removing
-	   files within that range doesn't cause the popover to resize. */
-	.minimal-popover {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: var(--fluent-inputfile-popover-width, 28rem);
-		max-width: 90vw;
-		min-height: var(--fluent-inputfile-popover-min-height, 16rem);
-		max-height: var(--fluent-inputfile-popover-max-height, 24rem);
-		background: var(--neutral-layer-1, white);
-		border: 1px solid var(--neutral-stroke-rest);
-		border-radius: var(--fluent-border-radius-lg);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-		padding: 0.75rem;
-		z-index: var(--fluent-z-popover, 1060);
-		overflow-y: auto;
-		overscroll-behavior: contain;
-	}
-	/* The popover stays a plain block scroll container (so position:sticky on the
-	   header/footer behaves predictably against it). To pin the footer to the
-	   visual bottom when the list is short, the inner .file-list is a flex
-	   column that's forced to fill the popover via min-height:100%, with the
-	   rows set to flex-grow so they consume the empty space and push the
-	   footer down. On long lists the popover scrolls naturally. */
-	.minimal-popover .file-list {
-		gap: 0.4rem;
-		min-height: 100%;
-	}
-	.minimal-popover .file-list-rows {
-		flex: 1 0 auto;
-	}
-	/* Pin header + limits to the top of the popover's scroll viewport while
-	   the rows scroll underneath. position: sticky on a single wrapper avoids
-	   the brittle "match nested sticky offsets" problem, and the popover keeps
-	   content-sizing for short lists (so 2 files don't render a giant box). */
-	.minimal-popover .file-list-sticky {
-		position: sticky;
-		top: -0.75rem;
-		background: var(--neutral-layer-1, white);
-		z-index: 1;
-		/* Negative margins + matching padding extend the sticky background to
-		   the popover's inner edge so rows scrolling underneath are hidden. */
-		margin: -0.75rem -0.75rem 0;
-		padding: 0.75rem 0.75rem 0;
-	}
-	.minimal-popover .file-list-footer {
-		position: sticky;
-		bottom: -0.75rem;
-		margin: 0 -0.75rem -0.75rem;
-		padding: 0.5rem 0.75rem 0.75rem;
-		background: var(--neutral-layer-1, white);
-		z-index: 1;
-		border-top: 1px solid var(--neutral-stroke-rest);
-	}
-	.file-list-footer {
-		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
-		padding-top: 0.5rem;
-	}
-	.footer-progress {
-		width: 100%;
-		height: 4px;
-		background: var(--neutral-layer-3);
-		border-radius: var(--fluent-border-radius-sm);
-		overflow: hidden;
-	}
-	.footer-progress-fill {
-		height: 100%;
-		background: var(--accent-fill-rest);
-		transition: width 0.15s linear;
-	}
-	.footer-stats {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.75rem;
-		color: var(--neutral-foreground-hint);
-		font-variant-numeric: tabular-nums;
-	}
-	.footer-stats-text {
-		flex: 1;
-		min-width: 0;
-	}
-	.footer-stats-percent {
-		font-weight: 600;
-		color: var(--neutral-foreground-rest);
-	}
-	.footer-actions {
-		display: flex;
-		gap: 0.1rem;
-		align-items: center;
-	}
-	/* Small text buttons sized to fit the footer's 0.75rem context — same
-	   colour cues as the existing .text-button (accent fg, neutral hover bg)
-	   but tighter padding so the trio + the percent still fits on one line. */
-	.footer-action-button {
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		padding: 0.15rem 0.4rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: var(--accent-fill-rest);
-		border-radius: var(--fluent-border-radius-sm);
-		line-height: 1.2;
-		transition: background 0.1s ease, color 0.1s ease;
-	}
-	.footer-action-button:hover {
-		background: var(--neutral-fill-secondary-hover, var(--neutral-layer-3));
-	}
-	.footer-action-button:focus-visible {
-		outline: 2px solid var(--accent-fill-rest);
-		outline-offset: -2px;
-	}
-
-	/* Transparent layout wrapper — the drop-zone card carries its own drag-over
-	   visual via the shared `isDragging` state, so no padding/border here (and
-	   no layout shift when chips appear vs. list/none modes). */
-	.chips-row {
-		display: flex;
-		flex-direction: row;
-		gap: 0.4rem;
-		align-items: flex-start;
-	}
-	.chips-row[data-chips-position="below"] {
-		flex-direction: column;
-		align-items: stretch;
-	}
-	/* Chips live in their own wrap cell so they flow top-down inside the cell
-	   instead of mixing into the selector's flex row (which produced row-1
-	   chips that vertically centered against a tall card and subsequent rows
-	   that wrapped below the card with an awkward gap). min-width: 0 lets the
-	   cell shrink below its content's intrinsic width so flex-wrap actually
-	   kicks in once chips overflow. */
-	.chips-wrap {
-		flex: 1 1 0;
-		min-width: 0;
-		display: flex;
-		flex-wrap: wrap;
-		align-content: flex-start;
-		align-items: center;
-		gap: 0.4rem;
-	}
-	.chips-row[data-chips-position="below"] .chips-wrap {
-		flex: 0 1 auto;
-	}
-	/* Two-cell layout: [ info | × ]. `align-items: stretch` + `overflow: hidden`
-	   let the remove button fill the chip's full height while still respecting
-	   the chip's rounded corners. Padding lives on the children, not the chip
-	   itself, so the remove button can reach the chip's right edge. */
-	.chip {
-		display: inline-flex;
-		align-items: stretch;
-		background: var(--neutral-layer-2);
-		border: 1px solid var(--neutral-stroke-rest);
-		border-radius: var(--fluent-border-radius-xl);
-		font-size: 0.85rem;
-		max-width: 240px;
-		overflow: hidden;
-	}
-	.chip.error {
-		border-color: var(--error-foreground-rest, #c50f1f);
-		color: var(--error-foreground-rest, #c50f1f);
-	}
-	.chip.uploading {
-		border-color: var(--accent-fill-rest);
-	}
-	.chip.completed {
-		border-color: var(--success-foreground-rest, #107c10);
-	}
-	.chip-info {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		padding: 0.2rem 0.5rem;
-		min-width: 0;
-		flex: 1 1 auto;
-	}
-	.chip-name {
-		max-width: 160px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-	.chip-progress {
-		font-variant-numeric: tabular-nums;
-		color: var(--neutral-foreground-hint);
-	}
-	/* Full-height right cell so the entire area from the divider to the chip's
-	   end is clickable, not just the × glyph. */
-	.chip-remove {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		background: transparent;
-		border: none;
-		border-left: 1px solid var(--neutral-stroke-rest);
-		cursor: pointer;
-		font-size: 1rem;
-		line-height: 1;
-		padding: 0 0.6rem;
-		min-width: 1.75rem;
-		color: var(--neutral-foreground-hint);
-		transition: background 0.1s ease, color 0.1s ease;
-	}
-	.chip-remove:hover {
-		background: var(--neutral-fill-secondary-hover, var(--neutral-layer-3));
-		color: var(--neutral-foreground-rest);
-	}
-	.chip-remove:focus-visible {
-		outline: 2px solid var(--accent-fill-rest);
-		outline-offset: -2px;
-	}
-	/* Keep the divider colour in sync with the status-coloured chip border. */
-	.chip.error .chip-remove {
-		border-left-color: var(--error-foreground-rest, #c50f1f);
-	}
-	.chip.uploading .chip-remove {
-		border-left-color: var(--accent-fill-rest);
-	}
-	.chip.completed .chip-remove {
-		border-left-color: var(--success-foreground-rest, #107c10);
-	}
-	.chip-more {
-		background: var(--neutral-layer-3);
-		color: var(--accent-fill-rest);
-		border: 1px dashed var(--neutral-stroke-rest);
-		font-weight: 700;
-		padding: 0.3rem 0.6rem;
-		cursor: pointer;
-	}
-	.chip-more:hover {
-		background: var(--neutral-layer-2);
-	}
-
-	.file-list {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-	.file-list-rows {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-	.file-list-rows.scrollable {
-		overflow-y: auto;
-		padding-right: 0.25rem;
-	}
-	.show-more-toggle {
-		align-self: flex-start;
-		background: transparent;
-		border: 1px dashed var(--neutral-stroke-rest);
-		color: var(--accent-fill-rest);
-		padding: 0.4rem 0.75rem;
-		border-radius: var(--fluent-border-radius-md);
-		cursor: pointer;
-		font-size: 0.85rem;
-		font-weight: 600;
-	}
-	.show-more-toggle:hover {
-		background: var(--neutral-layer-2);
-		border-style: solid;
-	}
-	.file-list-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 0.5rem 0;
-	}
-	/* Compact one-liner that mirrors the drop-zone hint paragraphs. Sits in the
-	   popover header where the card (and its inline hints) isn't visible. */
-	.file-list-limits {
-		font-size: 0.75rem;
-		color: var(--neutral-foreground-hint);
-		padding: 0 0 0.5rem;
-		line-height: 1.35;
-	}
-	.file-count {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: var(--neutral-foreground-rest);
-	}
-	.file-list-actions {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.text-button {
-		background: transparent;
-		border: none;
-		color: var(--accent-fill-rest);
-		cursor: pointer;
-		font-size: 0.875rem;
-		padding: 0.25rem 0.5rem;
-		border-radius: var(--fluent-border-radius-md);
-	}
-	.text-button:hover:not(:disabled) {
-		background: var(--neutral-fill-secondary-hover, var(--neutral-layer-2));
-	}
-	.text-button:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.file-item {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		padding: 0.75rem 1rem;
-		background: var(--neutral-layer-2);
-		border: 1px solid var(--neutral-stroke-rest);
-		border-radius: var(--fluent-border-radius-md);
-		outline: none;
-		transition:
-			border-color 0.15s ease,
-			background 0.15s ease;
-	}
-	.file-item:focus-visible {
-		border-color: var(--accent-fill-rest);
-		box-shadow: 0 0 0 1px var(--accent-fill-rest);
-	}
-	.file-item.error {
-		border-color: var(--error-foreground-rest, #c50f1f);
-	}
-	.file-item.completed {
-		border-color: var(--success-foreground-rest, #107c10);
-	}
-	.file-item.dragging {
-		opacity: 0.5;
-	}
-	.file-item.drag-over {
-		border-top: 2px solid var(--accent-fill-rest);
-	}
-
-	.file-thumb {
-		width: 40px;
-		height: 40px;
-		object-fit: cover;
-		border-radius: var(--fluent-border-radius-md);
-		flex-shrink: 0;
-		background: var(--neutral-layer-3);
-	}
-	/* Single neutral icon color across all file types. The category data
-	   attribute is still emitted on the element so consumers who want
-	   color-coding can add their own `.file-icon[data-category="pdf"]`
-	   rule, but the default treats every file the same to avoid implying
-	   semantics from a generic file glyph. */
-	.file-icon {
-		width: 40px;
-		height: 40px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		color: var(--fluent-inputfile-icon-file-color, var(--neutral-foreground-hint));
-	}
-
-	.file-info {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		min-width: 0;
-	}
-	.file-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1rem;
-	}
-	.file-name {
-		/* flex + min-width: 0 are required for the ellipsis to actually engage
-		   inside the flex parent — without min-width, a flex item never shrinks
-		   below its content's intrinsic width and `overflow: hidden` has nothing
-		   to clip. */
-		flex: 1 1 auto;
-		min-width: 0;
-		font-weight: 600;
-		color: var(--neutral-foreground-rest);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-	.file-size {
-		font-size: 0.875rem;
-		color: var(--neutral-foreground-hint);
-		white-space: nowrap;
-	}
-
-	.progress-bar {
-		width: 100%;
-		height: 4px;
-		background: var(--neutral-layer-3);
-		border-radius: var(--fluent-border-radius-sm);
-		overflow: hidden;
-	}
-	.progress-fill {
-		height: 100%;
-		background: var(--accent-fill-rest);
-		transition: width 0.15s linear;
-	}
-
-	.status-text {
-		font-size: 0.8rem;
-		color: var(--neutral-foreground-hint);
-		font-variant-numeric: tabular-nums;
-	}
-	.status-text.success {
-		color: var(--success-foreground-rest, #107c10);
-	}
-	.status-text.error {
-		color: var(--error-foreground-rest, #c50f1f);
-	}
-	.status-text.muted {
-		color: var(--neutral-foreground-hint);
-	}
-
-	.file-actions {
-		display: flex;
-		gap: 0.25rem;
-		align-items: center;
-		flex-shrink: 0;
-	}
-	.action-button,
-	.remove-button {
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		padding: 0.4rem;
-		color: var(--neutral-foreground-rest);
-		border-radius: var(--fluent-border-radius-md);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 0.95rem;
-		text-decoration: none;
-		min-width: 1.75rem;
-		min-height: 1.75rem;
-	}
-	.action-button:hover:not(:disabled),
-	.remove-button:hover:not(:disabled) {
-		background: var(--neutral-fill-secondary-hover, var(--neutral-layer-3));
-	}
-	.action-button:disabled,
-	.remove-button:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
-	}
-</style>

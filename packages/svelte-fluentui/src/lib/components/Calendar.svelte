@@ -4,7 +4,7 @@
 	import {CalendarDay} from "../fluent-ui/calendar/calendar-day.js"
 	import {CalendarMonth} from "../fluent-ui/calendar/calendar-month.js"
 	import {CalendarYear} from "../fluent-ui/calendar/calendar-year.js"
-	import type {CalendarSelectMode, CalendarView, IFluentCalendar} from "../fluent-ui/calendar/fluent-calendar.js"
+	import type {CalendarSelectMode, CalendarView, IFluentCalendar, CalendarSelectionError} from "../fluent-ui/calendar/fluent-calendar.js"
 	import {CalendarExtended} from "../fluent-ui/calendar/fluent-calendar-extended.js"
 	import type DayFormat from "../fluent-ui/calendar/day-format.js"
 	import {CalendarTitles} from "../fluent-ui/calendar/calendar-titles.js"
@@ -35,11 +35,20 @@
 		/** Gap between cells in CSS units (default 2px). */
 		gap?: string | number
 		readonly?: boolean
-		selectDatesHover?: ((date: Date) => Date[]) | null | undefined
+		/** Hover-preview function: given the day under the cursor, returns the set of dates to visually highlight. Defaults to `[date]`. */
+		highlightDates?: (date: Date) => Date[]
+		/** Click-selection function: given the clicked day, returns the dates to select. In multiple mode, the result is unioned with existing `selectedDates` (or removed wholesale if the clicked day was already selected). In range mode, the result replaces the range. Defaults to `[date]`. */
+		selectDates?: (date: Date) => Date[]
+		/** Upper bound for the number of dates that can be selected in multiple mode. When exceeded, `onSelectionError` fires and the selection is not modified. */
+		maxSelectableDays?: number
+		/** Fires when an attempted selection violates `maxSelectableDays`. The current `selectedDates` is left untouched. */
+		onSelectionError?: (error: CalendarSelectionError) => void
 		onDatesSelected?: (values: Date[]) => void
 		onDateSelected?: (value: Date) => void
 		/** Fires when the user navigates months/years (prev/next buttons). */
 		onPickerMonthChange?: (month: Date) => void
+		/** Fires when the cursor enters a day cell (with that day) or leaves the day grid (with `null`). Pure observation — does not affect highlighting. */
+		onDayHover?: (date: Date | null) => void
 		day?: SlotType
 		class?: string
 	}
@@ -62,10 +71,14 @@
 		    gap                             = undefined,
 		    disabledDateFunc                = undefined,
 		    selectableDates                 = undefined,
-		    selectDatesHover                = undefined,
+		    highlightDates                  = undefined,
+		    selectDates                     = undefined,
+		    maxSelectableDays               = undefined,
+		    onSelectionError                = undefined,
 		    onDatesSelected                 = undefined,
 		    onDateSelected                  = undefined,
 		    onPickerMonthChange             = undefined,
+		    onDayHover                      = undefined,
 		    day: daySnippet                 = undefined,
 		    ...  restProps
 	    }: Props = $props()
@@ -120,7 +133,7 @@
 	})
 
 	function getMultipleSelection() {
-		let inProgress = selectDatesHover !== null
+		const inProgress = _selectedDatesMouseOver.length > 0
 
 		if (selectedDates == null || !selectedDates.length) {
 			return {
@@ -131,18 +144,42 @@
 			}
 		}
 
-		if (selectDatesHover === null) {
-			inProgress = !_rangeSelector.isValid()
-		} else {
-			inProgress = _rangeSelectorMouseOver.isValid()
-		}
-
 		return {
 			isMultiple: (selectMode == "multiple" || selectMode == "range") && selectedDates.length > 1,
 			min:        selectedDates.reduce((acc, x) => !acc || x < acc ? x : acc),
 			max:        selectedDates.reduce((acc, x) => !acc || x > acc ? x : acc),
 			inProgress
 		}
+	}
+
+	function sameDay(a: Date, b: Date) {
+		return a.getFullYear() === b.getFullYear()
+			&& a.getMonth() === b.getMonth()
+			&& a.getDate() === b.getDate()
+	}
+
+	function dedupeDates(dates: Date[]) {
+		const seen = new Set<string>()
+		const out: Date[] = []
+		for (const d of dates) {
+			const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+			if (!seen.has(key)) {
+				seen.add(key)
+				out.push(d)
+			}
+		}
+		return out
+	}
+
+	function fireMaxExceeded(attempted: Date[]) {
+		onSelectionError?.({
+			code:      "max_selectable_days_exceeded",
+			message:   `You can select a maximum of ${maxSelectableDays} day${maxSelectableDays === 1 ? "" : "s"}. Delete a day to select a new one.`,
+			attempted,
+			current:   selectedDates,
+			max:       maxSelectableDays as number
+		})
+		_selectedDatesMouseOver = []
 	}
 
 	function getAnimationClass(existingClass: string) {
@@ -219,94 +256,123 @@
 	}
 
 	async function onSelectDayHandlerAsync(value_: Date, dayDisabled: boolean) {
-		if (!dayDisabled) {
-			switch (selectMode) {
-				// Single selection
-				case "single":
-					onDateSelected?.(value_)
+		if (dayDisabled) return
+
+		switch (selectMode) {
+			// Single selection
+			case "single":
+				onDateSelected?.(value_)
+				break
+
+			// Multiple selection — toggle the clicked group (single day by default,
+			// or whatever selectDates returns). The clicked day determines the
+			// toggle pivot: if it's already in selectedDates, the entire group is
+			// removed; otherwise the group is unioned in.
+			case "multiple": {
+				const group     = selectDates ? selectDates(value_) : [value_]
+				const isRemoving = selectedDates.some(d => sameDay(d, value_))
+
+				let newSelectedDates: Date[]
+				if (isRemoving) {
+					newSelectedDates = selectedDates.filter(d => !group.some(g => sameDay(g, d)))
+				} else {
+					newSelectedDates = dedupeDates([...selectedDates, ...group])
+				}
+
+				if (!isRemoving && maxSelectableDays !== undefined && newSelectedDates.length > maxSelectableDays) {
+					fireMaxExceeded(group)
+					return
+				}
+
+				onDatesSelected?.(newSelectedDates)
+				break
+			}
+
+			// Range of dates
+			case "range": {
+				// When selectDates is provided, clicking any day defines the
+				// entire range via the function. The result is taken verbatim —
+				// callers control skip/jump-over behavior for disabled days.
+				if (selectDates) {
+					const group = selectDates(value_)
+					if (maxSelectableDays !== undefined && group.length > maxSelectableDays) {
+						fireMaxExceeded(group)
+						return
+					}
+					_rangeSelector.start = getSmallest(group)
+					_rangeSelector.end   = getLargest(group)
+					onDatesSelected?.(group)
+					_selectedDatesMouseOver = []
 					break
+				}
 
-				// Multiple selection
-				case "multiple":
-					if (!selectDatesHover) {
-						let newSelectedDates = Array.from(selectedDates)
-						if (selectedDates.includes(value_)) {
-							newSelectedDates = newSelectedDates.filter(i => i !== value_)
-						} else {
-							newSelectedDates.push(value_)
-						}
+				const resetRange = (_rangeSelector.isValid() || _rangeSelector.isSingle()) && _rangeSelector.includes(value_)
 
-						onDatesSelected?.(newSelectedDates)
-					} else {
-						const range   = selectDatesHover(value_)
-						const newSelectedDates = range.filter(day => disabledDateFunc != null ? !disabledDateFunc(day) : true)
+				// Reset the selection
+				if (resetRange) {
+					_rangeSelector.clear()
+				}
 
-						onDatesSelected?.(newSelectedDates)
-					}
+				// End the selection
+				else if (_rangeSelector.start !== null && _rangeSelector.end === null) {
+					_rangeSelector.end = value_
+				}
 
-					break
+				// Start the selection
+				else {
+					_rangeSelector.start = value_
+					_rangeSelector.end   = null
 
-				// Range of dates
-				case "range":
+					await onSelectDayMouseOverAsync(value_, false)
+				}
 
-					const resetRange = (_rangeSelector.isValid() || _rangeSelector.isSingle()) && _rangeSelector.includes(value_)
+				// Emit [start] while end is null so the user sees their pivot day
+				// highlighted between the first and second click of a new range —
+				// otherwise the selection looks empty and they can't tell a new
+				// range has been started.
+				const newSelectedDates = _rangeSelector.end !== null
+					? _rangeSelector.getAllDates()
+					: (_rangeSelector.start ? [_rangeSelector.start] : [])
 
-					// Reset the selection
-					if (resetRange) {
-						_rangeSelector.clear()
-						_rangeSelectorMouseOver.clear()
-					}
+				if (maxSelectableDays !== undefined && newSelectedDates.length > maxSelectableDays) {
+					fireMaxExceeded(newSelectedDates)
+					_rangeSelector.clear()
+					return
+				}
 
-					// End the selection
-					else if (_rangeSelector.start !== null && _rangeSelector.end === null) {
-						_rangeSelector.end = value_
-					}
-
-					// Start and close a pre-selection
-					else if (selectDatesHover) {
-						const range = selectDatesHover(value_)
-
-						_rangeSelector.start = getSmallest(range)
-						_rangeSelector.end   = getLargest(range)
-					}
-
-					// Start the selection
-					else {
-						_rangeSelector.start = value_
-						_rangeSelector.end   = null
-
-						await onSelectDayMouseOverAsync(value_, false)
-					}
-
-					const newSelectedDates = _rangeSelector
-						.getAllDates()
-						.filter(day => disabledDateFunc != null ? !disabledDateFunc(day) : true)
-
-					onDatesSelected?.(newSelectedDates)
-					break
+				onDatesSelected?.(newSelectedDates)
+				break
 			}
 		}
 	}
 
 	async function onSelectDayMouseOverAsync(value: Date, dayDisabled: boolean) {
-		if (dayDisabled ||
-			selectMode === "single" ||
-			(_rangeSelector.isSingle() && !selectDatesHover)) {
+		// Pure-observation hover callback fires regardless of selectMode or
+		// disabled state — consumers may want to react to inactive days too
+		// (e.g., tooltip explaining why the day is disabled).
+		onDayHover?.(value)
+
+		if (dayDisabled || selectMode === "single") {
 			return
 		}
 
-		if (!selectDatesHover) {
-			_rangeSelectorMouseOver.start = _rangeSelector.start ?? value
-			_rangeSelectorMouseOver.end   = value
-		} else {
-			const range                   = selectDatesHover(value)
-			_rangeSelectorMouseOver.start = getSmallest(range)
-			_rangeSelectorMouseOver.end   = getLargest(range)
+		// Highlight set is whatever highlightDates returns (verbatim — no
+		// internal disabled filtering). Falls back to the existing in-progress
+		// range preview ([rangeStart, hovered]) for range mode when no
+		// highlightDates function is provided.
+		if (highlightDates) {
+			_selectedDatesMouseOver = highlightDates(value)
+			return
 		}
 
-		_selectedDatesMouseOver = !disabledDateFunc
-			? _rangeSelectorMouseOver.getAllDates()
-			: _rangeSelectorMouseOver.getAllDates().filter(day => !disabledDateFunc(day))
+		if (selectMode === "range" && _rangeSelector.start && !_rangeSelector.end) {
+			_rangeSelectorMouseOver.start = _rangeSelector.start
+			_rangeSelectorMouseOver.end   = value
+			_selectedDatesMouseOver       = _rangeSelectorMouseOver.getAllDates()
+			return
+		}
+
+		_selectedDatesMouseOver = []
 	}
 
 	async function onSelectMonthHandlerAsync(year: number, month: number, isReadOnly: boolean) {
@@ -414,7 +480,7 @@
 					part="label" class={getAnimationClass('label')}
 					role="button" tabindex="0"
 					onclick={() => onTitleClicked(titles)}
-					onkeydown={() => onTitleClicked(titles)}
+					onkeydown={(ev) => (ev.key === "Enter" || ev.key === " ") && onTitleClicked(titles)}
 				>
 					{titles.label}
 				</div>
@@ -448,7 +514,7 @@
 
 			{#if view === "days"}
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div class="days" part="days" onmouseleave={ev => _selectedDatesMouseOver = []}>
+				<div class="days" part="days" onmouseleave={ev => { _selectedDatesMouseOver = []; onDayHover?.(null) }}>
 					<!-- Titles: Mon, Tue, ... -->
 					<div class="week-days" part="week-days">
 						{#each calendarExtended.getDayNames() as weekDay}
@@ -476,12 +542,12 @@
 									data-today={dayProperties.isToday}
 									aria-selected={dayProperties.isSelected}
 									data-multi-day={dayProperties.isMultiDaySelected}
-									data-multi-day-over={multipleSelection.inProgress && _selectedDatesMouseOver.includes(day)}
-									data-multi-start={multipleSelection.isMultiple && selectMode === "range" && multipleSelection.min === day}
-									data-multi-end={multipleSelection.isMultiple && selectMode === "range" && multipleSelection.max === day}
+									data-multi-day-over={multipleSelection.inProgress && _selectedDatesMouseOver.some(d => sameDay(d, day))}
+									data-multi-start={multipleSelection.isMultiple && selectMode === "range" && sameDay(multipleSelection.min, day)}
+									data-multi-end={multipleSelection.isMultiple && selectMode === "range" && sameDay(multipleSelection.max, day)}
 									aria-label={dayProperties.title}
 									data-value={dayProperties.dayIdentifier}
-									onkeydown={ev => onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
+									onkeydown={ev => (ev.key === "Enter" || ev.key === " ") && onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
 									onclick={ev => onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
 									onmouseover={ev => onSelectDayMouseOverAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
 								>
@@ -511,7 +577,7 @@
 							data-value={monthProperties.monthIdentifier}
 							role="button"
 							tabindex={monthProperties.isDisabled || monthProperties.isReadOnly ? undefined : 0}
-							onkeydown={ev => onSelectMonthHandlerAsync(year, month.index, monthProperties.isReadOnly)}
+							onkeydown={ev => (ev.key === "Enter" || ev.key === " ") && onSelectMonthHandlerAsync(year, month.index, monthProperties.isReadOnly)}
 							onclick={ev => onSelectMonthHandlerAsync(year, month.index, monthProperties.isReadOnly)}
 						>
 							{month.abbreviated}
@@ -535,7 +601,7 @@
 							title={String(year.year)}
 							data-value={yearProperties.yearIdentifier}
 							tabindex={yearProperties.isDisabled || yearProperties.isReadOnly ? undefined : 0}
-							onkeydown={ev => onSelectYearHandlerAsync(year.year, yearProperties.isReadOnly)}
+							onkeydown={ev => (ev.key === "Enter" || ev.key === " ") && onSelectYearHandlerAsync(year.year, yearProperties.isReadOnly)}
 							onclick={ev => onSelectYearHandlerAsync(year.year, yearProperties.isReadOnly)}
 						>
 							{year.year}

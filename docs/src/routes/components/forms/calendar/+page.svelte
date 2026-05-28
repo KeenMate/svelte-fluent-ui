@@ -1,6 +1,8 @@
 <script lang="ts">
-	import {Calendar, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui"
+	import {Calendar, Stack, Grid, GridItem, Card, QuickGrid, Alert} from "svelte-fluentui"
+	import type {CalendarSelectionError} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
+	import {tick} from "svelte"
 
 	const now                     = new Date()
 	const disabledDates: string[] = [
@@ -19,6 +21,46 @@
 	let value       = $state(new Date(2025, 5, 4))
 	let values      = $state([new Date(2025, 5, 4)])
 	let pickerMonth = $state(new Date())
+
+	// SelectOneWeek + Select3Days demos
+	let weekValues       = $state<Date[]>([])
+	let threeDayValues   = $state<Date[]>([])
+	let threeDayHovered  = $state<Date | null>(null)
+	let maxFiveValues    = $state<Date[]>([])
+	let maxFiveError     = $state<CalendarSelectionError | null>(null)
+	let maxFiveAlertShown = $state(false)
+
+	function selectOneWeek(date: Date): Date[] {
+		const day     = date.getDay()
+		const diff    = day === 0 ? -6 : 1 - day
+		const monday  = new Date(date)
+		monday.setDate(date.getDate() + diff)
+		const week: Date[] = []
+		for (let i = 0; i < 7; i++) {
+			const d = new Date(monday)
+			d.setDate(monday.getDate() + i)
+			week.push(d)
+		}
+		return week
+	}
+
+	function selectThreeDays(date: Date): Date[] {
+		const result: Date[] = []
+		for (let i = -1; i <= 1; i++) {
+			const d = new Date(date)
+			d.setDate(date.getDate() + i)
+			result.push(d)
+		}
+		return result
+	}
+
+	async function handleMaxFiveError(error: CalendarSelectionError) {
+		maxFiveError = error
+		// Force remount so a previously-dismissed Alert reappears.
+		maxFiveAlertShown = false
+		await tick()
+		maxFiveAlertShown = true
+	}
 
 	function toDateISOString(date: Date): string {
 		return date.toISOString().substring(0, 11)
@@ -57,14 +99,19 @@
 		{name: "disabledSelectable", type: "boolean", default: "false", description: "Allow selecting disabled dates"},
 		{name: "dayFormat", type: "string", default: "undefined", description: "Custom day number format"},
 		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
-		{name: "selectDatesHover", type: "(date: Date) => Date[]", default: "undefined", description: "Highlight dates on hover"}
+		{name: "highlightDates", type: "(date: Date) => Date[]", default: "undefined", description: "Hover-preview function — returns the dates to visually highlight when the cursor is over a day"},
+		{name: "selectDates", type: "(date: Date) => Date[]", default: "undefined", description: "Click-selection function — returns the dates to select on click. Multiple mode unions with existing; range mode replaces"},
+		{name: "maxSelectableDays", type: "number", default: "undefined", description: "Upper bound on selected dates (multiple/range). Exceeding fires onSelectionError and leaves the selection untouched"}
 	]
 
 	const actions: Property[] = []
 
 	const callbacks: Property[] = [
-		{name: "onSelectedDatesChanged", type: "(values: Date[]) => void", default: "undefined", description: "Fires when selected dates change (multi/range)"},
-		{name: "onDateSelected", type: "(value: Date) => void", default: "undefined", description: "Fires when a date is selected (single)"}
+		{name: "onDatesSelected", type: "(values: Date[]) => void", default: "undefined", description: "Fires when selected dates change (multi/range)"},
+		{name: "onDateSelected", type: "(value: Date) => void", default: "undefined", description: "Fires when a date is selected (single)"},
+		{name: "onSelectionError", type: "(error: CalendarSelectionError) => void", default: "undefined", description: "Fires when an attempted selection would exceed maxSelectableDays"},
+		{name: "onPickerMonthChange", type: "(month: Date) => void", default: "undefined", description: "Fires when the user navigates months/years"},
+		{name: "onDayHover", type: "(date: Date | null) => void", default: "undefined", description: "Fires when the cursor enters a day cell (date) or leaves the day grid (null)"}
 	]
 
 	const slots: Property[] = [
@@ -166,7 +213,7 @@
 				selectedDates={values}
 				selectMode="multiple"
 				disabledDateFunc={getIsDateDisabled}
-				{onDateSelected}
+				{onDatesSelected}
 			/>
 			<p>Selected</p>
 			<ul>
@@ -175,18 +222,77 @@
 				{/each}
 			</ul>
 		</div>
+		<div class="calendar-item"></div>
+	</div>
+
+	<div class="calendar-examples">
 		<div class="calendar-item">
-			<!--<h3>Years calendar</h3>-->
-			<!--<p>-->
-			<!--	Selected {value.toLocaleDateString()}-->
-			<!--</p>-->
-			<!--<Calendar-->
-			<!--	bind:pickerMonth-->
-			<!--	{value}-->
-			<!--	view="years"-->
-			<!--	disabledDateFunc={getIsDateDisabled}-->
-			<!--	{onDateSelected}-->
-			<!--/>-->
+			<h3>Range with "SelectOneWeek"</h3>
+			<Calendar
+				bind:pickerMonth
+				selectedDates={weekValues}
+				selectMode="range"
+				disabledDateFunc={getIsDateDisabled}
+				highlightDates={selectOneWeek}
+				selectDates={selectOneWeek}
+				onDatesSelected={(dates) => weekValues = dates}
+			/>
+			<p>Selected</p>
+			<ul>
+				{#each weekValues as date}
+					<li>{date.toLocaleDateString()}</li>
+				{/each}
+			</ul>
+		</div>
+
+		<div class="calendar-item">
+			<h3>Multiple (max 5 days)</h3>
+			{#if maxFiveAlertShown && maxFiveError}
+				<Alert
+					intent="danger"
+					dismissable
+					ondismiss={() => maxFiveAlertShown = false}
+					style="margin-bottom: 0.5rem;"
+				>
+					{maxFiveError.message}
+				</Alert>
+			{/if}
+			<Calendar
+				bind:pickerMonth
+				selectedDates={maxFiveValues}
+				selectMode="multiple"
+				maxSelectableDays={5}
+				disabledDateFunc={getIsDateDisabled}
+				onDatesSelected={(dates) => maxFiveValues = dates}
+				onSelectionError={handleMaxFiveError}
+			/>
+			<p>Selected</p>
+			<ul>
+				{#each maxFiveValues as date}
+					<li>{date.toLocaleDateString()}</li>
+				{/each}
+			</ul>
+		</div>
+
+		<div class="calendar-item">
+			<h3>Multiple with "Select3Days"</h3>
+			<Calendar
+				bind:pickerMonth
+				selectedDates={threeDayValues}
+				selectMode="multiple"
+				disabledDateFunc={getIsDateDisabled}
+				highlightDates={selectThreeDays}
+				selectDates={selectThreeDays}
+				onDatesSelected={(dates) => threeDayValues = dates}
+				onDayHover={(date) => threeDayHovered = date}
+			/>
+			<p>Hovering: {threeDayHovered ? threeDayHovered.toLocaleDateString() : "—"}</p>
+			<p>Selected</p>
+			<ul>
+				{#each threeDayValues as date}
+					<li>{date.toLocaleDateString()}</li>
+				{/each}
+			</ul>
 		</div>
 	</div>
 	</Card>

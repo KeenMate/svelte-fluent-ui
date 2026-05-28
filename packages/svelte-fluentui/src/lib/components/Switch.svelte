@@ -75,6 +75,14 @@
 	{/if}
 
 	<!-- svelte-ignore a11y_autofocus -->
+	<!-- Bind via the public boolean `checked` attribute (not `current-checked`,
+	     which is the internal raw value). fluent-switch's `checkedChanged()`
+	     handler responds to `checked` and toggles a `.checked` class on its
+	     host — that class is what flips the track background to the accent
+	     fill (`:host(.checked) .switch { background: var(--accent-fill-rest) }`
+	     in fluent-switch's shadow styles). Use `|| null` so that `false`
+	     removes the attribute, since the boolean-attribute convention treats
+	     mere presence as `true`. -->
 	<fluent-switch
 		class={className}
 		{style}
@@ -85,8 +93,8 @@
 		{name}
 		aria-label={ariaLabel || label}
 		{required}
-		current-checked={checked}
-		aria-checked={checked}
+		checked={checked || null}
+		aria-checked={checked ? "true" : "false"}
 		onchange={handleChange}
 		role="switch"
 	>
@@ -121,6 +129,16 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
+	}
+
+	/* `.fluent-label` carries a 0.25rem bottom margin (set globally in
+	   components.scss for stacked form-field labels). In inline layouts that
+	   margin extends the label's flex-item box downward, so `align-items:
+	   center` lifts the label's visible text above the switch midline. Zero
+	   it out for start; keep it for top where the bottom margin is the
+	   intended gap before the control. */
+	.fluent-switch-wrapper[data-label-position="start"] .fluent-label {
+		margin-bottom: 0;
 	}
 
 	.fluent-switch-wrapper[data-label-position="top"] {

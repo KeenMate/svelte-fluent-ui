@@ -445,8 +445,16 @@
 		void $page.url.pathname
 		decorateHeadings()
 	})
+
+	// E2E test fixture routes get NO docs chrome — just the test layout below
+	// renders. Tried `+layout@.svelte` at routes/test/ to break out of this
+	// chain, but SvelteKit 2.48 doesn't honor the reset for our setup.
+	let isTestRoute = $derived($page.url.pathname.startsWith("/test/"))
 </script>
 
+{#if isTestRoute}
+	{@render children()}
+{:else}
 <Layout orientation="vertical" style="min-height: 100vh;">
 	<!-- Top Navigation Bar -->
 	<div class="topnav">
@@ -544,6 +552,7 @@
 		© 2025 Svelte FluentUI - Built with Fluent UI Web Components
 	</Footer>
 </Layout>
+{/if}
 
 <style>
 	.topnav {

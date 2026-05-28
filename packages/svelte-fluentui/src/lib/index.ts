@@ -42,10 +42,17 @@ export {default as Option} from "./components/Option.svelte"
 export {default as Toolbar} from "./components/Toolbar.svelte"
 export {default as Autocomplete} from "./components/Autocomplete.svelte"
 export {default as Calendar} from "./components/Calendar.svelte"
+export type {
+	CalendarView,
+	CalendarSelectMode,
+	CalendarSelectionError,
+	CalendarSelectionErrorCode
+} from "./fluent-ui/calendar/fluent-calendar.js"
 export {default as Card} from "./components/Card.svelte"
 export {default as ContentRegion} from "./components/ContentRegion.svelte"
 export {default as DatePicker} from "./components/DatePicker.svelte"
-export {default as InputFile, formatInputFileSize} from "./components/InputFile.svelte"
+export {default as InputFile} from "./components/InputFile.svelte"
+export {formatInputFileSize} from "./components/InputFile.utils.js"
 export type {
 	InputFileItem,
 	InputFileStatus,
@@ -62,7 +69,7 @@ export type {
 	FileUploadHandler,
 	FileUploadChunk,
 	FileUploadResult
-} from "./components/InputFile.svelte"
+} from "./components/InputFile.types.js"
 export {default as Paginator} from "./components/Paginator.svelte"
 export {default as PositioningRegion} from "./components/PositioningRegion.svelte"
 export {default as QuickGrid} from "./components/QuickGrid.svelte"

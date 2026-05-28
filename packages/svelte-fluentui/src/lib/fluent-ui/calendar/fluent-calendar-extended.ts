@@ -127,12 +127,6 @@ export class CalendarExtended {
 	isInCurrentMonth(date: Date): boolean {
 		const start = this.startOfMonth(this.date)
 		const end = this.endOfMonth(this.date)
-
-		if (date.getMonth() === 4 && date.getDate() === 31) {
-			console.log("isInCurrentMonth", {
-				date, start, end
-			})
-		}
 		return date >= start && date <= end
 	}
 

@@ -28,6 +28,7 @@
 		value?: string
 		label?: string
 		ariaLabel?: string
+		fullWidth?: boolean
 		labelTemplate?: SlotType
 		children?: SlotType
 		oninput?: (value: string) => void
@@ -57,6 +58,7 @@
 		value = $bindable(),
 		label = undefined,
 		ariaLabel = undefined,
+		fullWidth = false,
 		labelTemplate = undefined,
 		children = undefined,
 		oninput = undefined,
@@ -64,6 +66,10 @@
 	}: Props = $props()
 
 	let element: HTMLElement | undefined
+
+	export function focus() {
+		element?.focus()
+	}
 
 	function handleInput(e: Event) {
 		const target = e.target as HTMLTextAreaElement
@@ -79,6 +85,40 @@
 	$effect(() => {
 		if (autocomplete !== undefined) {
 			setAutocompleteOnShadowInput(element, autocomplete, "textarea")
+		}
+	})
+
+	// Sizing: by default the host opts out of parent flex stretching (matches the
+	// Blazor demo, where a default textarea renders at its intrinsic ~20ch width).
+	// `fullWidth` opts back into stretching. `cols` sets the host attribute that
+	// FluentUI's `:host([cols]) { width: initial }` gates on, plus `width: fit-content`
+	// so the host wraps the inner cols-sized textarea instead of being stretched.
+	// `rows` similarly writes the attribute that `:host([rows]) .control { height: initial }`
+	// gates on. FluentUI uses `mode: "fromView"` on both, so property writes alone
+	// wouldn't reflect to attributes — we have to set them directly.
+	$effect(() => {
+		if (!element) return
+
+		if (cols !== undefined) element.setAttribute("cols", String(cols))
+		else element.removeAttribute("cols")
+
+		if (rows !== undefined) element.setAttribute("rows", String(rows))
+		else element.removeAttribute("rows")
+
+		if (cols !== undefined) {
+			element.style.width = "fit-content"
+		} else if (fullWidth) {
+			element.style.width = "100%"
+		} else {
+			element.style.removeProperty("width")
+		}
+
+		if (cols !== undefined || rows !== undefined) {
+			element.style.alignSelf = "flex-start"
+		} else if (fullWidth) {
+			element.style.alignSelf = "stretch"
+		} else {
+			element.style.alignSelf = "flex-start"
 		}
 	})
 </script>

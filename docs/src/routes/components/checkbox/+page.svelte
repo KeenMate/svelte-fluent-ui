@@ -57,10 +57,15 @@
 	let childrenValue = $state(false);
 
 	// Label position examples
-	let labelPosition = $state<"top" | "start">("start");
+	let labelPosition = $state<"top" | "start" | "end">("end");
 	let interactivePosValue = $state(false);
 	let topPosValue = $state(true);
 	let startPosValue = $state(true);
+	let endPosValue = $state(true);
+
+	// Status message examples
+	let twoStateMessageValue = $state(true);
+	let triStateMessageValue = $state<boolean | null>(null);
 
 	// Callback example
 	let callbackValue = $state(false);
@@ -88,8 +93,11 @@
 		{name: "id", type: "string", default: "undefined", description: "Element id (also used by the external label's for attribute)"},
 		{name: "name", type: "string", default: "undefined", description: "Form field name"},
 		{name: "label", type: "string", default: "undefined", description: "Label text"},
-		{name: "labelPosition", type: '"top" | "start"', default: '"start"', description: "Where the label is rendered relative to the checkbox"},
+		{name: "labelPosition", type: '"top" | "start" | "end"', default: '"end"', description: "Where the label is rendered relative to the checkbox"},
 		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label (aria-label)"},
+		{name: "checkedMessage", type: "string | Snippet", default: "undefined", description: "Status text shown next to the checkbox when checked is true"},
+		{name: "uncheckedMessage", type: "string | Snippet", default: "undefined", description: "Status text shown next to the checkbox when checked is false"},
+		{name: "intermediateMessage", type: "string | Snippet", default: "undefined", description: "Status text shown next to the checkbox when checked is null (only reachable with withIntermediate)"},
 		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
 		{name: "style", type: "string", default: '""', description: "Inline styles"}
 	]
@@ -286,6 +294,7 @@
 				<Stack orientation="vertical" gap="0.75rem">
 					<strong>Interactive</strong>
 					<RadioGroup bind:value={labelPosition} orientation="horizontal" label="labelPosition">
+						<Radio value="end">end</Radio>
 						<Radio value="start">start</Radio>
 						<Radio value="top">top</Radio>
 					</RadioGroup>
@@ -296,13 +305,48 @@
 			<GridItem>
 				<Stack orientation="vertical" gap="1rem">
 					<div>
-						<strong>labelPosition="start" (default)</strong>
+						<strong>labelPosition="end" (default)</strong>
+						<Checkbox bind:checked={endPosValue} label="Accept terms" labelPosition="end" />
+					</div>
+					<div>
+						<strong>labelPosition="start"</strong>
 						<Checkbox bind:checked={startPosValue} label="Accept terms" labelPosition="start" />
 					</div>
 					<div>
 						<strong>labelPosition="top"</strong>
 						<Checkbox bind:checked={topPosValue} label="Accept terms" labelPosition="top" />
 					</div>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Status messages</h3>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Two-state</strong>
+					<small>checkedMessage / uncheckedMessage</small>
+					<Checkbox
+						bind:checked={twoStateMessageValue}
+						label="Notifications"
+						checkedMessage="Enabled"
+						uncheckedMessage="Disabled"
+					/>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Three-state</strong>
+					<small>Adds intermediateMessage for the indeterminate state. Click to cycle.</small>
+					<Checkbox
+						bind:checked={triStateMessageValue}
+						withIntermediate
+						label="Inherit from parent"
+						checkedMessage="Always allow"
+						uncheckedMessage="Never allow"
+						intermediateMessage="Inherit"
+					/>
+					<small class="value-display">checked: {triStateMessageValue === null ? 'null (intermediate)' : triStateMessageValue}</small>
 				</Stack>
 			</GridItem>
 		</Grid>

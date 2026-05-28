@@ -1,6 +1,6 @@
 {
 	"name": "svelte-fluentui",
-	"version": "1.0.0-rc22",
+	"version": "1.0.0",
 	"description": "A Svelte wrapper library for Microsoft FluentUI web components",
 	"license": "MIT",
 	"author": "KeenMate",
@@ -64,6 +64,7 @@
 	},
 	"devDependencies": {
 		"@fluentui/web-components": "^2.6.1",
+		"@playwright/test": "^1.60.0",
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.43.8",

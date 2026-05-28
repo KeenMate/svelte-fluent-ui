@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {toast, type Toast, type ToastPosition} from "../stores/toast.js"
 	import {onMount} from "svelte"
+	import DismissIcon from "./icons/DismissIcon.svelte"
 
 	let toasts = $state<Toast[]>([])
 	let mountedToasts = $state(new Set<string>())
@@ -96,7 +97,7 @@
 							handleDismiss(toastItem.id)
 						}}
 					>
-						✕
+						<DismissIcon size={14} />
 					</button>
 					{#if toastItem.showProgress && !toastItem.persistent}
 						<div

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {SlotType} from "../types/index.js"
+	import DismissIcon from "./icons/DismissIcon.svelte"
 
 	type Intent = 'info' | 'success' | 'warning' | 'danger'
 
@@ -74,7 +75,7 @@
 				aria-label="Dismiss"
 				onclick={handleDismiss}
 			>
-				✕
+				<DismissIcon size={14} />
 			</button>
 		{/if}
 	</div>
@@ -183,8 +184,6 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: var(--fluent-border-radius-md);
-		font-size: 14px;
-		line-height: 1;
 		transition: background-color 0.1s ease, color 0.1s ease;
 	}
 

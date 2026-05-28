@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {fluentAnchor, provideFluentDesignSystem} from "@fluentui/web-components"
 	import type {SlotType} from "../types/index.js";
+	import DismissIcon from "./icons/DismissIcon.svelte"
 
 	provideFluentDesignSystem().register(fluentAnchor())
 
@@ -64,6 +65,11 @@
 		background: none;
 		border: none;
 		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		color: var(--neutral-foreground-rest);
 	}
 
 	.toast-action-link {
@@ -88,7 +94,7 @@
 		<div class="fluent-toast-action">
 			{#if topCTAType === 'dismiss'}
 				<button title="Close" onclick={handleDismiss} aria-label="Dismiss" class="dismiss-button">
-					✕
+					<DismissIcon size={14} />
 				</button>
 			{:else if topCTAType === 'timestamp' && timestamp}
 				<span class="fluent-toast-small timestamp">{timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>

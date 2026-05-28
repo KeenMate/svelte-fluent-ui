@@ -16,6 +16,7 @@ DOCKER_PORT = 8080
 
 .PHONY: setup dev build package create-link unlink publish publish-dry clean help
 .PHONY: docker-build-docs docker-run-docs docker-stop-docs docker-clean-docs
+.PHONY: test-e2e test-e2e-ui test-e2e-headed test-e2e-install
 
 # Default target
 help:
@@ -30,8 +31,15 @@ help:
 	@echo   unlink       - Remove global npm link for svelte-fluentui
 	@echo
 	@echo Publishing:
-	@echo   publish      - Publish package to npm (asks for confirmation)
-	@echo   publish-dry  - Dry run publish (show what would be published)
+	@echo   publish              - Publish to npm under 'latest' dist-tag
+	@echo   publish TAG=rc       - Publish under a specific dist-tag (e.g. 'rc' for prereleases)
+	@echo   publish-dry          - Dry run publish (show what would be published)
+	@echo
+	@echo End-to-end tests (Playwright):
+	@echo   test-e2e-install - One-time: download chromium browser binary
+	@echo   test-e2e         - Run e2e suite headless
+	@echo   test-e2e-ui      - Open Playwright Test UI (debugging)
+	@echo   test-e2e-headed  - Run with a visible browser window
 	@echo
 	@echo Docker (Documentation Site):
 	@echo   docker-build-docs - Build docs Docker image (--no-cache --progress plain)
@@ -85,15 +93,31 @@ unlink:
 
 publish: package
 	@echo
-	@echo Publishing to npm with tag 'rc'...
+	@echo Publishing to npm$(if $(TAG), under '$(TAG)' dist-tag, under default 'latest' dist-tag)...
 	@echo
-	cd packages/svelte-fluentui && npm publish --tag rc
+	cd packages/svelte-fluentui && npm publish$(if $(TAG), --tag $(TAG))
 	@echo
 	@echo Published successfully!
 
 publish-dry: package
 	@echo Dry run - showing what would be published...
 	cd packages/svelte-fluentui && npm publish --dry-run
+
+test-e2e-install:
+	@echo Installing chromium for Playwright...
+	npm run test:e2e:install
+
+test-e2e:
+	@echo Running e2e tests (headless)...
+	npm run test:e2e
+
+test-e2e-ui:
+	@echo Opening Playwright Test UI...
+	npm run test:e2e:ui
+
+test-e2e-headed:
+	@echo Running e2e tests in headed mode...
+	npm run test:e2e:headed
 
 clean:
 	@echo Cleaning build artifacts...

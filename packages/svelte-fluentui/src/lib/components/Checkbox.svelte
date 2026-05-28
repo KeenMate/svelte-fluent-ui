@@ -19,10 +19,17 @@
 		name?: string;
 		label?: string;
 		labelTemplate?: SlotType;
-		labelPosition?: "top" | "start";
+		labelPosition?: "top" | "start" | "end";
 		ariaLabel?: string;
 		class?: string;
 		style?: string;
+		// Tri-state status messages, mirroring Switch's checkedMessage/
+		// uncheckedMessage. The intermediateMessage shows when checked is null
+		// (only reachable when withIntermediate is true). Each accepts either a
+		// plain string or a Snippet for richer content.
+		checkedMessage?: string | SlotType;
+		uncheckedMessage?: string | SlotType;
+		intermediateMessage?: string | SlotType;
 		onclick?: (ev: PointerEvent, previousValue: boolean | null) => void
 	}
 
@@ -38,13 +45,23 @@
 		name = undefined,
 		label = undefined,
 		labelTemplate = undefined,
-		labelPosition = "start",
+		labelPosition = "end",
 		ariaLabel = undefined,
 		class: className = "",
 		style = "",
 		children = undefined,
+		checkedMessage = undefined,
+		uncheckedMessage = undefined,
+		intermediateMessage = undefined,
 		onclick = undefined
 	}: Props = $props()
+
+	const currentMessage = $derived(
+		checked === true ? checkedMessage
+			: checked === false ? uncheckedMessage
+			: intermediateMessage
+	)
+	const isCurrentMessageSnippet = $derived(typeof currentMessage === "function")
 
 	let element: HTMLElement & {
 		checkValidity: () => boolean
@@ -136,6 +153,16 @@
 		style={style || null}
 		onclick={handleOnClick}
 	></fluent-checkbox>
+
+	{#if currentMessage}
+		<span class="checkbox-message">
+			{#if isCurrentMessageSnippet}
+				{@render (currentMessage as SlotType)?.()}
+			{:else}
+				{currentMessage}
+			{/if}
+		</span>
+	{/if}
 </span>
 
 <style>
@@ -149,9 +176,39 @@
 		gap: 0.5rem;
 	}
 
+	/* `.fluent-label` carries a 0.25rem bottom margin (set globally in
+	   components.scss for stacked form-field labels). In inline layouts that
+	   margin extends the label's flex-item box downward, so `align-items:
+	   center` lifts the label's visible text above the checkbox midline. Zero
+	   it out for start/end; keep it for top where the bottom margin is the
+	   intended gap before the control. */
+	.fluent-checkbox-wrapper[data-label-position="start"] .fluent-label,
+	.fluent-checkbox-wrapper[data-label-position="end"] .fluent-label {
+		margin-bottom: 0;
+	}
+
 	.fluent-checkbox-wrapper[data-label-position="top"] {
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.25rem;
+	}
+
+	/* Label appears AFTER the checkbox in the layout (checkbox on the left,
+	   label on the right) without changing DOM order — accessible name remains
+	   first in the source so screen readers announce it correctly.
+
+	   We use the `order` property rather than `flex-direction: row-reverse`
+	   so the optional status message always trails the [checkbox, label] pair
+	   instead of jumping to the front (which row-reverse would do). */
+	.fluent-checkbox-wrapper[data-label-position="end"] .fluent-label {
+		order: 1;
+	}
+	.fluent-checkbox-wrapper[data-label-position="end"] .checkbox-message {
+		order: 2;
+	}
+
+	.checkbox-message {
+		font-size: 0.875rem;
+		color: var(--neutral-foreground-hint);
 	}
 </style>
