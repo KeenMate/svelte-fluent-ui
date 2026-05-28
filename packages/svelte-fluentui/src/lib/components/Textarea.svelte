@@ -5,6 +5,17 @@
 
 	provideFluentDesignSystem().register(fluentTextArea())
 
+	const activeIndicatorOverride =
+		typeof CSSStyleSheet !== "undefined"
+			? (() => {
+					const sheet = new CSSStyleSheet()
+					sheet.replaceSync(
+						":host(:not([disabled]):active)::after { left: 0; width: 100%; transform: none; }"
+					)
+					return sheet
+				})()
+			: (undefined as unknown as CSSStyleSheet)
+
 	type Props = {
 		class?: string
 		style?: string
@@ -86,6 +97,23 @@
 		if (autocomplete !== undefined) {
 			setAutocompleteOnShadowInput(element, autocomplete, "textarea")
 		}
+	})
+
+	// Neutralize FluentUI's `:active::after` rule, which collapses the focus
+	// indicator to a 40%-wide centered line while the user is dragging the
+	// resize handle. Make active match focus-within (full-width line).
+	$effect(() => {
+		if (!element || typeof CSSStyleSheet === "undefined") return
+		const adopt = () => {
+			const root = element?.shadowRoot
+			if (!root) {
+				setTimeout(adopt, 10)
+				return
+			}
+			if (root.adoptedStyleSheets.includes(activeIndicatorOverride)) return
+			root.adoptedStyleSheets = [...root.adoptedStyleSheets, activeIndicatorOverride]
+		}
+		adopt()
 	})
 
 	// Sizing: by default the host opts out of parent flex stretching (matches the
