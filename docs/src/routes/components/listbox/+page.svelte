@@ -13,7 +13,6 @@
 		{name: "value", type: "string | string[]", default: "undefined", description: "Selected value(s) (bindable)"},
 		{name: "multi", type: "boolean", default: "false", description: "Enable multiple selection"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disables the component"},
-		{name: "readonly", type: "boolean", default: "false", description: "Disables user changes"},
 		{name: "autofocus", type: "boolean", default: "false", description: "Auto-focus on mount"},
 		{name: "name", type: "string", default: "undefined", description: "Form field name"},
 		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the listbox"},

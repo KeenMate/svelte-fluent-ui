@@ -1,7 +1,7 @@
 <!--
  * DatePicker Component
  * Inspired by FluentUI Blazor DatePicker component
- * https://www.fluentui-blazor.net/DatePicker
+ * https://www.fluentui-blazor.net/DateTime
  *
  * Combines TextField with Calendar popup for date selection
 -->
@@ -48,6 +48,8 @@
 		firstDayOfWeek?: number | null
 		/** When true (default), the popup closes after a date is picked. */
 		autoClose?: boolean
+		/** When true (default), clicking anywhere on the input area opens the calendar popup, matching FluentUI Blazor. Set false to require clicking the calendar icon. */
+		openOnInputClick?: boolean
 		/** Bindable open state of the calendar popup. */
 		open?: boolean
 		openCalendarIconAriaLabel?: string
@@ -87,6 +89,7 @@
 		animatePeriodChanges = undefined,
 		firstDayOfWeek = undefined,
 		autoClose = true,
+		openOnInputClick = true,
 		open = $bindable(false),
 		openCalendarIconAriaLabel = "Open calendar",
 		title = undefined,
@@ -168,10 +171,19 @@
 	}
 
 	// Handle input click to open calendar
-	function handleInputClick() {
+	function handleInputClick(event?: Event) {
+		event?.stopPropagation()
 		if (!disabled && !readonly) {
 			setOpen(!isOpen)
 		}
+	}
+
+	// Handle click anywhere on the input area — opens (does not toggle) so
+	// clicking inside an already-open picker keeps it open. Matches Blazor.
+	function handleWrapperClick() {
+		if (!openOnInputClick) return
+		if (disabled || readonly) return
+		if (!isOpen) setOpen(true)
 	}
 
 	// Handle input change (manual text entry)
@@ -192,7 +204,8 @@
 	}
 
 	// Handle clear
-	function handleClear() {
+	function handleClear(event?: Event) {
+		event?.stopPropagation()
 		value = null
 		inputValue = ""
 		setOpen(false)
@@ -209,7 +222,9 @@
 		</label>
 	{/if}
 
-	<div class="datepicker-wrapper" bind:this={wrapperElement}>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="datepicker-wrapper" bind:this={wrapperElement} onclick={handleWrapperClick}>
 		<TextField
 			{id}
 			value={inputValue}
@@ -221,7 +236,7 @@
 			{appearance}
 			{title}
 			oninput={handleInputChange}
-			style="width: 100%; cursor: pointer;"
+			style={openOnInputClick && !disabled && !readonly ? "width: 100%; cursor: pointer;" : "width: 100%;"}
 		>
 			{#snippet end()}
 				<span class="end-buttons">
@@ -268,6 +283,8 @@
 						pickerMonth={value || new Date()}
 						{culture}
 						{firstDayOfWeek}
+						{disabled}
+						{readonly}
 						{disabledSelectable}
 						{disabledCheckAllDaysOfMonthYear}
 						{dayFormat}

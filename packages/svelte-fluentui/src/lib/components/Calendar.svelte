@@ -35,6 +35,8 @@
 		/** Gap between cells in CSS units (default 2px). */
 		gap?: string | number
 		readonly?: boolean
+		/** When true, the calendar is non-interactive AND visually de-emphasized (opacity, not-allowed cursor on interactive cells, `aria-disabled="true"` on the host). Stricter than `readonly`, which blocks interaction without visual treatment. */
+		disabled?: boolean
 		/** Hover-preview function: given the day under the cursor, returns the set of dates to visually highlight. Defaults to `[date]`. */
 		highlightDates?: (date: Date) => Date[]
 		/** Click-selection function: given the clicked day, returns the dates to select. In multiple mode, the result is unioned with existing `selectedDates` (or removed wholesale if the clicked day was already selected). In range mode, the result replaces the range. Defaults to `[date]`. */
@@ -64,6 +66,7 @@
 		    animatePeriodChanges            = undefined,
 		    disabledSelectable              = undefined,
 		    readonly                        = undefined,
+		    disabled                        = undefined,
 		    selectMode                      = "single",
 		    checkIfSelectedValueHasChanged  = undefined,
 		    dayFormat                       = undefined,
@@ -107,7 +110,9 @@
 		// year fail the disabledDateFunc check, blocking the year picker entirely.
 		disabledCheckAllDaysOfMonthYear: disabledCheckAllDaysOfMonthYear ?? true,
 		disabledSelectable:              disabledSelectable ?? false,
-		readOnly:                        readonly ?? false,
+		// Treat `disabled` as effectively-readonly for the title/month/year selection gates.
+		// The visual difference (opacity, not-allowed cursor) is layered via `aria-disabled` CSS.
+		readOnly:                        (disabled || readonly) ?? false,
 		selectMode,
 		value:                           value,
 		selectedDates:                   selectedDates,
@@ -470,6 +475,7 @@
 	class:fluent-month={view === "months"}
 	class:fluent-year={view === "years"}
 	aria-readonly={readonly ? "true" : null}
+	aria-disabled={disabled ? "true" : null}
 	style={sizeStyle || null}
 >
 	{#if !_pickerView || _pickerView === "days"}
@@ -547,9 +553,9 @@
 									data-multi-end={multipleSelection.isMultiple && selectMode === "range" && sameDay(multipleSelection.max, day)}
 									aria-label={dayProperties.title}
 									data-value={dayProperties.dayIdentifier}
-									onkeydown={ev => (ev.key === "Enter" || ev.key === " ") && onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
-									onclick={ev => onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
-									onmouseover={ev => onSelectDayMouseOverAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || false)}
+									onkeydown={ev => (ev.key === "Enter" || ev.key === " ") && onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || disabled || false)}
+									onclick={ev => onSelectDayHandlerAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || disabled || false)}
+									onmouseover={ev => onSelectDayMouseOverAsync(day, dayProperties.isDisabled || dayProperties.isInactive || readonly || disabled || false)}
 								>
 									{#if daySnippet}
 										{@render daySnippet(dayProperties)}
@@ -619,6 +625,7 @@
 			onDateSelected={pickerMonthSelectAsync}
 			checkIfSelectedValueHasChanged={false}
 			{readonly}
+			{disabled}
 			{culture}
 			{disabledSelectable}
 			{animatePeriodChanges}
@@ -636,6 +643,7 @@
 			onDateSelected={pickerYearSelectAsync}
 			checkIfSelectedValueHasChanged={false}
 			{readonly}
+			{disabled}
 			{culture}
 			disabledSelectable={disabledSelectable}
 			{animatePeriodChanges}
@@ -646,3 +654,32 @@
 		/>
 	{/if}
 </div>
+
+<style>
+	/* Visual treatment for the host-level disabled state. Per-cell `aria-disabled` (e.g. dates filtered
+	   out by minDate/maxDate/disabledDateFunc) already has its own strikethrough rule in
+	   fluent-components.scss — these selectors only target the WHOLE-control disabled state
+	   (`.fluent-calendar[aria-disabled="true"]`, etc., set when the consumer passes `disabled`). */
+	:global(.fluent-calendar[aria-disabled="true"]),
+	:global(.fluent-month[aria-disabled="true"]),
+	:global(.fluent-year[aria-disabled="true"]) {
+		opacity: var(--disabled-opacity, 0.5);
+		cursor: not-allowed;
+	}
+
+	:global(.fluent-calendar[aria-disabled="true"] .day),
+	:global(.fluent-calendar[aria-disabled="true"] .title > .label),
+	:global(.fluent-calendar[aria-disabled="true"] .change-period > .previous),
+	:global(.fluent-calendar[aria-disabled="true"] .change-period > .next),
+	:global(.fluent-month[aria-disabled="true"] .month),
+	:global(.fluent-month[aria-disabled="true"] .title > .label),
+	:global(.fluent-month[aria-disabled="true"] .change-period > .previous),
+	:global(.fluent-month[aria-disabled="true"] .change-period > .next),
+	:global(.fluent-year[aria-disabled="true"] .year),
+	:global(.fluent-year[aria-disabled="true"] .title > .label),
+	:global(.fluent-year[aria-disabled="true"] .change-period > .previous),
+	:global(.fluent-year[aria-disabled="true"] .change-period > .next) {
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+</style>

@@ -1,7 +1,7 @@
 <!--
  * TimePicker Component
  * Inspired by FluentUI Blazor TimePicker component
- * https://www.fluentui-blazor.net/TimePicker
+ * https://www.fluentui-blazor.net/DateTime
  *
  * Provides time selection with hour, minute, and optional second/millisecond inputs
 -->
@@ -40,6 +40,8 @@
 		disabledTimes?: string[]
 		/** When true (default), the popup closes when the user clicks OK. */
 		autoClose?: boolean
+		/** When true (default), clicking anywhere on the input area opens the popup, matching FluentUI Blazor. Set false to require clicking the clock icon. */
+		openOnInputClick?: boolean
 		/** Bindable popup open state. */
 		open?: boolean
 		openClockIconAriaLabel?: string
@@ -72,6 +74,7 @@
 		disabledTimeFunc = undefined,
 		disabledTimes = undefined,
 		autoClose = true,
+		openOnInputClick = true,
 		open = $bindable(false),
 		openClockIconAriaLabel = "Open time picker",
 		title = undefined,
@@ -278,11 +281,19 @@
 
 	let displayValue = $derived(formatTime())
 
-	// Handle input click
+	// Handle clock-icon click — toggles the popup. Always available regardless of openOnInputClick.
 	function handleInputClick(e: MouseEvent) {
 		if (!disabled && !readonly) {
 			setOpen(!isOpen)
 		}
+	}
+
+	// Handle click anywhere on the input area — opens (does not toggle) so
+	// clicking inside an already-open picker keeps it open. Matches Blazor.
+	function handleWrapperClick() {
+		if (!openOnInputClick) return
+		if (disabled || readonly) return
+		if (!isOpen) setOpen(true)
 	}
 
 	// The wrapper has its own onclick for "click anywhere in field to open"; without these the click bubbles
@@ -363,7 +374,7 @@
 
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="timepicker-wrapper" bind:this={wrapperElement} onclick={handleInputClick} style="cursor: pointer;">
+	<div class="timepicker-wrapper" bind:this={wrapperElement} onclick={handleWrapperClick} style:cursor={openOnInputClick && !disabled && !readonly ? "pointer" : undefined}>
 		<TextField
 			{id}
 			value={displayValue}

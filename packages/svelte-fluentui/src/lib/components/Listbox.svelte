@@ -12,7 +12,6 @@
 	type Props = {
 		value: ValueType
 		multi?: boolean
-		readonly?: boolean
 		disabled?: boolean
 		autofocus?: boolean
 		name?: string
@@ -31,7 +30,6 @@
 		value = $bindable(),
 		multi = undefined,
 		disabled = undefined,
-		readonly = undefined,
 		autofocus = undefined,
 		name = undefined,
 		label = undefined,

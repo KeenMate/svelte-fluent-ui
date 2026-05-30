@@ -22,7 +22,6 @@
 		placeholder?: string
 		position?: "above" | "below"
 		disabled?: boolean
-		readonly?: boolean
 		appearance?: "outline" | "filled"
 		required?: boolean
 		autofocus?: boolean
@@ -51,7 +50,6 @@
 		placeholder = undefined,
 		position = undefined,
 		disabled = undefined,
-		readonly = undefined,
 		appearance = undefined,
 		required = undefined,
 		autofocus = undefined,
@@ -174,7 +172,7 @@
 			// )
 			return
 		}
-		if (untrack(() => readonly || disabled)) {
+		if (untrack(() => disabled)) {
 			selectedOptions.set(untrack(() => $state.snapshot(value)))
 			return
 		}
@@ -264,7 +262,6 @@
 	placeholder={placeholder || null}
 	position={position}
 	disabled={disabled || null}
-	readonly={readonly || null}
 	appearance={appearance || null}
 	required={required || null}
 	autofocus={autofocus || null}

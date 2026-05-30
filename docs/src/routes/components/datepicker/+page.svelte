@@ -54,6 +54,7 @@
 		{name: "animatePeriodChanges", type: "boolean", default: "undefined", description: "Animate transitions between months/years inside the popup. By default only the Months view animates."},
 		{name: "firstDayOfWeek", type: "number | null", default: "undefined", description: "First day of the week (0=Sunday … 6=Saturday). Overrides the culture default."},
 		{name: "autoClose", type: "boolean", default: "true", description: "When true, the popup closes immediately after a date is picked."},
+		{name: "openOnInputClick", type: "boolean", default: "true", description: "When true, clicking anywhere on the input area opens the calendar popup (matching FluentUI Blazor). Set false to require clicking the calendar icon."},
 		{name: "open", type: "boolean", default: "false", description: "Bindable open state of the calendar popup."},
 		{name: "openCalendarIconAriaLabel", type: "string", default: '"Open calendar"', description: "ARIA label for the calendar trigger button."},
 		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the root element."},
@@ -95,7 +96,7 @@
 
 	<References links={[
 		{label: "FluentUI Web Component", na: true},
-		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/DatePicker"}
+		{label: "FluentUI Blazor", href: "https://www.fluentui-blazor.net/DateTime"}
 	]} />
 
 	<Card>

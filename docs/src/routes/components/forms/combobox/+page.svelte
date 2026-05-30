@@ -94,7 +94,6 @@
 		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
 		{name: "appearance", type: '"outline" | "filled"', default: "outline", description: "Visual style"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disable the combobox"},
-		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
 		{name: "required", type: "boolean", default: "false", description: "Required field"},
 		{name: "open", type: "boolean", default: "false", description: "Dropdown open state"},
 		{name: "autofocus", type: "boolean", default: "false", description: "Auto focus on mount"},

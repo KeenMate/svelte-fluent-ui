@@ -98,7 +98,8 @@
 		{name: "animatePeriodChanges", type: "boolean", default: "false", description: "Animate month/year transitions"},
 		{name: "disabledSelectable", type: "boolean", default: "false", description: "Allow selecting disabled dates"},
 		{name: "dayFormat", type: "string", default: "undefined", description: "Custom day number format"},
-		{name: "readonly", type: "boolean", default: "false", description: "Read-only mode"},
+		{name: "readonly", type: "boolean", default: "false", description: "Blocks day/month/year/title interaction without visual de-emphasis. ARIA: sets aria-readonly on the host."},
+		{name: "disabled", type: "boolean", default: "false", description: "Blocks interaction AND visually de-emphasizes the whole calendar (reduced opacity, not-allowed cursor on interactive cells). ARIA: sets aria-disabled on the host."},
 		{name: "highlightDates", type: "(date: Date) => Date[]", default: "undefined", description: "Hover-preview function — returns the dates to visually highlight when the cursor is over a day"},
 		{name: "selectDates", type: "(date: Date) => Date[]", default: "undefined", description: "Click-selection function — returns the dates to select on click. Multiple mode unions with existing; range mode replaces"},
 		{name: "maxSelectableDays", type: "number", default: "undefined", description: "Upper bound on selected dates (multiple/range). Exceeding fires onSelectionError and leaves the selection untouched"}
@@ -293,6 +294,43 @@
 					<li>{date.toLocaleDateString()}</li>
 				{/each}
 			</ul>
+		</div>
+	</div>
+
+	<h3>Calendar states</h3>
+	<p>
+		<code>readonly</code> blocks day/month/year/title interaction without visual de-emphasis (the calendar
+		still looks "live", but clicks are ignored). <code>disabled</code> additionally fades the whole control
+		to <code>--disabled-opacity</code> and switches interactive cells to <code>cursor: not-allowed</code>,
+		matching the convention of other form inputs.
+	</p>
+
+	<div class="calendar-examples">
+		<div class="calendar-item">
+			<h3>Normal</h3>
+			<Calendar
+				bind:pickerMonth
+				{value}
+				{onDateSelected}
+			/>
+		</div>
+		<div class="calendar-item">
+			<h3>Readonly</h3>
+			<Calendar
+				bind:pickerMonth
+				{value}
+				readonly={true}
+				{onDateSelected}
+			/>
+		</div>
+		<div class="calendar-item">
+			<h3>Disabled</h3>
+			<Calendar
+				bind:pickerMonth
+				{value}
+				disabled={true}
+				{onDateSelected}
+			/>
 		</div>
 	</div>
 	</Card>
