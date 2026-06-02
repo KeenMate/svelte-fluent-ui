@@ -178,13 +178,37 @@
 		</Select>
 
 		<h3>Single select (default)</h3>
-		<p>Standard dropdown select.</p>
+		<p>Standard dropdown select. Open it and press a letter repeatedly to cycle type-ahead (e.g. <code>b</code> → Banana → Blackberry → Blueberry).</p>
 		<Select label="Choose a fruit">
 			{#snippet children()}
 				<Option value="">Select...</Option>
 				<Option value="apple">Apple</Option>
+				<Option value="apricot">Apricot</Option>
+				<Option value="avocado">Avocado</Option>
 				<Option value="banana">Banana</Option>
+				<Option value="blackberry">Blackberry</Option>
+				<Option value="blueberry">Blueberry</Option>
 				<Option value="cherry">Cherry</Option>
+				<Option value="coconut">Coconut</Option>
+				<Option value="cranberry">Cranberry</Option>
+				<Option value="fig">Fig</Option>
+				<Option value="grape">Grape</Option>
+				<Option value="grapefruit">Grapefruit</Option>
+				<Option value="kiwi">Kiwi</Option>
+				<Option value="lemon">Lemon</Option>
+				<Option value="lime">Lime</Option>
+				<Option value="mango">Mango</Option>
+				<Option value="melon">Melon</Option>
+				<Option value="orange">Orange</Option>
+				<Option value="papaya">Papaya</Option>
+				<Option value="peach">Peach</Option>
+				<Option value="pear">Pear</Option>
+				<Option value="pineapple">Pineapple</Option>
+				<Option value="plum">Plum</Option>
+				<Option value="raspberry">Raspberry</Option>
+				<Option value="strawberry">Strawberry</Option>
+				<Option value="starfruit">Starfruit</Option>
+				<Option value="watermelon">Watermelon</Option>
 			{/snippet}
 		</Select>
 

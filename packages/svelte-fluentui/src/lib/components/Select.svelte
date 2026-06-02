@@ -1,52 +1,76 @@
-<script lang="ts">
-	import { fluentSelect, provideFluentDesignSystem } from "@fluentui/web-components";
-	import type { SlotType } from "../types/index.js";
+<!--
+ * Select Component (rewrite)
+ *
+ * Custom Select that replaces the previous <fluent-select> wrapper.
+ *
+ * Single mode: custom combobox-style trigger + portalled listbox via
+ * PositioningRegion. The listbox max-height is capped to the available
+ * viewport space via PositioningRegion's availableHeight middleware, so
+ * the dropdown never extends past the viewport edges.
+ *
+ * Multi mode: always-expanded inline listbox (matches Blazor
+ * FluentSelect, which renders multi-select inline because the underlying
+ * web component doesn't support a multi-select dropdown).
+ *
+ * <Option> children work unchanged — they read selection via the
+ * 'selected-options' context, which this component provides.
+-->
 
-	provideFluentDesignSystem().register(fluentSelect());
+<script lang="ts">
+	import {setContext, untrack, tick} from "svelte"
+	import {provideFluentDesignSystem, fluentOption} from "@fluentui/web-components"
+	import PositioningRegion from "./PositioningRegion.svelte"
+	import type {SlotType} from "../types/index.js"
+	import type {SelectedOptionSvelteContext} from "../types/combobox.js"
+
+	provideFluentDesignSystem().register(fluentOption())
 
 	type SelectChangeDetail = {
-		value: string;
-		selectedOption?: string;
-		data?: Record<string, unknown>;
-	};
+		value: string
+		selectedOption?: string
+		data?: Record<string, unknown>
+	}
 
 	type Props = {
-		id?: string;
-		class?: string;
-		style?: string;
-		open?: boolean;
-		position?: "above" | "below";
-		multiple?: boolean;
-		disabled?: boolean;
-		appearance?: "outline" | "filled";
-		required?: boolean;
-		autofocus?: boolean;
-		name?: string;
-		value?: string;
-		label?: string;
-		ariaLabel?: string;
-		title?: string;
-		width?: string;
-		height?: string;
-		/** Max visible options for multiple select. When explicitly set, auto-calculates height based on option row height. */
-		maxVisibleOptions?: number;
-		labelTemplate?: SlotType;
-		indicatorTemplate?: SlotType;
-		children?: SlotType;
-		onchange?: (detail: SelectChangeDetail) => void;
-	};
+		id?: string
+		class?: string
+		style?: string
+		open?: boolean
+		/** Force the dropdown above/below the trigger. Default: auto (flip()). */
+		position?: "above" | "below"
+		multiple?: boolean
+		disabled?: boolean
+		appearance?: "outline" | "filled"
+		required?: boolean
+		autofocus?: boolean
+		name?: string
+		/** Selected value. String in single mode, string[] in multi mode. */
+		value?: string | string[]
+		label?: string
+		ariaLabel?: string
+		title?: string
+		width?: string
+		/** Multi mode: explicit height for the inline listbox. */
+		height?: string
+		/** Multi mode: cap visible option rows, enables internal scroll. */
+		maxVisibleOptions?: number
+		labelTemplate?: SlotType
+		indicatorTemplate?: SlotType
+		children?: SlotType
+		onchange?: (detail: SelectChangeDetail) => void
+	}
 
 	let {
 		id = undefined,
 		class: className = "",
 		style = "",
-		open = undefined,
+		open = $bindable(undefined),
 		position = undefined,
 		multiple = false,
-		disabled = undefined,
-		appearance = undefined,
-		required = undefined,
-		autofocus = undefined,
+		disabled = false,
+		appearance = "outline",
+		required = false,
+		autofocus = false,
 		name = undefined,
 		value = $bindable(),
 		label = undefined,
@@ -59,182 +83,643 @@
 		indicatorTemplate = undefined,
 		children = undefined,
 		onchange = undefined
-	}: Props = $props();
+	}: Props = $props()
 
-	let selectElement: HTMLElement | undefined = $state();
-	let calculatedHeight: string | undefined = $state();
+	// ---------- Selection state (shared with <Option> via context) ----------
+	// We provide our own context instead of createSelectedOptions because the
+	// single-mode UX is "click sets value", not "click toggles" — the existing
+	// store would deselect when clicking the already-selected option.
 
-	// Re-apply value when options are added asynchronously
-	// The fluent-select web component only evaluates current-value at init,
-	// so if options arrive later (async), the selection is lost.
-	$effect(() => {
-		if (!selectElement || value === undefined || value === null) return;
-
-		const observer = new MutationObserver(() => {
-			if (value !== undefined && value !== null) {
-				// Force fluent-select to re-evaluate the value
-				const el = selectElement as any;
-				if (el && el.value !== value) {
-					el.value = value;
-				}
-			}
-		});
-
-		observer.observe(selectElement, { childList: true, subtree: true });
-
-		return () => observer.disconnect();
-	});
-
-	// Auto-calculate height for multiple select
-	$effect(() => {
-		if (multiple && selectElement && !height) {
-			// Wait for options to render and get their computed height
-			setTimeout(() => {
-				const options = selectElement?.querySelectorAll('fluent-option');
-				if (options && options.length > 0) {
-					const firstOption = options[0] as HTMLElement;
-					// Get computed height or use fallback
-					const computedHeight = window.getComputedStyle(firstOption).height;
-					const optionHeight = parseInt(computedHeight) || firstOption.offsetHeight || 32;
-					// If maxVisibleOptions set, limit to that; otherwise show all
-					const visibleCount = maxVisibleOptions !== undefined
-						? Math.min(options.length, maxVisibleOptions)
-						: options.length;
-					// Add padding for top/bottom of the select container (approx 2.5rem = 40px)
-					const containerPadding = 40;
-					calculatedHeight = `${visibleCount * optionHeight + containerPadding}px`;
-				}
-			}, 0);
-		} else {
-			calculatedHeight = undefined;
-		}
-	});
-
-	// Whether we need a scroll container (maxVisibleOptions limits visible items)
-	const needsScrollContainer = $derived(multiple && maxVisibleOptions !== undefined && !height);
-
-	// Style for the scroll container (when needed)
-	const scrollContainerStyle = $derived(() => {
-		if (!needsScrollContainer || !calculatedHeight) return undefined;
-		const styles: string[] = [];
-		styles.push(`height: ${calculatedHeight}`);
-		styles.push('overflow: auto');
-		styles.push('overscroll-behavior: contain');
-		styles.push('padding: 0px 0.1rem');
-		styles.push('display: inline-block');
-		if (width) styles.push(`width: ${width}`);
-		return styles.join('; ');
-	});
-
-	// Compute inline style for fluent-select
-	const computedStyle = $derived(() => {
-		const styles: string[] = [];
-		if (style) styles.push(style);
-		// Width goes on container if using scroll container, otherwise on select
-		if (width && !needsScrollContainer) styles.push(`width: ${width}`);
-		// Height handling - only apply directly when not using scroll container
-		if (height) {
-			styles.push(`height: ${height}`);
-		} else if (calculatedHeight && !needsScrollContainer) {
-			styles.push(`height: ${calculatedHeight}`);
-		}
-		return styles.join('; ') || undefined;
-	});
-
-	function handleChange(e: Event) {
-		const target = e.target as HTMLSelectElement;
-		value = target.value;
-
-		// Find selected option and extract its data and display text
-		const selectedOptionEl = selectElement?.querySelector(`fluent-option[value="${target.value}"]`) as HTMLElement | null;
-		const contextData = selectedOptionEl?.dataset.optionContext;
-		const data = contextData ? JSON.parse(contextData) : undefined;
-		const selectedOption = selectedOptionEl?.textContent?.trim();
-
-		onchange?.({ value: target.value, selectedOption, data });
+	function normalize(v: typeof value): string[] {
+		if (v == null) return []
+		return Array.isArray(v) ? [...v] : [v]
 	}
+
+	let selectionState = $state<{value: string[]}>({value: normalize(value)})
+
+	const ctx: SelectedOptionSvelteContext = {
+		get value() {
+			return selectionState.value.length ? selectionState.value : null
+		},
+		set value(v) {
+			selectionState.value = v ?? []
+		},
+		set(v) {
+			selectionState.value = Array.isArray(v) ? [...v] : (v ? [v] : [])
+		},
+		toggle(val: string) {
+			if (val == null) return
+			if (multiple) {
+				const cur = selectionState.value
+				selectionState.value = cur.includes(val)
+					? cur.filter(x => x !== val)
+					: [...cur, val]
+			} else {
+				selectionState.value = [val]
+			}
+		}
+	}
+
+	setContext<SelectedOptionSvelteContext>("selected-options", ctx)
+
+	// prop value -> internal state
+	$effect(() => {
+		const normalized = normalize(value)
+		const current = untrack(() => selectionState.value)
+		if (
+			normalized.length !== current.length ||
+			normalized.some((v, i) => v !== current[i])
+		) {
+			selectionState.value = normalized
+		}
+	})
+
+	// internal state -> prop value
+	$effect(() => {
+		const sel = selectionState.value
+		untrack(() => {
+			if (multiple) {
+				const cur = Array.isArray(value) ? value : (value != null ? [value] : [])
+				if (sel.length !== cur.length || sel.some((v, i) => v !== cur[i])) {
+					value = [...sel]
+				}
+			} else {
+				const next = sel[0] ?? ""
+				if (value !== next) value = next
+			}
+		})
+	})
+
+	const selectedSingle = $derived<string>(selectionState.value[0] ?? "")
+
+	// ---------- Open / close (single mode) ----------
+	let isOpen = $state(false)
+
+	// Allow external control via `open` prop (binds both ways).
+	$effect(() => {
+		if (open !== undefined && open !== untrack(() => isOpen)) {
+			isOpen = open
+		}
+	})
+	$effect(() => {
+		if (open !== undefined && isOpen !== untrack(() => open)) {
+			open = isOpen
+		}
+	})
+
+	let triggerEl: HTMLButtonElement | undefined = $state()
+	let listEl: HTMLDivElement | undefined = $state()
+	let inlineListEl: HTMLDivElement | undefined = $state()
+	// Single-mode hidden mirror of <Option> children. Stays mounted even when
+	// the dropdown is closed, so getOptionText() can resolve the trigger's
+	// display text from `value` (the portalled listEl unmounts on close).
+	let sourceEl: HTMLDivElement | undefined = $state()
+	let highlightedIndex = $state(-1)
+	let typeAheadBuffer = ""
+	let typeAheadTimer: ReturnType<typeof setTimeout> | undefined
+
+	function getOptionEls(root: HTMLElement | undefined): HTMLElement[] {
+		if (!root) return []
+		return Array.from(root.querySelectorAll("fluent-option")) as HTMLElement[]
+	}
+	function enabledOptionEls(root: HTMLElement | undefined): HTMLElement[] {
+		return getOptionEls(root).filter(el => !el.hasAttribute("disabled"))
+	}
+
+	// fluent-option carries its value as a JS PROPERTY (set by Svelte's custom-element
+	// property-assignment path), not an HTML attribute — so getAttribute("value")
+	// returns null. Read the property first, fall back to the attribute for the
+	// rare case where it was set as a string attribute.
+	function optionValue(el: HTMLElement): string {
+		const v = (el as HTMLElement & {value?: string}).value
+		if (typeof v === "string") return v
+		return el.getAttribute("value") ?? ""
+	}
+
+	function getOptionText(val: string): string {
+		const roots = multiple
+			? [inlineListEl]
+			: [listEl, sourceEl]
+		for (const root of roots) {
+			if (!root) continue
+			const all = getOptionEls(root)
+			const el = all.find(o => optionValue(o) === val)
+			if (el) return el.textContent?.trim() ?? ""
+		}
+		return ""
+	}
+
+	function getOptionData(el: HTMLElement): Record<string, unknown> | undefined {
+		const raw = el.dataset.optionContext
+		if (!raw) return undefined
+		try { return JSON.parse(raw) } catch { return undefined }
+	}
+
+	function openDropdown() {
+		if (disabled || multiple) return
+		isOpen = true
+		tick().then(() => {
+			const opts = enabledOptionEls(listEl)
+			const i = opts.findIndex(el => optionValue(el) === selectedSingle)
+			highlightedIndex = i >= 0 ? i : (opts.length > 0 ? 0 : -1)
+			scrollHighlightedIntoView()
+		})
+	}
+
+	function closeDropdown(refocus = true) {
+		if (!isOpen) return
+		isOpen = false
+		highlightedIndex = -1
+		typeAheadBuffer = ""
+		if (refocus) triggerEl?.focus()
+	}
+
+	function toggleDropdown() {
+		if (isOpen) closeDropdown()
+		else openDropdown()
+	}
+
+	// Keyboard-path selection: explicit call from key handlers when there's no
+	// click event to ride. Mutates selection via ctx.toggle (which has the right
+	// mode-aware semantics), fires onchange, and closes in single mode.
+	function selectByValue(val: string, el?: HTMLElement) {
+		const optEl = el ?? getOptionEls(multiple ? inlineListEl : listEl)
+			.find(o => optionValue(o) === val)
+
+		ctx.toggle(val)
+
+		onchange?.({
+			value: multiple ? "" : (selectionState.value[0] ?? ""),
+			selectedOption: optEl?.textContent?.trim(),
+			data: optEl ? getOptionData(optEl) : undefined
+		})
+
+		if (!multiple) closeDropdown()
+	}
+
+	// Click-path: Option.svelte's own onclick already called ctx.toggle by the
+	// time this bubble-phase handler runs (option is a descendant of the
+	// listbox). We deliberately do NOT call ctx.toggle here — doing so would
+	// double-toggle in multi mode and cancel the user's click. We only handle
+	// the post-selection side effects: onchange + close-on-single.
+	function handleListClick(ev: MouseEvent) {
+		const target = ev.target as HTMLElement | null
+		if (!target) return
+		const optEl = target.closest("fluent-option") as HTMLElement | null
+		if (!optEl) return
+		if (optEl.hasAttribute("disabled")) {
+			ev.preventDefault()
+			return
+		}
+
+		onchange?.({
+			value: multiple ? "" : (selectionState.value[0] ?? ""),
+			selectedOption: optEl.textContent?.trim(),
+			data: getOptionData(optEl)
+		})
+
+		if (!multiple) closeDropdown()
+	}
+
+	// ---------- Keyboard (single mode) ----------
+	function moveHighlight(delta: number) {
+		const opts = enabledOptionEls(listEl)
+		if (opts.length === 0) return
+		const cur = highlightedIndex
+		let next = cur + delta
+		if (next < 0) next = 0
+		if (next >= opts.length) next = opts.length - 1
+		highlightedIndex = next
+		scrollHighlightedIntoView()
+	}
+
+	function scrollHighlightedIntoView() {
+		if (!listEl || highlightedIndex < 0) return
+		const opts = enabledOptionEls(listEl)
+		const el = opts[highlightedIndex]
+		el?.scrollIntoView({block: "nearest"})
+	}
+
+	function typeAheadJump(ch: string) {
+		clearTimeout(typeAheadTimer)
+		typeAheadBuffer += ch.toLowerCase()
+		typeAheadTimer = setTimeout(() => { typeAheadBuffer = "" }, 750)
+
+		const opts = enabledOptionEls(listEl)
+		if (opts.length === 0) return
+		const start = highlightedIndex >= 0 ? highlightedIndex : 0
+		const n = opts.length
+
+		// Mode picking:
+		// - "Repeat" (buffer="cc"|"ccc"): user is cycling — advance past current.
+		// - "Single re-press" (buffer="c", current option already starts with "c"):
+		//   treat like cycle too, so c-pause-c-pause-c advances through matches
+		//   even when the buffer timed out between presses.
+		// - "Prefix" (anything else): land on the first option matching the buffer
+		//   from the current position.
+		const isRepeat = typeAheadBuffer.length > 1
+			&& typeAheadBuffer.split("").every(c => c === typeAheadBuffer[0])
+		const isSingleRepress = typeAheadBuffer.length === 1
+			&& (opts[start]?.textContent?.trim().toLowerCase() ?? "").startsWith(typeAheadBuffer)
+		const advance = isRepeat || isSingleRepress
+		const needle = isRepeat ? typeAheadBuffer[0] : typeAheadBuffer
+		const startAt = advance ? (start + 1) % n : start
+
+		for (let i = 0; i < n; i++) {
+			const idx = (startAt + i) % n
+			const text = opts[idx].textContent?.trim().toLowerCase() ?? ""
+			if (text.startsWith(needle)) {
+				highlightedIndex = idx
+				scrollHighlightedIntoView()
+				return
+			}
+		}
+	}
+
+	function handleTriggerKeydown(ev: KeyboardEvent) {
+		if (disabled) return
+
+		if (!isOpen) {
+			switch (ev.key) {
+				case "ArrowDown":
+				case "ArrowUp":
+				case "Enter":
+				case " ":
+					ev.preventDefault()
+					openDropdown()
+					return
+			}
+			// Type-ahead on the closed trigger: open + jump-highlight (no commit).
+			if (ev.key.length === 1 && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+				ev.preventDefault()
+				openDropdown()
+				tick().then(() => typeAheadJump(ev.key))
+			}
+			return
+		}
+
+		switch (ev.key) {
+			case "ArrowDown": ev.preventDefault(); moveHighlight(1); break
+			case "ArrowUp":   ev.preventDefault(); moveHighlight(-1); break
+			case "Home": {
+				ev.preventDefault()
+				const opts = enabledOptionEls(listEl)
+				if (opts.length) { highlightedIndex = 0; scrollHighlightedIntoView() }
+				break
+			}
+			case "End": {
+				ev.preventDefault()
+				const opts = enabledOptionEls(listEl)
+				if (opts.length) { highlightedIndex = opts.length - 1; scrollHighlightedIntoView() }
+				break
+			}
+			case "Enter":
+			case " ": {
+				ev.preventDefault()
+				const opts = enabledOptionEls(listEl)
+				const el = opts[highlightedIndex]
+				if (el) selectByValue(optionValue(el), el)
+				break
+			}
+			case "Escape": ev.preventDefault(); closeDropdown(); break
+			case "Tab": closeDropdown(false); break
+			default:
+				if (ev.key.length === 1 && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+					ev.preventDefault()
+					typeAheadJump(ev.key)
+				}
+		}
+	}
+
+	// ---------- Visual highlight sync ----------
+	// Reflects highlightedIndex to a data-highlighted attribute on the corresponding
+	// fluent-option, so CSS can style the keyboard-cursor row distinctly from
+	// hover and selected states.
+	$effect(() => {
+		const _ = highlightedIndex // dep tracking
+		const opts = enabledOptionEls(listEl)
+		opts.forEach((el, i) => {
+			if (i === highlightedIndex) el.setAttribute("data-highlighted", "")
+			else el.removeAttribute("data-highlighted")
+		})
+	})
+
+	// ---------- Close on outside pointerdown ----------
+	$effect(() => {
+		if (!isOpen) return
+		function onDown(ev: PointerEvent) {
+			const path = ev.composedPath()
+			if (triggerEl && path.includes(triggerEl)) return
+			if (listEl && path.includes(listEl)) return
+			closeDropdown(false)
+		}
+		// Use capture so we beat any handler that stops propagation.
+		document.addEventListener("pointerdown", onDown, true)
+		return () => document.removeEventListener("pointerdown", onDown, true)
+	})
+
+	// ---------- Multi-mode height calculation (maxVisibleOptions) ----------
+	let multiCalcHeight: string | undefined = $state()
+	$effect(() => {
+		if (!multiple || !inlineListEl || height) {
+			multiCalcHeight = undefined
+			return
+		}
+		if (maxVisibleOptions === undefined) {
+			multiCalcHeight = undefined
+			return
+		}
+		queueMicrotask(() => {
+			if (!inlineListEl) return
+			const opts = inlineListEl.querySelectorAll("fluent-option")
+			if (opts.length === 0) return
+			const first = opts[0] as HTMLElement
+			const rowH = parseInt(window.getComputedStyle(first).height) || first.offsetHeight || 32
+			const visible = Math.min(opts.length, maxVisibleOptions)
+			// + 8px for top/bottom padding of the listbox.
+			multiCalcHeight = `${visible * rowH + 8}px`
+		})
+	})
+
+	// ---------- Computed styles ----------
+	const triggerStyle = $derived(() => {
+		const parts: string[] = []
+		if (width) parts.push(`width: ${width}`)
+		return parts.join("; ")
+	})
+
+	const multiListStyle = $derived(() => {
+		const parts: string[] = []
+		if (width) parts.push(`width: ${width}`)
+		if (height) parts.push(`height: ${height}`)
+		else if (multiCalcHeight) parts.push(`height: ${multiCalcHeight}`)
+		return parts.join("; ")
+	})
+
+	// Forced position support: prop -> Floating UI placement.
+	const forcedPlacement = $derived<"top" | "bottom" | undefined>(
+		position === "above" ? "top" : position === "below" ? "bottom" : undefined
+	)
+
+	const displayText = $derived(getOptionText(selectedSingle))
+
+	const hasLabel = $derived(!!(label || labelTemplate))
+
+	const listboxId = $derived(id ? `${id}-listbox` : undefined)
 </script>
 
-{#if needsScrollContainer}
-	<div class="select-scroll-wrapper" style="display: inline-flex; flex-direction: column;">
-		{#if label || labelTemplate}
-			<label for={id} class="fluent-label">
-				{#if label}
-					{label}
-				{/if}
-				{#if labelTemplate}
-					{@render labelTemplate?.()}
-				{/if}
-			</label>
-		{/if}
-		<div class="select-scroll-container" style={scrollContainerStyle()}>
-		<!-- svelte-ignore a11y_autofocus -->
-		<fluent-select
-			bind:this={selectElement}
-			{id}
-			class={className}
-			style={computedStyle() || style}
-			{open}
-			{position}
-			{multiple}
-			{disabled}
-			{appearance}
-			{required}
-			{autofocus}
-			{name}
-			current-value={value}
-			{title}
-			aria-label={ariaLabel || label}
-			onchange={handleChange}
-		>
-			{#if indicatorTemplate}
-				<span slot="indicator">
-					{@render indicatorTemplate()}
-				</span>
-			{/if}
-			{#if children}
-				{@render children?.()}
-			{/if}
-		</fluent-select>
-		</div>
+<!-- svelte-ignore a11y_label_has_associated_control -->
+{#if hasLabel}
+	<label class="select-label" for={id}>
+		{#if label}{label}{/if}
+		{#if labelTemplate}{@render labelTemplate?.()}{/if}
+		{#if required}<span class="required-indicator">*</span>{/if}
+	</label>
+{/if}
+
+{#if multiple}
+	<!-- ===== Multi mode: always-expanded inline listbox ===== -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div
+		bind:this={inlineListEl}
+		{id}
+		role="listbox"
+		tabindex="0"
+		aria-multiselectable="true"
+		aria-label={ariaLabel || label}
+		class="select-listbox-inline {appearance} {className}"
+		class:disabled
+		style={(multiListStyle() ? multiListStyle() + "; " : "") + style}
+		{title}
+		onclick={handleListClick}
+	>
+		{@render children?.()}
 	</div>
 {:else}
-	{#if label || labelTemplate}
-		<label for={id} class="fluent-label">
-			{#if label}
-				{label}
-			{/if}
-			{#if labelTemplate}
-				{@render labelTemplate?.()}
-			{/if}
-		</label>
-	{/if}
+	<!-- ===== Single mode: trigger + portalled dropdown ===== -->
+
+	<!-- Hidden mirror of <Option> children so getOptionText() can resolve the
+	     selected value's display text when the dropdown is closed. Aria-hidden
+	     so screen readers don't see two copies of the options. -->
+	<div bind:this={sourceEl} class="select-options-source" aria-hidden="true">
+		{@render children?.()}
+	</div>
+
 	<!-- svelte-ignore a11y_autofocus -->
-	<fluent-select
-		bind:this={selectElement}
+	<button
+		bind:this={triggerEl}
+		type="button"
 		{id}
-		class={className}
-		style={computedStyle() || style}
-		{open}
-		{position}
-		{multiple}
-		{disabled}
-		{appearance}
-		{required}
-		{autofocus}
-		{name}
-		current-value={value}
-		{title}
+		role="combobox"
+		aria-haspopup="listbox"
+		aria-expanded={isOpen}
+		aria-controls={listboxId}
 		aria-label={ariaLabel || label}
-		onchange={handleChange}
+		{disabled}
+		{autofocus}
+		{title}
+		class="select-trigger {appearance} {className}"
+		class:open={isOpen}
+		style={(triggerStyle() ? triggerStyle() + "; " : "") + style}
+		onclick={toggleDropdown}
+		onkeydown={handleTriggerKeydown}
 	>
-		{#if indicatorTemplate}
-			<span slot="indicator">
+		<span class="select-trigger-value" class:placeholder={!displayText}>
+			{displayText}
+		</span>
+		<span class="select-trigger-indicator" aria-hidden="true">
+			{#if indicatorTemplate}
 				{@render indicatorTemplate()}
-			</span>
-		{/if}
-		{#if children}
-			{@render children?.()}
-		{/if}
-	</fluent-select>
+			{:else}
+				<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+					<path d="M2.22 4.47a.75.75 0 0 1 1.06 0L6 7.19l2.72-2.72a.75.75 0 1 1 1.06 1.06L6.53 8.78a.75.75 0 0 1-1.06 0L2.22 5.53a.75.75 0 0 1 0-1.06Z"/>
+				</svg>
+			{/if}
+		</span>
+	</button>
+
+	{#if isOpen && triggerEl}
+		<PositioningRegion
+			anchor={triggerEl}
+			visible={isOpen}
+			position={forcedPlacement}
+			matchWidth
+			availableHeight
+		>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<div
+				bind:this={listEl}
+				id={listboxId}
+				role="listbox"
+				tabindex="-1"
+				class="select-listbox-popover"
+				onclick={handleListClick}
+			>
+				{@render children?.()}
+			</div>
+		</PositioningRegion>
+	{/if}
+
+	<!-- Hidden input to participate in HTML form submission. -->
+	{#if name}
+		<input type="hidden" {name} {required} value={selectedSingle} />
+	{/if}
 {/if}
+
+<style>
+	.select-label {
+		display: block;
+		font-size: var(--type-ramp-base-font-size, 0.875rem);
+		font-weight: 600;
+		color: var(--neutral-foreground-rest, #242424);
+		margin-bottom: 0.25rem;
+	}
+
+	.required-indicator {
+		color: var(--error-foreground-rest, #d13438);
+		margin-left: 0.25rem;
+	}
+
+	/* ===== Trigger button (single mode) ===== */
+	.select-trigger {
+		display: inline-flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		min-height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
+		box-sizing: border-box;
+		padding: 0 calc(var(--design-unit, 4) * 2 * 1px);
+		background: var(--neutral-fill-input-rest, #ffffff);
+		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		font-family: inherit;
+		font-size: var(--type-ramp-base-font-size, 14px);
+		line-height: var(--type-ramp-base-line-height, 20px);
+		color: var(--neutral-foreground-rest, #242424);
+		cursor: pointer;
+		text-align: left;
+		transition: border-color 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
+		min-width: 200px;
+	}
+
+	.select-trigger:hover:not(:disabled) {
+		background: var(--neutral-fill-input-hover, #f5f5f5);
+	}
+
+	.select-trigger:focus-visible:not(:disabled),
+	.select-trigger.open:not(:disabled) {
+		/* Match fluent-text-field focus: accent-colored bottom edge via inset shadow
+		 * so the underline thickens visually without shifting content by 1px. */
+		border-bottom-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: inset 0 -1px 0 0 var(--accent-fill-rest, #0078d4);
+		outline: none;
+	}
+
+	.select-trigger.filled {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		border: none;
+		border-bottom: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
+	}
+
+	.select-trigger.filled:hover:not(:disabled) {
+		background: var(--neutral-fill-secondary-hover, #ebebeb);
+	}
+
+	.select-trigger.filled:focus-visible:not(:disabled),
+	.select-trigger.filled.open:not(:disabled) {
+		border-bottom-color: var(--accent-fill-rest, #0078d4);
+		box-shadow: 0 1px 0 0 var(--accent-fill-rest, #0078d4);
+	}
+
+	.select-trigger:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	.select-trigger-value {
+		flex: 1;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.select-trigger-value.placeholder {
+		color: var(--neutral-foreground-hint, #717171);
+	}
+
+	.select-trigger-indicator {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--neutral-foreground-hint, #717171);
+		flex-shrink: 0;
+	}
+
+	/* Hidden mirror of options for trigger-text lookup (single mode). */
+	.select-options-source {
+		display: none;
+	}
+
+	/* ===== Dropdown listbox (single mode, portalled) ===== */
+	:global(.select-listbox-popover) {
+		display: flex;
+		flex-direction: column;
+		background: var(--neutral-layer-floating, #ffffff);
+		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		box-shadow: var(--elevation-shadow-flyout, 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12));
+		padding: calc(var(--design-unit, 4) * 1px);
+		/* Cap to the available viewport space exposed by PositioningRegion.
+		 * Fallback to 280px if the property isn't set. */
+		max-height: var(--available-height, 280px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		box-sizing: border-box;
+	}
+
+	/* <fluent-option> defaults to inline-flex (sized to content). Inside our
+	 * listbox we want stacked rows of equal width — keep flex so fluent-option's
+	 * own internal layout still works, but stretch to full width and lock the
+	 * flex item against shrinking so a fixed-height listbox doesn't compress
+	 * rows together when content exceeds the cap. */
+	:global(.select-listbox-popover) :global(fluent-option),
+	.select-listbox-inline :global(fluent-option) {
+		display: flex;
+		width: 100%;
+		flex-shrink: 0;
+	}
+
+	/* Keyboard-cursor highlight (single mode). Distinct from hover and selected
+	 * — driven by data-highlighted set in the highlightedIndex sync effect. */
+	:global(.select-listbox-popover) :global(fluent-option[data-highlighted]) {
+		background: var(--neutral-fill-stealth-hover, #f0f0f0);
+	}
+
+	/* ===== Inline listbox (multi mode) ===== */
+	.select-listbox-inline {
+		display: flex;
+		flex-direction: column;
+		background: var(--neutral-fill-input-rest, #ffffff);
+		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px);
+		padding: calc(var(--design-unit, 4) * 1px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		box-sizing: border-box;
+	}
+
+	.select-listbox-inline.filled {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		border: none;
+		border-bottom: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
+	}
+
+	.select-listbox-inline.disabled {
+		opacity: 0.4;
+		pointer-events: none;
+	}
+</style>

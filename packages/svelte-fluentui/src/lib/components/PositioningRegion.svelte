@@ -28,6 +28,12 @@
 		 * width via Floating UI's `size` middleware. Useful for dropdowns whose
 		 * options should align under the input. */
 		matchWidth?: boolean
+		/** When true, exposes the remaining viewport height as the CSS custom
+		 * property `--available-height` on the floating element (minus the
+		 * shift padding). Consumers should set max-height: var(--available-height)
+		 * on a scroll container inside, so the dropdown stays inside the viewport
+		 * regardless of which side flip() picks. */
+		availableHeight?: boolean
 		children?: SlotType
 	}
 
@@ -39,6 +45,7 @@
 		position: positionProp = "bottom",
 		align: alignProp = "center",
 		matchWidth = true,
+		availableHeight = false,
 		children = undefined
 	}: Props = $props()
 
@@ -60,10 +67,12 @@
 		anchor: HTMLElement
 		placement: Placement
 		matchWidth: boolean
+		availableHeight: boolean
 	}
 
 	function position(node: HTMLElement, params: PositionParams) {
 		let cleanup: () => void = () => {}
+		const SHIFT_PADDING = 8
 
 		function attach(p: PositionParams) {
 			cleanup()
@@ -71,13 +80,22 @@
 				const middleware = [
 					offset(0),
 					flip(),
-					shift({padding: 8})
+					shift({padding: SHIFT_PADDING})
 				]
-				if (p.matchWidth) {
+				if (p.matchWidth || p.availableHeight) {
 					middleware.push(
 						size({
-							apply({rects, elements}) {
-								elements.floating.style.width = `${rects.reference.width}px`
+							padding: SHIFT_PADDING,
+							apply({rects, elements, availableHeight: h}) {
+								if (p.matchWidth) {
+									elements.floating.style.width = `${rects.reference.width}px`
+								}
+								if (p.availableHeight) {
+									elements.floating.style.setProperty(
+										"--available-height",
+										`${Math.max(0, Math.floor(h))}px`
+									)
+								}
 							}
 						})
 					)
@@ -110,7 +128,7 @@
 	{#if visible}
 		<div
 			use:portal
-			use:position={{anchor, placement, matchWidth}}
+			use:position={{anchor, placement, matchWidth, availableHeight}}
 			class="positioning-region positioning-region-floating"
 			{title}
 			style="position: fixed; top: 0; left: 0; {style}"
