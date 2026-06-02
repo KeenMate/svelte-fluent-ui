@@ -239,7 +239,7 @@
 
 <!-- svelte-ignore a11y_label_has_associated_control -->
 {#if label || labelTemplate}
-	<label class="combobox-label">
+	<label class="fluent-label" for={id}>
 		{#if label}
 			{label}
 		{/if}
@@ -282,14 +282,6 @@
 </fluent-combobox>
 
 <style>
-	.combobox-label {
-		display: block;
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: var(--neutral-foreground-rest);
-		margin-bottom: 0.25rem;
-	}
-
 	.required-indicator {
 		color: var(--error-foreground-rest, #d13438);
 		margin-left: 0.25rem;

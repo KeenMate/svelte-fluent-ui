@@ -470,7 +470,7 @@
 
 <!-- svelte-ignore a11y_label_has_associated_control -->
 {#if hasLabel}
-	<label class="select-label" for={id}>
+	<label class="fluent-label" for={id}>
 		{#if label}{label}{/if}
 		{#if labelTemplate}{@render labelTemplate?.()}{/if}
 		{#if required}<span class="required-indicator">*</span>{/if}
@@ -569,14 +569,6 @@
 {/if}
 
 <style>
-	.select-label {
-		display: block;
-		font-size: var(--type-ramp-base-font-size, 0.875rem);
-		font-weight: 600;
-		color: var(--neutral-foreground-rest, #242424);
-		margin-bottom: 0.25rem;
-	}
-
 	.required-indicator {
 		color: var(--error-foreground-rest, #d13438);
 		margin-left: 0.25rem;

@@ -56,6 +56,16 @@
 		onclick = undefined
 	}: Props = $props()
 
+	// Stable fallback id so <label for={...}> always links to the checkbox —
+	// without it, clicking the value label on an id-less <Checkbox /> wouldn't
+	// toggle the box.
+	const fallbackId = `fluent-checkbox-${Math.random().toString(36).slice(2, 11)}`
+	const effectiveId = $derived(id ?? fallbackId)
+
+	// Checkbox label always describes the value next to the control — never a
+	// field-label — so styling stays the same across all positions; only the
+	// wrapper's flex direction changes per labelPosition.
+
 	const currentMessage = $derived(
 		checked === true ? checkedMessage
 			: checked === false ? uncheckedMessage
@@ -126,9 +136,14 @@
 	}
 </script>
 
-<span class="fluent-checkbox-wrapper" data-label-position={labelPosition}>
+<span
+	class="fluent-checkbox-wrapper"
+	data-label-position={labelPosition}
+	data-disabled={disabled ? "true" : null}
+	data-readonly={readonly ? "true" : null}
+>
 	{#if label || labelTemplate || children}
-		<label for={id} class="fluent-label">
+		<label for={effectiveId} class="fluent-value-label">
 			{#if label}{label}{/if}
 			{#if labelTemplate}{@render labelTemplate?.()}{/if}
 			{#if children}{@render children?.()}{/if}
@@ -146,7 +161,7 @@
 		{readonly}
 		{disabled}
 		{required}
-		{id}
+		id={effectiveId}
 		{name}
 		aria-label={ariaLabel || label || null}
 		class={className || null}
@@ -176,17 +191,8 @@
 		gap: 0.5rem;
 	}
 
-	/* `.fluent-label` carries a 0.25rem bottom margin (set globally in
-	   components.scss for stacked form-field labels). In inline layouts that
-	   margin extends the label's flex-item box downward, so `align-items:
-	   center` lifts the label's visible text above the checkbox midline. Zero
-	   it out for start/end; keep it for top where the bottom margin is the
-	   intended gap before the control. */
-	.fluent-checkbox-wrapper[data-label-position="start"] .fluent-label,
-	.fluent-checkbox-wrapper[data-label-position="end"] .fluent-label {
-		margin-bottom: 0;
-	}
-
+	/* "top" position: label stacks above the checkbox. Label keeps its
+	   value-label styling — only the wrapper layout changes. */
 	.fluent-checkbox-wrapper[data-label-position="top"] {
 		flex-direction: column;
 		align-items: flex-start;
@@ -200,7 +206,7 @@
 	   We use the `order` property rather than `flex-direction: row-reverse`
 	   so the optional status message always trails the [checkbox, label] pair
 	   instead of jumping to the front (which row-reverse would do). */
-	.fluent-checkbox-wrapper[data-label-position="end"] .fluent-label {
+	.fluent-checkbox-wrapper[data-label-position="end"] :global(.fluent-value-label) {
 		order: 1;
 	}
 	.fluent-checkbox-wrapper[data-label-position="end"] .checkbox-message {

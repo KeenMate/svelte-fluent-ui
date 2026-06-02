@@ -32,9 +32,9 @@
 	align-items: center;
 }
 
-// Canonical label style used by form components (TextField, Select,
-// Autocomplete, Radio, RadioGroup) so labels stay visually consistent
-// regardless of whether the input is a fluent web component or a custom one.
+// Canonical FIELD label — bold, block, sits ABOVE a stacked input
+// (TextField, Select, Combobox, Autocomplete, NumberField, Textarea, Slider,
+// DatePicker, TimePicker, RadioGroup, and Checkbox/Switch when labelPosition="top").
 .fluent-label {
 	display: block;
 	font-size: 0.875rem;
@@ -42,5 +42,25 @@
 	line-height: 1.25;
 	color: var(--neutral-foreground-rest);
 	margin-bottom: 0.25rem;
+}
+
+// Canonical VALUE label — inline, normal weight, pointer cursor.
+// Used for the text that sits next to a control and describes the value/option
+// itself (Checkbox/Switch inline labels in labelPosition="start"/"end"). The
+// pointer cursor is the sole hover affordance — no color shift, matching how
+// fluent-radio's slotted default-slot label behaves natively.
+.fluent-value-label {
+	display: inline;
+	font-size: 0.875rem;
+	font-weight: normal;
+	line-height: 1.25;
+	color: var(--neutral-foreground-rest);
+	cursor: pointer;
+	user-select: none;
+}
+// Disabled / readonly host swaps the cursor to indicate non-interactivity.
+[data-disabled="true"] > .fluent-value-label,
+[data-readonly="true"] > .fluent-value-label {
+	cursor: not-allowed;
 }
 

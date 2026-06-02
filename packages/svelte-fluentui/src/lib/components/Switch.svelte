@@ -45,6 +45,15 @@
 		labelTemplate = undefined
 	}: Props = $props()
 
+	// Stable fallback id so <label for={...}> always toggles the switch even
+	// when the caller didn't provide an id.
+	const fallbackId = `fluent-switch-${Math.random().toString(36).slice(2, 11)}`
+	const effectiveId = $derived(id ?? fallbackId)
+
+	// Switch label always describes the value next to the control — never a
+	// field-label — so styling stays the same across positions; only the
+	// wrapper's flex direction changes per labelPosition.
+
 	// Check if messages are snippets or strings
 	let isCheckedMessageSnippet = $derived(typeof checkedMessage === 'function')
 	let isUncheckedMessageSnippet = $derived(typeof uncheckedMessage === 'function')
@@ -65,9 +74,14 @@
 	}
 </script>
 
-<span class="fluent-switch-wrapper" data-label-position={labelPosition}>
+<span
+	class="fluent-switch-wrapper"
+	data-label-position={labelPosition}
+	data-disabled={disabled ? "true" : null}
+	data-readonly={readonly ? "true" : null}
+>
 	{#if label || labelTemplate || children}
-		<label for={id} class="fluent-label">
+		<label for={effectiveId} class="fluent-value-label">
 			{#if label}{label}{/if}
 			{#if labelTemplate}{@render labelTemplate?.()}{/if}
 			{#if children}{@render children?.()}{/if}
@@ -87,7 +101,7 @@
 		class={className}
 		{style}
 		{readonly}
-		{id}
+		id={effectiveId}
 		{disabled}
 		{autofocus}
 		{name}
@@ -131,16 +145,8 @@
 		gap: 0.5rem;
 	}
 
-	/* `.fluent-label` carries a 0.25rem bottom margin (set globally in
-	   components.scss for stacked form-field labels). In inline layouts that
-	   margin extends the label's flex-item box downward, so `align-items:
-	   center` lifts the label's visible text above the switch midline. Zero
-	   it out for start; keep it for top where the bottom margin is the
-	   intended gap before the control. */
-	.fluent-switch-wrapper[data-label-position="start"] .fluent-label {
-		margin-bottom: 0;
-	}
-
+	/* "top" position: label stacks above the switch. Label keeps its
+	   value-label styling — only the wrapper layout changes. */
 	.fluent-switch-wrapper[data-label-position="top"] {
 		flex-direction: column;
 		align-items: flex-start;
