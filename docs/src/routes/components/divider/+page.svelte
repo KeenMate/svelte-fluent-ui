@@ -60,17 +60,17 @@
 
 		<h3>Vertical</h3>
 		<p>
-			Set <code>orientation="vertical"</code> for an inline divider between siblings. Vertical dividers stretch to their
-			parent's height, so the surrounding flex container needs to give them height (here via <code>align-items: stretch</code>
-			on the <code>Stack</code> and a fixed height on the row).
+			Set <code>orientation="vertical"</code> for an inline divider between siblings. Vertical dividers don't have an
+			intrinsic height — give the divider an explicit <code>height</code> via inline style (this matches the FluentUI
+			Blazor pattern). The parent layout doesn't need any special configuration.
 		</p>
-		<Stack orientation="horizontal" gap="1rem" style="align-items: stretch; height: 2.5rem;">
+		<Stack orientation="horizontal" gap="0.625rem" verticalAlign="center">
 			<span>Home</span>
-			<Divider orientation="vertical" />
+			<Divider orientation="vertical" style="height: 1.5rem;" />
 			<span>Products</span>
-			<Divider orientation="vertical" />
+			<Divider orientation="vertical" style="height: 1.5rem;" />
 			<span>About</span>
-			<Divider orientation="vertical" />
+			<Divider orientation="vertical" style="height: 1.5rem;" />
 			<span>Contact</span>
 		</Stack>
 
