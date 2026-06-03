@@ -314,6 +314,7 @@
 			items: [
 				{label: "Badge", href: "/components/badge"},
 				{label: "Card", href: "/components/card"},
+				{label: "Divider", href: "/components/divider"},
 				{label: "Icon", href: "/components/icon"}
 			]
 		},
