@@ -50,7 +50,7 @@
 
 		<h3>Horizontal (default)</h3>
 		<p>The most common case — a horizontal line between blocks of content.</p>
-		<div>
+		<div class="divider-stack">
 			<p>Section 1 — some content above the divider.</p>
 			<Divider />
 			<p>Section 2 — content below.</p>
@@ -79,7 +79,7 @@
 			Use <code>role="presentation"</code> when the divider is purely visual and shouldn't be announced by screen readers
 			(e.g. inside a layout where the structural separation is already obvious from surrounding semantics).
 		</p>
-		<div>
+		<div class="divider-stack">
 			<p>The divider below is decorative — screen readers will skip it.</p>
 			<Divider role="presentation" />
 			<p>This is the content after it.</p>
@@ -90,7 +90,7 @@
 			Override <code>--neutral-stroke-divider-rest</code> inline (or in a parent stylesheet) to change the divider's color
 			without forking the component.
 		</p>
-		<div>
+		<div class="divider-stack">
 			<p>Default color (subtle neutral stroke).</p>
 			<Divider />
 			<p>Accent-tinted divider.</p>
@@ -109,3 +109,18 @@
 		</GridItem>
 	</Grid>
 </Stack>
+
+<style>
+	/* Reset reboot.scss's `p { margin-bottom: 1rem }` inside our horizontal-divider
+	   demos so dividers sit visually centred between paragraphs instead of glued
+	   to the bottom of the previous one. */
+	.divider-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.divider-stack > p {
+		margin: 0;
+	}
+</style>
