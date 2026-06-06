@@ -196,7 +196,6 @@
 
 	.topnav-container {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 		width: 100%;
 		position: relative;
@@ -226,14 +225,17 @@
 		align-items: center;
 	}
 
-	/* Trailing flex group: items + divider + actions. Brand sits opposite
-	   it (justify-content: space-between on .topnav-container), so the
-	   trailing group right-anchors as a single unit. */
+	/* Trailing flex group: items + divider + actions. `margin-left: auto`
+	   pushes it to the inline-end edge so brand stays next to hamburger
+	   (or hugs the start edge when hamburger is hidden), instead of being
+	   visually centered the way justify-content: space-between would do
+	   with three flex children. */
 	.topnav-trailing {
 		display: flex;
 		align-items: center;
 		gap: 1.5rem;
 		min-width: 0;
+		margin-inline-start: auto;
 	}
 
 	.topnav-items {
