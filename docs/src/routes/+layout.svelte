@@ -293,6 +293,7 @@
 				{label: "Grid", href: "/components/navigation-layout/grid"},
 				{label: "Layout", href: "/components/navigation-layout/layout"},
 				{label: "MultiSplitter", href: "/components/navigation-layout/multisplitter"},
+				{label: "Panel", href: "/components/navigation-layout/panel"},
 				{label: "Spacer", href: "/components/navigation-layout/spacer"},
 				{label: "Stack", href: "/components/navigation-layout/stack"}
 			]
@@ -305,7 +306,8 @@
 				{label: "AppBar", href: "/components/navigation-layout/appbar"},
 				{label: "Breadcrumbs", href: "/components/breadcrumbs"},
 				{label: "NavMenu", href: "/components/navigation-layout/navigation"},
-				{label: "Tabs", href: "/components/tabs"}
+				{label: "Tabs", href: "/components/tabs"},
+				{label: "TopNav", href: "/components/navigation-layout/topnav"}
 			]
 		},
 		{

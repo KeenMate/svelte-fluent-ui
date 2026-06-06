@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
 	import Button from "../Button.svelte"
+	import Panel from "./Panel.svelte"
 	import NavMenu from "../nav/NavMenu.svelte"
 	import NavGroup from "../nav/NavGroup.svelte"
 	import NavLinkItem from "../nav/NavLinkItem.svelte"
@@ -43,6 +44,10 @@
 
 	let mobileMenuOpen = $state(false)
 
+	const hasDrawerContent = $derived(
+		items.length > 0 || navigationGroups.length > 0 || !!children
+	)
+
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen
 	}
@@ -62,22 +67,28 @@
 	style="height: {height}px; {style}"
 >
 	<div class="topnav-container">
-		<!-- Mobile menu toggle (left side) -->
-		<Button appearance="stealth" class="mobile-menu-toggle" onclick={toggleMobileMenu}>
-			<span class="hamburger-icon">
-				{#if mobileMenuOpen}
-					<DismissIcon size={20} />
-				{:else}
-					☰
-				{/if}
-			</span>
-		</Button>
+		{#if hasDrawerContent}
+			<Button
+				appearance="stealth"
+				class="mobile-menu-toggle"
+				onclick={toggleMobileMenu}
+				aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+				aria-expanded={mobileMenuOpen}
+			>
+				<span class="hamburger-icon">
+					{#if mobileMenuOpen}
+						<DismissIcon size={20} />
+					{:else}
+						☰
+					{/if}
+				</span>
+			</Button>
+		{/if}
 
 		<a href={brandHref} class="topnav-brand">
 			{brand}
 		</a>
 
-		<!-- Desktop navigation items -->
 		<div class="topnav-items">
 			{#if items.length > 0}
 				{#each items as item}
@@ -95,18 +106,41 @@
 			{/if}
 
 			{#if children}
-				<div class="nav-divider"></div>
+				{#if items.length > 0}
+					<div class="nav-divider"></div>
+				{/if}
 				<div class="topnav-actions">
 					{@render children()}
 				</div>
 			{/if}
 		</div>
 	</div>
+</nav>
 
-	<!-- Mobile sidebar navigation -->
-	{#if navigationGroups.length > 0}
-		<div class="mobile-sidebar" class:mobile-open={mobileMenuOpen}>
-			<div class="mobile-sidebar-content">
+{#if hasDrawerContent}
+	<Panel bind:open={mobileMenuOpen} side="start" width="280px" class="topnav-drawer">
+		<div class="topnav-drawer-body">
+			{#if items.length > 0}
+				<div class="topnav-drawer-items">
+					{#each items as item}
+						<a
+							href={item.href}
+							class="nav-item"
+							onclick={() => handleNavClick(item)}
+						>
+							{#if item.icon}
+								<span class="nav-icon">{item.icon}</span>
+							{/if}
+							<span class="nav-text">{item.label}</span>
+						</a>
+					{/each}
+				</div>
+			{/if}
+
+			{#if navigationGroups.length > 0}
+				{#if items.length > 0}
+					<hr class="topnav-drawer-separator" />
+				{/if}
 				<NavMenu>
 					{#each navigationGroups as group}
 						<NavGroup>
@@ -123,15 +157,15 @@
 						</NavGroup>
 					{/each}
 				</NavMenu>
-			</div>
-			{#if children}
-				<div class="mobile-sidebar-actions">
-					{@render children()}
-				</div>
 			{/if}
 		</div>
-	{/if}
-</nav>
+		{#if children}
+			<div class="topnav-drawer-actions">
+				{@render children()}
+			</div>
+		{/if}
+	</Panel>
+{/if}
 
 <style>
 	.topnav {
@@ -140,6 +174,8 @@
 		background: var(--neutral-layer-1, #ffffff);
 		border-bottom: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 		padding: 0 1.5rem;
+		container-type: inline-size;
+		container-name: topnav;
 	}
 
 	.topnav-container {
@@ -148,6 +184,8 @@
 		align-items: center;
 		width: 100%;
 		position: relative;
+		gap: 1rem;
+		min-width: 0;
 	}
 
 	.topnav-brand {
@@ -155,26 +193,29 @@
 		color: inherit;
 		font-size: 1.25rem;
 		font-weight: 600;
-		z-index: var(--fluent-z-sticky, 1020);
+		flex-shrink: 0;
 	}
 
-	/* Mobile menu toggle button */
+	/* Mobile menu toggle button — hidden by default, shown when container is narrow */
 	:global(.topnav .mobile-menu-toggle) {
 		display: none;
-		z-index: var(--fluent-z-sticky, 1020);
 		order: -1;
+		flex-shrink: 0;
 	}
 
 	.hamburger-icon {
 		font-size: 1.5rem;
 		line-height: 1;
+		display: flex;
+		align-items: center;
 	}
 
-	/* Navigation items */
 	.topnav-items {
 		display: flex;
 		gap: 1.5rem;
 		align-items: center;
+		min-width: 0;
+		overflow: hidden;
 	}
 
 	.nav-item {
@@ -206,23 +247,44 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		flex-shrink: 0;
 	}
 
-	/* Mobile sidebar */
-	.mobile-sidebar {
-		display: none;
+	/* Drawer styling — Panel handles position / transition / a11y */
+	.topnav-drawer-body {
+		flex: 1 1 0;
+		min-height: 0;
+		overflow-y: auto;
+		padding: 0.75rem 0;
 	}
 
-	.mobile-sidebar-actions {
-		padding: 1rem;
+	.topnav-drawer-items {
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+		padding: 0 0.75rem;
+	}
+
+	.topnav-drawer-items .nav-item {
+		padding: 0.6rem 0.75rem;
+	}
+
+	.topnav-drawer-separator {
+		border: none;
+		border-top: 1px solid var(--neutral-stroke-divider-rest, #e0e0e0);
+		margin: 0.75rem 0;
+	}
+
+	.topnav-drawer-actions {
+		flex-shrink: 0;
+		padding: 1rem 1.25rem;
 		border-top: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		gap: 0.5rem;
 	}
 
-	/* Responsive styles */
-	@media (max-width: 768px) {
+	@container topnav (max-width: 900px) {
 		:global(.topnav .mobile-menu-toggle) {
 			display: flex;
 		}
@@ -230,39 +292,11 @@
 		.topnav-items {
 			display: none;
 		}
-
-		.mobile-sidebar {
-			display: block;
-			position: fixed;
-			top: 60px;
-			left: -280px;
-			width: 280px;
-			height: calc(100vh - 60px);
-			background: var(--neutral-layer-1, #ffffff);
-			border-right: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-			transition: left 0.3s ease-in-out;
-			z-index: var(--fluent-z-fixed, 1030);
-			box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-			overflow-y: auto;
-		}
-
-		.mobile-sidebar.mobile-open {
-			left: 0;
-		}
-
-		.mobile-sidebar-content {
-			padding: 0;
-		}
 	}
 
-	@media (max-width: 480px) {
+	@container topnav (max-width: 480px) {
 		.topnav-brand {
 			font-size: 1rem;
-		}
-
-		.topnav-items {
-			width: 100%;
-			right: -100%;
 		}
 	}
 </style>

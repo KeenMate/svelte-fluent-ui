@@ -44,6 +44,7 @@
 		{group: "Layout", name: "Layout", description: "Page layout wrapper", href: "/components/navigation-layout/layout"},
 		{group: "Layout", name: "MultiSplitter", description: "Resizable multi-panel splitter", href: "/components/navigation-layout/multisplitter"},
 		{group: "Layout", name: "MultiSplitterPane", description: "Splitter panel", href: "/components/navigation-layout/multisplitter"},
+		{group: "Layout", name: "Panel", description: "Slide-in side panel (left/right) with overlay", href: "/components/navigation-layout/panel"},
 		{group: "Layout", name: "Spacer", description: "Flexible spacing utility", href: "/components/navigation-layout/spacer"},
 		{group: "Layout", name: "Stack", description: "Flexbox layout container (vertical/horizontal)", href: "/components/navigation-layout/stack"},
 
@@ -60,6 +61,7 @@
 		{group: "Navigation", name: "Tab", description: "Tab navigation item", href: "/components/tabs"},
 		{group: "Navigation", name: "TabPanel", description: "Tab content panel", href: "/components/tabs"},
 		{group: "Navigation", name: "Tabs", description: "Tab navigation container", href: "/components/tabs"},
+		{group: "Navigation", name: "TopNav", description: "Top navigation bar with brand, links, and mobile sidebar", href: "/components/navigation-layout/topnav"},
 
 		// Display
 		{group: "Display", name: "Badge", description: "Status indicator badge", href: "/components/badge"},
