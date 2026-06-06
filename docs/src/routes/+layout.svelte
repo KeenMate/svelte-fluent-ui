@@ -458,6 +458,51 @@
 {#if isTestRoute}
 	{@render children()}
 {:else}
+<!-- Shared sidebar nav — rendered both as the desktop sidebar and inside
+     TopNav's mobile drawer. `closeDrawer` is a no-op on desktop, but closes
+     the drawer when used in the mobile context so link clicks dismiss it. -->
+{#snippet sidebarNav(closeDrawer: () => void)}
+	<NavMenu>
+		{#each navigation as navItem}
+			{#if navItem.href}
+				<!-- Top-level link -->
+				<NavLinkItem
+					href={navItem.href}
+					class={isActive(navItem.href) ? "active" : ""}
+					onClick={closeDrawer}
+				>
+					{#snippet icon()}
+						<Icon name={navItem.icon} size={16} />
+					{/snippet}
+					{navItem.title}
+				</NavLinkItem>
+			{:else if navItem.items}
+				<!-- Group with sub-items -->
+				<NavGroup title={navItem.title}>
+					{#snippet linkIcon()}
+						<Icon name={navItem.icon} size={16} />
+					{/snippet}
+					{#snippet linkText()}
+						{navItem.title}
+					{/snippet}
+
+					{#each navItem.items as item}
+						<NavLinkItem
+							href={item.href}
+							target={item.target}
+							rel={item.rel}
+							class={isActive(item.href) ? "active" : ""}
+							onClick={closeDrawer}
+						>
+							{item.label}
+						</NavLinkItem>
+					{/each}
+				</NavGroup>
+			{/if}
+		{/each}
+	</NavMenu>
+{/snippet}
+
 <Layout orientation="vertical" style="min-height: 100vh;">
 	<!-- Top Navigation Bar -->
 	<TopNav class="docs-topnav">
@@ -466,6 +511,10 @@
 				<a href="/" class="topnav-brand">Svelte FluentUI</a>
 				<span class="docs-topnav-version">v{__SVELTE_FLUENTUI_VERSION__}</span>
 			</div>
+		{/snippet}
+
+		{#snippet drawerContent(closeDrawer: () => void)}
+			{@render sidebarNav(closeDrawer)}
 		{/snippet}
 
 		<button class="docs-topnav-search" onclick={openPalette} aria-label="Search pages">
@@ -499,46 +548,10 @@
 	<!-- Main Content Area with Sidebar -->
 	<BodyContent>
 		<Grid spacing={0}>
-			<!-- Sidebar -->
-			<GridItem xs={12} md={3} lg={2}>
+			<!-- Sidebar (desktop only; mobile uses the TopNav drawer) -->
+			<GridItem xs={12} md={3} lg={2} class="sidebar-grid-item">
 				<div class="sidebar">
-					<NavMenu>
-						{#each navigation as navItem}
-							{#if navItem.href}
-								<!-- Top-level link -->
-								<NavLinkItem
-									href={navItem.href}
-									class={isActive(navItem.href) ? "active" : ""}
-								>
-									{#snippet icon()}
-										<Icon name={navItem.icon} size={16} />
-									{/snippet}
-									{navItem.title}
-								</NavLinkItem>
-							{:else if navItem.items}
-								<!-- Group with sub-items -->
-								<NavGroup title={navItem.title}>
-									{#snippet linkIcon()}
-										<Icon name={navItem.icon} size={16} />
-									{/snippet}
-									{#snippet linkText()}
-										{navItem.title}
-									{/snippet}
-
-									{#each navItem.items as item}
-										<NavLinkItem
-											href={item.href}
-											target={item.target}
-											rel={item.rel}
-											class={isActive(item.href) ? "active" : ""}
-										>
-											{item.label}
-										</NavLinkItem>
-									{/each}
-								</NavGroup>
-							{/if}
-						{/each}
-					</NavMenu>
+					{@render sidebarNav(() => {})}
 				</div>
 			</GridItem>
 
@@ -640,6 +653,15 @@
 		position: sticky;
 		top: 0;
 		padding: var(--fluent-sidebar-padding);
+	}
+
+	/* Hide the desktop sidebar GridItem below Grid's md breakpoint (960px),
+	   which also aligns with TopNav's collapse breakpoint — the same nav
+	   lives inside the mobile drawer via TopNav's drawerContent. */
+	@media (max-width: 959.98px) {
+		:global(.sidebar-grid-item) {
+			display: none;
+		}
 	}
 
 	.sidebar :global(.fluent-nav-menu) {

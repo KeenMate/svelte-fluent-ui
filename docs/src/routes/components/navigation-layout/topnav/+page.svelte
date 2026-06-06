@@ -61,6 +61,7 @@
 		{name: "brandTemplate", type: "Snippet", default: "undefined", description: "Optional snippet that replaces the default brand link — use for logos, version badges, composite brand content"},
 		{name: "items", type: "NavItem[]", default: "[]", description: "Desktop nav items — { label, href, icon?, onClick? }"},
 		{name: "navigationGroups", type: "NavGroupItem[]", default: "[]", description: "Groups shown in the mobile sidebar — { title, icon, items: { label, href }[] }"},
+		{name: "drawerContent", type: "Snippet<[() => void]>", default: "undefined", description: "Custom mobile drawer content (rendered after items + groups). Receives a closeDrawer fn so consumer-supplied links can dismiss the drawer on click."},
 		{name: "height", type: "number", default: "60", description: "TopNav height in pixels"},
 		{name: "class", type: "string", default: "undefined", description: "Additional CSS class"},
 		{name: "style", type: "string", default: "undefined", description: "Inline style appended after the computed height"}
@@ -91,7 +92,7 @@
 
 	<p>
 		A horizontal top navigation bar — brand on the left, link items in the middle, optional action area
-		on the right. Below the mobile breakpoint (900px) the items collapse into a hamburger-triggered
+		on the right. Below the mobile breakpoint (960px) the items collapse into a hamburger-triggered
 		sidebar driven by <span class="component-name">navigationGroups</span>.
 	</p>
 
@@ -161,7 +162,7 @@
 				<h3>With mobile navigation groups</h3>
 				<p class="example-description">
 					<span class="component-name">navigationGroups</span> drives the mobile sidebar drawer. Resize the
-					window below 900px to see the hamburger toggle and grouped sidebar appear.
+					window below 960px to see the hamburger toggle and grouped sidebar appear.
 				</p>
 				<div class="topnav-frame">
 					<TopNav

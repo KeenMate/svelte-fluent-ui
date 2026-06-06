@@ -27,6 +27,7 @@
 		items?: NavItem[]
 		children?: SlotType
 		navigationGroups?: NavGroupItem[]
+		drawerContent?: SlotType
 		height?: number
 		class?: string
 		style?: string
@@ -39,6 +40,7 @@
 		items = [],
 		children = undefined,
 		navigationGroups = [],
+		drawerContent = undefined,
 		height = 60,
 		class: className = "",
 		style = ""
@@ -46,11 +48,12 @@
 
 	let mobileMenuOpen = $state(false)
 
-	// Drawer is only for collapsed nav items / groups. The action slot stays
-	// visible at any width (search, account menu, theme toggle, etc. should
-	// remain reachable on mobile rather than being hidden inside a hamburger).
+	// Drawer is for collapsed nav items / groups OR custom drawerContent.
+	// The action slot is intentionally NOT counted — it stays visible at every
+	// width (search, account menu, theme toggle should remain reachable on
+	// mobile rather than being hidden inside a hamburger).
 	const hasDrawerContent = $derived(
-		items.length > 0 || navigationGroups.length > 0
+		items.length > 0 || navigationGroups.length > 0 || !!drawerContent
 	)
 
 	function toggleMobileMenu() {
@@ -168,6 +171,13 @@
 						</NavGroup>
 					{/each}
 				</NavMenu>
+			{/if}
+
+			{#if drawerContent}
+				{#if items.length > 0 || navigationGroups.length > 0}
+					<hr class="topnav-drawer-separator" />
+				{/if}
+				{@render drawerContent(closeMobileMenu)}
 			{/if}
 		</div>
 	</Panel>
@@ -291,7 +301,7 @@
 		margin: 0.75rem 0;
 	}
 
-	@container topnav (max-width: 900px) {
+	@container topnav (max-width: 960px) {
 		:global(.topnav .mobile-menu-toggle) {
 			display: flex;
 		}
