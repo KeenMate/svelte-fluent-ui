@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../assets/styles/demo-pages.scss"
 	import "svelte-fluentui/styles.scss"
-	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer, Icon} from "svelte-fluentui"
+	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer, Icon, TopNav} from "svelte-fluentui"
 	import SiteSettings from "../lib/components/SiteSettings.svelte"
 	import CommandPalette from "../lib/components/CommandPalette.svelte"
 
@@ -460,31 +460,32 @@
 {:else}
 <Layout orientation="vertical" style="min-height: 100vh;">
 	<!-- Top Navigation Bar -->
-	<div class="topnav">
-		<div class="topnav-brand-group">
-			<a href="/" class="topnav-brand">Svelte FluentUI</a>
-			<span class="topnav-version">v{__SVELTE_FLUENTUI_VERSION__}</span>
-		</div>
-		<div class="topnav-actions">
-			<button class="topnav-search" onclick={openPalette} aria-label="Search pages">
-				<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-					<path d="M7 1.75a5.25 5.25 0 1 0 3.215 9.4l3.067 3.068a.75.75 0 1 0 1.061-1.061l-3.066-3.066A5.25 5.25 0 0 0 7 1.75zM3.25 7a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0z" fill="currentColor"/>
-				</svg>
-				<span class="topnav-search-label">Search…</span>
-				<span class="topnav-search-kbd">{paletteShortcutLabel}</span>
-			</button>
-			<Button appearance="stealth" onclick={toggleTheme}>
-				{#if effectiveTheme === "light"}
-					<Icon name="weather_moon" size={20} />
-				{:else}
-					<Icon name="weather_sunny" size={20} />
-				{/if}
-			</Button>
-			<Button appearance="stealth" onclick={openSettings}>
-				<Icon name="settings" size={20} />
-			</Button>
-		</div>
-	</div>
+	<TopNav class="docs-topnav">
+		{#snippet brandTemplate()}
+			<div class="docs-topnav-brand-group">
+				<a href="/" class="topnav-brand">Svelte FluentUI</a>
+				<span class="docs-topnav-version">v{__SVELTE_FLUENTUI_VERSION__}</span>
+			</div>
+		{/snippet}
+
+		<button class="docs-topnav-search" onclick={openPalette} aria-label="Search pages">
+			<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+				<path d="M7 1.75a5.25 5.25 0 1 0 3.215 9.4l3.067 3.068a.75.75 0 1 0 1.061-1.061l-3.066-3.066A5.25 5.25 0 0 0 7 1.75zM3.25 7a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0z" fill="currentColor"/>
+			</svg>
+			<span class="docs-topnav-search-label">Search…</span>
+			<span class="docs-topnav-search-kbd">{paletteShortcutLabel}</span>
+		</button>
+		<Button appearance="stealth" onclick={toggleTheme}>
+			{#if effectiveTheme === "light"}
+				<Icon name="weather_moon" size={20} />
+			{:else}
+				<Icon name="weather_sunny" size={20} />
+			{/if}
+		</Button>
+		<Button appearance="stealth" onclick={openSettings}>
+			<Icon name="settings" size={20} />
+		</Button>
+	</TopNav>
 
 	<!-- Site Settings Dialog -->
 	<SiteSettings open={settingsOpen} onClose={closeSettings} />
@@ -558,33 +559,26 @@
 {/if}
 
 <style>
-	.topnav {
+	:global(.docs-topnav) {
 		position: sticky;
 		top: 0;
 		z-index: 100;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		background: var(--neutral-layer-1, #ffffff);
-		border-bottom: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-		padding: 0 1.5rem;
-		height: 60px;
 	}
 
-	.topnav-brand-group {
+	.docs-topnav-brand-group {
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
 	}
 
-	.topnav-brand {
+	.docs-topnav-brand-group .topnav-brand {
 		text-decoration: none;
 		color: inherit;
 		font-size: 1.25rem;
 		font-weight: 600;
 	}
 
-	.topnav-version {
+	.docs-topnav-version {
 		font-size: 0.875rem;
 		color: var(--neutral-foreground-hint, #666);
 		background: var(--neutral-layer-3, #f0f0f0);
@@ -593,13 +587,7 @@
 		font-weight: 500;
 	}
 
-	.topnav-actions {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.topnav-search {
+	.docs-topnav-search {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -615,17 +603,17 @@
 		transition: background 120ms ease, border-color 120ms ease;
 	}
 
-	.topnav-search:hover {
+	.docs-topnav-search:hover {
 		background: var(--neutral-fill-secondary-hover, #ebebeb);
 		border-color: var(--neutral-stroke-rest, #c8c8c8);
 	}
 
-	.topnav-search-label {
+	.docs-topnav-search-label {
 		flex: 1;
 		text-align: left;
 	}
 
-	.topnav-search-kbd {
+	.docs-topnav-search-kbd {
 		padding: 0.1rem 0.4rem;
 		border: 1px solid var(--neutral-stroke-layer-rest, #d0d0d0);
 		border-radius: 3px;
@@ -635,11 +623,11 @@
 	}
 
 	@media (max-width: 768px) {
-		.topnav-search-label,
-		.topnav-search-kbd {
+		.docs-topnav-search-label,
+		.docs-topnav-search-kbd {
 			display: none;
 		}
-		.topnav-search {
+		.docs-topnav-search {
 			min-width: auto;
 			padding: 0.5rem;
 		}

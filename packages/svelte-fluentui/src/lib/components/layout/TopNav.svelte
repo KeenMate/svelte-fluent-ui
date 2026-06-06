@@ -23,6 +23,7 @@
 	type Props = {
 		brand?: string
 		brandHref?: string
+		brandTemplate?: SlotType
 		items?: NavItem[]
 		children?: SlotType
 		navigationGroups?: NavGroupItem[]
@@ -34,6 +35,7 @@
 	let {
 		brand = "Brand",
 		brandHref = "/",
+		brandTemplate = undefined,
 		items = [],
 		children = undefined,
 		navigationGroups = [],
@@ -44,8 +46,11 @@
 
 	let mobileMenuOpen = $state(false)
 
+	// Drawer is only for collapsed nav items / groups. The action slot stays
+	// visible at any width (search, account menu, theme toggle, etc. should
+	// remain reachable on mobile rather than being hidden inside a hamburger).
 	const hasDrawerContent = $derived(
-		items.length > 0 || navigationGroups.length > 0 || !!children
+		items.length > 0 || navigationGroups.length > 0
 	)
 
 	function toggleMobileMenu() {
@@ -85,24 +90,30 @@
 			</Button>
 		{/if}
 
-		<a href={brandHref} class="topnav-brand">
-			{brand}
-		</a>
+		{#if brandTemplate}
+			{@render brandTemplate()}
+		{:else}
+			<a href={brandHref} class="topnav-brand">
+				{brand}
+			</a>
+		{/if}
 
-		<div class="topnav-items">
+		<div class="topnav-trailing">
 			{#if items.length > 0}
-				{#each items as item}
-					<a
-						href={item.href}
-						class="nav-item"
-						onclick={() => handleNavClick(item)}
-					>
-						{#if item.icon}
-							<span class="nav-icon">{item.icon}</span>
-						{/if}
-						<span class="nav-text">{item.label}</span>
-					</a>
-				{/each}
+				<div class="topnav-items">
+					{#each items as item}
+						<a
+							href={item.href}
+							class="nav-item"
+							onclick={() => handleNavClick(item)}
+						>
+							{#if item.icon}
+								<span class="nav-icon">{item.icon}</span>
+							{/if}
+							<span class="nav-text">{item.label}</span>
+						</a>
+					{/each}
+				</div>
 			{/if}
 
 			{#if children}
@@ -159,11 +170,6 @@
 				</NavMenu>
 			{/if}
 		</div>
-		{#if children}
-			<div class="topnav-drawer-actions">
-				{@render children()}
-			</div>
-		{/if}
 	</Panel>
 {/if}
 
@@ -208,6 +214,16 @@
 		line-height: 1;
 		display: flex;
 		align-items: center;
+	}
+
+	/* Trailing flex group: items + divider + actions. Brand sits opposite
+	   it (justify-content: space-between on .topnav-container), so the
+	   trailing group right-anchors as a single unit. */
+	.topnav-trailing {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		min-width: 0;
 	}
 
 	.topnav-items {
@@ -275,21 +291,13 @@
 		margin: 0.75rem 0;
 	}
 
-	.topnav-drawer-actions {
-		flex-shrink: 0;
-		padding: 1rem 1.25rem;
-		border-top: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
 	@container topnav (max-width: 900px) {
 		:global(.topnav .mobile-menu-toggle) {
 			display: flex;
 		}
 
-		.topnav-items {
+		.topnav-items,
+		.nav-divider {
 			display: none;
 		}
 	}
