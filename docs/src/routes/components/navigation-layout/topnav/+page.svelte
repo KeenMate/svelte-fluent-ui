@@ -62,6 +62,7 @@
 		{name: "items", type: "NavItem[]", default: "[]", description: "Desktop nav items — { label, href, icon?, onClick? }"},
 		{name: "navigationGroups", type: "NavGroupItem[]", default: "[]", description: "Groups shown in the mobile sidebar — { title, icon, items: { label, href }[] }"},
 		{name: "drawerContent", type: "Snippet<[() => void]>", default: "undefined", description: "Custom mobile drawer content (rendered after items + groups). Receives a closeDrawer fn so consumer-supplied links can dismiss the drawer on click."},
+		{name: "collapse", type: '"auto" | "always" | "never"', default: '"auto"', description: 'Force the collapse state. "auto" uses the 960px container query; "always" keeps the hamburger visible at every width (useful when the consumer wants to hide a paired desktop sidebar at a custom breakpoint); "never" keeps items expanded at every width.'},
 		{name: "height", type: "number", default: "60", description: "TopNav height in pixels"},
 		{name: "class", type: "string", default: "undefined", description: "Additional CSS class"},
 		{name: "style", type: "string", default: "undefined", description: "Inline style appended after the computed height"}
@@ -180,6 +181,19 @@
 				<p class="example-description">Override the default 60px height.</p>
 				<div class="topnav-frame">
 					<TopNav brand="Tall Bar" items={simpleItems} height={80} />
+				</div>
+			</div>
+
+			<div class="example-item">
+				<h3>Force collapse (hamburger always visible)</h3>
+				<p class="example-description">
+					<span class="component-name">collapse="always"</span> keeps the hamburger visible and items
+					hidden at every width — useful when you pair TopNav with a desktop sidebar that you want to
+					hide at a custom breakpoint (e.g. the docs site hides its sidebar at &lt;960px and routes
+					all nav through the drawer below that point).
+				</p>
+				<div class="topnav-frame">
+					<TopNav brand="Always Collapsed" items={simpleItems} collapse="always" />
 				</div>
 			</div>
 

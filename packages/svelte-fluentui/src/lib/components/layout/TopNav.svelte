@@ -20,6 +20,8 @@
 		items: Array<{label: string; href: string}>
 	}
 
+	type CollapseMode = "auto" | "always" | "never"
+
 	type Props = {
 		brand?: string
 		brandHref?: string
@@ -28,6 +30,7 @@
 		children?: SlotType
 		navigationGroups?: NavGroupItem[]
 		drawerContent?: SlotType
+		collapse?: CollapseMode
 		height?: number
 		class?: string
 		style?: string
@@ -41,6 +44,7 @@
 		children = undefined,
 		navigationGroups = [],
 		drawerContent = undefined,
+		collapse = "auto",
 		height = 60,
 		class: className = "",
 		style = ""
@@ -72,6 +76,8 @@
 
 <nav
 	class="topnav {className}"
+	class:topnav--force-collapse={collapse === "always"}
+	class:topnav--force-expand={collapse === "never"}
 	style="height: {height}px; {style}"
 >
 	<div class="topnav-container">
@@ -318,5 +324,28 @@
 		.topnav-brand {
 			font-size: 1rem;
 		}
+	}
+
+	/* collapse="always" — force hamburger visible + items hidden regardless of width */
+	:global(.topnav.topnav--force-collapse .mobile-menu-toggle) {
+		display: flex;
+	}
+
+	.topnav--force-collapse .topnav-items,
+	.topnav--force-collapse .nav-divider {
+		display: none;
+	}
+
+	/* collapse="never" — force items/divider visible + hamburger hidden regardless of width */
+	:global(.topnav.topnav--force-expand .mobile-menu-toggle) {
+		display: none;
+	}
+
+	.topnav--force-expand .topnav-items {
+		display: flex;
+	}
+
+	.topnav--force-expand .nav-divider {
+		display: block;
 	}
 </style>
