@@ -35,12 +35,13 @@
 }
 
 // Footer component
-.footer {
+.fluent-footer {
 	display: flex;
 	align-items: center;
-	background-color: var(--neutral-layer-4);
-	color: var(--neutral-foreground-rest);
-	border-top: 1px solid var(--neutral-stroke-layer-rest);
+	background-color: var(--fluent-footer-bg, var(--neutral-layer-4));
+	color: var(--fluent-footer-text, var(--neutral-foreground-rest));
+	border-top: 1px solid var(--fluent-footer-border, var(--neutral-stroke-layer-rest));
 	padding: 0 1rem;
+	z-index: 10;
 	transition: background-color 0.3s ease, color 0.3s ease;
 }

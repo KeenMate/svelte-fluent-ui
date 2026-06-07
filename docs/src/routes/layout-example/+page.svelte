@@ -70,7 +70,7 @@
   &lt;/BodyContent&gt;
 
   &lt;!-- Footer --&gt;
-  &lt;Footer class="footer"&gt;
+  &lt;Footer&gt;
     © 2025 Svelte FluentUI - Built with Fluent UI Web Components
   &lt;/Footer&gt;
 &lt;/Layout&gt;</code></pre>
@@ -112,7 +112,7 @@
 
 		<h3>Footer</h3>
 		<p>A footer section that appears at the bottom of the layout.</p>
-		<pre><code>&lt;Footer class="footer"&gt;
+		<pre><code>&lt;Footer&gt;
   © 2025 Your App Name
 &lt;/Footer&gt;</code></pre>
 	</Card>

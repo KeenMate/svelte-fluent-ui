@@ -37,7 +37,7 @@
 
 		// Layout
 		{group: "Layout", name: "BodyContent", description: "Main content area wrapper", href: "/components/navigation-layout/body-content"},
-		{group: "Layout", name: "Footer", description: "Page footer section", href: "/components/navigation-layout/layout"},
+		{group: "Layout", name: "Footer", description: "Page footer section", href: "/components/navigation-layout/footer"},
 		{group: "Layout", name: "Grid", description: "Responsive 12-column grid system", href: "/components/navigation-layout/grid"},
 		{group: "Layout", name: "GridItem", description: "Grid column item", href: "/components/navigation-layout/grid"},
 		{group: "Layout", name: "Header", description: "Page header section", href: "/components/navigation-layout/layout"},

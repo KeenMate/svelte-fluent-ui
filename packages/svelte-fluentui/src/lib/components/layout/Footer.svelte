@@ -12,10 +12,8 @@
 		class: className = "",
 		style = ""
 	}: Props = $props()
-
-	let element: HTMLElement | undefined = $state()
 </script>
 
-<footer bind:this={element}  {style} class="footer {className}">
+<footer {style} class="fluent-footer {className}">
 	{@render children?.()}
 </footer>

@@ -1068,16 +1068,6 @@ div[dragged-over="true"] {
 	animation: blinker 1s linear infinite;
 }
 
-/* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Footer/FluentFooter.razor.rz.scp.css */
-.footer {
-	display: flex;
-	z-index: 10;
-	flex-direction: row;
-	font-family: var(--body-font);
-	font-weight: normal;
-	font-size: var(--type-ramp-minus-1-font-size);
-	line-height: var(--type-ramp-minus-1-line-height);
-}
 
 /* _content/Microsoft.FluentUI.AspNetCore.Components/Components/Forms/FluentValidationMessage.razor.rz.scp.css */
 .validation-message {

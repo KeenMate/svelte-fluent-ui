@@ -290,6 +290,7 @@
 			icon: "panel_left",
 			items: [
 				{label: "BodyContent", href: "/components/navigation-layout/body-content"},
+				{label: "Footer", href: "/components/navigation-layout/footer"},
 				{label: "Grid", href: "/components/navigation-layout/grid"},
 				{label: "Layout", href: "/components/navigation-layout/layout"},
 				{label: "MultiSplitter", href: "/components/navigation-layout/multisplitter"},
@@ -565,7 +566,7 @@
 	</BodyContent>
 
 	<!-- Footer -->
-	<Footer class="footer">
+	<Footer>
 		© 2025 Svelte FluentUI - Built with Fluent UI Web Components
 	</Footer>
 </Layout>
