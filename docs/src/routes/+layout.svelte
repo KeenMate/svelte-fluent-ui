@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../assets/styles/demo-pages.scss"
 	import "svelte-fluentui/styles.scss"
-	import {Layout, Footer, BodyContent, Grid, GridItem, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer, Icon, TopNav} from "svelte-fluentui"
+	import {Layout, Footer, BodyContent, Button, NavMenu, NavGroup, NavLinkItem, ToastContainer, Icon, TopNav} from "svelte-fluentui"
 	import SiteSettings from "../lib/components/SiteSettings.svelte"
 	import CommandPalette from "../lib/components/CommandPalette.svelte"
 
@@ -18,6 +18,12 @@
 	import {page} from "$app/stores"
 
 	let {children} = $props()
+
+	// Pin the TopNav drawer as a permanent left rail above this width; below it
+	// the drawer becomes a hamburger-triggered overlay. Single source of truth
+	// instead of rendering both a sidebar and a drawer at once.
+	const PIN_BREAKPOINT = 1024
+	let isWide = $state(false)
 
 	// Check if a link is active based on current route
 	function isActive(href: string): boolean {
@@ -79,6 +85,16 @@
 			console.warn("Failed to apply initial theme colors:", e)
 		}
 	}
+
+	// Track viewport width so we can flip TopNav between pinned and overlay
+	// drawer. SSR is `false` so initial render assumes narrow; corrected on mount.
+	onMount(() => {
+		const mq = window.matchMedia(`(min-width: ${PIN_BREAKPOINT}px)`)
+		isWide = mq.matches
+		const update = (e: MediaQueryListEvent) => { isWide = e.matches }
+		mq.addEventListener("change", update)
+		return () => mq.removeEventListener("change", update)
+	})
 
 	// Set FluentUI luminance and apply settings after components mount
 	onMount(async () => {
@@ -504,9 +520,9 @@
 	</NavMenu>
 {/snippet}
 
-<Layout orientation="vertical" style="min-height: 100vh;">
+<Layout orientation="vertical" class="docs-layout" style="min-height: 100vh;">
 	<!-- Top Navigation Bar -->
-	<TopNav class="docs-topnav" collapse="always">
+	<TopNav class="docs-topnav" collapse="always" drawerPinned={isWide}>
 		{#snippet brandTemplate()}
 			<div class="docs-topnav-brand-group">
 				<a href="/" class="topnav-brand">Svelte FluentUI</a>
@@ -546,23 +562,12 @@
 	<!-- Toast Container for programmatic toasts -->
 	<ToastContainer />
 
-	<!-- Main Content Area with Sidebar -->
+	<!-- Main Content — sidebar nav is the TopNav drawer (pinned on desktop,
+	     hamburger overlay on narrow widths). No duplicate sidebar. -->
 	<BodyContent>
-		<Grid spacing={0}>
-			<!-- Sidebar (desktop only; mobile uses the TopNav drawer) -->
-			<GridItem xs={12} md={3} lg={2} class="sidebar-grid-item">
-				<div class="sidebar">
-					{@render sidebarNav(() => {})}
-				</div>
-			</GridItem>
-
-			<!-- Main Content -->
-			<GridItem xs={12} md={9} lg={10} class="content-grid-item">
-				<div class="content">
-					{@render children()}
-				</div>
-			</GridItem>
-		</Grid>
+		<div class="content">
+			{@render children()}
+		</div>
 	</BodyContent>
 
 	<!-- Footer -->
@@ -665,15 +670,6 @@
 		}
 	}
 
-	.sidebar {
-		border-right: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-		background: var(--neutral-layer-2, #faf9f8);
-		min-height: calc(100vh - 60px);
-		position: sticky;
-		top: 0;
-		padding: var(--fluent-sidebar-padding);
-	}
-
 	/* Footer sections — inline gap between items in each snippet, plus a
 	   muted separator colour and a version chip that matches the topnav one. */
 	:global(.fluent-footer__start),
@@ -712,40 +708,71 @@
 		font-weight: 500;
 	}
 
-	/* TopNav uses collapse="always" so the hamburger is forced visible at
-	   every width. Hide it above lg (1280px) where the desktop sidebar
-	   takes over, so we never show two redundant nav surfaces at once. */
-	@media (min-width: 1280px) {
-		:global(.docs-topnav .mobile-menu-toggle) {
-			display: none;
+	/* Docs layout uses CSS Grid so TopNav spans the top, the pinned drawer
+	   sits as the left rail (when wide), content fills the remainder, and
+	   Footer spans the bottom. At narrow widths the drawer isn't pinned
+	   (overlay instead), so the second column collapses to a single track. */
+	:global(.layout.docs-layout) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto 1fr auto;
+		grid-template-areas:
+			"top"
+			"body"
+			"footer";
+	}
+
+	:global(.docs-layout > .topnav) {
+		grid-area: top;
+	}
+
+	:global(.docs-layout > .body-content) {
+		grid-area: body;
+		min-width: 0;
+	}
+
+	:global(.docs-layout > .fluent-footer) {
+		grid-area: footer;
+	}
+
+	@media (min-width: 1024px) {
+		:global(.layout.docs-layout) {
+			grid-template-columns: auto minmax(0, 1fr);
+			grid-template-areas:
+				"top    top"
+				"drawer body"
+				"footer footer";
 		}
-	}
 
-	/* Below lg (1280px) the desktop sidebar disappears and the hamburger
-	   drawer is the sole navigation. Stretch the content GridItem to full
-	   width (Grid keeps it at md=9 between 960-1280px, leaving an empty
-	   25% gutter otherwise). */
-	@media (max-width: 1279.98px) {
-		:global(.sidebar-grid-item) {
-			display: none;
+		/* Pinned drawer = the desktop rail. Sticky so it stays visible while
+		   the content column scrolls. Height clears the 60px sticky topnav.
+		   No padding on the aside itself — the scrollable inner body owns
+		   the lane, which keeps the scrollbar flush against the rail's edge
+		   instead of floating inside a padding gap. */
+		:global(.docs-layout > .fluent-panel--pinned) {
+			grid-area: drawer;
+			position: sticky;
+			top: 60px;
+			height: calc(100vh - 60px);
+			background: var(--neutral-layer-2, #faf9f8);
+			padding: 0;
 		}
-		:global(.content-grid-item) {
-			flex-basis: 100% !important;
-			max-width: 100% !important;
+
+		:global(.docs-layout > .fluent-panel--pinned .topnav-drawer-body) {
+			padding: var(--fluent-sidebar-padding) 0 var(--fluent-sidebar-padding) var(--fluent-sidebar-padding);
 		}
-	}
 
-	.sidebar :global(.fluent-nav-menu) {
-		padding: 0 !important;
-	}
+		:global(.docs-layout > .fluent-panel--pinned .fluent-nav-menu) {
+			padding: 0 !important;
+		}
 
-	.sidebar :global(.fluent-icon) {
-		margin-right: var(--fluent-sidebar-icon-gap);
-	}
+		:global(.docs-layout > .fluent-panel--pinned .fluent-icon) {
+			margin-right: var(--fluent-sidebar-icon-gap);
+		}
 
-	/* Reduce spacing for top-level nav items (direct children of nav-menu) */
-	.sidebar :global(.fluent-nav-menu > .fluent-nav-item) {
-		margin: 2px 0;
+		:global(.docs-layout > .fluent-panel--pinned .fluent-nav-menu > .fluent-nav-item) {
+			margin: 2px 0;
+		}
 	}
 
 	.content {
@@ -790,10 +817,6 @@
 
 
 	@media (max-width: 768px) {
-		.sidebar {
-			display: none;
-		}
-
 		.content {
 			padding: 1rem;
 		}

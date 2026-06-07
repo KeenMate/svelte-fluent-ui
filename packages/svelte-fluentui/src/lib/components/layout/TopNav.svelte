@@ -31,6 +31,8 @@
 		navigationGroups?: NavGroupItem[]
 		drawerContent?: SlotType
 		collapse?: CollapseMode
+		drawerPinned?: boolean
+		drawerWidth?: string
 		height?: number
 		class?: string
 		style?: string
@@ -45,6 +47,8 @@
 		navigationGroups = [],
 		drawerContent = undefined,
 		collapse = "auto",
+		drawerPinned = false,
+		drawerWidth = "280px",
 		height = 60,
 		class: className = "",
 		style = ""
@@ -59,6 +63,15 @@
 	const hasDrawerContent = $derived(
 		items.length > 0 || navigationGroups.length > 0 || !!drawerContent
 	)
+
+	// Sync drawer's open state with `drawerPinned` so transitioning to pinned
+	// mode auto-reveals the rail (desktop default) and transitioning back to
+	// overlay mode starts closed (no surprise overlay on viewport resize).
+	// User toggles via the hamburger between transitions stand on their own
+	// since this effect only re-runs when drawerPinned itself changes.
+	$effect(() => {
+		mobileMenuOpen = drawerPinned
+	})
 
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen
@@ -78,6 +91,7 @@
 	class="topnav {className}"
 	class:topnav--force-collapse={collapse === "always"}
 	class:topnav--force-expand={collapse === "never"}
+	class:topnav--drawer-pinned={drawerPinned}
 	style="height: {height}px; {style}"
 >
 	<div class="topnav-container">
@@ -141,9 +155,10 @@
 	<Panel
 		bind:open={mobileMenuOpen}
 		side="start"
-		width="280px"
+		width={drawerWidth}
 		top="{height}px"
-		class="topnav-drawer"
+		pinned={drawerPinned}
+		class="topnav-drawer {drawerPinned ? 'topnav-drawer--pinned' : ''}"
 	>
 		<div class="topnav-drawer-body">
 			{#if items.length > 0}
@@ -201,7 +216,7 @@
 		align-items: center;
 		background: var(--neutral-layer-1, #ffffff);
 		border-bottom: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-		padding: 0 1.5rem;
+		padding: 0 0.5rem;
 		container-type: inline-size;
 		container-name: topnav;
 	}
@@ -346,6 +361,12 @@
 
 	/* collapse="always" — force hamburger visible + items hidden regardless of width */
 	:global(.topnav.topnav--force-collapse .mobile-menu-toggle) {
+		display: flex;
+	}
+
+	/* When drawer is pinned the hamburger acts as a show/hide toggle for the
+	   pinned rail itself, so it must stay visible at every width. */
+	:global(.topnav.topnav--drawer-pinned .mobile-menu-toggle) {
 		display: flex;
 	}
 

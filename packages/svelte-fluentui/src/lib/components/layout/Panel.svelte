@@ -48,6 +48,7 @@
 		overlay?: boolean
 		closeOnOutsideClick?: boolean
 		closeOnEscape?: boolean
+		pinned?: boolean
 		onclose?: () => void
 		children?: SlotType
 		class?: string
@@ -62,6 +63,7 @@
 		overlay = true,
 		closeOnOutsideClick = true,
 		closeOnEscape = true,
+		pinned = false,
 		onclose = undefined,
 		children = undefined,
 		class: className = undefined,
@@ -78,6 +80,7 @@
 
 	let wasOpen = false
 	$effect(() => {
+		if (pinned) return
 		if (open && !wasOpen) {
 			pushPanel(handle)
 			wasOpen = true
@@ -91,7 +94,7 @@
 	// overlay to catch the click. Deferred to the next task so the same click
 	// that opened the panel doesn't immediately close it.
 	$effect(() => {
-		if (!open || overlay || !closeOnOutsideClick) return
+		if (pinned || !open || overlay || !closeOnOutsideClick) return
 		const id = setTimeout(() => {
 			document.addEventListener("pointerdown", handleOutsideClick, true)
 		}, 0)
@@ -140,35 +143,46 @@
 	}
 </script>
 
-<div
-	class="fluent-panel-root fluent-panel-root--{side} {className || ''}"
-	class:fluent-panel-root--open={open}
-	class:fluent-panel-root--rtl={isRTL}
-	style="--panel-top: {top};"
-	aria-hidden={!open}
-	use:setupRoot
->
-	{#if overlay}
-		<div
-			class="fluent-panel-overlay"
-			role="button"
-			tabindex={-1}
-			aria-label="Close panel"
-			onclick={onOverlayClick}
-			onkeydown={(e) => (e.key === "Enter" || e.key === " ") && onOverlayClick()}
-		></div>
+{#if pinned}
+	{#if open}
+		<aside
+			class="fluent-panel fluent-panel--pinned fluent-panel--pinned-{side} {className || ''}"
+			style="width: {width}; {style || ''}"
+		>
+			{@render children?.()}
+		</aside>
 	{/if}
-
+{:else}
 	<div
-		bind:this={panelEl}
-		class="fluent-panel"
-		role="dialog"
-		aria-modal={overlay}
-		style="width: {width}; {style || ''}"
+		class="fluent-panel-root fluent-panel-root--{side} {className || ''}"
+		class:fluent-panel-root--open={open}
+		class:fluent-panel-root--rtl={isRTL}
+		style="--panel-top: {top};"
+		aria-hidden={!open}
+		use:setupRoot
 	>
-		{@render children?.()}
+		{#if overlay}
+			<div
+				class="fluent-panel-overlay"
+				role="button"
+				tabindex={-1}
+				aria-label="Close panel"
+				onclick={onOverlayClick}
+				onkeydown={(e) => (e.key === "Enter" || e.key === " ") && onOverlayClick()}
+			></div>
+		{/if}
+
+		<div
+			bind:this={panelEl}
+			class="fluent-panel"
+			role="dialog"
+			aria-modal={overlay}
+			style="width: {width}; {style || ''}"
+		>
+			{@render children?.()}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	.fluent-panel-root {
@@ -262,5 +276,36 @@
 		transform: translateX(0);
 		visibility: visible;
 		pointer-events: auto;
+	}
+
+	// Pinned: render in normal flow as a regular column. None of the
+	// floating-panel positioning, transforms, or visibility gymnastics apply
+	// — caller is responsible for placing the <aside> via parent layout.
+	//
+	// `z-index` is explicit (not auto) so pinned forms its own stacking
+	// context — keeps overlay drawers (z-index 1050+) and their backdrops
+	// (1040) reliably above any pinned drawer, regardless of paint order.
+	// Override via --fluent-z-panel-pinned on the consumer side if multiple
+	// pinned panels need to layer relative to each other.
+	.fluent-panel--pinned {
+		position: relative;
+		top: auto;
+		height: auto;
+		max-width: none;
+		transform: none;
+		visibility: visible;
+		pointer-events: auto;
+		transition: none;
+		flex-shrink: 0;
+		align-self: stretch;
+		box-shadow: none;
+		border-inline-end: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
+		z-index: var(--fluent-z-panel-pinned, 1);
+	}
+
+	.fluent-panel--pinned-end,
+	.fluent-panel--pinned-right {
+		border-inline-end: none;
+		border-inline-start: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
 	}
 </style>
