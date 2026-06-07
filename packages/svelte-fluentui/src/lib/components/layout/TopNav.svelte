@@ -228,6 +228,19 @@
 		display: none;
 		order: -1;
 		flex-shrink: 0;
+		width: 42px;
+		min-width: 42px;
+		height: 42px;
+	}
+
+	/* Override fluent-button's internal control padding/min-height so the
+	   hamburger fills the fixed 42×42 box and the icon centers in it. */
+	:global(.topnav .mobile-menu-toggle::part(control)) {
+		width: 100%;
+		height: 100%;
+		min-width: 0;
+		min-height: 0;
+		padding: 0;
 	}
 
 	.hamburger-icon {
