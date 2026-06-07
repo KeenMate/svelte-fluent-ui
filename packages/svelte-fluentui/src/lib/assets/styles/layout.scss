@@ -46,3 +46,39 @@
 	z-index: 10;
 	transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+// Three-part mode: switch to CSS Grid so the center column is truly centered
+// (1fr | auto | 1fr — side columns absorb equal slack regardless of widths).
+// Explicit grid-column placement so a missing section doesn't shift the
+// remaining ones into the wrong column.
+.fluent-footer--three-part {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	gap: 1rem;
+}
+
+.fluent-footer__start  { grid-column: 1; justify-self: start; }
+.fluent-footer__center { grid-column: 2; justify-self: center; }
+.fluent-footer__end    { grid-column: 3; justify-self: end; }
+
+// Stacking on narrow widths — opt-in via the `stack` prop (default true).
+// Container query keyed on the footer itself so behavior is intrinsic to
+// the bar's width, not the viewport (mirrors TopNav's approach).
+.fluent-footer--stacks {
+	container-type: inline-size;
+	container-name: fluent-footer;
+}
+
+@container fluent-footer (max-width: 600px) {
+	.fluent-footer--stacks {
+		grid-template-columns: 1fr;
+		gap: 0.5rem;
+	}
+
+	.fluent-footer--stacks .fluent-footer__start,
+	.fluent-footer--stacks .fluent-footer__center,
+	.fluent-footer--stacks .fluent-footer__end {
+		grid-column: 1;
+		justify-self: start;
+	}
+}
