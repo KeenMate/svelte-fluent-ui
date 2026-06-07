@@ -308,7 +308,6 @@
 		flex: 1 1 0;
 		min-height: 0;
 		overflow-y: auto;
-		padding: 0.75rem 0;
 	}
 
 	.topnav-drawer-items {
