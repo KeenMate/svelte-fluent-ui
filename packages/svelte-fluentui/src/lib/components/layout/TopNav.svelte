@@ -138,7 +138,13 @@
 </nav>
 
 {#if hasDrawerContent}
-	<Panel bind:open={mobileMenuOpen} side="start" width="280px" class="topnav-drawer">
+	<Panel
+		bind:open={mobileMenuOpen}
+		side="start"
+		width="280px"
+		top="{height}px"
+		class="topnav-drawer"
+	>
 		<div class="topnav-drawer-body">
 			{#if items.length > 0}
 				<div class="topnav-drawer-items">

@@ -20,6 +20,7 @@
 		{name: "open", type: "boolean", default: "false", description: "Open state (bindable)"},
 		{name: "side", type: '"left" | "right" | "start" | "end"', default: '"right"', description: "Edge the panel slides in from. \"left\"/\"right\" are physical; \"start\"/\"end\" are logical and flip with dir=\"rtl\""},
 		{name: "width", type: "string", default: '"320px"', description: "Panel width (any CSS length)"},
+		{name: "top", type: "string", default: '"0"', description: "Top offset for the panel + overlay (any CSS length). Leaves the area above (e.g. a sticky header / top nav) visible and interactive so the trigger remains clickable while the drawer is open."},
 		{name: "overlay", type: "boolean", default: "true", description: "Render a dimmed backdrop behind the panel"},
 		{name: "closeOnOutsideClick", type: "boolean", default: "true", description: "Close the panel when the user clicks outside it (overlay click when overlay is on, document click when overlay is off)"},
 		{name: "closeOnEscape", type: "boolean", default: "true", description: "Close the panel when Escape is pressed"},

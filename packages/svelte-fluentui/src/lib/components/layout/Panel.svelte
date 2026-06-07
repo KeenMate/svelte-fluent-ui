@@ -44,6 +44,7 @@
 		open?: boolean
 		side?: Side
 		width?: string
+		top?: string
 		overlay?: boolean
 		closeOnOutsideClick?: boolean
 		closeOnEscape?: boolean
@@ -57,6 +58,7 @@
 		open = $bindable(false),
 		side = "right",
 		width = "320px",
+		top = "0",
 		overlay = true,
 		closeOnOutsideClick = true,
 		closeOnEscape = true,
@@ -142,6 +144,7 @@
 	class="fluent-panel-root fluent-panel-root--{side} {className || ''}"
 	class:fluent-panel-root--open={open}
 	class:fluent-panel-root--rtl={isRTL}
+	style="--panel-top: {top};"
 	aria-hidden={!open}
 	use:setupRoot
 >
@@ -170,7 +173,10 @@
 <style lang="scss">
 	.fluent-panel-root {
 		position: fixed;
-		inset: 0;
+		top: var(--panel-top, 0);
+		right: 0;
+		bottom: 0;
+		left: 0;
 		z-index: var(--fluent-z-modal, 1050);
 		// Never block the page — only the overlay and the panel surface
 		// (re-enabled below) capture pointer events.
@@ -190,7 +196,7 @@
 	.fluent-panel {
 		position: absolute;
 		top: 0;
-		height: 100vh;
+		height: 100%;
 		max-width: 90vw;
 		background-color: var(--neutral-layer-1, #ffffff);
 		display: flex;
