@@ -567,7 +567,25 @@
 
 	<!-- Footer -->
 	<Footer>
-		© 2025 Svelte FluentUI - Built with Fluent UI Web Components
+		{#snippet start()}
+			<span>© 2025–2026 KeenMate</span>
+			<span class="docs-footer-sep" aria-hidden="true">·</span>
+			<a
+				href="https://github.com/KeenMate/svelte-fluentui/blob/master/LICENSE"
+				target="_blank"
+				rel="noopener noreferrer"
+			>MIT</a>
+		{/snippet}
+		{#snippet center()}
+			Built with FluentUI Web Components
+		{/snippet}
+		{#snippet end()}
+			<a href="https://github.com/KeenMate/svelte-fluentui" target="_blank" rel="noopener noreferrer">GitHub</a>
+			<span class="docs-footer-sep" aria-hidden="true">·</span>
+			<a href="https://www.npmjs.com/package/svelte-fluentui" target="_blank" rel="noopener noreferrer">npm</a>
+			<span class="docs-footer-sep" aria-hidden="true">·</span>
+			<span class="docs-footer-version">v{__SVELTE_FLUENTUI_VERSION__}</span>
+		{/snippet}
 	</Footer>
 </Layout>
 {/if}
@@ -654,6 +672,44 @@
 		position: sticky;
 		top: 0;
 		padding: var(--fluent-sidebar-padding);
+	}
+
+	/* Footer sections — inline gap between items in each snippet, plus a
+	   muted separator colour and a version chip that matches the topnav one. */
+	:global(.fluent-footer__start),
+	:global(.fluent-footer__center),
+	:global(.fluent-footer__end) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.875rem;
+	}
+
+	:global(.fluent-footer__center) {
+		color: var(--neutral-foreground-hint, #666);
+	}
+
+	:global(.fluent-footer a) {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	:global(.fluent-footer a:hover) {
+		text-decoration: underline;
+	}
+
+	.docs-footer-sep {
+		color: var(--neutral-foreground-hint, #999);
+		user-select: none;
+	}
+
+	.docs-footer-version {
+		font-size: 0.8rem;
+		color: var(--neutral-foreground-hint, #666);
+		background: var(--neutral-layer-3, #f0f0f0);
+		padding: 0.2rem 0.5rem;
+		border-radius: 4px;
+		font-weight: 500;
 	}
 
 	/* TopNav uses collapse="always" so the hamburger is forced visible at
