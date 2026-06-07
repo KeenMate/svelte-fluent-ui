@@ -67,7 +67,11 @@ If `WIP_VERSION` ≠ `NEW_VERSION` (e.g. the WIP is `1.0.0-rc17` but the user as
 
 - Run `git status`. The repo intentionally keeps `.claude/`, `ALERT_SESSION_NOTES.md`, and `docs/.claude/` untracked — those are fine. If there are **other** uncommitted changes that aren't `CHANGELOG.md`, root `README.md`, or `packages/svelte-fluentui/package.json`, warn the user and ask before continuing.
 - Confirm the WIP CHANGELOG section has at least one bullet of substantive content under `### Added`, `### Changed`, `### Removed`, or `### Fixed`. If empty, stop — there's nothing meaningful to release.
-- Confirm `./README.md` has a `## What's New in vWIP_VERSION` section. If it's missing, stop and ask the user to add it (the publish step shouldn't invent the highlights — that's a writing call, not a mechanical one).
+- Confirm `./README.md` has a `## What's New in vWIP_VERSION` section. If it's missing, draft one from the CHANGELOG and present it to the user for approval before continuing:
+  - Read the WIP CHANGELOG section, distill it to 5–7 scannable bullets covering the Added/Changed themes (paraphrase, don't copy CHANGELOG bullets verbatim — those are exhaustive; What's New is the highlight reel). Follow the formatting of the existing `## What's New in vX.Y.Z` sections in the README (bold lead phrase + em-dash + 1–3 sentence explanation).
+  - Show the user the proposed draft as plain markdown in your reply. Ask whether to (a) insert as-is, (b) edit, or (c) abort so they can write it themselves.
+  - Only proceed past step 1 once the user approves the draft (or supplies their own). On approval, insert the section directly above the current top `## What's New in vX.Y.Z` heading in `README.md`, then continue.
+  - Do not silently insert the draft without confirmation — release highlights are a writing call and the user owns the voice.
 
 ### 2. Bump version (if needed)
 
