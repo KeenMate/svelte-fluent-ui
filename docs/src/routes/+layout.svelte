@@ -505,7 +505,7 @@
 
 <Layout orientation="vertical" style="min-height: 100vh;">
 	<!-- Top Navigation Bar -->
-	<TopNav class="docs-topnav">
+	<TopNav class="docs-topnav" collapse="always">
 		{#snippet brandTemplate()}
 			<div class="docs-topnav-brand-group">
 				<a href="/" class="topnav-brand">Svelte FluentUI</a>
@@ -556,7 +556,7 @@
 			</GridItem>
 
 			<!-- Main Content -->
-			<GridItem xs={12} md={9} lg={10}>
+			<GridItem xs={12} md={9} lg={10} class="content-grid-item">
 				<div class="content">
 					{@render children()}
 				</div>
@@ -655,12 +655,26 @@
 		padding: var(--fluent-sidebar-padding);
 	}
 
-	/* Hide the desktop sidebar GridItem below Grid's md breakpoint (960px),
-	   which also aligns with TopNav's collapse breakpoint — the same nav
-	   lives inside the mobile drawer via TopNav's drawerContent. */
-	@media (max-width: 959.98px) {
+	/* TopNav uses collapse="always" so the hamburger is forced visible at
+	   every width. Hide it above lg (1280px) where the desktop sidebar
+	   takes over, so we never show two redundant nav surfaces at once. */
+	@media (min-width: 1280px) {
+		:global(.docs-topnav .mobile-menu-toggle) {
+			display: none;
+		}
+	}
+
+	/* Below lg (1280px) the desktop sidebar disappears and the hamburger
+	   drawer is the sole navigation. Stretch the content GridItem to full
+	   width (Grid keeps it at md=9 between 960-1280px, leaving an empty
+	   25% gutter otherwise). */
+	@media (max-width: 1279.98px) {
 		:global(.sidebar-grid-item) {
 			display: none;
+		}
+		:global(.content-grid-item) {
+			flex-basis: 100% !important;
+			max-width: 100% !important;
 		}
 	}
 
