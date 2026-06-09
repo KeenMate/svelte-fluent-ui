@@ -22,10 +22,10 @@
 </script>
 
 <fluent-toolbar
-	id={id}
+	{...(id ? { id } : {})}
 	class={className}
-	style={style}
-	orientation={orientation}
+	{...(style ? { style } : {})}
+	{...(orientation ? { orientation } : {})}
 >
 	{#if children}
 		{@render children?.()}

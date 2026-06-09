@@ -179,20 +179,20 @@
 <!-- svelte-ignore a11y_autofocus -->
 <fluent-text-field
 	bind:this={element}
-	{id}
-	{value}
-	{placeholder}
-	{appearance}
-	{disabled}
-	{readonly}
-	{required}
-	{type}
-	{name}
-	{autofocus}
-	{autocomplete}
-	{style}
-	{title}
-	aria-label={!label && !labelTemplate ? undefined : label || undefined}
+	{...(id ? { id } : {})}
+	{...(value != null ? { value } : {})}
+	{...(placeholder ? { placeholder } : {})}
+	{...(appearance ? { appearance } : {})}
+	{...(disabled ? { disabled } : {})}
+	{...(readonly ? { readonly } : {})}
+	{...(required ? { required } : {})}
+	{...(type ? { type } : {})}
+	{...(name ? { name } : {})}
+	{...(autofocus ? { autofocus } : {})}
+	{...(autocomplete ? { autocomplete } : {})}
+	{...(style ? { style } : {})}
+	{...(title ? { title } : {})}
+	{...(label || labelTemplate ? { "aria-label": label } : {})}
 	oninput={handleOnInput}
 	onchange={handleOnChange}
 	onkeydown={handleOnKeyDown}

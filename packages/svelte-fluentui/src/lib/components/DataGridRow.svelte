@@ -48,9 +48,9 @@
 <!-- svelte-ignore a11y_interactive_supports_focus -->
 <fluent-data-grid-row
 	class={className}
-	{style}
-	data-row-index={rowIndex}
-	row-type={rowType}
+	{...(style ? { style } : {})}
+	{...(rowIndex !== undefined ? { "data-row-index": rowIndex } : {})}
+	{...(rowType ? { "row-type": rowType } : {})}
 	role="row"
 	onkeydown={handleKeyDown}
 	onclick={handleClick}

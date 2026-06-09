@@ -254,19 +254,19 @@
 <fluent-combobox
 	bind:this={element}
 	class={className}
-	style={computedStyle()}
-	{id}
-	autocomplete={autocomplete || null}
-	open={open || null}
-	current-value={currentValue || null}
-	placeholder={placeholder || null}
-	position={position}
-	disabled={disabled || null}
-	appearance={appearance || null}
-	required={required || null}
-	autofocus={autofocus || null}
-	name={name || null}
-	aria-label={ariaLabel || label || null}
+	{...(computedStyle() ? { style: computedStyle() } : {})}
+	{...(id ? { id } : {})}
+	{...(autocomplete ? { autocomplete } : {})}
+	{...(open ? { open } : {})}
+	{...(currentValue ? { "current-value": currentValue } : {})}
+	{...(placeholder ? { placeholder } : {})}
+	{...(position ? { position } : {})}
+	{...(disabled ? { disabled } : {})}
+	{...(appearance ? { appearance } : {})}
+	{...(required ? { required } : {})}
+	{...(autofocus ? { autofocus } : {})}
+	{...(name ? { name } : {})}
+	{...(ariaLabel || label ? { "aria-label": ariaLabel ?? label } : {})}
 	{...titleProps}
 	onchange={handleChange}
 >

@@ -97,9 +97,9 @@
 <fluent-listbox
 	bind:this={element}
 	selected-options={selectedOptionsAttr}
-	{disabled}
-	{autofocus}
-	{name}
+	{...(disabled ? { disabled } : {})}
+	{...(autofocus ? { autofocus } : {})}
+	{...(name ? { name } : {})}
 	{...(size !== undefined ? { size } : {})}
 	aria-label={ariaLabel || null}
 	class={className || null}

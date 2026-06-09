@@ -99,15 +99,15 @@
 	     mere presence as `true`. -->
 	<fluent-switch
 		class={className}
-		{style}
-		{readonly}
+		{...(style ? { style } : {})}
+		{...(readonly ? { readonly } : {})}
 		id={effectiveId}
-		{disabled}
-		{autofocus}
-		{name}
-		aria-label={ariaLabel || label}
-		{required}
-		checked={checked || null}
+		{...(disabled ? { disabled } : {})}
+		{...(autofocus ? { autofocus } : {})}
+		{...(name ? { name } : {})}
+		{...(ariaLabel || label ? { "aria-label": ariaLabel || label } : {})}
+		{...(required ? { required } : {})}
+		{...(checked ? { checked } : {})}
 		aria-checked={checked ? "true" : "false"}
 		onchange={handleChange}
 		role="switch"

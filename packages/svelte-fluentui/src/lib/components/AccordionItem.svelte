@@ -43,14 +43,18 @@
 
 		onchange?.(ev, target.getAttribute("expanded") === "")
 	}
+
+	const isExpanded = $derived(
+		expanded === undefined && ctx.value !== undefined ? !!ctx.value?.includes(id) : expanded
+	)
 </script>
 
 <!-- todo: investigate flicker during switching of accordions -->
 <fluent-accordion-item
-	{id}
+	{...(id ? { id } : {})}
 	data-custom-id={id}
-	heading-level={headingLevel}
-	expanded={expanded === undefined && ctx.value !== undefined ? !!ctx.value?.includes(id) : expanded}
+	{...(headingLevel !== undefined ? { "heading-level": headingLevel } : {})}
+	{...(isExpanded ? { expanded: isExpanded } : {})}
 	onchange={handleOnChange}
 >
 	<div slot="heading">

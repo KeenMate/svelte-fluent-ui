@@ -123,6 +123,48 @@
 				autocomplete="current-password"
 			/>
 		</Stack>
+
+		<h3>Readonly</h3>
+		<p>Set <code>readonly</code> to display a value the user can focus and select but not edit.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<TextField
+				label="Readonly (outline)"
+				value="Read-only value"
+				readonly
+			/>
+
+			<TextField
+				label="Readonly (filled)"
+				appearance="filled"
+				value="Read-only value"
+				readonly
+			/>
+		</Stack>
+
+		<h3>Disabled</h3>
+		<p>Set <code>disabled</code> to render the field as inactive and skip it during form submission.</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<TextField
+				label="Disabled (outline)"
+				placeholder="Disabled placeholder"
+				disabled
+			/>
+
+			<TextField
+				label="Disabled with value"
+				value="Cannot be edited"
+				disabled
+			/>
+
+			<TextField
+				label="Disabled (filled)"
+				appearance="filled"
+				value="Cannot be edited"
+				disabled
+			/>
+		</Stack>
 	</Card>
 
 	<Grid spacing={3}>

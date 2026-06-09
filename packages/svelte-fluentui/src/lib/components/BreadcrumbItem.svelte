@@ -20,7 +20,7 @@
 </script>
 
 <fluent-breadcrumb-item
-	{href}
+	{...(href ? { href } : {})}
 >
 	{#if separator}
 		<span slot="separator">

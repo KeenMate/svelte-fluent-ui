@@ -84,6 +84,6 @@
 	}
 </script>
 
-<fluent-accordion expand-mode={multi}  onchange={handleAccordionChange}>
+<fluent-accordion {...(multi ? { "expand-mode": multi } : {})} onchange={handleAccordionChange}>
 	{@render children?.()}
 </fluent-accordion>

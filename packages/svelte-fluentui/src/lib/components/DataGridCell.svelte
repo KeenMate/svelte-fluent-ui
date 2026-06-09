@@ -52,14 +52,14 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex a11y_click_events_have_key_events -->
 <fluent-data-grid-cell
 	class={className}
-	{style}
-	grid-column={gridColumn}
-	cell-type={cellType}
-	col-index={colIndex}
-	{role}
-	tabindex={tabIndex}
-	{title}
-	aria-label={ariaLabel}
+	{...(style ? { style } : {})}
+	{...(gridColumn !== undefined ? { "grid-column": gridColumn } : {})}
+	{...(cellType ? { "cell-type": cellType } : {})}
+	{...(colIndex !== undefined ? { "col-index": colIndex } : {})}
+	{...(role ? { role } : {})}
+	{...(tabIndex !== undefined ? { tabindex: tabIndex } : {})}
+	{...(title ? { title } : {})}
+	{...(ariaLabel ? { "aria-label": ariaLabel } : {})}
 	onkeydown={handleKeyDown}
 	onclick={handleClick}
 	onfocus={handleFocus}

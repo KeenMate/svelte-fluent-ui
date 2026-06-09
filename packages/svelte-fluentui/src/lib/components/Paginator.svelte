@@ -55,7 +55,7 @@
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onFirst?.()}
-			disabled={!canGoBack || disabled}
+			{...(!canGoBack || disabled ? { disabled: true } : {})}
 			title="Go to first page"
 			aria-label="Go to first page"
 		>
@@ -66,7 +66,7 @@
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onPrevious?.()}
-			disabled={!canGoBack || disabled}
+			{...(!canGoBack || disabled ? { disabled: true } : {})}
 			title="Go to previous page"
 			aria-label="Go to previous page"
 		>
@@ -85,7 +85,7 @@
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onNext?.()}
-			disabled={!canGoForwards || disabled}
+			{...(!canGoForwards || disabled ? { disabled: true } : {})}
 			title="Go to next page"
 			aria-label="Go to next page"
 		>
@@ -96,7 +96,7 @@
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<fluent-button
 			onclick={() => onLast?.()}
-			disabled={!canGoForwards || disabled}
+			{...(!canGoForwards || disabled ? { disabled: true } : {})}
 			title="Go to last page"
 			aria-label="Go to last page"
 		>

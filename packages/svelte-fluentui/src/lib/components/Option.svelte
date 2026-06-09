@@ -55,13 +55,13 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<fluent-option
-		{value}
-		selected={selected !== undefined ? selected : (selectedValue?.value?.includes(value) || undefined)}
+		{...(value != null ? { value } : {})}
+		{...((selected !== undefined ? selected : selectedValue?.value?.includes(value)) ? { selected: true } : {})}
 		class={className}
-		{style}
-		data-option-label={label || null}
-		data-option-context={data ? JSON.stringify(data) : undefined}
-		{disabled}
+		{...(style ? { style } : {})}
+		{...(label ? { "data-option-label": label } : {})}
+		{...(data ? { "data-option-context": JSON.stringify(data) } : {})}
+		{...(disabled ? { disabled } : {})}
 		onclick={handleOnClick}
 	>
 		{#if icon}

@@ -164,26 +164,26 @@
 <fluent-text-area
 	bind:this={element}
 	class={className}
-	{style}
-	{readonly}
-	{resize}
-	{autofocus}
-	autocomplete={autocomplete}
-	{form}
-	{list}
+	{...(style ? { style } : {})}
+	{...(readonly ? { readonly } : {})}
+	{...(resize ? { resize } : {})}
+	{...(autofocus ? { autofocus } : {})}
+	{...(autocomplete ? { autocomplete } : {})}
+	{...(form ? { form } : {})}
+	{...(list ? { list } : {})}
 	{...(maxlength !== undefined ? { maxlength } : {})}
 	{...(minlength !== undefined ? { minlength } : {})}
-	{placeholder}
+	{...(placeholder ? { placeholder } : {})}
 	{...(cols !== undefined ? { cols } : {})}
 	{...(rows !== undefined ? { rows } : {})}
-	{spellcheck}
-	{id}
-	{name}
-	{disabled}
-	{required}
-	{appearance}
-	{value}
-	aria-label={ariaLabel}
+	{...(spellcheck != null ? { spellcheck } : {})}
+	{...(id ? { id } : {})}
+	{...(name ? { name } : {})}
+	{...(disabled ? { disabled } : {})}
+	{...(required ? { required } : {})}
+	{...(appearance ? { appearance } : {})}
+	{...(value != null ? { value } : {})}
+	{...(ariaLabel ? { "aria-label": ariaLabel } : {})}
 	oninput={handleInput}
 	onchange={handleChange}
 >

@@ -91,18 +91,18 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <fluent-slider
 	bind:this={element}
-	{id}
-	{min}
-	{max}
-	{step}
-	{orientation}
-	{disabled}
-	{readonly}
-	{required}
-	{name}
-	aria-label={ariaLabel || label || null}
-	class={className || null}
-	style={style || null}
+	{...(id ? { id } : {})}
+	{...(min !== undefined ? { min } : {})}
+	{...(max !== undefined ? { max } : {})}
+	{...(step !== undefined ? { step } : {})}
+	{...(orientation ? { orientation } : {})}
+	{...(disabled ? { disabled } : {})}
+	{...(readonly ? { readonly } : {})}
+	{...(required ? { required } : {})}
+	{...(name ? { name } : {})}
+	{...(ariaLabel || label ? { "aria-label": ariaLabel || label } : {})}
+	{...(className ? { class: className } : {})}
+	{...(style ? { style } : {})}
 	onchange={handleChange}
 	oninput={handleInput}
 >

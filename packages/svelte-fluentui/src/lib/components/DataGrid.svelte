@@ -39,10 +39,10 @@
 
 <fluent-data-grid
 	class={className}
-	{style}
-	{id}
-	aria-rowcount={ariaRowCount}
-	generate-header={generateHeader}
+	{...(style ? { style } : {})}
+	{...(id ? { id } : {})}
+	{...(ariaRowCount !== undefined ? { "aria-rowcount": ariaRowCount } : {})}
+	{...(generateHeader ? { "generate-header": generateHeader } : {})}
 	role={role}
 	onclosecolumnoptions={handleCloseColumnOptions}
 	onclosecolumnresize={handleCloseColumnResize}

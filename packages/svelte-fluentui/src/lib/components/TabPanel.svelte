@@ -23,7 +23,7 @@
 	}: Props = $props()
 </script>
 
-<fluent-tab-panel class={className} {style} {id} hidden={!active} >
+<fluent-tab-panel class={className} {...(style ? { style } : {})} {...(id ? { id } : {})} hidden={!active} >
 	{#if children}
 		{@render children?.()}
 	{/if}

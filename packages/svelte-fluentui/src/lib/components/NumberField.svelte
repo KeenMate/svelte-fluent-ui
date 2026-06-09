@@ -187,27 +187,27 @@
 <!-- svelte-ignore a11y_autofocus -->
 <fluent-number-field
 	bind:this={element}
-	{id}
-	class={className || null}
-	style={computedStyle}
-	placeholder={placeholder || null}
-	appearance={appearance || null}
-	disabled={disabled || null}
-	readonly={readonly || null}
-	required={required || null}
-	autofocus={autofocus || null}
-	autocomplete={autocomplete || null}
+	{...(id ? { id } : {})}
+	{...(className ? { class: className } : {})}
+	{...(computedStyle ? { style: computedStyle } : {})}
+	{...(placeholder ? { placeholder } : {})}
+	{...(appearance ? { appearance } : {})}
+	{...(disabled ? { disabled } : {})}
+	{...(readonly ? { readonly } : {})}
+	{...(required ? { required } : {})}
+	{...(autofocus ? { autofocus } : {})}
+	{...(autocomplete ? { autocomplete } : {})}
 	{...(step !== undefined ? { step } : {})}
 	{...(min !== undefined ? { min } : {})}
 	{...(max !== undefined ? { max } : {})}
 	{...(minlength !== undefined ? { minlength } : {})}
 	{...(maxlength !== undefined ? { maxlength } : {})}
 	{...(size !== undefined ? { size } : {})}
-	list={list || null}
-	hide-step={hideStep || null}
-	name={name || null}
-	aria-label={ariaLabel ?? (label || null)}
-	value={value ?? ""}
+	{...(list ? { list } : {})}
+	{...(hideStep ? { "hide-step": hideStep } : {})}
+	{...(name ? { name } : {})}
+	{...(ariaLabel || label ? { "aria-label": ariaLabel ?? label } : {})}
+	{...(value != null ? { value } : {})}
 	{...titleProps}
 	oninput={handleOnInput}
 	onchange={handleOnChange}

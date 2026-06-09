@@ -155,17 +155,17 @@
 	<!-- svelte-ignore a11y_autofocus -->
 	<fluent-checkbox
 		bind:this={element}
-		checked={checked === true}
-		indeterminate={checked === null}
-		{autofocus}
-		{readonly}
-		{disabled}
-		{required}
+		{...(checked === true ? { checked: true } : {})}
+		{...(checked === null ? { indeterminate: true } : {})}
+		{...(autofocus ? { autofocus } : {})}
+		{...(readonly ? { readonly } : {})}
+		{...(disabled ? { disabled } : {})}
+		{...(required ? { required } : {})}
 		id={effectiveId}
-		{name}
-		aria-label={ariaLabel || label || null}
-		class={className || null}
-		style={style || null}
+		{...(name ? { name } : {})}
+		{...(ariaLabel || label ? { "aria-label": ariaLabel || label } : {})}
+		{...(className ? { class: className } : {})}
+		{...(style ? { style } : {})}
 		onclick={handleOnClick}
 	></fluent-checkbox>
 

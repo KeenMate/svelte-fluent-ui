@@ -68,18 +68,18 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <fluent-anchor
 	bind:this={element}
-	{id}
-	class={className}
-	{style}
-	{download}
-	{href}
-	{hreflang}
-	{ping}
-	{referrerpolicy}
-	{rel}
-	{target}
-	{type}
-	{appearance}
+	{...(id ? { id } : {})}
+	{...(className ? { class: className } : {})}
+	{...(style ? { style } : {})}
+	{...(download ? { download } : {})}
+	{...(href ? { href } : {})}
+	{...(hreflang ? { hreflang } : {})}
+	{...(ping ? { ping } : {})}
+	{...(referrerpolicy ? { referrerpolicy } : {})}
+	{...(rel ? { rel } : {})}
+	{...(target ? { target } : {})}
+	{...(type ? { type } : {})}
+	{...(appearance ? { appearance } : {})}
 	onclick={handleClick}
 >
 	{#if iconStart}

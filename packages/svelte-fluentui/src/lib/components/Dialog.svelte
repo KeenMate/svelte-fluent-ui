@@ -229,12 +229,12 @@
 <fluent-dialog
 	use:portal
 	bind:this={element}
-	{modal}
+	{...(modal ? { modal } : {})}
 	hidden={!visible}
-	{trapFocus}
-	{ariaDescribedby}
-	{ariaLabelledby}
-	{ariaLabel}
+	{...(trapFocus ? { trapFocus } : {})}
+	{...(ariaDescribedby ? { ariaDescribedby } : {})}
+	{...(ariaLabelledby ? { ariaLabelledby } : {})}
+	{...(ariaLabel ? { ariaLabel } : {})}
 	class="dialog-positioned"
 	style={dialogStyle + (style ? ` ${style}` : '')}
 >

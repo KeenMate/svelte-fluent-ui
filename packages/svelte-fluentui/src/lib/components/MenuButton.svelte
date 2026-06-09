@@ -207,10 +207,10 @@
 <span bind:this={anchorEl} class="fluent-menu-button-anchor">
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<fluent-button
-		{appearance}
-		{disabled}
+		{...(appearance ? { appearance } : {})}
+		{...(disabled ? { disabled } : {})}
 		class={className}
-		{style}
+		{...(style ? { style } : {})}
 		aria-haspopup="menu"
 		aria-expanded={open}
 		onclick={toggleMenu}
