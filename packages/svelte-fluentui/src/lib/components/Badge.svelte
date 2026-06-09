@@ -18,6 +18,7 @@
 		fill?: string
 		appearance?: BadgeAppearance
 		circular?: boolean
+		radius?: string
 		children?: SlotType
 		onclick?: (ev: MouseEvent) => void
 		class?: string
@@ -29,6 +30,7 @@
 		fill = undefined,
 		appearance = "lightweight",
 		circular = false,
+		radius = undefined,
 		children = undefined,
 		onclick = undefined,
 		class: className = "",
@@ -51,7 +53,9 @@
 		return styles
 	})
 
-	let computedStyle = $derived([colorStyles, style].filter(Boolean).join(" "))
+	let radiusStyle = $derived(radius ? `border-radius: ${radius};` : "")
+
+	let computedStyle = $derived([colorStyles, radiusStyle, style].filter(Boolean).join(" "))
 
 	let classes = $derived.by(() => {
 		let cls = ["badge"]

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type {SlotType} from "../../types/index.js"
-	import Button from "../Button.svelte"
 	import Panel from "./Panel.svelte"
 	import NavMenu from "../nav/NavMenu.svelte"
 	import NavGroup from "../nav/NavGroup.svelte"
@@ -34,6 +33,8 @@
 		drawerPinned?: boolean
 		drawerWidth?: string
 		height?: number
+		menuToggleSize?: number
+		menuToggleTemplate?: SlotType
 		class?: string
 		style?: string
 	}
@@ -50,6 +51,8 @@
 		drawerPinned = false,
 		drawerWidth = "280px",
 		height = 60,
+		menuToggleSize = 42,
+		menuToggleTemplate = undefined,
 		class: className = "",
 		style = ""
 	}: Props = $props()
@@ -92,25 +95,29 @@
 	class:topnav--force-collapse={collapse === "always"}
 	class:topnav--force-expand={collapse === "never"}
 	class:topnav--drawer-pinned={drawerPinned}
-	style="height: {height}px; {style}"
+	style="height: {height}px; --topnav-toggle-size: {menuToggleSize}px; {style}"
 >
 	<div class="topnav-container">
 		{#if hasDrawerContent}
-			<Button
-				appearance="stealth"
-				class="mobile-menu-toggle"
-				onclick={toggleMobileMenu}
-				aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-				aria-expanded={mobileMenuOpen}
-			>
-				<span class="hamburger-icon">
-					{#if mobileMenuOpen}
-						<DismissIcon size={20} />
-					{:else}
-						☰
-					{/if}
-				</span>
-			</Button>
+			<div class="topnav-menu-toggle">
+				{#if menuToggleTemplate}
+					{@render menuToggleTemplate({open: mobileMenuOpen, toggle: toggleMobileMenu})}
+				{:else}
+					<button
+						type="button"
+						class="mobile-menu-toggle"
+						onclick={toggleMobileMenu}
+						aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+						aria-expanded={mobileMenuOpen}
+					>
+						{#if mobileMenuOpen}
+							<DismissIcon size={Math.round(menuToggleSize * 0.48)} />
+						{:else}
+							<span class="hamburger-glyph">☰</span>
+						{/if}
+					</button>
+				{/if}
+			</div>
 		{/if}
 
 		{#if brandTemplate}
@@ -238,31 +245,46 @@
 		flex-shrink: 0;
 	}
 
-	/* Mobile menu toggle button — hidden by default, shown when container is narrow */
-	:global(.topnav .mobile-menu-toggle) {
+	/* Wrapper slot — owns visibility + position so a custom menuToggleTemplate
+	   gets the same collapse behavior as the default button without consumers
+	   needing to know about the internal rules. */
+	.topnav-menu-toggle {
 		display: none;
 		order: -1;
 		flex-shrink: 0;
-		width: 42px;
-		min-width: 42px;
-		height: 42px;
-	}
-
-	/* Override fluent-button's internal control padding/min-height so the
-	   hamburger fills the fixed 42×42 box and the icon centers in it. */
-	:global(.topnav .mobile-menu-toggle::part(control)) {
-		width: 100%;
-		height: 100%;
-		min-width: 0;
-		min-height: 0;
-		padding: 0;
-	}
-
-	.hamburger-icon {
-		font-size: 1.5rem;
-		line-height: 1;
-		display: flex;
 		align-items: center;
+	}
+
+	/* Default toggle — plain icon target, no button chrome. Sized via
+	   --topnav-toggle-size (set inline from the menuToggleSize prop).
+	   Custom templates render at their natural size. */
+	.mobile-menu-toggle {
+		width: var(--topnav-toggle-size, 42px);
+		height: var(--topnav-toggle-size, 42px);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		background: transparent;
+		border: none;
+		color: inherit;
+		cursor: pointer;
+		border-radius: var(--fluent-border-radius-md, 4px);
+		transition: opacity 0.15s, background-color 0.15s;
+	}
+
+	.mobile-menu-toggle:hover {
+		opacity: 0.7;
+	}
+
+	.mobile-menu-toggle:focus-visible {
+		outline: 2px solid var(--accent-fill-rest, currentColor);
+		outline-offset: 2px;
+	}
+
+	.hamburger-glyph {
+		font-size: calc(var(--topnav-toggle-size, 42px) * 0.55);
+		line-height: 1;
 	}
 
 	/* Trailing flex group: items + divider + actions. `margin-left: auto`
@@ -343,7 +365,7 @@
 	}
 
 	@container topnav (max-width: 960px) {
-		:global(.topnav .mobile-menu-toggle) {
+		.topnav-menu-toggle {
 			display: flex;
 		}
 
@@ -359,14 +381,14 @@
 		}
 	}
 
-	/* collapse="always" — force hamburger visible + items hidden regardless of width */
-	:global(.topnav.topnav--force-collapse .mobile-menu-toggle) {
+	/* collapse="always" — force toggle visible + items hidden regardless of width */
+	.topnav--force-collapse .topnav-menu-toggle {
 		display: flex;
 	}
 
-	/* When drawer is pinned the hamburger acts as a show/hide toggle for the
+	/* When drawer is pinned the toggle acts as a show/hide control for the
 	   pinned rail itself, so it must stay visible at every width. */
-	:global(.topnav.topnav--drawer-pinned .mobile-menu-toggle) {
+	.topnav--drawer-pinned .topnav-menu-toggle {
 		display: flex;
 	}
 
@@ -375,8 +397,8 @@
 		display: none;
 	}
 
-	/* collapse="never" — force items/divider visible + hamburger hidden regardless of width */
-	:global(.topnav.topnav--force-expand .mobile-menu-toggle) {
+	/* collapse="never" — force items/divider visible + toggle hidden regardless of width */
+	.topnav--force-expand .topnav-menu-toggle {
 		display: none;
 	}
 
