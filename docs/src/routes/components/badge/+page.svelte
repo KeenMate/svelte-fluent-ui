@@ -12,7 +12,8 @@
 	const properties: Property[] = [
 		{name: "color", type: "string", default: "undefined", description: "Badge color"},
 		{name: "appearance", type: "string", default: "undefined", description: "Visual appearance"},
-		{name: "circular", type: "boolean", default: "undefined", description: "Circular shape"}
+		{name: "circular", type: "boolean", default: "undefined", description: "Circular shape"},
+		{name: "radius", type: "string", default: "undefined", description: "Custom border-radius (any CSS length). Wins over default and circular radii via inline-style specificity."}
 	]
 
 	const callbacks: Property[] = [
@@ -161,6 +162,31 @@
 			<Badge circular>1</Badge>
 			<Badge circular color="danger">5</Badge>
 			<Badge circular color="success">99+</Badge>
+		</Stack>
+
+		<h3>Custom Radius</h3>
+		<p>
+			The <code>radius</code> prop accepts any CSS length and overrides both the default rounded-rect
+			(<code>4px</code>) and <code>circular</code> pill shapes via inline-style specificity. Useful when you
+			want a softer corner, match a nearby Card radius, or get pill-mode sizing with a non-pill radius.
+		</p>
+		<Stack orientation="horizontal" gap="0.75rem" style="flex-wrap: wrap; align-items: center;">
+			<Badge color="brand" appearance="accent" radius="0">Squared</Badge>
+			<Badge color="brand" appearance="accent" radius="2px">2px</Badge>
+			<Badge color="brand" appearance="accent" radius="8px">8px</Badge>
+			<Badge color="brand" appearance="accent" radius="12px">12px</Badge>
+			<Badge color="success" appearance="accent" radius="0.5rem">0.5rem</Badge>
+			<Badge color="warning" appearance="accent" radius="var(--fluent-border-radius-pill)">Token</Badge>
+		</Stack>
+		<p style="margin-top: 0.75rem;">
+			Combine with <code>circular</code> to keep the pill <strong>sizing</strong> (<code>min-width: 20px</code>, padded)
+			but with a non-pill corner:
+		</p>
+		<Stack orientation="horizontal" gap="0.75rem" style="flex-wrap: wrap; align-items: center;">
+			<Badge circular color="danger">5</Badge>
+			<Badge circular color="danger" radius="6px">5</Badge>
+			<Badge circular color="success" radius="4px">99+</Badge>
+			<Badge circular color="informative" radius="0">12</Badge>
 		</Stack>
 	</Card>
 
