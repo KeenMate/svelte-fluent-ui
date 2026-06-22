@@ -468,6 +468,10 @@
 	const listboxId = $derived(id ? `${id}-listbox` : undefined)
 </script>
 
+<!-- Single DOM root so consumers see one element, not 2–4 siblings. Uses
+     display:contents so it's transparent to flex/grid layout in the parent. -->
+<div class="select-root">
+
 <!-- svelte-ignore a11y_label_has_associated_control -->
 {#if hasLabel}
 	<label class="fluent-label" for={id}>
@@ -568,7 +572,16 @@
 	{/if}
 {/if}
 
+</div>
+
 <style>
+	/* Transparent to layout — wraps label + trigger + mirror + portal anchor
+	 * so consumers only see one root, but parent flex/grid still lays out the
+	 * inner elements directly. */
+	.select-root {
+		display: contents;
+	}
+
 	.required-indicator {
 		color: var(--error-foreground-rest, #d13438);
 		margin-left: 0.25rem;

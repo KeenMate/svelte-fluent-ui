@@ -1,24 +1,19 @@
 <script lang="ts">
-	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button} from "svelte-fluentui"
-	import type {MultiSplitterEventArgs, MultiSplitterResizeEventArgs} from "svelte-fluentui"
+	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button, Icon} from "svelte-fluentui"
+	import type {MultiSplitterResizeDetail, MultiSplitterToggleDetail} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 
 	let lastEvent = $state<string>("None")
 	let orientation: "horizontal" | "vertical" = $state("horizontal")
 
-	function handleCollapse(args: MultiSplitterEventArgs) {
-		lastEvent = `Collapsed pane ${args.index}`
-		console.log("Collapsed:", args)
+	function handleCollapse(detail: MultiSplitterToggleDetail) {
+		lastEvent = `Collapsed pane ${detail.index}`
 	}
-
-	function handleExpand(args: MultiSplitterEventArgs) {
-		lastEvent = `Expanded pane ${args.index}`
-		console.log("Expanded:", args)
+	function handleExpand(detail: MultiSplitterToggleDetail) {
+		lastEvent = `Expanded pane ${detail.index}`
 	}
-
-	function handleResize(args: MultiSplitterResizeEventArgs) {
-		lastEvent = `Resized pane ${args.index} to ${Math.round(args.size)}px`
-		console.log("Resized:", args)
+	function handleResize(detail: MultiSplitterResizeDetail) {
+		lastEvent = `Resized pane ${detail.index} to ${Math.round(detail.size)}px`
 	}
 
 	type Property = {
@@ -29,38 +24,40 @@
 	}
 
 	const multiSplitterProperties: Property[] = [
-		{name: "orientation", type: '"horizontal" | "vertical"', default: "horizontal", description: "Direction of the splitter layout. Horizontal arranges panes side by side; vertical stacks them."},
-		{name: "barSize", type: "string", default: "6px", description: "Width (horizontal) or height (vertical) of the resize drag bar between panes"},
-		{name: "width", type: "string", default: "undefined", description: "Explicit width of the splitter container. Any CSS length value (e.g. '800px', '100%')."},
-		{name: "height", type: "string", default: "undefined", description: "Explicit height of the splitter container. Any CSS length value (e.g. '400px', '100vh')."},
-		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the container element"},
-		{name: "style", type: "string", default: '""', description: "Inline CSS styles applied to the container element"}
+		{name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Layout direction. Horizontal arranges panes side-by-side with vertical gutters; vertical stacks them with horizontal gutters."},
+		{name: "id", type: "string", default: "undefined", description: "Enables localStorage persistence under \"fluent-multi-splitter:<id>\". Saves sizes, last-expanded sizes, and minimized state."},
+		{name: "step", type: "number", default: "10", description: "Keyboard arrow-key step in px when a gutter is focused."},
+		{name: "railSize", type: "number", default: "40", description: "Width (or height in vertical mode) in px that a minimized pane collapses to."},
+		{name: "minimizeThreshold", type: "number", default: "0.40", description: "Drag-to-rail snap threshold as ratio of the drag-start (or max-reached) size. Floored at railSize × 1.5."},
+		{name: "width", type: "string", default: "undefined", description: "Explicit container width (e.g. '800px', '100%')."},
+		{name: "height", type: "string", default: "undefined", description: "Explicit container height (e.g. '400px', '100vh')."},
+		{name: "debug", type: "boolean", default: "false", description: "Logs drag and minimize transitions to console (development aid)."},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names on the root element."},
+		{name: "style", type: "string", default: '""', description: "Inline styles on the root element."}
 	]
 
 	const multiSplitterCallbacks: Property[] = [
-		{name: "onCollapse", type: "(args: MultiSplitterEventArgs) => void", default: "undefined", description: "Called when a pane is collapsed. Args: { index: number, pane: HTMLElement }"},
-		{name: "onExpand", type: "(args: MultiSplitterEventArgs) => void", default: "undefined", description: "Called when a collapsed pane is expanded. Args: { index: number, pane: HTMLElement }"},
-		{name: "onResize", type: "(args: MultiSplitterResizeEventArgs) => void", default: "undefined", description: "Called continuously while a pane is being resized. Args: { index: number, pane: HTMLElement, size: number }"}
-	]
-
-	const multiSplitterSlots: Property[] = [
-		{name: "children", type: "Snippet", default: "undefined", description: "MultiSplitterPane components to render as panels inside the splitter"}
+		{name: "onresize", type: "(detail: MultiSplitterResizeDetail) => void", default: "undefined", description: "Fired continuously while a pane is resized. `{ index, pane, size }`."},
+		{name: "oncollapse", type: "(detail: MultiSplitterToggleDetail) => void", default: "undefined", description: "Fired when a pane minimizes to a rail. `{ index, pane }`."},
+		{name: "onexpand", type: "(detail: MultiSplitterToggleDetail) => void", default: "undefined", description: "Fired when a railed pane expands back. `{ index, pane }`."}
 	]
 
 	const multiSplitterPaneProperties: Property[] = [
-		{name: "size", type: "string", default: "undefined", description: "Initial size of the pane. Sets width in horizontal mode, height in vertical mode. Any CSS length (e.g. '250px')."},
-		{name: "minSize", type: "string", default: "undefined", description: "Minimum size constraint during resizing. Any CSS length (e.g. '150px')."},
-		{name: "maxSize", type: "string", default: "undefined", description: "Maximum size constraint during resizing. Any CSS length (e.g. '400px')."},
-		{name: "resizable", type: "boolean", default: "true", description: "Whether the user can drag the bar to resize this pane"},
-		{name: "collapsible", type: "boolean", default: "false", description: "Whether the pane can be collapsed to zero size via the collapse button on the bar"},
-		{name: "class", type: "string", default: '""', description: "Additional CSS class names applied to the pane element"},
-		{name: "style", type: "string", default: '""', description: "Inline CSS styles applied to the pane element"}
+		{name: "size", type: "string", default: "undefined", description: "Initial size. Accepts \"200px\" or \"30%\". Unsized panes share leftover space equally; if all are sized, the last absorbs any delta."},
+		{name: "min", type: "string", default: "undefined", description: "Minimum size constraint. Accepts \"150px\" or \"10%\". Default 0."},
+		{name: "max", type: "string", default: "undefined", description: "Maximum size constraint. Accepts \"400px\" or \"50%\". Default unbounded."},
+		{name: "minimize", type: "boolean", default: "false", description: "If true, pane can collapse to a rail. Snaps in via drag, click the rail to restore, or double-click an adjacent gutter."},
+		{name: "class", type: "string", default: '""', description: "Additional CSS class names on the pane element."},
+		{name: "style", type: "string", default: '""', description: "Inline styles on the pane element."}
 	]
 
-	const multiSplitterPaneCallbacks: Property[] = []
+	const dataAttributes: Property[] = [
+		{name: "data-multisplitter-toggle", type: "marker", default: "—", description: "Put on any element inside a minimizable pane to act as a toggle button (e.g. a button in a card header)."},
+		{name: "data-multisplitter-rail-title", type: "marker", default: "—", description: "Put on a title element inside a minimizable pane so it rotates to vertical writing when the pane is railed."}
+	]
 
-	const multiSplitterPaneSlots: Property[] = [
-		{name: "children", type: "Snippet", default: "undefined", description: "Content to render inside the pane"}
+	const cssCustomProperties: Property[] = [
+		{name: "--fluent-multi-splitter-gutter-size", type: "length", default: "6px", description: "Gutter thickness (width in horizontal mode, height in vertical mode)."}
 	]
 
 	const propertyColumns = [
@@ -71,178 +68,186 @@
 	]
 </script>
 
+<!-- All FluentUI icons at size=20 — the only size where window_console exists,
+     so picking 20 ensures consistent stroke weight & viewBox across the set.
+     Folder/Code/Info also offer 20, confirmed via the pure-admin-icons MCP. -->
+{#snippet folderIcon()}<Icon name="folder" size={20} variant="regular" color="accent" class="card-icon" />{/snippet}
+{#snippet codeIcon()}<Icon name="code" size={20} variant="regular" color="accent" class="card-icon" />{/snippet}
+{#snippet consoleIcon()}<Icon name="window_console" size={20} variant="regular" color="accent" class="card-icon" />{/snippet}
+{#snippet infoIcon()}<Icon name="info" size={20} variant="regular" color="accent" class="card-icon" />{/snippet}
+
 <Stack orientation="vertical" gap="1rem">
 	<Meta
 		title="MultiSplitter"
-		description="A resizable multi-panel splitter for Svelte with draggable bars between panes. Based on the FluentUI Blazor implementation."
+		description="Resizable N-pane splitter for Svelte with drag, snap-to-rail, keyboard navigation, accordion mode, and localStorage persistence."
 		keywords="svelte, fluentui, multisplitter, splitter, resizable, panels, layout"
 	/>
 
 	<h1>MultiSplitter</h1>
 
 	<p>
-		Resizable multi-panel splitter based on FluentUI Blazor implementation. Drag the bars to resize
-		panels.
+		Resizable N-pane container. Drag any gutter to resize, arrow keys nudge when focused, double-click an adjacent gutter
+		(or click a railed pane) to toggle minimize. Ported from <a href="https://pureadmin.io" target="_blank" rel="noopener">pureadmin.io</a>'s
+		splitter into Svelte 5.
 	</p>
 
 	<References links={[
 		{label: "FluentUI Web Component", na: true},
-		{label: "FluentUI Blazor Splitter", href: "https://www.fluentui-blazor.net/Splitter"}
+		{label: "FluentUI Blazor Splitter", href: "https://www.fluentui-blazor.net/Splitter"},
+		{label: "Custom component inspired by pureadmin.io", href: "https://pureadmin.io"}
 	]} />
 
 	<Card>
 		<h2>Examples</h2>
 
-		<h3>Basic Horizontal Splitter</h3>
+		<h3>Two-pane horizontal (content-driven height)</h3>
+		<p>
+			No fixed height — the splitter is as tall as its tallest pane's natural content. All panes stretch to match. Drag
+			the gutter to see how the height responds.
+		</p>
 		<p>Last event: <strong>{lastEvent}</strong></p>
+		<MultiSplitter
+			orientation="horizontal"
+			onresize={handleResize}
+			oncollapse={handleCollapse}
+			onexpand={handleExpand}
+		>
+			<MultiSplitterPane size="280px" min="200px" max="60%">
+				<Card>
+					<h4 class="card-heading">{@render folderIcon()} Sidebar</h4>
+					<p>Size: 280px, min 200px, max 60%.</p>
+					<p>Drag the gutter →</p>
+				</Card>
+			</MultiSplitterPane>
+			<MultiSplitterPane>
+				<Card>
+					<h4 class="card-heading">{@render codeIcon()} Main</h4>
+					<p>Absorbs leftover space.</p>
+				</Card>
+			</MultiSplitterPane>
+		</MultiSplitter>
 
-		<div class="splitter-container">
-			<MultiSplitter
-				orientation="horizontal"
-				onCollapse={handleCollapse}
-				onExpand={handleExpand}
-				onResize={handleResize}
-			>
-				<MultiSplitterPane size="250px" minSize="150px" maxSize="400px" resizable collapsible>
-					<Card class="pane-card-layer2">
-						<h3>Left Panel</h3>
-						<p>Size: 250px</p>
-						<p>Min: 150px, Max: 400px</p>
-						<p>Resizable & Collapsible</p>
-					</Card>
-				</MultiSplitterPane>
-				<MultiSplitterPane>
-					<Card class="pane-card-layer3">
-						<h3>Main Content</h3>
-						<p>This panel takes up the remaining space.</p>
-						<p>Not resizable</p>
-					</Card>
-				</MultiSplitterPane>
-				<MultiSplitterPane size="200px" resizable>
-					<Card class="pane-card-layer2">
-						<h3>Right Panel</h3>
-						<p>Size: 200px</p>
-						<p>Resizable but not collapsible</p>
-					</Card>
-				</MultiSplitterPane>
-			</MultiSplitter>
-		</div>
+		<h3>Three-pane with minimize-to-rail + persistence</h3>
+		<p>
+			First and last panes have <code>minimize</code>. Try dragging a gutter past the snap threshold, or click a rail to
+			restore. <code>&lt;Card&gt;</code> auto-adapts when railed — first child becomes a rotated title, the rest hides.
+			Layout persists under <code>id="demo-three"</code> in localStorage. Pane content sets the height; expand a card to
+			see the whole splitter grow.
+		</p>
+		<MultiSplitter id="demo-three" orientation="horizontal">
+			<MultiSplitterPane size="240px" min="180px" max="360px" minimize>
+				<Card>
+					<h4 class="card-heading">{@render folderIcon()} File tree</h4>
+					<ul class="file-tree">
+						<li>src</li>
+						<li class="file-tree-indent">main.ts</li>
+						<li class="file-tree-indent">app.svelte</li>
+						<li>lib</li>
+						<li class="file-tree-indent">index.ts</li>
+					</ul>
+				</Card>
+			</MultiSplitterPane>
+			<MultiSplitterPane min="240px">
+				<Card>
+					<h4 class="card-heading">{@render codeIcon()} Editor</h4>
+					<p>Always expanded — no <code>minimize</code> prop.</p>
+					<pre class="editor-code">{`function hello() {
+  console.log("Hello World!")
+}`}</pre>
+				</Card>
+			</MultiSplitterPane>
+			<MultiSplitterPane size="280px" min="220px" max="420px" minimize>
+				<Card>
+					<h4 class="card-heading">{@render infoIcon()} Inspector</h4>
+					<p>Minimizable right rail.</p>
+				</Card>
+			</MultiSplitterPane>
+		</MultiSplitter>
 
-		<h3>Vertical Splitter</h3>
+		<h3>Vertical orientation</h3>
+		<p>For vertical splitters you typically want a fixed height — otherwise each pane is content-sized and the gutter has nothing meaningful to drag.</p>
 		<Button onclick={() => (orientation = orientation === "horizontal" ? "vertical" : "horizontal")}>
-			Toggle Orientation (Current: {orientation})
+			Toggle orientation (current: {orientation})
 		</Button>
-
-		<div class="splitter-container-large">
+		<div class="splitter-container">
 			<MultiSplitter {orientation}>
-				<MultiSplitterPane size="100px" minSize="60px" resizable>
-					<Card class="pane-card-layer2">
-						<h4>Panel 1</h4>
-						<p>100px, resizable</p>
+				<MultiSplitterPane size="40%" min="20%" max="80%">
+					<Card>
+						<h4>Top / Left</h4>
 					</Card>
 				</MultiSplitterPane>
 				<MultiSplitterPane>
-					<Card class="pane-card-layer3">
-						<h4>Panel 2</h4>
-						<p>Flexible</p>
-					</Card>
-				</MultiSplitterPane>
-				<MultiSplitterPane size="150px" resizable collapsible>
-					<Card class="pane-card-layer2">
-						<h4>Panel 3</h4>
-						<p>150px, resizable & collapsible</p>
+					<Card>
+						<h4>Bottom / Right</h4>
 					</Card>
 				</MultiSplitterPane>
 			</MultiSplitter>
 		</div>
 
-		<h3>Code Editor Layout Example</h3>
-		<div class="splitter-container-xlarge">
-			<MultiSplitter orientation="horizontal">
-				<MultiSplitterPane size="250px" minSize="200px" resizable collapsible>
-					<Card class="pane-card-layer2">
-						<h4>File Explorer</h4>
-						<ul class="file-tree">
-							<li>📁 src</li>
-							<li class="file-tree-indent">📄 main.ts</li>
-							<li class="file-tree-indent">📄 app.svelte</li>
-							<li>📁 lib</li>
-							<li class="file-tree-indent">📄 index.ts</li>
-						</ul>
-					</Card>
-				</MultiSplitterPane>
-				<MultiSplitterPane>
-					<MultiSplitter orientation="vertical">
-						<MultiSplitterPane>
-							<Card class="pane-card-layer3">
-								<h4>Editor</h4>
-								<pre class="editor-code">
-{`// Your code here
-function hello() {
-  console.log("Hello World!");
-}`}
-								</pre>
-							</Card>
-						</MultiSplitterPane>
-						<MultiSplitterPane size="200px" minSize="100px" resizable>
-							<Card class="pane-card-layer2">
-								<h4>Terminal</h4>
-								<p class="terminal-text">$ npm run dev</p>
-								<p class="terminal-text terminal-success">
-									✓ Server running...
-								</p>
-							</Card>
-						</MultiSplitterPane>
-					</MultiSplitter>
-				</MultiSplitterPane>
-				<MultiSplitterPane size="300px" minSize="250px" resizable collapsible>
-					<Card class="pane-card-layer2">
-						<h4>Properties Panel</h4>
-						<p>Component properties and settings would go here.</p>
-					</Card>
-				</MultiSplitterPane>
-			</MultiSplitter>
-		</div>
+		<h3>Fixed-area splitter (IDE-style)</h3>
+		<p>Pass <code>height</code> to lock the splitter to a viewport area. Useful for nested splitters where the outer drives a known frame and inner splitters fill it.</p>
+		<MultiSplitter orientation="horizontal" height="500px" id="ide-outer" debug>
+			<MultiSplitterPane size="240px" min="180px" minimize>
+				<Card>
+					<h4 class="card-heading">{@render folderIcon()} Explorer</h4>
+					<ul class="file-tree">
+						<li>src</li>
+						<li class="file-tree-indent">main.ts</li>
+						<li class="file-tree-indent">app.svelte</li>
+					</ul>
+				</Card>
+			</MultiSplitterPane>
+			<MultiSplitterPane>
+				<MultiSplitter orientation="vertical" height="100%" id="ide-inner" debug>
+					<MultiSplitterPane min="100px" minimize>
+						<Card>
+							<h4 class="card-heading">{@render codeIcon()} Editor</h4>
+							<pre class="editor-code">{`function hello() {
+  console.log("Hello World!")
+}`}</pre>
+						</Card>
+					</MultiSplitterPane>
+					<MultiSplitterPane size="160px" min="80px" minimize>
+						<Card>
+							<h4 class="card-heading">{@render consoleIcon()} Console</h4>
+							<p class="terminal-text">$ npm run dev</p>
+							<p class="terminal-text terminal-success">✓ Server running...</p>
+						</Card>
+					</MultiSplitterPane>
+				</MultiSplitter>
+			</MultiSplitterPane>
+		</MultiSplitter>
 	</Card>
 
 	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
-				<h2>MultiSplitter Properties</h2>
+				<h2>MultiSplitter properties</h2>
 				<QuickGrid items={multiSplitterProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
-				<h2>MultiSplitter Callbacks</h2>
+				<h2>MultiSplitter callbacks</h2>
 				<QuickGrid items={multiSplitterCallbacks} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
-				<h2>MultiSplitter Slots</h2>
-				<QuickGrid items={multiSplitterSlots} columns={propertyColumns} sortable filterable striped />
-			</Card>
-		</GridItem>
-	</Grid>
-
-	<Grid spacing={3}>
-		<GridItem xs={12} xl={6} xxl={4}>
-			<Card>
-				<h2>MultiSplitterPane Properties</h2>
+				<h2>MultiSplitterPane properties</h2>
 				<QuickGrid items={multiSplitterPaneProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
-				<h2>MultiSplitterPane Callbacks</h2>
-				<QuickGrid items={multiSplitterPaneCallbacks} columns={propertyColumns} sortable filterable striped />
+				<h2>Data attributes</h2>
+				<QuickGrid items={dataAttributes} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
-		<GridItem xs={12} xl={6} xxl={4}>
+		<GridItem xs={12} xl={6}>
 			<Card>
-				<h2>MultiSplitterPane Slots</h2>
-				<QuickGrid items={multiSplitterPaneSlots} columns={propertyColumns} sortable filterable striped />
+				<h2>CSS custom properties</h2>
+				<QuickGrid items={cssCustomProperties} columns={propertyColumns} sortable filterable striped />
 			</Card>
 		</GridItem>
 	</Grid>
@@ -255,36 +260,31 @@ function hello() {
 		margin: 1rem 0;
 	}
 
-	.splitter-container-large {
-		height: 500px;
-		border: 1px solid var(--app-border);
-		margin: 1rem 0;
+	.card-heading {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0 0 0.5rem 0;
 	}
-
-	.splitter-container-xlarge {
-		height: 600px;
-		border: 1px solid var(--app-border);
-		margin: 1rem 0;
+	.card-heading :global(.card-icon) {
+		flex-shrink: 0;
 	}
-
 	.file-tree {
 		list-style: none;
 		padding-left: 0;
 	}
-
 	.file-tree-indent {
 		padding-left: 1rem;
 	}
-
 	.editor-code {
 		margin: 0;
+		font-family: monospace;
+		font-size: 0.875rem;
 	}
-
 	.terminal-text {
 		font-family: monospace;
 		font-size: 0.875rem;
 	}
-
 	.terminal-success {
 		color: green;
 	}
