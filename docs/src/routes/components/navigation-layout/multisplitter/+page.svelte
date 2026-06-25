@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button, Icon} from "svelte-fluentui"
+	import {MultiSplitter, MultiSplitterPane, QuickGrid, Stack, Grid, GridItem, Card, Button, Icon, Tabs, Tab} from "svelte-fluentui"
 	import type {MultiSplitterResizeDetail, MultiSplitterToggleDetail} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 
@@ -217,6 +217,47 @@
 				</MultiSplitter>
 			</MultiSplitterPane>
 		</MultiSplitter>
+
+		<h3>Inside tabs (deferred initial sizing)</h3>
+		<p>
+			A splitter mounted inside an inactive tab panel starts with <code>clientWidth = 0</code> because the panel is
+			<code>hidden</code>. Initial sizing defers until the tab is revealed for the first time, so <code>min</code> and
+			<code>size</code> constraints are honoured on reveal instead of leaving every pane at zero width. Click the
+			<strong>Splitter</strong> tab to verify, then toggle back and forth — sizes are preserved across hide/show cycles.
+		</p>
+		<Tabs>
+			{#snippet childContent()}
+				<Tab id="splitter-tabs-info" label="Read me first">
+					{#snippet content()}
+						<p>
+							The splitter on the next tab was mounted while this tab was active, so it never saw its own container
+							width at construction time. Switch to the <strong>Splitter</strong> tab — both panes should render at
+							their configured sizes (240&nbsp;px left, leftover on the right) with their minimums respected.
+						</p>
+					{/snippet}
+				</Tab>
+				<Tab id="splitter-tabs-content" label="Splitter">
+					{#snippet content()}
+						<div class="splitter-container">
+							<MultiSplitter orientation="horizontal">
+								<MultiSplitterPane size="240px" min="180px" max="60%">
+									<Card>
+										<h4 class="card-heading">{@render folderIcon()} Left (min 180px)</h4>
+										<p>Mounted hidden — first reveal should still respect the 180&nbsp;px minimum.</p>
+									</Card>
+								</MultiSplitterPane>
+								<MultiSplitterPane min="200px">
+									<Card>
+										<h4 class="card-heading">{@render codeIcon()} Right (min 200px)</h4>
+										<p>Without the deferred-init path, both panes would render at 0&nbsp;px on first reveal.</p>
+									</Card>
+								</MultiSplitterPane>
+							</MultiSplitter>
+						</div>
+					{/snippet}
+				</Tab>
+			{/snippet}
+		</Tabs>
 	</Card>
 
 	<Grid spacing={3}>

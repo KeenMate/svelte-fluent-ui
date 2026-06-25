@@ -313,6 +313,7 @@
 		border: 1px solid var(--neutral-stroke-layer-rest, #ccc);
 		border-radius: 3px;
 		background: var(--neutral-layer-2, #f5f5f5);
+		color: var(--neutral-foreground-rest, #222);
 		font-family: inherit;
 		font-size: 0.7rem;
 		margin: 0 0.15rem 0 0;

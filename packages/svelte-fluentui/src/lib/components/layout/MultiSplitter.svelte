@@ -843,21 +843,30 @@
 		initScheduled = true
 		queueMicrotask(() => {
 			requestAnimationFrame(() => {
-				if (panes.length < 2 || !rootEl) {
-					initScheduled = false
-					return
-				}
-				applyInitialSizes()
 				initScheduled = false
-				initApplied = true
+				if (panes.length < 2 || !rootEl) return
+				// Install observer + toggle delegation immediately, even if
+				// the container hasn't been laid out yet (mounted inside a
+				// hidden tab panel etc). When the container transitions
+				// 0 → non-zero, the observer's `!initApplied` branch runs
+				// applyInitialSizes for the first time. Otherwise sizes
+				// get clamped to 0 at mount and the panes render smashed
+				// on first reveal.
+				setupResizeObserver()
+				setupToggleDelegation()
+				applyInitialSizes()
 			})
 		})
 	}
 
 	function applyInitialSizes() {
-		if (!rootEl) return
-		const N = panes.length
+		if (!rootEl || initApplied) return
 		const initialTotal = resolveConstraints()
+		// Defer until the container is actually laid out. Mounting inside a
+		// hidden tab panel returns total=0 here; the ResizeObserver retries
+		// this when the container reveals.
+		if (initialTotal <= 0) return
+		const N = panes.length
 		const rootSizeRef = rootEl[clientAxis]
 		const saved = readStorage()
 
@@ -915,8 +924,7 @@
 		clampToConstraints(initialTotal, pinned)
 		applySizes({persist: false})
 		if (shouldBeAccordion()) enterAccordion()
-		setupResizeObserver()
-		setupToggleDelegation()
+		initApplied = true
 	}
 
 	// ---------- Toggle delegation ----------
@@ -951,9 +959,25 @@
 		if (resizeObserver || !rootEl || typeof ResizeObserver === "undefined") return
 		let lastTotal = totalAvailable()
 		resizeObserver = new ResizeObserver(() => {
+			if (!rootEl) return
 			const total = resolveConstraints()
 			if (Math.abs(total - lastTotal) < 0.5) return
-			if (lastTotal <= 0) { lastTotal = total; return }
+			// Container hidden (display:none, tab switched away, parent
+			// detached). Record the new total but leave pane sizes alone —
+			// running clampToConstraints/scale against total=0 would zero
+			// every flex-basis and the user would lose their layout on the
+			// next reveal.
+			if (total <= 0) { lastTotal = total; return }
+			// Deferred init: container was hidden at mount time, now we
+			// finally have a real box to size against.
+			if (!initApplied) {
+				applyInitialSizes()
+				lastTotal = total
+				return
+			}
+			// Reveal after hide (lastTotal was 0). Fall through to the
+			// scale path so pane sizes get rescaled if the container width
+			// changed while hidden.
 			const wantAccordion = shouldBeAccordion()
 			if (wantAccordion && !accordionActive) {
 				enterAccordion()

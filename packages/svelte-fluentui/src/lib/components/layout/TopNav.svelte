@@ -81,6 +81,14 @@
 	}
 
 	function closeMobileMenu() {
+		// Pinned drawer (desktop rail) is meant to stay open across link
+		// clicks — consumers wire onClick={closeDrawer} on every NavLinkItem
+		// to dismiss the overlay on mobile, and rely on this being a no-op
+		// once the rail is pinned. Without this guard, every desktop click
+		// would close the rail and the sync $effect on drawerPinned wouldn't
+		// re-run to restore it (depends only on drawerPinned, not on
+		// mobileMenuOpen).
+		if (drawerPinned) return
 		mobileMenuOpen = false
 	}
 
