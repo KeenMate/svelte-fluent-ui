@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0-rc01] - 2026-06-25 [PUBLISHED]
+
+### Added
+- **`CommandPalette` — promoted from a docs-only widget to a published, data-driven library component** - Previous releases shipped a `CommandPalette` only inside the docs app (`docs/src/lib/components/`), hard-wired to SvelteKit's `goto` and a navigation-only `{label, href}` item shape. It's now a first-class library export (`packages/svelte-fluentui/src/lib/components/CommandPalette.svelte` + `CommandPalette.types.ts`) reshaped into a generic, app-ready component modeled on pure-admin's Spotlight-style palette but following this library's data-driven idiom (`ContextMenu`/`Autocomplete`-style: pass items + callbacks, behaviour built in). Items are now either navigation (`href`) or actions (`onSelect`), and carry `icon`, `meta`, `badge`, `shortcut`, `group`, and `keywords`. Navigation rows render as real `<a>` elements so the host router intercepts the click — the hard `goto` dependency is gone, making the component framework-agnostic. Built-in: layered fuzzy scoring (exact > prefix > substring > subsequence) across title/meta/group/keywords with `<mark>` highlighting, a grouped idle/home screen, flat ranked search results with group chips, `bind:open` controlled state, a configurable global `shortcut` (`"mod+k"`), and `onselect`/`onopen`/`onclose` callbacks. Escape hatches for app-specific control: a custom `filter` prop that replaces the scorer entirely, and `item`/`empty`/`footer` snippets. Exported with `CommandPaletteItem` and `CommandPaletteFilter` types.
+- **`CommandPaletteTrigger` — new search-pill trigger component** - A presentational button (`CommandPaletteTrigger.svelte`) that mirrors the navbar "search pill" pattern: leading search icon, placeholder, trailing keyboard-shortcut hint (auto-detecting ⌘K on Mac vs Ctrl K elsewhere, or `null` to hide), `small`/`medium`/`large` size variants, and a responsive collapse to icon-only below 768px. Wire its `onclick` to your `bind:open` state. Styled entirely against FluentUI design tokens.
+
+### Changed
+- **Docs now consume the published `CommandPalette` instead of a local copy** - The docs `+layout.svelte` imports `CommandPalette` + `CommandPaletteTrigger` from `svelte-fluentui`; the old `docs/src/lib/components/CommandPalette.svelte` and the ad-hoc search button + their orphaned CSS are deleted. The previous `window` `CustomEvent("open-command-palette")` open/close hack is replaced with a plain `bind:open` state. The site's Ctrl/⌘+K search now runs on the library component. A dedicated demo page (`/components/command-palette`) was added with examples for action commands, rich navigation items, the custom-filter escape hatch, and the global shortcut, plus API tables, and registered in both the sidebar nav and the components-list page.
+
 ## [1.4.1] - 2026-06-25 [PUBLISHED]
 
 ### Fixed
