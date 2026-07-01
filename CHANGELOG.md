@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`Combobox` — empty-state message when the filter matches no options** - Typing a query that matches nothing previously left just an empty, tiny dropdown box with no explanation. The dropdown now renders a centered "No results found" message when zero options remain after filtering. Customizable via the new `noDataText` prop (string, default `"No results found"`) or, for full control, the `noDataTemplate` snippet which overrides it. The message is driven by a live count of displayed rows (disabled options still count as displayed) and is reset on close so it never flashes on the next open.
 - **`Dialog` demo — new "Tabs inside a height-constrained Dialog" example demonstrating scroll containment** - A fixed-height `<Dialog>` whose body is a `<Tabs>` set to fill the available height, with a tall expression form (mirroring a real-world report where the textarea grew out of the dialog) inside the Expression panel. A live checkbox toggles the containment pattern: with it off, the tab panel is a plain block that neither fills nor scrolls, so content taller than the dialog overflows and spills past the dialog bounds; with it on, `.fluent-tabs-panels` becomes a flex column and the active `.fluent-tab-panel` gets `flex: 1; min-height: 0; overflow-y: auto`, so the panel fills the remaining dialog height and scrolls its own overflow. Documents the consumer-side pattern for putting `<Tabs>` inside a height-constrained `<Dialog>`.
 
+### Internal
+- **Package now ships an MIT `LICENSE` file** - `package.json` declared `"license": "MIT"` but no `LICENSE` file existed, so every published tarball (through rc01) lacked one. Added `LICENSE` at the workspace root, synced into the package during build by `post-package.js` (same pattern as the README), and listed in the `files` array.
+
 ## [1.5.0-rc01] - 2026-06-25 [PUBLISHED]
 
 ### Added

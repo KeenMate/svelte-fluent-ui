@@ -20,6 +20,18 @@ try {
 	process.exit(1);
 }
 
+// Copy LICENSE from workspace root to package
+try {
+	copyFileSync(
+		path.join(workspaceRoot, 'LICENSE'),
+		path.join(rootDir, 'LICENSE')
+	);
+	console.log('✓ LICENSE copied from workspace root');
+} catch (error) {
+	console.error('Error copying LICENSE:', error.message);
+	process.exit(1);
+}
+
 // Compile SCSS to CSS
 try {
 	execSync('npx sass dist/main.scss dist/main.css', {
