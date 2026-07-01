@@ -80,6 +80,10 @@ These are built from scratch using Svelte, styled with FluentUI design tokens:
 - **TimePicker** - Time selection with hour/minute/second picker (inspired by FluentUI Blazor)
 - **InputFile** - File upload with drag-drop, validation, and progress tracking (inspired by FluentUI Blazor)
 - **Autocomplete** - Multiple selection with tag/chip display, custom filtering, and initial options support for showing popular items before async search (inspired by FluentUI Blazor)
+- **Select** - Custom single/multi select; trigger + portalled listbox (via PositioningRegion) that escapes ancestor `overflow` clipping and caps height to the viewport. Renders `<Option>` children via the `selected-options` context.
+- **Combobox** - Custom single-select combobox: editable filtering input + portalled listbox (via PositioningRegion), same clipping/height fix as Select. Supports `autocomplete` modes (list/inline/both/none, diacritic-insensitive), `minSearchLength`, `onsearch` (server-side) / `filter` (custom matcher) callbacks, and `<Option>` children or an `options` array.
+- **Option** - A single listbox row rendered as a plain themed `<div role="option">` (no longer wraps `<fluent-option>` — dropped for performance, since the custom element's shadow-DOM upgrade blocked the main thread on open). Consumed by Select/Combobox via the `selected-options` context. Parents read `data-value`/`data-option-label`/`data-option-context` and set `data-highlighted`/`data-filtered-out`/`disabled`; the component owns all row styling.
+- **OptionGroup** - A `role="group"` section header + its `<Option>` rows for grouped listboxes. Used directly in Select/Combobox children (`<OptionGroup label="…">`), or generated automatically by Combobox from the `group` field on `options` array items. Navigation/filtering only walk `.fluent-option`, so headers are skipped; Combobox hides an empty group via a `:has()` rule.
 - **Paginator** - Pagination control with custom logic
 - **Tab/Tabs** - Tab navigation (wraps fluent-tab but adds significant custom logic)
 
@@ -115,7 +119,6 @@ These wrap `<fluent-*>` web components from `@fluentui/web-components`:
 - **BreadcrumbItem** → `<fluent-breadcrumb-item>`
 - **Button** → `<fluent-button>`
 - **Checkbox** → `<fluent-checkbox>`
-- **Combobox** → `<fluent-combobox>`
 - **DataGrid** → `<fluent-data-grid>`
 - **DataGridRow** → `<fluent-data-grid-row>`
 - **DataGridCell** → `<fluent-data-grid-cell>`
@@ -125,12 +128,10 @@ These wrap `<fluent-*>` web components from `@fluentui/web-components`:
 - **Menu** → `<fluent-menu>`
 - **MenuItem** → `<fluent-menu-item>`
 - **NumberField** → `<fluent-number-field>`
-- **Option** → `<fluent-option>`
 - **Progress** → `<fluent-progress>`
 - **Radio** → `<fluent-radio>`
 - **RadioGroup** → `<fluent-radio-group>`
 - **Search** → `<fluent-search>`
-- **Select** → `<fluent-select>`
 - **Slider** → `<fluent-slider>`
 - **Switch** → `<fluent-switch>`
 - **TabPanel** → `<fluent-tab-panel>`

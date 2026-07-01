@@ -3,7 +3,10 @@ export type SlotType = any
 export type OptionItem = {
 	value: string
 	label: string
-	disabled: boolean
+	disabled?: boolean
+	/** Optional group heading. Options sharing a `group` are rendered together
+	 * under a non-interactive header (Combobox `options` array). */
+	group?: string
 }
 
 export type SelectedValue = OptionItem["value"][] | undefined | null

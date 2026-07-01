@@ -17,9 +17,27 @@
 		preventClose: () => boolean
 		onbeforeclose: () => boolean | void
 		hide: () => void
+		/** Enable/disable this instance's FAST focus trap. See {@link syncFocusTrap}. */
+		setFocusTrap: (active: boolean) => void
 	}
 	const openDialogStack: DialogHandle[] = []
 	let escListenerAttached = false
+
+	/**
+	 * Keep the FAST focus trap active on only the topmost open dialog.
+	 *
+	 * `<fluent-dialog>` defaults `trapFocus` to true and installs a document-level
+	 * `focusin` listener that yanks focus back inside whenever it escapes. With two
+	 * dialogs open at once, both listeners fire on every focus change and pull focus
+	 * into each other in turn — an infinite ping-pong that overflows the call stack
+	 * (`RangeError`). Releasing the trap on every dialog beneath the top lets the
+	 * topmost one own focus uncontested; closing it re-traps the new top.
+	 */
+	function syncFocusTrap() {
+		for (let i = 0; i < openDialogStack.length; i++) {
+			openDialogStack[i].setFocusTrap(i === openDialogStack.length - 1)
+		}
+	}
 
 	function handleGlobalEscape(e: KeyboardEvent) {
 		if (e.key !== "Escape") return
@@ -40,6 +58,7 @@
 			document.addEventListener("keydown", handleGlobalEscape, true)
 			escListenerAttached = true
 		}
+		syncFocusTrap()
 	}
 
 	function popDialog(handle: DialogHandle) {
@@ -48,6 +67,47 @@
 		if (openDialogStack.length === 0 && escListenerAttached && typeof document !== "undefined") {
 			document.removeEventListener("keydown", handleGlobalEscape, true)
 			escListenerAttached = false
+		}
+		syncFocusTrap()
+	}
+
+	/**
+	 * Body scroll lock for modal dialogs. Without this, scrolling while the
+	 * pointer is over a non-scrollable part of the dialog (header, tab strip,
+	 * gaps) chains up to the document and scrolls the page behind the modal.
+	 *
+	 * Reference-counted so stacked/nested modals only release the lock once the
+	 * last one closes. The original inline `overflow` / `paddingRight` are saved
+	 * on lock and restored on unlock; padding compensates for the disappearing
+	 * scrollbar so the page doesn't shift sideways when the lock engages.
+	 */
+	let scrollLockCount = 0
+	let savedBodyOverflow = ""
+	let savedBodyPaddingRight = ""
+
+	function lockBodyScroll() {
+		if (typeof document === "undefined") return
+		if (scrollLockCount === 0) {
+			const body = document.body
+			savedBodyOverflow = body.style.overflow
+			savedBodyPaddingRight = body.style.paddingRight
+			const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+			if (scrollbarWidth > 0) {
+				const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0
+				body.style.paddingRight = `${current + scrollbarWidth}px`
+			}
+			body.style.overflow = "hidden"
+		}
+		scrollLockCount++
+	}
+
+	function unlockBodyScroll() {
+		if (typeof document === "undefined") return
+		if (scrollLockCount === 0) return
+		scrollLockCount--
+		if (scrollLockCount === 0) {
+			document.body.style.overflow = savedBodyOverflow
+			document.body.style.paddingRight = savedBodyPaddingRight
 		}
 	}
 </script>
@@ -193,7 +253,27 @@
 		closeOnEscape: () => closeOnEscape,
 		preventClose: () => preventClose,
 		onbeforeclose: () => onbeforeclose?.(),
-		hide
+		hide,
+		// Topmost dialog keeps the trap; the rest release it. We never re-enable a
+		// trap the author explicitly disabled (trapFocus={false}).
+		//
+		// Setting the `trapFocus` *property* alone is not enough: FAST's
+		// `trapFocusChanged` reflection does not reliably tear down the document
+		// `focusin` listener, so a released dialog keeps trapping (isTrappingFocus
+		// stays true) and two live traps ping-pong focus into a stack overflow.
+		// Calling the internal `updateTrapFocus(shouldTrap)` forces the listener
+		// on/off immediately; we still set the property to keep FAST's own
+		// `shouldTrapFocus()` coherent for any later internal recompute.
+		setFocusTrap: (active: boolean) => {
+			if (!element) return
+			const fast = element as unknown as {
+				trapFocus: boolean
+				updateTrapFocus?: (shouldTrapFocusOverride?: boolean) => void
+			}
+			const shouldTrap = active && trapFocus !== false
+			fast.trapFocus = shouldTrap
+			fast.updateTrapFocus?.(shouldTrap)
+		}
 	}
 	$effect(() => {
 		if (visible) {
@@ -201,6 +281,17 @@
 			return () => popDialog(handle)
 		}
 	})
+
+	// Lock the page scroll while a *modal* dialog is open so wheel events over
+	// the dialog don't chain to the document. Non-modal dialogs leave the page
+	// scrollable on purpose.
+	$effect(() => {
+		if (visible && modal) {
+			lockBodyScroll()
+			return () => unlockBodyScroll()
+		}
+	})
+
 	onDestroy(() => popDialog(handle))
 
 	async function runAction(action: DialogAction) {

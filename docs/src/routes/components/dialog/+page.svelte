@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Button, Dialog, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {Button, Dialog, Tab, Tabs, TextField, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 
 	let dialog: Dialog
@@ -8,6 +8,16 @@
 	let largeDialog = $state(false)
 	let extraLargeDialog = $state(false)
 	let fullDialog = $state(false)
+
+	// "Tabs inside a height-constrained Dialog" reproduction. Toggle the
+	// containment pattern on/off to compare the broken vs fixed layout.
+	let scrollDialog = $state(false)
+	let containScroll = $state(true)
+
+	// Stacked modal dialogs — opening a second modal from inside the first used
+	// to ping-pong focus between the two FAST focus traps and freeze the tab.
+	let outerDialog = $state(false)
+	let innerDialog = $state(false)
 
 	type Property = {
 		name: string
@@ -161,6 +171,124 @@
 			<p>This dialog can be controlled using the <code>show()</code> and <code>hide()</code> methods.</p>
 			<p>Click the X button or use the Dismiss button to close.</p>
 		</Dialog>
+
+		<h3>Tabs inside a height-constrained Dialog</h3>
+		<p>
+			A common pattern: a fixed-height <code>&lt;Dialog&gt;</code> whose body is a
+			<code>&lt;Tabs&gt;</code> set to fill the available height, with a tall form (e.g. a
+			big expression textarea) inside a panel. By default a tab panel is a plain block —
+			it neither fills nor scrolls — so content taller than the dialog
+			<strong>overflows and grows out of the dialog</strong> instead of scrolling within it.
+		</p>
+		<p>
+			Toggle the containment pattern to see the fix. It makes
+			<code>.fluent-tabs-panels</code> a flex column and gives the active
+			<code>.fluent-tab-panel</code> <code>flex: 1; min-height: 0; overflow-y: auto</code>,
+			so the panel fills the remaining dialog height and scrolls its own overflow.
+		</p>
+
+		<Stack orientation="horizontal" gap="0.5rem" style="flex-wrap: wrap; align-items: center;">
+			<Button appearance="accent" onclick={() => scrollDialog = true}>
+				Open Dialog with Tabs
+			</Button>
+			<label style="display: flex; align-items: center; gap: 0.5rem;">
+				<input type="checkbox" bind:checked={containScroll} />
+				Apply scroll-containment fix
+			</label>
+		</Stack>
+
+		<Dialog
+			visible={scrollDialog}
+			modal={true}
+			title="Override value"
+			width="640px"
+			height="70vh"
+			onClose={() => scrollDialog = false}
+		>
+			<div class="dialog-body-fill">
+				<Tabs class={`scroll-demo-tabs${containScroll ? " contained" : ""}`} activeId="expression">
+					{#snippet childContent()}
+						<Tab id="expression" label="Expression">
+							{#snippet content()}
+								<div class="expr-form">
+									<label class="field-label" for="default-value">Default value</label>
+									<TextField id="default-value" placeholder="Static value or field reference" />
+
+									<div class="override-head">Override — Expression</div>
+									<textarea
+										class="expr-textarea"
+										placeholder="Expression — use &#123;&#123;field&#125;&#125; for interpolation"
+									></textarea>
+
+									<p class="hint">
+										This textarea is the field that grew out of the dialog in the original report.
+										With the fix off, the panel doesn't scroll and the whole form spills past the
+										dialog bounds.
+									</p>
+									{#each Array(8) as _, i}
+										<TextField placeholder={`Extra rule field ${i + 1}`} />
+									{/each}
+								</div>
+							{/snippet}
+						</Tab>
+						<Tab id="condition" label="Condition">
+							{#snippet content()}
+								<div class="expr-form">
+									<p>Condition builder goes here.</p>
+									<TextField placeholder="when ..." />
+								</div>
+							{/snippet}
+						</Tab>
+					{/snippet}
+				</Tabs>
+			</div>
+
+			{#snippet footer()}
+				<Button appearance="accent" onclick={() => scrollDialog = false}>Apply</Button>
+				<Button appearance="neutral" onclick={() => scrollDialog = false}>Cancel</Button>
+			{/snippet}
+		</Dialog>
+
+		<h3>Stacked modal dialogs</h3>
+		<p>
+			Two modal dialogs can be open at once — e.g. opening a picker from inside an
+			already-open form. Each <code>&lt;Dialog&gt;</code> wraps <code>&lt;fluent-dialog&gt;</code>,
+			whose FAST focus trap defaults on and pulls focus back inside whenever it escapes.
+			With two traps live, they used to fight over focus and freeze the tab with a
+			<code>RangeError</code>. The library now keeps the trap active on only the
+			<strong>topmost</strong> open dialog and releases it on the ones beneath, re-trapping
+			the one below when the top closes.
+		</p>
+		<p>
+			Open the outer dialog, open the inner one from inside it, then <kbd>Tab</kbd> around —
+			focus stays trapped in the inner dialog. Close it and focus trapping resumes in the
+			outer dialog. No freeze.
+		</p>
+
+		<Button appearance="accent" onclick={() => outerDialog = true}>
+			Open Outer Dialog
+		</Button>
+
+		<!-- Outer (first) modal dialog -->
+		<Dialog visible={outerDialog} modal={true} title="Outer dialog" width="520px" onClose={() => outerDialog = false}>
+			<p>This is the first modal dialog. Open a second one on top of it.</p>
+			<TextField placeholder="Try tabbing through these fields" />
+			<TextField placeholder="Focus stays trapped here…" />
+			{#snippet footer()}
+				<Button appearance="accent" onclick={() => innerDialog = true}>Open Inner Dialog</Button>
+				<Button appearance="neutral" onclick={() => outerDialog = false}>Close</Button>
+			{/snippet}
+		</Dialog>
+
+		<!-- Inner (stacked) modal dialog -->
+		<Dialog visible={innerDialog} modal={true} title="Inner dialog" width="400px" onClose={() => innerDialog = false}>
+			<p>Now two modal dialogs are open. Tab around — focus is trapped here, not in the outer dialog.</p>
+			<TextField placeholder="Inner field 1" />
+			<TextField placeholder="Inner field 2" />
+			{#snippet footer()}
+				<Button appearance="accent" onclick={() => innerDialog = false}>Close Inner</Button>
+			{/snippet}
+		</Dialog>
 	</Card>
 
 	<Grid spacing={3}>
@@ -197,5 +325,81 @@
 		border-radius: 3px;
 		font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 		font-size: 0.875em;
+	}
+
+	/*
+	 * Make the dialog body a flex column that fills the fixed dialog height, so
+	 * the <Tabs> child has a definite height to flex within. Without this the
+	 * dialog content area is a plain block and Tabs can't fill it.
+	 */
+	.dialog-body-fill {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
+
+	/*
+	 * The Tabs host fills the dialog body in both states. The difference between
+	 * broken and fixed lives entirely in the panel rules below.
+	 */
+	.dialog-body-fill :global(.scroll-demo-tabs) {
+		flex: 1 1 auto;
+		min-height: 0;
+	}
+
+	/*
+	 * Containment fix: turn the panels region into a flex column and let the
+	 * ACTIVE panel fill the remaining height and scroll its own overflow. The
+	 * `min-height: 0` is the escape hatch that lets a flex item shrink below
+	 * its content size so `overflow-y: auto` can actually kick in. Without these
+	 * rules the panel is a plain block that grows with its content and overflows
+	 * the dialog.
+	 */
+	.dialog-body-fill :global(.scroll-demo-tabs.contained .fluent-tabs-panels) {
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.dialog-body-fill :global(.scroll-demo-tabs.contained .fluent-tab-panel.active) {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+	}
+
+	.expr-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.field-label,
+	.override-head {
+		font-weight: 600;
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		letter-spacing: 0.04em;
+		color: var(--neutral-foreground-hint);
+	}
+
+	.override-head {
+		margin-top: 0.5rem;
+	}
+
+	.expr-textarea {
+		width: 100%;
+		min-height: 160px;
+		resize: vertical;
+		padding: 0.5rem;
+		font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+		border: 1px solid var(--neutral-stroke-rest);
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+
+	.hint {
+		font-size: 0.875rem;
+		color: var(--neutral-foreground-hint);
 	}
 </style>

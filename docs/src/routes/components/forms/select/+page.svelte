@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Select, Option, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui";
+	import {Select, Option, OptionGroup, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui";
 	import {References, Meta} from "$lib/components";
 
 	// Two-way binding example
@@ -174,6 +174,27 @@
 				<Option value="disabled2" disabled>Disabled 2</Option>
 				<Option value="option3">Option 3</Option>
 				<Option value="option4">Option 4</Option>
+			{/snippet}
+		</Select>
+
+		<h3>Grouped options</h3>
+		<p>Wrap <code>&lt;Option&gt;</code> rows in <code>&lt;OptionGroup label="…"&gt;</code> to section the list under non-interactive headers.</p>
+		<Select label="Choose a food" id="grouped-select">
+			{#snippet children()}
+				<Option value="">Select...</Option>
+				<OptionGroup label="Fruit">
+					<Option value="apple">Apple</Option>
+					<Option value="banana">Banana</Option>
+					<Option value="cherry" disabled>Cherry (sold out)</Option>
+				</OptionGroup>
+				<OptionGroup label="Vegetable">
+					<Option value="carrot">Carrot</Option>
+					<Option value="potato" disabled>Potato (sold out)</Option>
+				</OptionGroup>
+				<OptionGroup label="Dairy">
+					<Option value="cheddar">Cheddar</Option>
+					<Option value="yogurt">Yogurt</Option>
+				</OptionGroup>
 			{/snippet}
 		</Select>
 

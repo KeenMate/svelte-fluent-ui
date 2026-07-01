@@ -18,12 +18,9 @@
 
 <script lang="ts">
 	import {setContext, untrack, tick} from "svelte"
-	import {provideFluentDesignSystem, fluentOption} from "@fluentui/web-components"
 	import PositioningRegion from "./PositioningRegion.svelte"
 	import type {SlotType} from "../types/index.js"
 	import type {SelectedOptionSvelteContext} from "../types/combobox.js"
-
-	provideFluentDesignSystem().register(fluentOption())
 
 	type SelectChangeDetail = {
 		value: string
@@ -180,20 +177,15 @@
 
 	function getOptionEls(root: HTMLElement | undefined): HTMLElement[] {
 		if (!root) return []
-		return Array.from(root.querySelectorAll("fluent-option")) as HTMLElement[]
+		return Array.from(root.querySelectorAll(".fluent-option")) as HTMLElement[]
 	}
 	function enabledOptionEls(root: HTMLElement | undefined): HTMLElement[] {
 		return getOptionEls(root).filter(el => !el.hasAttribute("disabled"))
 	}
 
-	// fluent-option carries its value as a JS PROPERTY (set by Svelte's custom-element
-	// property-assignment path), not an HTML attribute — so getAttribute("value")
-	// returns null. Read the property first, fall back to the attribute for the
-	// rare case where it was set as a string attribute.
+	// Option carries its value in `data-value` (see Option.svelte).
 	function optionValue(el: HTMLElement): string {
-		const v = (el as HTMLElement & {value?: string}).value
-		if (typeof v === "string") return v
-		return el.getAttribute("value") ?? ""
+		return el.dataset.value ?? el.getAttribute("value") ?? ""
 	}
 
 	function getOptionText(val: string): string {
@@ -265,7 +257,7 @@
 	function handleListClick(ev: MouseEvent) {
 		const target = ev.target as HTMLElement | null
 		if (!target) return
-		const optEl = target.closest("fluent-option") as HTMLElement | null
+		const optEl = target.closest(".fluent-option") as HTMLElement | null
 		if (!optEl) return
 		if (optEl.hasAttribute("disabled")) {
 			ev.preventDefault()
@@ -298,6 +290,16 @@
 		const opts = enabledOptionEls(listEl)
 		const el = opts[highlightedIndex]
 		el?.scrollIntoView({block: "nearest"})
+	}
+
+	// Number of option rows that fit in the popover viewport — the step for
+	// PageUp/PageDown. Falls back to 10 before the list has measured.
+	function pageSize(): number {
+		const opts = enabledOptionEls(listEl)
+		if (!listEl || opts.length === 0) return 10
+		const rowH = opts[0].offsetHeight || 32
+		const perPage = Math.floor(listEl.clientHeight / rowH)
+		return Math.max(1, perPage - 1) // keep one row of context across the jump
 	}
 
 	function typeAheadJump(ch: string) {
@@ -343,6 +345,8 @@
 			switch (ev.key) {
 				case "ArrowDown":
 				case "ArrowUp":
+				case "PageDown":
+				case "PageUp":
 				case "Enter":
 				case " ":
 					ev.preventDefault()
@@ -361,6 +365,8 @@
 		switch (ev.key) {
 			case "ArrowDown": ev.preventDefault(); moveHighlight(1); break
 			case "ArrowUp":   ev.preventDefault(); moveHighlight(-1); break
+			case "PageDown":  ev.preventDefault(); moveHighlight(pageSize()); break
+			case "PageUp":    ev.preventDefault(); moveHighlight(-pageSize()); break
 			case "Home": {
 				ev.preventDefault()
 				const opts = enabledOptionEls(listEl)
@@ -393,7 +399,7 @@
 
 	// ---------- Visual highlight sync ----------
 	// Reflects highlightedIndex to a data-highlighted attribute on the corresponding
-	// fluent-option, so CSS can style the keyboard-cursor row distinctly from
+	// option element, so CSS can style the keyboard-cursor row distinctly from
 	// hover and selected states.
 	$effect(() => {
 		const _ = highlightedIndex // dep tracking
@@ -431,7 +437,7 @@
 		}
 		queueMicrotask(() => {
 			if (!inlineListEl) return
-			const opts = inlineListEl.querySelectorAll("fluent-option")
+			const opts = inlineListEl.querySelectorAll(".fluent-option")
 			if (opts.length === 0) return
 			const first = opts[0] as HTMLElement
 			const rowH = parseInt(window.getComputedStyle(first).height) || first.offsetHeight || 32
@@ -685,23 +691,9 @@
 		box-sizing: border-box;
 	}
 
-	/* <fluent-option> defaults to inline-flex (sized to content). Inside our
-	 * listbox we want stacked rows of equal width — keep flex so fluent-option's
-	 * own internal layout still works, but stretch to full width and lock the
-	 * flex item against shrinking so a fixed-height listbox doesn't compress
-	 * rows together when content exceeds the cap. */
-	:global(.select-listbox-popover) :global(fluent-option),
-	.select-listbox-inline :global(fluent-option) {
-		display: flex;
-		width: 100%;
-		flex-shrink: 0;
-	}
-
-	/* Keyboard-cursor highlight (single mode). Distinct from hover and selected
-	 * — driven by data-highlighted set in the highlightedIndex sync effect. */
-	:global(.select-listbox-popover) :global(fluent-option[data-highlighted]) {
-		background: var(--neutral-fill-stealth-hover, #f0f0f0);
-	}
+	/* Option row layout, hover, keyboard highlight (data-highlighted), selected
+	 * and disabled styling now live in Option.svelte, scoped to the option
+	 * element so they apply in both the portalled popover and the inline list. */
 
 	/* ===== Inline listbox (multi mode) ===== */
 	.select-listbox-inline {

@@ -48,7 +48,33 @@
 		{ value: "15", label: "Anaïs Dupont" }
 	]
 
+	// Grouped options (the `group` field sections them under headers). Long
+	// enough that the dropdown scrolls, so PageUp/PageDown are demonstrable too.
+	const groupedFoods = [
+		{ value: "salt", label: "Salt" },   // ungrouped -> leading section
+		{ value: "pepper", label: "Pepper", disabled: true },
+		{ value: "apple", label: "Apple", group: "Fruit" },
+		{ value: "apricot", label: "Apricot", group: "Fruit" },
+		{ value: "banana", label: "Banana", group: "Fruit" },
+		{ value: "blueberry", label: "Blueberry", group: "Fruit" },
+		{ value: "cherry", label: "Cherry", group: "Fruit" },
+		{ value: "grape", label: "Grape", group: "Fruit" },
+		{ value: "mango", label: "Mango (out of season)", group: "Fruit", disabled: true },
+		{ value: "carrot", label: "Carrot", group: "Vegetable" },
+		{ value: "celery", label: "Celery", group: "Vegetable" },
+		{ value: "potato", label: "Potato", group: "Vegetable" },
+		{ value: "pumpkin", label: "Pumpkin (out of season)", group: "Vegetable", disabled: true },
+		{ value: "spinach", label: "Spinach", group: "Vegetable" },
+		{ value: "zucchini", label: "Zucchini", group: "Vegetable" },
+		{ value: "tofu", label: "Tofu" }, // ungrouped, kept in place between groups
+		{ value: "brie", label: "Brie", group: "Dairy" },
+		{ value: "cheddar", label: "Cheddar", group: "Dairy" },
+		{ value: "gouda", label: "Gouda", group: "Dairy" },
+		{ value: "yogurt", label: "Yogurt", group: "Dairy" }
+	]
+
 	// State for each example
+	let groupedValue = $state<string[]>([])
 	let basicValue = $state<string[]>([])
 	let preselectedValue = $state<string[]>(["3"])
 	let placeholderValue = $state<string[]>([])
@@ -76,6 +102,58 @@
 		callbackMessage = `Selection changed to: ${value[0] || "None"}`
 	}
 
+	// --- Async search (onsearch) — parent owns the data ---
+	let asyncValue = $state<string[]>([])
+	let asyncOptions = $state<{ value: string; label: string }[]>([])
+	let asyncLoading = $state(false)
+	let asyncTimer: ReturnType<typeof setTimeout> | undefined
+	function searchNames(query: string) {
+		const q = query.trim().toLowerCase()
+		if (asyncTimer) clearTimeout(asyncTimer)
+		if (!q) {
+			asyncLoading = false
+			asyncOptions = []
+			return
+		}
+		asyncLoading = true
+		// Simulate a server round-trip.
+		asyncTimer = setTimeout(() => {
+			asyncOptions = namesWithDiacritics.filter((n) =>
+				n.label.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(q)
+			)
+			asyncLoading = false
+		}, 700)
+	}
+
+	// --- Custom matcher (filter) — subsequence ("fuzzy") match on the label ---
+	let fuzzyValue = $state<string[]>([])
+	// Fold accents to plain ASCII. NFD strips combining marks (é → e), but some
+	// Latin letters (ø, ł, æ, ß, …) don't decompose, so map those explicitly —
+	// that's what lets "soren" match "Søren Østergård".
+	function fold(s: string): string {
+		return s
+			.toLowerCase()
+			.normalize("NFD")
+			.replace(/\p{Diacritic}/gu, "")
+			.replace(/ø/g, "o")
+			.replace(/ł/g, "l")
+			.replace(/đ/g, "d")
+			.replace(/æ/g, "ae")
+			.replace(/œ/g, "oe")
+			.replace(/ß/g, "ss")
+	}
+	function fuzzyFilter(query: string, option: { label: string }): boolean {
+		const q = fold(query).replace(/\s+/g, "")
+		if (!q) return true
+		const label = fold(option.label)
+		let i = 0
+		for (const ch of label) {
+			if (ch === q[i]) i++
+			if (i === q.length) return true
+		}
+		return false
+	}
+
 	type Property = {
 		name: string
 		type: string
@@ -91,6 +169,13 @@
 		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
 		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
 		{name: "minSearchLength", type: "number", default: "undefined", description: "Keep dropdown closed until the typed text reaches this length. Useful with large/async option sets to avoid opening on a single character."},
+		{name: "noDataText", type: "string", default: '"No results found"', description: "Text shown inside the dropdown when the filter matches no options."},
+		{name: "noDataTemplate", type: "Snippet", default: "undefined", description: "Custom content shown when the filter matches no options; overrides noDataText."},
+		{name: "onsearch", type: "(query: string) => void", default: "undefined", description: "Debounced notification that the query changed. When set, update options with the results yourself; the component skips its own client-side filtering."},
+		{name: "searchDelay", type: "number", default: "250", description: "Debounce in ms before onsearch fires. Ignored without onsearch."},
+		{name: "filter", type: "(query, option) => boolean", default: "undefined", description: "Custom client-side matcher replacing the built-in substring match. Ignored when onsearch is set."},
+		{name: "loading", type: "boolean", default: "undefined", description: "Parent-controlled loading flag for async onsearch; shows loadingText instead of the empty-state message while true."},
+		{name: "loadingText", type: "string", default: '"Searching…"', description: "Text shown while loading is true."},
 		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
 		{name: "appearance", type: '"outline" | "filled"', default: "outline", description: "Visual style"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disable the combobox"},
@@ -269,6 +354,81 @@
 					<small style="color: var(--neutral-foreground-hint);">Type one character — dropdown stays closed. Type a second — it opens.</small>
 					<Combobox id="min-search" bind:value={minSearchValue} options={namesWithDiacritics} autocomplete="list" minSearchLength={2} width="300px" />
 					<small>Selected: {minSearchValue[0] ? namesWithDiacritics.find(n => n.value === minSearchValue[0])?.label : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Grouped options &amp; keyboard navigation</h3>
+		<p>
+			Add a <code>group</code> field to each item in the <code>options</code> array and the combobox sections
+			them under non-interactive headers. Order is preserved exactly as authored — a new header starts
+			wherever the <code>group</code> changes, and ungrouped items (e.g. Salt, Pepper at the top and Tofu
+			between Vegetable and Dairy) stay right where you put them. As you type, a group's header
+			disappears automatically once all of its options filter out. (For <code>&lt;Option&gt;</code> children,
+			wrap them in <code>&lt;OptionGroup label="…"&gt;</code> instead.) Headers are inert — the keyboard
+			(<kbd>↑</kbd>/<kbd>↓</kbd>, <kbd>PageUp</kbd>/<kbd>PageDown</kbd>, <kbd>Home</kbd>/<kbd>End</kbd>)
+			skips straight over them from one option to the next.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>options with <code>group</code></strong>
+					<small style="color: var(--neutral-foreground-hint);">Type "yog" — only Dairy remains; the Fruit and Vegetable headers vanish. Or open and press PageDown to jump a page at a time.</small>
+					<Combobox id="grouped" bind:value={groupedValue} options={groupedFoods} autocomplete="list" width="300px" />
+					<small>Selected: {groupedValue[0] ? groupedFoods.find(f => f.value === groupedValue[0])?.label : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Server-side search (<code>onsearch</code>)</h3>
+		<p>
+			With <code>onsearch</code> the parent owns the data: the component fires a <strong>debounced</strong>
+			callback as you type, you fetch results and update <code>options</code>, and the component skips its
+			own client-side filtering (the server already filtered). Pair it with <code>minSearchLength</code> to
+			avoid firing on the first character and <code>loading</code> to show a "Searching…" state instead of the
+			empty message while the request is in flight.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Async, debounced, with loading state</strong>
+					<small style="color: var(--neutral-foreground-hint);">Type ≥2 chars (e.g. "jo", "mul"); results arrive after ~700ms.</small>
+					<Combobox
+						id="async-search"
+						bind:value={asyncValue}
+						options={asyncOptions}
+						onsearch={searchNames}
+						loading={asyncLoading}
+						minSearchLength={2}
+						placeholder="Search names…"
+						width="300px"
+					/>
+					<small>Selected: {asyncValue[0] ? namesWithDiacritics.find(n => n.value === asyncValue[0])?.label : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Custom matcher (<code>filter</code>)</h3>
+		<p>
+			The <code>filter</code> prop replaces the built-in diacritic-insensitive substring match with your own
+			predicate — here a subsequence ("fuzzy") match, so typing <code>jg</code> matches "<em>J</em>osé
+			<em>G</em>arcía". It runs entirely client-side and is ignored when <code>onsearch</code> is set.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Fuzzy subsequence match</strong>
+					<small style="color: var(--neutral-foreground-hint);">Try: "jg", "fm", "zb" (fuzzy) — or "soren" / "lukasz" (accent-folded).</small>
+					<Combobox
+						id="fuzzy"
+						bind:value={fuzzyValue}
+						options={namesWithDiacritics}
+						filter={fuzzyFilter}
+						autocomplete="list"
+						placeholder="Fuzzy search…"
+						width="300px"
+					/>
+					<small>Selected: {fuzzyValue[0] ? namesWithDiacritics.find(n => n.value === fuzzyValue[0])?.label : "None"}</small>
 				</Stack>
 			</GridItem>
 		</Grid>
