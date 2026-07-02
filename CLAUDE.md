@@ -74,6 +74,10 @@ These are built from scratch using Svelte, styled with FluentUI design tokens:
 
 - **QuickGrid** - Advanced data grid with sorting, filtering, and pagination (inspired by ASP.NET QuickGrid)
 - **Card** - Content container with FluentUI styling
+- **Badge** - Small status/count indicator; a themed `<span>` (NOT a `<fluent-badge>` wrapper). Supports `color`/`fill` (token-based via `--badge-fill-*`/`--badge-color-*`), `appearance` (accent/lightweight/neutral/outline/tint), `size` (xs–xl), `circular`, `pill`, `radius`, an `icon` snippet, and text truncation — `truncate` (end ellipsis) or `ellipsisStart` (start-side ellipsis for paths/hierarchies) with `maxWidth` + `title`.
+- **Label** - Lighter tag-style indicator (tinted fill + coloured border, medium weight); `outline` variant, six semantic colours (primary/secondary/success/warning/danger/info), xs–xl size scale, `icon` slot. Colours resolve from the shared `--fluent-color-<name>-*` palette (see fluent-blazor-compat.scss).
+- **CompositeBadge** - Three-section `[icon][label][button]` chip (notification pills, status + count, dismissible chips). Base `color` applies to all sections; `labelColor`/`buttonColor` override the middle/right sections independently. `onlabelclick`/`onbuttonclick` handlers, default `×` button glyph.
+- **BadgeGroup** - Flex-wrap container that hides child badges past a per-instance `limit` (default 5), always keeping the last child visible for a "+N more" tail (hidden badges stay in the DOM); `showAll` reveals everything. Limit applied via an effect + `MutationObserver`.
 - **Toast** - Notification/toast component (uses fluent-anchor but custom layout)
 - **Calendar** - Date picker with custom FluentUI calendar implementation
 - **DatePicker** - Date selection with calendar popup (inspired by FluentUI Blazor)
@@ -114,7 +118,6 @@ These wrap `<fluent-*>` web components from `@fluentui/web-components`:
 - **Accordion** → `<fluent-accordion>`
 - **AccordionItem** → `<fluent-accordion-item>`
 - **Anchor** → `<fluent-anchor>`
-- **Badge** → `<fluent-badge>`
 - **Breadcrumb** → `<fluent-breadcrumb>`
 - **BreadcrumbItem** → `<fluent-breadcrumb-item>`
 - **Button** → `<fluent-button>`

@@ -8,13 +8,16 @@ SHELL := cmd.exe
 .SHELLFLAGS := /c
 endif
 
+# Dev server port (docs vite dev). Override: make kill-port PORT=3000
+PORT ?= 12900
+
 # Docker image settings
 DOCKER_IMAGE_NAME = registry.km8.es/svelte-fluentui-showcase
 DOCKER_TAG = production
 DOCKER_CONTAINER_NAME = svelte-fluentui-docs
 DOCKER_PORT = 8080
 
-.PHONY: setup dev build package create-link unlink publish publish-dry clean help
+.PHONY: setup dev build package create-link unlink publish publish-dry clean help kill-port
 .PHONY: docker-build-docs docker-run-docs docker-stop-docs docker-clean-docs
 .PHONY: test-e2e test-e2e-ui test-e2e-headed test-e2e-install
 
@@ -29,6 +32,7 @@ help:
 	@echo   package      - Package the library for publishing
 	@echo   create-link  - Create global npm link for svelte-fluentui
 	@echo   unlink       - Remove global npm link for svelte-fluentui
+	@echo   kill-port    - Free the dev server port (default $(PORT); override with PORT=xxxx)
 	@echo
 	@echo Publishing:
 	@echo   publish              - Publish to npm under 'latest' dist-tag
@@ -59,6 +63,18 @@ setup:
 dev:
 	@echo Starting development server with HMR...
 	npm run dev
+
+# Free the dev server port. Kills whatever is LISTENING on $(PORT) — covers
+# both IPv4 and IPv6 (vite binds [::1]:$(PORT), which a naive IPv4-only check
+# misses). Override the port with: make kill-port PORT=3000
+kill-port:
+	@echo Freeing port $(PORT)...
+ifeq ($(OS),Windows_NT)
+	-@for /f "tokens=5" %%a in ('netstat -ano ^| findstr :$(PORT) ^| findstr LISTENING') do taskkill /F /PID %%a
+else
+	-@lsof -ti tcp:$(PORT) | xargs -r kill -9
+endif
+	@echo Port $(PORT) is free
 
 build:
 	@echo Building library and documentation...

@@ -48,6 +48,70 @@
 }
 
 // =============================================================================
+// Semantic palette for the Badge family (Badge / Label / CompositeBadge)
+// Each colour exposes four roles so filled chips, tinted labels and outlines
+// all read correctly:
+//   --fluent-color-<name>          solid background
+//   --fluent-color-<name>-contrast text on the solid background
+//   --fluent-color-<name>-emphasis readable line colour (label text + border,
+//                                  outline text) — differs from the solid fill
+//                                  where the solid is too light (e.g. warning)
+//   --fluent-color-<name>-tint     faint fill for tinted labels
+// FluentUI tokens back the neutral/brand roles so themes flow through; the
+// semantic hues (success/warning/danger/info) are hardcoded like the badge
+// colours above since FluentUI 2.6 ships no semantic palette.
+// =============================================================================
+:root {
+	// primary (brand)
+	--fluent-color-primary: var(--accent-fill-rest, #0078d4);
+	--fluent-color-primary-contrast: var(--foreground-on-accent-rest, #ffffff);
+	--fluent-color-primary-emphasis: var(--accent-foreground-rest, #0067b8);
+	--fluent-color-primary-tint: color-mix(in srgb, var(--accent-fill-rest, #0078d4) 12%, transparent);
+
+	// secondary (neutral grey)
+	--fluent-color-secondary: var(--neutral-fill-strong-rest, #616161);
+	--fluent-color-secondary-contrast: #ffffff;
+	--fluent-color-secondary-emphasis: var(--neutral-foreground-rest, #424242);
+	--fluent-color-secondary-tint: color-mix(in srgb, var(--neutral-fill-strong-rest, #616161) 12%, transparent);
+
+	// success (green)
+	--fluent-color-success: #107c10;
+	--fluent-color-success-contrast: #ffffff;
+	--fluent-color-success-emphasis: #0e700e;
+	--fluent-color-success-tint: color-mix(in srgb, #107c10 12%, transparent);
+
+	// warning (yellow — solid needs dark text, line colour is dark amber)
+	--fluent-color-warning: #fde300;
+	--fluent-color-warning-contrast: #242424;
+	--fluent-color-warning-emphasis: #8a6d00;
+	--fluent-color-warning-tint: color-mix(in srgb, #fde300 22%, transparent);
+
+	// danger (red)
+	--fluent-color-danger: #c50f1f;
+	--fluent-color-danger-contrast: #ffffff;
+	--fluent-color-danger-emphasis: #b10e1e;
+	--fluent-color-danger-tint: color-mix(in srgb, #c50f1f 12%, transparent);
+
+	// info (blue)
+	--fluent-color-info: #0a94d6;
+	--fluent-color-info-contrast: #ffffff;
+	--fluent-color-info-emphasis: #0a6a9a;
+	--fluent-color-info-tint: color-mix(in srgb, #0a94d6 12%, transparent);
+
+	// light
+	--fluent-color-light: var(--neutral-fill-secondary-rest, #f0f0f0);
+	--fluent-color-light-contrast: var(--neutral-foreground-rest, #242424);
+	--fluent-color-light-emphasis: var(--neutral-foreground-hint, #8a8a8a);
+	--fluent-color-light-tint: var(--neutral-fill-secondary-rest, #f5f5f5);
+
+	// dark
+	--fluent-color-dark: var(--neutral-foreground-rest, #242424);
+	--fluent-color-dark-contrast: var(--neutral-layer-1, #ffffff);
+	--fluent-color-dark-emphasis: var(--neutral-foreground-rest, #242424);
+	--fluent-color-dark-tint: color-mix(in srgb, var(--neutral-foreground-rest, #242424) 10%, transparent);
+}
+
+// =============================================================================
 // RTL Support
 // =============================================================================
 
