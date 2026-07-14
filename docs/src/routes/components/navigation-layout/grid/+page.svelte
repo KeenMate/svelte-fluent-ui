@@ -1,11 +1,20 @@
 <script lang="ts">
-	import {Grid, GridItem, QuickGrid, Stack, Card, Button, Badge} from "svelte-fluentui"
+	import {Grid, GridItem, QuickGrid, Stack, Card, Button, Badge, configureGridBreakpoints} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 
 	let currentBreakpoint = $state<string>("unknown")
 
 	function handleBreakpointChange(size: string) {
 		currentBreakpoint = size
+	}
+
+	// Container-query demo state
+	let cqBoxWidth = $state(760)
+	let cbBoxWidth = $state(760)
+
+	function applyGlobalBreakpoints() {
+		// Reads --fluent-grid-breakpoint-* from :root, then applies these overrides.
+		configureGridBreakpoints({sm: 400, md: 700, lg: 1000})
 	}
 
 	type Property = {
@@ -17,6 +26,9 @@
 
 	const gridProperties: Property[] = [
 		{name: "columns", type: "number", default: "undefined", description: "Switches Grid to CSS-grid mode with N equal-width tracks (minmax(0, 1fr)). Children fill one cell each; xs/sm/md breakpoint props are ignored."},
+		{name: "container", type: "boolean", default: "false", description: "Opt into container-query mode: GridItem xs/sm/md… breakpoints resolve against a container's width instead of the viewport. Without containerId, the Grid itself is the query container."},
+		{name: "containerId", type: "string", default: "undefined", description: "Container-query mode only. Size against the nearest ancestor declaring `container-name: <containerId>` instead of the Grid. Warns in dev if no such ancestor exists."},
+		{name: "containerBreakpoints", type: "Partial<GridBreakpoints>", default: "undefined", description: "Container-query mode only. Per-Grid breakpoint override (px), e.g. {sm:300, md:450}. Falls back to configureGridBreakpoints() / --fluent-grid-breakpoint-* vars, then built-in defaults (sm480/md640/lg900/xl1200/xxl1600)."},
 		{name: "gap", type: "string", default: '"1rem" (when columns set)', description: "Gap between cells in columns mode (e.g. '0.5rem', '16px'). Ignored in flex-spacing mode."},
 		{name: "spacing", type: "number (1-10)", default: "3", description: "Spacing between grid items (flex-spacing mode only)"},
 		{name: "justify", type: "JustifyContent", default: "flex-start", description: "Horizontal alignment of items (flex-spacing mode only)"},
@@ -75,6 +87,7 @@
 	<ul>
 		<li><strong>Flex-spacing mode</strong> (default): responsive 12-column system with <code>GridItem</code> breakpoint props (<code>xs</code>, <code>sm</code>, <code>md</code>…). Based on FluentUI Blazor.</li>
 		<li><strong>Columns mode</strong>: pass <code>columns={'{N}'}</code> (plus optional <code>gap</code>) for a CSS-grid layout with N equal-width tracks. Simpler, and immune to content-based width stealing between cells.</li>
+		<li><strong>Container-query mode</strong>: add <code>container</code> so the same <code>xs</code>/<code>sm</code>/<code>md</code>… breakpoints respond to a <em>container's</em> width instead of the viewport — ideal for components reused in sidebars, panels, or splitters.</li>
 	</ul>
 
 	<References links={[
@@ -160,6 +173,51 @@
 				<Card class="grid-card-layer3">4</Card>
 			</GridItem>
 		</Grid>
+
+		<h3>Container queries</h3>
+		<p>
+			With <code>container</code>, breakpoints resolve against the Grid's own width, not the
+			viewport. Drag the slider to resize the box — the columns reflow on the
+			<strong>box width ({cqBoxWidth}px)</strong>, and resizing the browser window does nothing.
+			Container breakpoints: &lt;480→1 · ≥480→sm · ≥640→md · ≥900→lg.
+		</p>
+		<input type="range" min="240" max="1080" bind:value={cqBoxWidth} class="cq-slider" aria-label="Container width" />
+		<div class="cq-box" style="width: {cqBoxWidth}px;">
+			<Grid container spacing={2}>
+				{#each [1, 2, 3, 4, 5, 6, 7, 8] as n}
+					<GridItem xs={12} sm={6} md={4} lg={3}>
+						<Card class="grid-card-layer3 grid-card-centered">Item {n}</Card>
+					</GridItem>
+				{/each}
+			</Grid>
+		</div>
+
+		<h3>Per-Grid container breakpoints</h3>
+		<p>
+			Override the thresholds for a single Grid with <code>containerBreakpoints</code>. This one
+			switches columns much earlier (sm@300, md@450, lg@600):
+		</p>
+		<input type="range" min="240" max="1080" bind:value={cbBoxWidth} class="cq-slider" aria-label="Container width" />
+		<div class="cq-box cq-box-alt" style="width: {cbBoxWidth}px;">
+			<Grid container containerBreakpoints={{sm: 300, md: 450, lg: 600}} spacing={2}>
+				{#each [1, 2, 3, 4, 5, 6, 7, 8] as n}
+					<GridItem xs={12} sm={6} md={4} lg={3}>
+						<Card class="grid-card-layer3 grid-card-centered">Item {n}</Card>
+					</GridItem>
+				{/each}
+			</Grid>
+		</div>
+
+		<h3>App-wide breakpoint config</h3>
+		<p>
+			Configure breakpoints for the whole app with <code>configureGridBreakpoints()</code> — call it
+			once at startup (it reads <code>--fluent-grid-breakpoint-*</code> CSS variables from
+			<code>:root</code>) or pass an explicit object. The button below rewrites the default-container
+			thresholds live (to sm@400, md@700, lg@1000) — it affects the first example above.
+		</p>
+		<Button appearance="accent" onclick={applyGlobalBreakpoints}>
+			configureGridBreakpoints(&#123;sm:400, md:700, lg:1000&#125;)
+		</Button>
 
 		<h3>Different Spacing</h3>
 		<p>Grid with spacing={6}:</p>
@@ -314,5 +372,23 @@
 <style>
 	.breakpoint-list {
 		margin: 0.5rem 0;
+	}
+
+	.cq-slider {
+		width: 100%;
+		max-width: 1080px;
+		margin: 0.25rem 0 0.75rem;
+	}
+
+	.cq-box {
+		max-width: 100%;
+		padding: 12px;
+		border: 2px dashed var(--neutral-stroke-strong-rest, #888);
+		border-radius: var(--layer-corner-radius, 8px);
+		box-sizing: border-box;
+	}
+
+	.cq-box-alt {
+		border-color: var(--accent-fill-rest, #036ac4);
 	}
 </style>
