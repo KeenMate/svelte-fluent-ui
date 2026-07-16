@@ -17,7 +17,7 @@ DOCKER_TAG = production
 DOCKER_CONTAINER_NAME = svelte-fluentui-docs
 DOCKER_PORT = 8080
 
-.PHONY: setup dev build package create-link unlink publish publish-dry clean help kill-port
+.PHONY: setup dev build package create-link unlink publish publish-rc publish-dry clean help kill-port
 .PHONY: docker-build-docs docker-run-docs docker-stop-docs docker-clean-docs
 .PHONY: test-e2e test-e2e-ui test-e2e-headed test-e2e-install
 
@@ -37,6 +37,7 @@ help:
 	@echo Publishing:
 	@echo   publish              - Publish to npm under 'latest' dist-tag
 	@echo   publish TAG=rc       - Publish under a specific dist-tag (e.g. 'rc' for prereleases)
+	@echo   publish-rc           - Publish under the 'rc' dist-tag (shortcut for publish TAG=rc)
 	@echo   publish-dry          - Dry run publish (show what would be published)
 	@echo
 	@echo End-to-end tests (Playwright):
@@ -114,6 +115,11 @@ publish: package
 	cd packages/svelte-fluentui && npm publish$(if $(TAG), --tag $(TAG))
 	@echo
 	@echo Published successfully!
+
+# Convenience shortcut for prereleases: publishes under the 'rc' dist-tag so it
+# never moves the 'latest' tag. Equivalent to: make publish TAG=rc
+publish-rc:
+	@$(MAKE) publish TAG=rc
 
 publish-dry: package
 	@echo Dry run - showing what would be published...
