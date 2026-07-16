@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.0-rc05] - 2026-07-16
+## [1.5.0-rc05] - 2026-07-16 [PUBLISHED]
 
 ### Added
 - **`Combobox`, `Select`, `Autocomplete` — `maxDropdownHeight` and `dropdownWidth` to size the portalled dropdown independently of the control** - The custom dropdowns in all three components portal their listbox out via `PositioningRegion`, which capped height only to the viewport-available space (`--available-height`, fallback 280px; `Autocomplete` used a hardcoded 300px) and forced the listbox width to exactly match the control (Floating UI `matchWidth`). Neither was configurable per-instance. Two new string props fix that: (1) **`maxDropdownHeight`** (e.g. `"240px"`, `"50vh"`) sets a per-instance ceiling — the listbox `max-height` becomes `min(--available-height, maxDropdownHeight)`, so it's still capped to the viewport but never taller than your value (whichever is smaller wins). (2) **`dropdownWidth`** (e.g. `"360px"`) gives the listbox its own width: when unset it matches the control as before, but when set, `matchWidth` is switched off and the width applied directly, so the list can be wider (to show long labels) or narrower than the input — the control keeps its own `width`. On `Select`, both apply to single-select mode (multi mode keeps `maxVisibleOptions`); `Autocomplete`'s dropdown is now also viewport-aware (its former hardcoded 300px is now the `maxDropdownHeight` default). The three demo pages gain slider-driven "Dropdown max height" and "Dropdown width" examples plus API-table rows.
