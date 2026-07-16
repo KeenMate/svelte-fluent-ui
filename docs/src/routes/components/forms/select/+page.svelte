@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Select, Option, OptionGroup, Stack, Grid, GridItem, Card, QuickGrid} from "svelte-fluentui";
+	import {Select, Option, OptionGroup, Stack, Grid, GridItem, Card, QuickGrid, Slider} from "svelte-fluentui";
 	import {References, Meta} from "$lib/components";
 
 	// Two-way binding example
@@ -54,6 +54,14 @@
 	let selectedLanguageValue = $state("1");
 	let selectedLanguage: Language | undefined = $state(languages[0]);
 
+	// Dropdown max-height demo (single-select mode)
+	let selectMaxHeightPx = $state(240);
+	let maxHeightLanguage = $state("");
+
+	// Dropdown width demo (single-select mode)
+	let selectDropdownWidthPx = $state(360);
+	let dropdownWidthLanguage = $state("");
+
 	function handleLanguageChange(detail: { value: string, data?: Record<string, unknown> }) {
 		selectedLanguageValue = detail.value;
 		selectedLanguage = detail.data as Language | undefined;
@@ -76,6 +84,8 @@
 		{name: "height", type: "string", default: "undefined", description: "Height (e.g., '200px')"},
 		{name: "id", type: "string", default: "undefined", description: "Element ID"},
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
+		{name: "maxDropdownHeight", type: "string", default: "undefined (280px cap)", description: "Single mode: cap the dropdown listbox height (e.g. '240px', '50vh'). Always also capped to the viewport-available space, whichever is smaller."},
+		{name: "dropdownWidth", type: "string", default: "undefined (matches control)", description: "Single mode: width of the dropdown listbox (e.g. '360px'). When unset the list matches the control width; when set it uses this width instead."},
 		{name: "maxVisibleOptions", type: "number", default: "undefined", description: "Limits visible options in multiple select, enables scrolling"},
 		{name: "multiple", type: "boolean", default: "false", description: "Allow multiple selections"},
 		{name: "name", type: "string", default: "undefined", description: "Form field name"},
@@ -335,6 +345,53 @@
 							<Option value="2">Option 2</Option>
 						{/snippet}
 					</Select>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Dropdown max height</h3>
+		<p>
+			In single-select mode, use <code>maxDropdownHeight</code> to cap the dropdown listbox height (e.g.
+			<code>"240px"</code>, <code>"50vh"</code>). The listbox is always <em>also</em> capped to the space
+			available to the viewport edge, so this acts as an upper bound — whichever is smaller wins. Drag the
+			slider to change it live, then open the dropdown. (Multi mode uses <code>maxVisibleOptions</code> instead.)
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Slider id="select-maxheight" bind:value={selectMaxHeightPx} min={100} max={400} step={20} label={`maxDropdownHeight: ${selectMaxHeightPx}px`} />
+					<Select label="Language" bind:value={maxHeightLanguage} maxDropdownHeight={`${selectMaxHeightPx}px`} width="300px">
+						{#snippet children()}
+							<Option value="">Select a language...</Option>
+							{#each languages as lang}
+								<Option value={String(lang.id)}>{lang.name} ({lang.native})</Option>
+							{/each}
+						{/snippet}
+					</Select>
+					<small>Open the dropdown — the 33 options scroll once they exceed {selectMaxHeightPx}px.</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Dropdown width</h3>
+		<p>
+			By default the dropdown matches the control width. In single-select mode, set <code>dropdownWidth</code>
+			to give the listbox its own width — wider than the trigger (to show long labels) or narrower — independent
+			of the control. Drag the slider to change it live, then open the dropdown.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Slider id="select-ddwidth" bind:value={selectDropdownWidthPx} min={160} max={520} step={20} label={`dropdownWidth: ${selectDropdownWidthPx}px`} />
+					<Select label="Language" bind:value={dropdownWidthLanguage} dropdownWidth={`${selectDropdownWidthPx}px`} width="220px">
+						{#snippet children()}
+							<Option value="">Select a language...</Option>
+							{#each languages as lang}
+								<Option value={String(lang.id)}>{lang.name} ({lang.native})</Option>
+							{/each}
+						{/snippet}
+					</Select>
+					<small>The control stays 220px wide; the dropdown is {selectDropdownWidthPx}px.</small>
 				</Stack>
 			</GridItem>
 		</Grid>

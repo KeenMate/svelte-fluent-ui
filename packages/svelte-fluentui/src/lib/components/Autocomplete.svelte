@@ -38,6 +38,14 @@
 		keepOpen?: boolean
 		width?: string
 		height?: string
+		/** Cap the dropdown listbox height (e.g. "300px", "50vh"). The listbox is
+		 * always also capped to the space available to the viewport edge; this
+		 * lets a shorter ceiling be set per-instance. Defaults to 300px. */
+		maxDropdownHeight?: string
+		/** Width of the dropdown listbox (e.g. "360px", "24rem"). When unset the
+		 * listbox matches the control width; when set it uses this width instead
+		 * (and stops matching), so the list can be wider or narrower than the input. */
+		dropdownWidth?: string
 		id?: string
 		title?: string
 		ariaLabel?: string
@@ -84,6 +92,8 @@
 		keepOpen = false,
 		width = undefined,
 		height = undefined,
+		maxDropdownHeight = undefined,
+		dropdownWidth = undefined,
 		id = undefined,
 		title = undefined,
 		ariaLabel = undefined,
@@ -602,7 +612,9 @@
 			<PositioningRegion
 				anchor={containerElement}
 				visible={isOpen}
-				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: var(--fluent-border-radius-md); box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); max-height: 300px; overflow-y: auto; overscroll-behavior: contain;"
+				availableHeight
+				matchWidth={!dropdownWidth}
+				style="z-index: var(--fluent-z-popover, 1060); background: var(--neutral-layer-1); border: 1px solid var(--neutral-stroke-rest); border-radius: var(--fluent-border-radius-md); box-shadow: 0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12); {dropdownWidth ? `width: ${dropdownWidth}; ` : ''}{maxDropdownHeight ? `--autocomplete-listbox-max-height: ${maxDropdownHeight}; ` : ''}max-height: min(var(--available-height, 100vh), var(--autocomplete-listbox-max-height, 300px)); overflow-y: auto; overscroll-behavior: contain;"
 			>
 				<div class="options-list">
 					{#if headerContent}

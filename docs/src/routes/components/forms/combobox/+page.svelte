@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui";
+	import { Combobox, Option, Stack, Grid, GridItem, Card, QuickGrid, Icon, Slider } from "svelte-fluentui";
 	import {References, Meta} from "$lib/components";
 	import { songs } from "$lib/demo-data/datasets";
 
@@ -92,6 +92,10 @@
 	let belowValue = $state<string[]>([])
 	let templateValue = $state<string[]>([])
 	let widthValue = $state<string[]>([])
+	let maxHeightValue = $state<string[]>([])
+	let maxHeightPx = $state(240)
+	let dropdownWidthValue = $state<string[]>([])
+	let dropdownWidthPx = $state(360)
 	let callbackValue = $state<string[]>([])
 	let callbackMessage = $state<string>("")
 	let diacriticsValue = $state<string[]>([])
@@ -187,6 +191,8 @@
 		{name: "title", type: "string", default: "undefined", description: "Tooltip text"},
 		{name: "width", type: "string", default: "undefined", description: "Component width (e.g., '300px', '100%')"},
 		{name: "height", type: "string", default: "undefined", description: "Component height"},
+		{name: "maxDropdownHeight", type: "string", default: "undefined (280px cap)", description: "Cap the dropdown listbox height (e.g. '240px', '50vh'). Always also capped to the viewport-available space, whichever is smaller."},
+		{name: "dropdownWidth", type: "string", default: "undefined (matches control)", description: "Width of the dropdown listbox (e.g. '360px'). When unset the list matches the control width; when set it uses this width instead."},
 		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
 		{name: "style", type: "string", default: '""', description: "Inline styles"}
 	]
@@ -486,6 +492,38 @@
 				<Stack orientation="vertical" gap="0.5rem">
 					<strong>Full width (100%)</strong>
 					<Combobox id="width-full" bind:value={widthValue} options={sizes} width="100%" />
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Dropdown max height</h3>
+		<p>
+			Use <code>maxDropdownHeight</code> to cap the dropdown listbox height (e.g. <code>"240px"</code>, <code>"50vh"</code>).
+			The listbox is always <em>also</em> capped to the space available to the viewport edge, so this acts as an
+			upper bound — whichever is smaller wins. Drag the slider to change it live, then open the dropdown.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Slider id="cb-maxheight" bind:value={maxHeightPx} min={100} max={400} step={20} label={`maxDropdownHeight: ${maxHeightPx}px`} />
+					<Combobox id="maxheight" bind:value={maxHeightValue} options={longList} maxDropdownHeight={`${maxHeightPx}px`} autocomplete="list" width="300px" />
+					<small>Open the dropdown — it scrolls once the 20 options exceed {maxHeightPx}px.</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Dropdown width</h3>
+		<p>
+			By default the dropdown matches the control width. Set <code>dropdownWidth</code> to give the listbox its
+			own width — wider than the input (to show long labels) or narrower — independent of the control. Drag the
+			slider to change it live, then open the dropdown.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Slider id="cb-ddwidth" bind:value={dropdownWidthPx} min={160} max={520} step={20} label={`dropdownWidth: ${dropdownWidthPx}px`} />
+					<Combobox id="ddwidth" bind:value={dropdownWidthValue} options={songs} dropdownWidth={`${dropdownWidthPx}px`} width="220px" />
+					<small>The control stays 220px wide; the dropdown is {dropdownWidthPx}px.</small>
 				</Stack>
 			</GridItem>
 		</Grid>

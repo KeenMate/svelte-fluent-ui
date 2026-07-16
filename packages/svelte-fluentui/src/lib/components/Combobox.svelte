@@ -56,6 +56,14 @@
 		width?: string
 		/** Accepted for API compatibility (no-op — combobox is single-line). */
 		height?: string
+		/** Cap the dropdown listbox height (e.g. "300px", "50vh"). The listbox is
+		 * always also capped to the space available to the viewport edge; this
+		 * lets a shorter ceiling be set per-instance. */
+		maxDropdownHeight?: string
+		/** Width of the dropdown listbox (e.g. "360px", "24rem"). When unset the
+		 * listbox matches the control width; when set it uses this width instead
+		 * (and stops matching), so the list can be wider or narrower than the input. */
+		dropdownWidth?: string
 		/** Accepted for API compatibility; combobox is single-select. */
 		multiple?: boolean
 		minSearchLength?: number
@@ -103,6 +111,8 @@
 		title = undefined,
 		width = undefined,
 		height = undefined,
+		maxDropdownHeight = undefined,
+		dropdownWidth = undefined,
 		multiple = false,
 		minSearchLength = undefined,
 		noDataText = "No results found",
@@ -704,7 +714,7 @@
 			anchor={controlEl}
 			visible={isOpen}
 			position={forcedPlacement}
-			matchWidth
+			matchWidth={!dropdownWidth}
 			availableHeight
 		>
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -715,6 +725,10 @@
 				role="listbox"
 				tabindex="-1"
 				class="combobox-listbox"
+				style={[
+					dropdownWidth ? `width: ${dropdownWidth}` : "",
+					maxDropdownHeight ? `--combobox-listbox-max-height: ${maxDropdownHeight}` : ""
+				].filter(Boolean).join("; ") || undefined}
 				onclick={handleListClick}
 			>
 				{@render optionList()}
@@ -845,8 +859,9 @@
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
 		box-shadow: var(--elevation-shadow-flyout, 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12));
 		padding: calc(var(--design-unit, 4) * 1px);
-		/* Cap to the space PositioningRegion measured to the viewport edge. */
-		max-height: var(--available-height, 280px);
+		/* Cap to the space PositioningRegion measured to the viewport edge, and
+		 * (when set) to the per-instance `maxDropdownHeight` prop — whichever is smaller. */
+		max-height: min(var(--available-height, 280px), var(--combobox-listbox-max-height, 100vh));
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		box-sizing: border-box;

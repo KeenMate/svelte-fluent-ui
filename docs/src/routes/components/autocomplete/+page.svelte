@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Autocomplete, Stack, Grid, GridItem, Card, QuickGrid, Icon } from "svelte-fluentui"
+	import { Autocomplete, Stack, Grid, GridItem, Card, QuickGrid, Icon, Slider } from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 	import { countries } from "$lib/demo-data/datasets"
 
@@ -64,6 +64,10 @@
 	let filledValue = $state<string[]>([])
 	let outlineValue = $state<string[]>([])
 	let widthValue = $state<string[]>([])
+	let maxHeightAcValue = $state<string[]>([])
+	let acMaxHeightPx = $state(240)
+	let dropdownWidthAcValue = $state<string[]>([])
+	let acDropdownWidthPx = $state(360)
 	let templateValue = $state<string[]>([])
 	let headerFooterValue = $state<string[]>([])
 	let iconValue = $state<string[]>([])
@@ -147,6 +151,8 @@
 		{name: "ariaLabel", type: "string", default: "undefined", description: "Accessibility label"},
 		{name: "width", type: "string", default: "undefined", description: "Component width"},
 		{name: "height", type: "string", default: "undefined", description: "Component height"},
+		{name: "maxDropdownHeight", type: "string", default: '"300px"', description: "Cap the dropdown listbox height (e.g. '240px', '50vh'). Always also capped to the viewport-available space, whichever is smaller."},
+		{name: "dropdownWidth", type: "string", default: "undefined (matches control)", description: "Width of the dropdown listbox (e.g. '360px'). When unset the list matches the control width; when set it uses this width instead."},
 		{name: "class", type: "string", default: '""', description: "Additional CSS classes"},
 		{name: "style", type: "string", default: '""', description: "Inline styles"}
 	]
@@ -453,6 +459,59 @@
 						width="100%"
 						label="Full width"
 					/>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Dropdown max height</h3>
+		<p>
+			Use <code>maxDropdownHeight</code> to cap the dropdown listbox height (e.g. <code>"240px"</code>, <code>"50vh"</code>);
+			it defaults to <code>300px</code>. The listbox is always <em>also</em> capped to the space available to the
+			viewport edge, so this acts as an upper bound — whichever is smaller wins. Drag the slider to change it live,
+			then focus the input to open the list.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Slider id="ac-maxheight" bind:value={acMaxHeightPx} min={100} max={400} step={20} label={`maxDropdownHeight: ${acMaxHeightPx}px`} />
+					<Autocomplete
+						bind:selectedOptions={maxHeightAcValue}
+						options={countries}
+						showInitialOptions={true}
+						initialOptionsCount={30}
+						maxOptionsSearch={30}
+						maxDropdownHeight={`${acMaxHeightPx}px`}
+						width="300px"
+						label="Search countries"
+						placeholder="Focus to see the list scroll..."
+					/>
+					<small>Focus the input — the list scrolls once the options exceed {acMaxHeightPx}px.</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Dropdown width</h3>
+		<p>
+			By default the dropdown matches the input width. Set <code>dropdownWidth</code> to give the listbox its own
+			width — wider than the input (to show long labels) or narrower — independent of the control. Drag the slider
+			to change it live, then focus the input to open the list.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<Slider id="ac-ddwidth" bind:value={acDropdownWidthPx} min={160} max={520} step={20} label={`dropdownWidth: ${acDropdownWidthPx}px`} />
+					<Autocomplete
+						bind:selectedOptions={dropdownWidthAcValue}
+						options={countries}
+						showInitialOptions={true}
+						initialOptionsCount={30}
+						maxOptionsSearch={30}
+						dropdownWidth={`${acDropdownWidthPx}px`}
+						width="220px"
+						label="Search countries"
+						placeholder="Focus to see the list..."
+					/>
+					<small>The input stays 220px wide; the dropdown is {acDropdownWidthPx}px.</small>
 				</Stack>
 			</GridItem>
 		</Grid>

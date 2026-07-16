@@ -49,6 +49,14 @@
 		width?: string
 		/** Multi mode: explicit height for the inline listbox. */
 		height?: string
+		/** Single mode: cap the dropdown listbox height (e.g. "300px", "50vh").
+		 * The listbox is always also capped to the space available to the
+		 * viewport edge; this lets a shorter ceiling be set per-instance. */
+		maxDropdownHeight?: string
+		/** Single mode: width of the dropdown listbox (e.g. "360px", "24rem").
+		 * When unset the listbox matches the control width; when set it uses this
+		 * width instead (and stops matching), so the list can be wider or narrower. */
+		dropdownWidth?: string
 		/** Multi mode: cap visible option rows, enables internal scroll. */
 		maxVisibleOptions?: number
 		labelTemplate?: SlotType
@@ -75,6 +83,8 @@
 		title = undefined,
 		width = undefined,
 		height = undefined,
+		maxDropdownHeight = undefined,
+		dropdownWidth = undefined,
 		maxVisibleOptions = undefined,
 		labelTemplate = undefined,
 		indicatorTemplate = undefined,
@@ -554,7 +564,7 @@
 			anchor={triggerEl}
 			visible={isOpen}
 			position={forcedPlacement}
-			matchWidth
+			matchWidth={!dropdownWidth}
 			availableHeight
 		>
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -565,6 +575,10 @@
 				role="listbox"
 				tabindex="-1"
 				class="select-listbox-popover"
+				style={[
+					dropdownWidth ? `width: ${dropdownWidth}` : "",
+					maxDropdownHeight ? `--select-listbox-max-height: ${maxDropdownHeight}` : ""
+				].filter(Boolean).join("; ") || undefined}
 				onclick={handleListClick}
 			>
 				{@render children?.()}
@@ -683,9 +697,10 @@
 		border-radius: calc(var(--control-corner-radius, 4) * 1px);
 		box-shadow: var(--elevation-shadow-flyout, 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12));
 		padding: calc(var(--design-unit, 4) * 1px);
-		/* Cap to the available viewport space exposed by PositioningRegion.
-		 * Fallback to 280px if the property isn't set. */
-		max-height: var(--available-height, 280px);
+		/* Cap to the available viewport space exposed by PositioningRegion
+		 * (fallback 280px), and — when the `maxHeight` prop is set — to that
+		 * ceiling too, whichever is smaller. */
+		max-height: min(var(--available-height, 280px), var(--select-listbox-max-height, 100vh));
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		box-sizing: border-box;
