@@ -326,7 +326,7 @@ export const icons = ['home', 'settings'];`}</code></pre>
 })`}</code></pre>
 
 		<h3>How the Vite Plugin Works</h3>
-		<p>The plugin scans your source files for <code>&lt;Icon&gt;</code> usage using regex, then makes only those icons available through the <code>virtual:fluentui-icons</code> module. It reads each tag's <code>size</code> and <code>variant</code> too, so only the exact size/variant tuples you render are bundled (a usage with no <code>size</code> uses the default 24; a dynamic <code>size={expr}</code> falls back to all sizes). Understanding what it can and cannot detect helps you avoid missing icons in production.</p>
+		<p>The plugin scans your source files for <code>&lt;Icon&gt;</code> usage using regex, then makes only those icons available through the <code>virtual:fluentui-icons</code> module. It reads each tag's <code>size</code> and <code>variant</code> too, so only the exact size/variant tuples you render are bundled (a usage with no <code>size</code> uses the default 24; a dynamic <code>size=&#123;expr&#125;</code> falls back to all sizes). Understanding what it can and cannot detect helps you avoid missing icons in production.</p>
 		<p><strong>What the plugin WILL find:</strong></p>
 		<pre><code>{`<!-- Static string literals -->
 <Icon name="home" />
