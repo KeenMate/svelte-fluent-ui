@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0-rc06] - 2026-07-19 [PUBLISHED]
+
+### Changed
+- **`Accordion` / `AccordionItem` — reworked into a fully custom control** - Both components no longer wrap `<fluent-accordion>` / `<fluent-accordion-item>`; they are now built from plain themed elements styled with FluentUI design tokens (same approach as the Select/Combobox/Option family). This gives full control over layout and behaviour with no shadow-DOM upgrade cost. The public API is a drop-in for the previous wrappers (`value`, `multi`, `AccordionItem` `id`/`header`/`headingLevel`/`expanded`, and the `heading`/`start`/`end`/`icon`/`children` snippets), and single/multi expand, keyboard navigation (Arrow/Home/End roving focus), and ARIA wiring (`role=heading`/`aria-level`, `aria-expanded`, `aria-controls`↔`role=region`) are preserved.
+
+### Added
+- **`Accordion` — `togglePosition` and `gap` props** - `togglePosition="start"` moves the expand/collapse chevron to the leading (left in LTR) side natively; it defaults to `"end"` (right, unchanged). `gap` sets the spacing between items to any CSS length (e.g. `gap="0.75rem"`). In `multi` mode, bind `value` to an array of every item id to open all at once (`null` collapses all).
+- **`AccordionItem` — `disabled` prop** - A disabled item can't be toggled and is skipped by keyboard navigation.
+- **`Accordion` — animated expand/collapse** - Items now open and close with a smooth height transition (the previous wrapper toggled instantly), and the content region is `inert` while collapsed so it leaves the tab order and accessibility tree.
+
+### Documentation
+- **`Accordion` — icon usage examples** - The demo page gains leading-icon (`start` slot), trailing-icon (`end` slot), custom-toggle-icon (`icon` snippet, swapping `add`/`subtract` on expand), and icons-with-left-toggle examples, plus `disabled`, `togglePosition`, `gap`, and expand/collapse-all demos and refreshed API tables.
+
+### Fixed
+- **`Accordion` — chevron dropped to a second row with `togglePosition="start"`** - With the toggle on the left, the heading grid's default `grid-auto-flow` bumped the chevron onto its own row (tall header, chevron misaligned below the text), because the button claimed its column before the icon could be placed to its left. Every heading cell is now pinned to `grid-row: 1`, so the chevron sits inline regardless of column order.
+- **`Accordion` — oversized gap between the chevron and a leading `start` icon in `togglePosition="start"`** - The chevron column and the `start` slot each added their own leading indent, leaving a ~16px gap between them. In left-toggle mode the `start` slot's redundant `padding-inline-start` is dropped (the chevron owns the indent) and the chevron's inner margin is trimmed, closing the gap to ~4px. The `start`-icon→heading gap stays at the library-standard 8px, matching `Tabs`/`Select`/`Option`.
+- **`QuickGrid` — row toolbar now renders real FluentUI icons instead of bare Unicode glyphs** - The floating row toolbar (`showRowToolbar` / `rowToolbar`) rendered each item's `icon` as raw text (`{item.icon}`), and the predefined items shipped Unicode glyphs (`↑ ↓ + ⧉ −`). Those glyphs render inconsistently across brand fonts — in a consumer app using the DHL theme they came out invisible, leaving a wide, empty toolbar with no icons and (because nothing goes through the SVG-fetch path) not even the `<Icon>` error marker. Toolbar items now render through `<Icon name={item.icon} size={16} />`, and the predefined `icon` values are FluentUI icon **names** — `add`→`add`, `delete`→`delete`, `duplicate`→`copy`, `moveUp`→`arrow_up`, `moveDown`→`arrow_down` — so they match the icon language used everywhere else and the `danger` styling still tints the delete icon via `currentColor`. **Breaking for custom `rowToolbar` items:** the `icon` field is now a FluentUI icon name (e.g. `'arrow_up'`), not a display glyph.
+
 ## [1.5.0-rc05] - 2026-07-16 [PUBLISHED]
 
 ### Added

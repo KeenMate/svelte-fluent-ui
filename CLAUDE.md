@@ -72,6 +72,8 @@ This project contains two types of components:
 #### Custom Implementations (No FluentUI wrapper)
 These are built from scratch using Svelte, styled with FluentUI design tokens:
 
+- **Accordion** - Custom stack of collapsible panels (NOT a `<fluent-accordion>` wrapper). Owns layout, spacing, and animation: `value` (single id or array), `multi`, `togglePosition` (start/end chevron side), `gap`, `onchange`, plus roving-focus keyboard nav. Provides an `AccordionSvelteContext` via the `fluent-accordion` context.
+- **AccordionItem** - A single collapsible panel (NOT a `<fluent-accordion-item>` wrapper). Plain themed CSS-grid heading `[start | button | end | icon]` + an animated `grid-template-rows` 0fr→1fr region that is `inert` while collapsed. Props: `id` (required), `header`, `headingLevel`, `expanded`, `disabled`; snippets `heading`/`start`/`end`/`icon` (receives `isExpanded`)/`children`.
 - **QuickGrid** - Advanced data grid with sorting, filtering, and pagination (inspired by ASP.NET QuickGrid)
 - **Card** - Content container with FluentUI styling
 - **Badge** - Small status/count indicator; a themed `<span>` (NOT a `<fluent-badge>` wrapper). Supports `color`/`fill` (token-based via `--badge-fill-*`/`--badge-color-*`), `appearance` (accent/lightweight/neutral/outline/tint), `size` (xs–xl), `circular`, `pill`, `radius`, an `icon` snippet, and text truncation — `truncate` (end ellipsis) or `ellipsisStart` (start-side ellipsis for paths/hierarchies) with `maxWidth` + `title`.
@@ -115,8 +117,6 @@ Located in `src/lib/components/nav/`:
 #### FluentUI Web Component Wrappers
 These wrap `<fluent-*>` web components from `@fluentui/web-components`:
 
-- **Accordion** → `<fluent-accordion>`
-- **AccordionItem** → `<fluent-accordion-item>`
 - **Anchor** → `<fluent-anchor>`
 - **Breadcrumb** → `<fluent-breadcrumb>`
 - **BreadcrumbItem** → `<fluent-breadcrumb-item>`

@@ -176,7 +176,7 @@
 		id: string
 
 		// Display
-		icon: string
+		icon: string  // FluentUI icon name (e.g. 'delete', 'arrow_up'), rendered via <Icon />
 		title: string
 		label?: string  // Optional text label next to icon
 
@@ -1697,11 +1697,11 @@
 
 	// Predefined toolbar item configs
 	const predefinedToolbarItems: Record<PredefinedToolbarItemType, { icon: string; title: string; danger?: boolean }> = {
-		add: { icon: '+', title: 'Add row below' },
-		delete: { icon: '−', title: 'Delete row', danger: true },
-		duplicate: { icon: '⧉', title: 'Duplicate row' },
-		moveUp: { icon: '↑', title: 'Move row up' },
-		moveDown: { icon: '↓', title: 'Move row down' }
+		add: { icon: 'add', title: 'Add row below' },
+		delete: { icon: 'delete', title: 'Delete row', danger: true },
+		duplicate: { icon: 'copy', title: 'Duplicate row' },
+		moveUp: { icon: 'arrow_up', title: 'Move row up' },
+		moveDown: { icon: 'arrow_down', title: 'Move row down' }
 	}
 
 	// Normalize toolbar config: convert string shorthand to full objects
@@ -2134,7 +2134,7 @@
 									disabled={isDisabled}
 									onclick={() => handleToolbarItemClick(item)}
 								>
-									{item.icon}
+									<Icon name={item.icon} size={16} />
 									{#if item.label}
 										<span class="row-toolbar-label">{item.label}</span>
 									{/if}
