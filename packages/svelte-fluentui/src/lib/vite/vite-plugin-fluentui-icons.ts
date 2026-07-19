@@ -29,6 +29,21 @@ import path from 'path';
 
 export type FluentUIIconsMode = 'inline' | 'asset';
 
+/**
+ * An icon to always include, optionally restricting which sizes/variants ship.
+ * When `sizes`/`variants` are given they also *cap* the auto-detected usage of
+ * that icon: e.g. a data-driven `<Icon name={item.icon} />` normally can't be
+ * pinned to a size and falls back to every size, but `{ name, sizes: [16] }`
+ * clamps it to size 16.
+ */
+export interface IconInclude {
+	name: string;
+	/** Sizes to bundle for this icon when a usage's size is unknown. */
+	sizes?: number[];
+	/** Variants to bundle for this icon when a usage's variant is unknown. */
+	variants?: ('regular' | 'filled')[];
+}
+
 export interface FluentUIIconsOptions {
 	/**
 	 * Delivery mode for the icons.
@@ -38,11 +53,12 @@ export interface FluentUIIconsOptions {
 	mode?: FluentUIIconsMode;
 
 	/**
-	 * Additional icon names to always include (for names the scanner can't see,
-	 * e.g. fully computed `name={iconName}` or template interpolation).
-	 * @example ['home', 'settings', 'person']
+	 * Additional icons to always include (for names the scanner can't see, e.g.
+	 * fully computed `name={iconName}` or template interpolation). Each entry is
+	 * either a name (all sizes/variants) or an object restricting sizes/variants.
+	 * @example ['home', 'settings', { name: 'history', sizes: [16] }]
 	 */
-	include?: string[];
+	include?: (string | IconInclude)[];
 
 	/**
 	 * Path to a config file containing additional icons to include.
@@ -116,7 +132,10 @@ const IGNORED_DIRS = new Set([
 /**
  * Load icons from a config file
  */
-async function loadConfigFile(configPath: string, verbose: boolean): Promise<string[]> {
+async function loadConfigFile(
+	configPath: string,
+	verbose: boolean
+): Promise<(string | IconInclude)[]> {
 	if (!fs.existsSync(configPath)) {
 		return [];
 	}
@@ -314,7 +333,7 @@ function findIconsPackage(startDir: string): string | null {
 
 export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 	const opts = { ...DEFAULT_OPTIONS, ...options };
-	const extraIncludes = new Set<string>(opts.include);
+	const includeEntries: (string | IconInclude)[] = [...opts.include];
 
 	let config: ResolvedConfig;
 	let iconsSourcePath: string | null = null;
@@ -347,7 +366,7 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 
 				if (configPath) {
 					const configIcons = await loadConfigFile(configPath, opts.verbose);
-					configIcons.forEach((icon) => extraIncludes.add(icon));
+					includeEntries.push(...configIcons);
 				}
 			}
 		},
@@ -364,20 +383,33 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 				return 'export default {};';
 			}
 
-			// Collect every icon requirement: scanned usage + explicit includes
-			// (includes have no usage context, so they pull every size/variant).
+			// Collect every icon requirement from scanned usage, and register each
+			// `include` entry (a name pulls every size/variant; an object entry caps
+			// the sizes/variants for that name — even for its auto-detected usage).
 			const requests = scanProjectForIcons(config.root, opts.scanExtensions);
-			extraIncludes.forEach((name) => requests.push({ name, size: null, variants: null }));
+			const overrides = new Map<string, { sizes?: number[]; variants?: ('regular' | 'filled')[] }>();
+			for (const entry of includeEntries) {
+				const name = typeof entry === 'string' ? entry : entry.name;
+				requests.push({ name, size: null, variants: null });
+				if (typeof entry !== 'string' && (entry.sizes?.length || entry.variants?.length)) {
+					const override = overrides.get(name) ?? {};
+					if (entry.sizes?.length) override.sizes = entry.sizes;
+					if (entry.variants?.length) override.variants = entry.variants;
+					overrides.set(name, override);
+				}
+			}
 
 			// Expand requirements into the exact set of `name_size_variant` keys we
-			// need, honouring per-usage size/variant and falling back to all
-			// configured sizes/variants when a request couldn't be pinned down.
+			// need. A usage with a literal size/variant is used as-is; an unknown
+			// one falls back to the per-name override, then to the configured
+			// sizes/variants.
 			const wanted = new Set<string>();
 			const names = new Set<string>();
 			for (const req of requests) {
 				names.add(req.name);
-				const sizes = req.size !== null ? [req.size] : opts.sizes;
-				const variants = req.variants !== null ? req.variants : opts.variants;
+				const override = overrides.get(req.name);
+				const sizes = req.size !== null ? [req.size] : (override?.sizes ?? opts.sizes);
+				const variants = req.variants !== null ? req.variants : (override?.variants ?? opts.variants);
 				for (const size of sizes) {
 					for (const variant of variants) {
 						wanted.add(`${req.name}_${size}_${variant}`);

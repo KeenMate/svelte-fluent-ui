@@ -299,14 +299,11 @@ export default defineConfig({
     "home",
     "settings",
     "person",
-    "mail",
-    "calendar",
-    "arrow_left",
-    "arrow_right",
-    "chevron_up",
-    "chevron_down"
+    { "name": "history", "sizes": [16] },
+    { "name": "star", "sizes": [16, 20], "variants": ["regular"] }
   ]
 }`}</code></pre>
+		<p>An entry is either a <strong>name</strong> (all configured sizes/variants) or an <strong>object</strong> with optional <code>sizes</code> / <code>variants</code>. Beyond just including an icon, the object form <strong>caps</strong> that icon's sizes/variants — including its auto-detected usage. A data-driven <code>{`<Icon name={item.icon} />`}</code> normally can't be pinned to a size so it pulls every size; listing it as <code>{`{ name: "history", sizes: [16] }`}</code> collapses it to only size 16. The <code>include</code> plugin option accepts the same shape: <code>{`include: ['home', { name: 'history', sizes: [16] }]`}</code>.</p>
 		<p><strong>JavaScript format</strong></p>
 		<pre><code>{`// fluentui-icons.config.js
 export default [
