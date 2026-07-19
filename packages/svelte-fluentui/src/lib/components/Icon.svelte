@@ -1,4 +1,6 @@
 <script lang="ts">
+	import iconMap from 'virtual:fluentui-icons'
+
 	type IconSize = 16 | 20 | 24 | 28 | 32 | 48
 	type IconVariant = 'regular' | 'filled'
 	type IconColor = 'neutral' | 'accent' | 'warning' | 'info' | 'error' | 'success' | 'fill' | 'fill-inverse' | 'lightweight' | 'disabled' | 'custom'
@@ -73,45 +75,81 @@
 		return styles
 	})
 
-	// Load SVG content using fetch
-	async function loadSvg(iconName: string, iconSize: IconSize, iconVariant: IconVariant) {
-		try {
-			isLoading = true
-			error = null
+	const icons = iconMap as Record<string, string>
 
-			// Construct the icon file path
-			const fileName = `${iconName}_${iconSize}_${iconVariant}.svg`
-
-			// Fetch from node_modules - Vite dev server will serve these files
-			const iconUrl = `/node_modules/@fluentui/svg-icons/icons/${fileName}`
-
-			const response = await fetch(iconUrl)
-			if (!response.ok) {
-				throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-			}
-
-			const svgContent = await response.text()
-			return svgContent
-		} catch (err) {
-			console.error(`Failed to load icon: ${iconName}_${iconSize}_${iconVariant}`, err)
-			error = `Icon not found: ${iconName}`
-			return ''
-		} finally {
-			isLoading = false
-		}
+	// An inline-mode entry is raw SVG markup; an asset-mode entry is a URL.
+	function isMarkup(entry: string): boolean {
+		return entry.trimStart().startsWith('<')
 	}
 
-	// Load the SVG on mount and when props change
-	$effect(() => {
-		loadSvg(name, size, variant).then((content) => {
-			svgContent = content
-		})
+	// Resolve one icon key to its SVG markup. Inline entries are returned as-is;
+	// asset URLs are fetched (so the SVG can be injected for `currentColor`).
+	async function resolveMarkup(key: string): Promise<string> {
+		const entry = icons[key]
+		if (entry === undefined) {
+			throw new Error(`Icon not found: ${key}`)
+		}
+		if (isMarkup(entry)) {
+			return entry
+		}
+		const response = await fetch(entry)
+		if (!response.ok) {
+			throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+		}
+		return response.text()
+	}
 
-		// If hover effect is enabled, also load the filled variant
+	// Resolve the requested icon (and the filled variant when hoverEffect is on)
+	// from the virtual map whenever the inputs change.
+	$effect(() => {
+		const key = `${name}_${size}_${variant}`
+		const entry = icons[key]
+
+		if (entry === undefined) {
+			console.error(
+				`[svelte-fluentui] ${key}.svg not found. If this icon is referenced only ` +
+					`through a dynamic name, add it to the fluentuiIcons({ include: [...] }) option.`
+			)
+			error = `Icon not found: ${name}`
+			svgContent = ''
+			isLoading = false
+			return
+		}
+
+		error = null
+
+		if (isMarkup(entry)) {
+			// Inline mode: markup is already in the bundle, no request needed.
+			svgContent = entry
+			isLoading = false
+		} else {
+			// Asset mode: fetch the hashed asset URL.
+			isLoading = true
+			resolveMarkup(key)
+				.then((content) => {
+					svgContent = content
+				})
+				.catch((err) => {
+					console.error(`[svelte-fluentui] Failed to load icon: ${key}`, err)
+					error = `Icon not found: ${name}`
+					svgContent = ''
+				})
+				.finally(() => {
+					isLoading = false
+				})
+		}
+
+		// If hover effect is enabled, also resolve the filled variant.
 		if (hoverEffect && variant === 'regular') {
-			loadSvg(name, size, 'filled').then((content) => {
-				svgContentFilled = content
-			})
+			resolveMarkup(`${name}_${size}_filled`)
+				.then((content) => {
+					svgContentFilled = content
+				})
+				.catch(() => {
+					svgContentFilled = ''
+				})
+		} else {
+			svgContentFilled = ''
 		}
 	})
 </script>

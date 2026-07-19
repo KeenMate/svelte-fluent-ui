@@ -75,11 +75,12 @@ export default defineConfig({
 });`}</code></pre>
 			</li>
 		</ol>
-		<p>The plugin handles both development and production:</p>
+		<p>The plugin scans your code for the icons you actually use and makes just those available through a virtual module the <code>Icon</code> component imports — so icons travel through Vite's normal output, never a <code>/node_modules/…</code> URL. Two delivery modes:</p>
 		<ul>
-			<li><strong>Dev mode:</strong> Serves icons directly from node_modules</li>
-			<li><strong>Build mode:</strong> Scans your code and copies only the icons you use to the output</li>
+			<li><strong><code>inline</code> (default):</strong> each used icon's SVG markup is baked into the JS bundle (one shared, cached chunk). No runtime request.</li>
+			<li><strong><code>asset</code>:</strong> each used icon is emitted as a hashed file under <code>/_app/*</code> and fetched on demand — smaller bundle, one cached request per rendered icon. Good for icon-heavy apps.</li>
 		</ul>
+		<pre><code>{`fluentuiIcons({ mode: 'inline' })  // or 'asset'`}</code></pre>
 
 		<h3>Basic Usage</h3>
 		<Stack orientation="horizontal" gap="1rem" style="align-items: center; flex-wrap: wrap;">
@@ -240,10 +241,16 @@ export default defineConfig({
 				</thead>
 				<tbody>
 					<tr>
+						<td><code>mode</code></td>
+						<td><code>'inline' | 'asset'</code></td>
+						<td><code>'inline'</code></td>
+						<td><code>inline</code> bakes SVG markup into the JS bundle; <code>asset</code> emits hashed files under <code>/_app/*</code></td>
+					</tr>
+					<tr>
 						<td><code>include</code></td>
 						<td><code>string[]</code></td>
 						<td><code>[]</code></td>
-						<td>Additional icon names to always include (for dynamic usage)</td>
+						<td>Additional icon names to always include (for dynamic usage). Names have no usage context, so every size/variant is bundled</td>
 					</tr>
 					<tr>
 						<td><code>configFile</code></td>
@@ -252,28 +259,22 @@ export default defineConfig({
 						<td>Path to config file, or <code>false</code> to disable</td>
 					</tr>
 					<tr>
-						<td><code>scanPatterns</code></td>
+						<td><code>scanExtensions</code></td>
 						<td><code>string[]</code></td>
-						<td><code>['**/*.svelte', '**/*.ts', '**/*.js']</code></td>
-						<td>Glob patterns for files to scan for icon usage</td>
+						<td><code>['.svelte', '.ts', '.js']</code></td>
+						<td>File extensions to scan for icon usage</td>
 					</tr>
 					<tr>
 						<td><code>sizes</code></td>
 						<td><code>number[]</code></td>
 						<td><code>[16, 20, 24, 28, 32, 48]</code></td>
-						<td>Icon sizes to copy for each detected icon</td>
+						<td>Sizes made available when a usage's size can't be determined statically</td>
 					</tr>
 					<tr>
 						<td><code>variants</code></td>
 						<td><code>('regular' | 'filled')[]</code></td>
 						<td><code>['regular', 'filled']</code></td>
-						<td>Icon variants to copy for each detected icon</td>
-					</tr>
-					<tr>
-						<td><code>outputPath</code></td>
-						<td><code>string</code></td>
-						<td><code>'node_modules/@fluentui/svg-icons/icons'</code></td>
-						<td>Output path relative to build output directory</td>
+						<td>Variants made available when a usage's variant can't be determined statically</td>
 					</tr>
 					<tr>
 						<td><code>verbose</code></td>
@@ -328,7 +329,7 @@ export const icons = ['home', 'settings'];`}</code></pre>
 })`}</code></pre>
 
 		<h3>How the Vite Plugin Works</h3>
-		<p>The plugin scans your source files during build and looks for <code>&lt;Icon name="..." /&gt;</code> patterns using regex. Understanding what it can and cannot detect helps you avoid missing icons in production.</p>
+		<p>The plugin scans your source files for <code>&lt;Icon&gt;</code> usage using regex, then makes only those icons available through the <code>virtual:fluentui-icons</code> module. It reads each tag's <code>size</code> and <code>variant</code> too, so only the exact size/variant tuples you render are bundled (a usage with no <code>size</code> uses the default 24; a dynamic <code>size={expr}</code> falls back to all sizes). Understanding what it can and cannot detect helps you avoid missing icons in production.</p>
 		<p><strong>What the plugin WILL find:</strong></p>
 		<pre><code>{`<!-- Static string literals -->
 <Icon name="home" />
