@@ -337,10 +337,10 @@ export const icons = ['home', 'settings'];`}</code></pre>
 <Icon name={isActive ? "star_filled" : "star"} />
 <Icon name={"home" + suffix} />
 
-<!-- Objects with name property (for programmatic usage) -->
-const icons = [
-  { name: "home", label: "Home" },
-  { name: "settings", label: "Settings" }
+<!-- Objects with an icon / iconName property (for programmatic usage) -->
+const items = [
+  { icon: "home", label: "Home" },
+  { icon: "settings", label: "Settings" }
 ];`}</code></pre>
 		<p><strong>What the plugin will NOT find:</strong> names with no literal to read — variables, props, template interpolation, or data-driven values.</p>
 		<pre><code>{`<!-- Variable / prop -->

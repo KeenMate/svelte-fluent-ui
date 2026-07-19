@@ -271,9 +271,12 @@ function extractIconRequests(code: string): IconRequest[] {
 		requests.push(...parseIconTag(match[0]));
 	}
 
-	// Programmatic usage (data arrays, config): name has no tag context, so we
-	// can't know the size/variant — include all.
-	const objectPattern = /(?:icon(?:Name)?|name):\s*["']([a-z][a-z_]*)["']/g;
+	// Programmatic usage (data arrays): an `icon:` / `iconName:` property, e.g.
+	// `{ label: "History", icon: "history" }`. We deliberately DON'T match a bare
+	// `name:` — that collides with unrelated object literals (API-doc tables full
+	// of `{ name: "options", type: ... }` rows) and would bundle phantom icons.
+	// These have no tag context, so the size/variant is unknown → include all.
+	const objectPattern = /\bicon(?:Name)?:\s*["']([a-z][a-z_]*)["']/g;
 	while ((match = objectPattern.exec(code)) !== null) {
 		requests.push({ name: match[1], size: null, variants: null });
 	}

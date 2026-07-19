@@ -1,17 +1,17 @@
 {
   "icons": [
-    { "name": "apps", "sizes": [16] },
-    { "name": "book", "sizes": [16] },
-    { "name": "chat", "sizes": [16] },
-    { "name": "color", "sizes": [16] },
-    { "name": "cursor_hover", "sizes": [16] },
-    { "name": "history", "sizes": [16] },
-    { "name": "image", "sizes": [16] },
-    { "name": "library", "sizes": [16] },
-    { "name": "link", "sizes": [16] },
-    { "name": "navigation", "sizes": [16] },
-    { "name": "panel_left", "sizes": [16] },
-    { "name": "table", "sizes": [16] },
-    { "name": "textbox", "sizes": [16] }
+    { "name": "apps", "sizes": [16, 20] },
+    { "name": "book", "sizes": [16, 20] },
+    { "name": "chat", "sizes": [16, 20] },
+    { "name": "color", "sizes": [16, 20] },
+    { "name": "cursor_hover", "sizes": [16, 20] },
+    { "name": "history", "sizes": [16, 20] },
+    { "name": "image", "sizes": [16, 20] },
+    { "name": "library", "sizes": [16, 20] },
+    { "name": "link", "sizes": [16, 20] },
+    { "name": "navigation", "sizes": [16, 20] },
+    { "name": "panel_left", "sizes": [16, 20] },
+    { "name": "table", "sizes": [16, 20] },
+    { "name": "textbox", "sizes": [16, 20] }
   ]
 }
