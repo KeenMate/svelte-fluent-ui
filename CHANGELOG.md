@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0-rc07] - 2026-07-19
+
+### Fixed
+- **`fluentuiIcons` Vite plugin — detects icon names inside dynamic `<Icon name={…}>` expressions** - The build-time scanner only matched static `<Icon name="literal" />` (and `name:`/`icon:` object properties), so an icon referenced *only* through a dynamic expression was never copied into the production build and 404'd at runtime (showing the `⚠️` fallback). This bit the Accordion custom-toggle demo: `name={isExpanded ? "subtract" : "add"}` meant `subtract` was never bundled. The scanner now also extracts quoted string literals out of `name={…}` expressions, so ternaries (`name={active ? "star_filled" : "star"}`) and concatenations (`name={"home" + suffix}`) are detected automatically. Fully computed names (a bare variable, template interpolation like `` name={`arrow_${dir}`} ``, or data-driven `item.icon`) still have no literal to read and continue to require the `include` option.
+
 ## [1.5.0-rc06] - 2026-07-19 [PUBLISHED]
 
 ### Changed

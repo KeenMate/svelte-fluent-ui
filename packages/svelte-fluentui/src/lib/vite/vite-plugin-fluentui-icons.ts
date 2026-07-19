@@ -163,6 +163,20 @@ function extractIconNames(code: string): Set<string> {
 		icons.add(match[1]);
 	}
 
+	// Match dynamic name expressions: <Icon ... name={ EXPR } ... /> and pull any
+	// quoted icon-name literals out of EXPR. Covers ternaries and concatenations
+	// like name={isExpanded ? "subtract" : "add"} or name={"home" + suffix}.
+	// Fully computed names (variables, template interpolation, data-driven
+	// item.icon) still can't be resolved statically — use the `include` option.
+	const dynamicNamePattern = /<Icon[^>]*\sname=\{([^}]*)\}/g;
+	const literalPattern = /["']([a-z][a-z0-9_]*)["']/g;
+	while ((match = dynamicNamePattern.exec(code)) !== null) {
+		let literal;
+		while ((literal = literalPattern.exec(match[1])) !== null) {
+			icons.add(literal[1]);
+		}
+	}
+
 	// Match icon-related properties in objects (for programmatic usage)
 	// Covers patterns like: name: "home", icon: "settings", iconName: "person"
 	const objectPattern = /(?:icon(?:Name)?|name):\s*["']([a-z][a-z_]*)["']/g;

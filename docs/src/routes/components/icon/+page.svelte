@@ -335,24 +335,26 @@ export const icons = ['home', 'settings'];`}</code></pre>
 <Icon name="settings" size={24} />
 <Icon name='arrow_left' variant="filled" />
 
+<!-- Quoted literals inside dynamic expressions (ternaries, concatenation) -->
+<Icon name={isActive ? "star_filled" : "star"} />
+<Icon name={"home" + suffix} />
+
 <!-- Objects with name property (for programmatic usage) -->
 const icons = [
   { name: "home", label: "Home" },
   { name: "settings", label: "Settings" }
 ];`}</code></pre>
-		<p><strong>What the plugin will NOT find:</strong></p>
-		<pre><code>{`<!-- Dynamic/computed names -->
+		<p><strong>What the plugin will NOT find:</strong> names with no literal to read — variables, props, template interpolation, or data-driven values.</p>
+		<pre><code>{`<!-- Variable / prop -->
 <Icon name={iconName} />
-<Icon name={isActive ? "star_filled" : "star"} />
+
+<!-- Template interpolation -->
 <Icon name={\`arrow_\${direction}\`} />
 
-<!-- Variables or props -->
+<!-- Data-driven -->
 {#each items as item}
   <Icon name={item.icon} />
-{/each}
-
-<!-- Concatenated strings -->
-<Icon name={"home" + suffix} />`}</code></pre>
+{/each}`}</code></pre>
 		<p style="margin-top: 1rem;">For dynamic icons, use the <code>include</code> option to ensure they are bundled:</p>
 		<pre><code>{`fluentuiIcons({
   include: ['home', 'settings', 'person', 'mail', 'star', 'arrow_left', 'arrow_right']
