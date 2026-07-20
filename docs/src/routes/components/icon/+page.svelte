@@ -65,12 +65,12 @@
 				<pre><code>npm install @fluentui/svg-icons</code></pre>
 			</li>
 			<li>Add the Vite plugin to your <code>vite.config.ts</code>:
-				<pre><code>{`import { fluentuiIcons } from 'svelte-fluentui/vite';
+				<pre><code>{`import { svelteFluentUI } from 'svelte-fluentui/vite';
 
 export default defineConfig({
   plugins: [
     sveltekit(),
-    fluentuiIcons()
+    svelteFluentUI()
   ]
 });`}</code></pre>
 			</li>
@@ -80,7 +80,7 @@ export default defineConfig({
 			<li><strong><code>inline</code> (default):</strong> each used icon's SVG markup is baked into the JS bundle (one shared, cached chunk). No runtime request.</li>
 			<li><strong><code>asset</code>:</strong> each used icon is emitted as a hashed file under <code>/_app/*</code> and fetched on demand — smaller bundle, one cached request per rendered icon. Good for icon-heavy apps.</li>
 		</ul>
-		<pre><code>{`fluentuiIcons({ mode: 'inline' })  // or 'asset'`}</code></pre>
+		<pre><code>{`svelteFluentUI({ iconsMode: 'inline' })  // or 'asset'`}</code></pre>
 
 		<h3>Basic Usage</h3>
 		<Stack orientation="horizontal" gap="1rem" style="align-items: center; flex-wrap: wrap;">
@@ -228,7 +228,7 @@ export default defineConfig({
 		<p style="margin-top: 1rem; color: var(--neutral-foreground-hint);">Hover over the icons above to see the effect.</p>
 
 		<h3>Plugin Options</h3>
-		<p>The <code>fluentuiIcons</code> plugin accepts the following options:</p>
+		<p>The <code>svelteFluentUI</code> plugin accepts the following options:</p>
 		<div class="table-wrapper">
 			<table>
 				<thead>
@@ -241,37 +241,37 @@ export default defineConfig({
 				</thead>
 				<tbody>
 					<tr>
-						<td><code>mode</code></td>
+						<td><code>iconsMode</code></td>
 						<td><code>'inline' | 'asset'</code></td>
 						<td><code>'inline'</code></td>
 						<td><code>inline</code> bakes SVG markup into the JS bundle; <code>asset</code> emits hashed files under <code>/_app/*</code></td>
 					</tr>
 					<tr>
-						<td><code>include</code></td>
-						<td><code>string[]</code></td>
+						<td><code>iconsInclude</code></td>
+						<td><code>(string | {`{ name, sizes?, variants? }`})[]</code></td>
 						<td><code>[]</code></td>
-						<td>Additional icon names to always include (for dynamic usage). Names have no usage context, so every size/variant is bundled</td>
+						<td>Additional icons to always include (for dynamic usage). A bare name bundles every size/variant; the object form caps them</td>
 					</tr>
 					<tr>
-						<td><code>configFile</code></td>
+						<td><code>iconsConfigFile</code></td>
 						<td><code>string | false</code></td>
 						<td>auto-detect</td>
 						<td>Path to config file, or <code>false</code> to disable</td>
 					</tr>
 					<tr>
-						<td><code>scanExtensions</code></td>
+						<td><code>iconsScanExtensions</code></td>
 						<td><code>string[]</code></td>
 						<td><code>['.svelte', '.ts', '.js']</code></td>
 						<td>File extensions to scan for icon usage</td>
 					</tr>
 					<tr>
-						<td><code>sizes</code></td>
+						<td><code>iconsSizes</code></td>
 						<td><code>number[]</code></td>
 						<td><code>[16, 20, 24, 28, 32, 48]</code></td>
 						<td>Sizes made available when a usage's size can't be determined statically</td>
 					</tr>
 					<tr>
-						<td><code>variants</code></td>
+						<td><code>iconsVariants</code></td>
 						<td><code>('regular' | 'filled')[]</code></td>
 						<td><code>['regular', 'filled']</code></td>
 						<td>Variants made available when a usage's variant can't be determined statically</td>
@@ -304,8 +304,8 @@ export default defineConfig({
     { "name": "star", "sizes": [16, 20], "variants": ["regular"] }
   ]
 }`}</code></pre>
-		<p><strong>Default <code>sizes</code> / <code>variants</code>.</strong> The single biggest lever: these set which sizes/variants are bundled for any icon whose size/variant can't be determined statically — chiefly data-driven usages like <code>{`<Icon name={item.icon} size={20} />`}</code>, where the dynamic name can't be paired with a size, so the icon would otherwise pull <em>every</em> size. Setting <code>"sizes": [16, 20]</code> caps that fallback to just those. Statically-sized usages (<code>{`<Icon name="star" size={48} />`}</code>) are always bundled at their exact size regardless. Equivalent to the plugin's <code>sizes</code> / <code>variants</code> options (an explicit plugin option wins over the config file).</p>
-		<p><strong>Per-icon entries.</strong> Each item in <code>icons</code> is either a <strong>name</strong> (uses the defaults above) or an <strong>object</strong> with its own <code>sizes</code> / <code>variants</code>, which <em>caps</em> that specific icon — including its auto-detected usage. The <code>include</code> plugin option accepts the same shape: <code>{`include: ['home', { name: 'history', sizes: [16] }]`}</code>.</p>
+		<p><strong>Default <code>sizes</code> / <code>variants</code>.</strong> The single biggest lever: these set which sizes/variants are bundled for any icon whose size/variant can't be determined statically — chiefly data-driven usages like <code>{`<Icon name={item.icon} size={20} />`}</code>, where the dynamic name can't be paired with a size, so the icon would otherwise pull <em>every</em> size. Setting <code>"sizes": [16, 20]</code> caps that fallback to just those. Statically-sized usages (<code>{`<Icon name="star" size={48} />`}</code>) are always bundled at their exact size regardless. Equivalent to the plugin's <code>iconsSizes</code> / <code>iconsVariants</code> options (an explicit plugin option wins over the config file).</p>
+		<p><strong>Per-icon entries.</strong> Each item in <code>icons</code> is either a <strong>name</strong> (uses the defaults above) or an <strong>object</strong> with its own <code>sizes</code> / <code>variants</code>, which <em>caps</em> that specific icon — including its auto-detected usage. The <code>iconsInclude</code> plugin option accepts the same shape: <code>{`iconsInclude: ['home', { name: 'history', sizes: [16] }]`}</code>.</p>
 		<p><strong>JavaScript format</strong></p>
 		<pre><code>{`// fluentui-icons.config.js
 export default [
@@ -319,12 +319,12 @@ export default [
 export const icons = ['home', 'settings'];`}</code></pre>
 		<p><strong>Disable config file</strong></p>
 		<p>To disable automatic config file loading:</p>
-		<pre><code>{`fluentuiIcons({
-  configFile: false
+		<pre><code>{`svelteFluentUI({
+  iconsConfigFile: false
 })`}</code></pre>
 		<p><strong>Custom config file path</strong></p>
-		<pre><code>{`fluentuiIcons({
-  configFile: 'src/icons.json'
+		<pre><code>{`svelteFluentUI({
+  iconsConfigFile: 'src/icons.json'
 })`}</code></pre>
 
 		<h3>How the Vite Plugin Works</h3>
@@ -355,9 +355,9 @@ const items = [
 {#each items as item}
   <Icon name={item.icon} />
 {/each}`}</code></pre>
-		<p style="margin-top: 1rem;">For dynamic icons, use the <code>include</code> option to ensure they are bundled:</p>
-		<pre><code>{`fluentuiIcons({
-  include: ['home', 'settings', 'person', 'mail', 'star', 'arrow_left', 'arrow_right']
+		<p style="margin-top: 1rem;">For dynamic icons, use the <code>iconsInclude</code> option to ensure they are bundled:</p>
+		<pre><code>{`svelteFluentUI({
+  iconsInclude: ['home', 'settings', 'person', 'mail', 'star', 'arrow_left', 'arrow_right']
 })`}</code></pre>
 
 		<h3>Icon Size Availability</h3>

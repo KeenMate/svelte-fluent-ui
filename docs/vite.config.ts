@@ -3,9 +3,13 @@ import { defineConfig } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
-import { fluentuiIcons } from '../packages/svelte-fluentui/src/lib/vite/vite-plugin-fluentui-icons.js';
+import { svelteFluentUI } from '../packages/svelte-fluentui/src/lib/vite/vite-plugin-fluentui-icons.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Icon delivery mode. Defaults to `asset`; `verify-icon-modes.mjs` overrides it
+// via SF_ICONS_MODE to build & assert both `inline` and `asset` output shapes.
+const iconsMode = (process.env.SF_ICONS_MODE ?? 'asset') as 'inline' | 'asset';
 
 // Read version from svelte-fluentui package.json
 const pkg = JSON.parse(
@@ -15,7 +19,8 @@ const pkg = JSON.parse(
 export default defineConfig({
 	plugins: [
 		sveltekit(),
-		fluentuiIcons({
+		svelteFluentUI({
+			iconsMode,
 			verbose: true
 		})
 	],

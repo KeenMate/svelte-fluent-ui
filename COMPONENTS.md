@@ -69,7 +69,7 @@ The full catalogue of components exported by `svelte-fluentui`. For runnable cod
 - `Listbox` / `Option` / `OptionGroup` - List selection
 - `Tree` / `TreeItem` - Hierarchical data
 - `Toolbar` - Action toolbars
-- `Icon` - FluentUI SVG icons (regular/filled variants, hover effect), bundled by the `fluentuiIcons` Vite plugin — only used icons ship, inlined into JS (`inline`) or as hashed `/_app/*` assets (`asset`)
+- `Icon` - FluentUI SVG icons (regular/filled variants, hover effect), bundled by the `svelteFluentUI` Vite plugin — only used icons ship, inlined into JS (`iconsMode: 'inline'`) or as hashed `/_app/*` assets (`iconsMode: 'asset'`)
 - `SiteSettings` - Theme / accent / mode settings dialog
 - `portal` - Action for consumer-built overlays that need to escape parent stacking contexts
 

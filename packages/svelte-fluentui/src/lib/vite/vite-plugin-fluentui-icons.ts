@@ -15,10 +15,10 @@
  * @example
  * ```ts
  * // vite.config.ts
- * import { fluentuiIcons } from 'svelte-fluentui/vite';
+ * import { svelteFluentUI } from 'svelte-fluentui/vite';
  *
  * export default defineConfig({
- *   plugins: [sveltekit(), fluentuiIcons({ mode: 'inline' })]
+ *   plugins: [sveltekit(), svelteFluentUI({ iconsMode: 'inline' })]
  * });
  * ```
  */
@@ -27,7 +27,7 @@ import { type Plugin, type ResolvedConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 
-export type FluentUIIconsMode = 'inline' | 'asset';
+export type IconsMode = 'inline' | 'asset';
 
 /**
  * An icon to always include, optionally restricting which sizes/variants ship.
@@ -44,13 +44,13 @@ export interface IconInclude {
 	variants?: ('regular' | 'filled')[];
 }
 
-export interface FluentUIIconsOptions {
+export interface SvelteFluentUIOptions {
 	/**
 	 * Delivery mode for the icons.
 	 * - `inline` (default): SVG markup baked into the JS bundle (no runtime request).
 	 * - `asset`: emitted as hashed files under `/_app/*` and fetched at runtime.
 	 */
-	mode?: FluentUIIconsMode;
+	iconsMode?: IconsMode;
 
 	/**
 	 * Additional icons to always include (for names the scanner can't see, e.g.
@@ -58,7 +58,7 @@ export interface FluentUIIconsOptions {
 	 * either a name (all sizes/variants) or an object restricting sizes/variants.
 	 * @example ['home', 'settings', { name: 'history', sizes: [16] }]
 	 */
-	include?: (string | IconInclude)[];
+	iconsInclude?: (string | IconInclude)[];
 
 	/**
 	 * Path to a config file containing additional icons to include.
@@ -69,25 +69,25 @@ export interface FluentUIIconsOptions {
 	 *
 	 * @default 'fluentui-icons.config.json' (if exists)
 	 */
-	configFile?: string | false;
+	iconsConfigFile?: string | false;
 
 	/**
 	 * File extensions to scan for icon usage.
 	 * @default ['.svelte', '.ts', '.js']
 	 */
-	scanExtensions?: string[];
+	iconsScanExtensions?: string[];
 
 	/**
 	 * Icon sizes to make available for each detected icon.
 	 * @default [16, 20, 24, 28, 32, 48]
 	 */
-	sizes?: number[];
+	iconsSizes?: number[];
 
 	/**
 	 * Icon variants to make available for each detected icon.
 	 * @default ['regular', 'filled']
 	 */
-	variants?: ('regular' | 'filled')[];
+	iconsVariants?: ('regular' | 'filled')[];
 
 	/**
 	 * Enable verbose logging
@@ -105,15 +105,15 @@ const DEFAULT_CONFIG_FILES = [
 	'fluentui-icons.config.ts'
 ];
 
-const DEFAULT_OPTIONS: Required<Omit<FluentUIIconsOptions, 'configFile'>> & {
-	configFile: string | false | undefined;
+const DEFAULT_OPTIONS: Required<Omit<SvelteFluentUIOptions, 'iconsConfigFile'>> & {
+	iconsConfigFile: string | false | undefined;
 } = {
-	mode: 'inline',
-	include: [],
-	configFile: undefined, // Will auto-detect
-	scanExtensions: ['.svelte', '.ts', '.js'],
-	sizes: [16, 20, 24, 28, 32, 48],
-	variants: ['regular', 'filled'],
+	iconsMode: 'inline',
+	iconsInclude: [],
+	iconsConfigFile: undefined, // Will auto-detect
+	iconsScanExtensions: ['.svelte', '.ts', '.js'],
+	iconsSizes: [16, 20, 24, 28, 32, 48],
+	iconsVariants: ['regular', 'filled'],
 	verbose: false
 };
 
@@ -357,16 +357,16 @@ function findIconsPackage(startDir: string): string | null {
 	return null;
 }
 
-export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
+export function svelteFluentUI(options: SvelteFluentUIOptions = {}): Plugin {
 	const opts = { ...DEFAULT_OPTIONS, ...options };
-	const includeEntries: (string | IconInclude)[] = [...opts.include];
+	const includeEntries: (string | IconInclude)[] = [...opts.iconsInclude];
 
 	// Effective fallback sizes/variants (used when a usage's size/variant can't
 	// be determined). Precedence: explicit plugin option > config file > default.
-	let effectiveSizes = opts.sizes;
-	let effectiveVariants = opts.variants;
-	const sizesFromOption = options.sizes !== undefined;
-	const variantsFromOption = options.variants !== undefined;
+	let effectiveSizes = opts.iconsSizes;
+	let effectiveVariants = opts.iconsVariants;
+	const sizesFromOption = options.iconsSizes !== undefined;
+	const variantsFromOption = options.iconsVariants !== undefined;
 
 	let config: ResolvedConfig;
 	let iconsSourcePath: string | null = null;
@@ -387,12 +387,12 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 			}
 
 			// Load config file if not disabled
-			if (opts.configFile !== false) {
+			if (opts.iconsConfigFile !== false) {
 				let configPath: string | null = null;
-				if (typeof opts.configFile === 'string') {
-					configPath = path.isAbsolute(opts.configFile)
-						? opts.configFile
-						: path.join(config.root, opts.configFile);
+				if (typeof opts.iconsConfigFile === 'string') {
+					configPath = path.isAbsolute(opts.iconsConfigFile)
+						? opts.iconsConfigFile
+						: path.join(config.root, opts.iconsConfigFile);
 				} else {
 					configPath = findConfigFile(config.root);
 				}
@@ -422,7 +422,7 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 			// Collect every icon requirement from scanned usage, and register each
 			// `include` entry (a name pulls every size/variant; an object entry caps
 			// the sizes/variants for that name — even for its auto-detected usage).
-			const requests = scanProjectForIcons(config.root, opts.scanExtensions);
+			const requests = scanProjectForIcons(config.root, opts.iconsScanExtensions);
 			const overrides = new Map<string, { sizes?: number[]; variants?: ('regular' | 'filled')[] }>();
 			for (const entry of includeEntries) {
 				const name = typeof entry === 'string' ? entry : entry.name;
@@ -457,7 +457,7 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 			// `asset` mode only emits hashed files during a real build; in dev we
 			// always inline (Vite's asset pipeline isn't running), which also keeps
 			// dev and prod consistent — a missing icon fails the same way in both.
-			const useAsset = isBuild && opts.mode === 'asset';
+			const useAsset = isBuild && opts.iconsMode === 'asset';
 
 			const entries: string[] = [];
 			let count = 0;
@@ -483,7 +483,7 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 
 			if (opts.verbose) {
 				console.log(
-					`[fluentui-icons] ${opts.mode} mode: ${names.size} icon(s), ${count} file(s) ` +
+					`[fluentui-icons] ${opts.iconsMode} mode: ${names.size} icon(s), ${count} file(s) ` +
 						`(${useAsset ? 'emitted as assets' : 'inlined'})`
 				);
 			}
@@ -494,7 +494,7 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 		handleHotUpdate(ctx) {
 			// When a scanned source file changes, the set of used icons may change —
 			// invalidate the virtual module so it regenerates.
-			if (!opts.scanExtensions.includes(path.extname(ctx.file))) return;
+			if (!opts.iconsScanExtensions.includes(path.extname(ctx.file))) return;
 			const mod = ctx.server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_ID);
 			if (mod) {
 				ctx.server.moduleGraph.invalidateModule(mod);
@@ -504,4 +504,4 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 	};
 }
 
-export default fluentuiIcons;
+export default svelteFluentUI;

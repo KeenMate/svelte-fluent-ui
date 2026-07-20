@@ -108,7 +108,7 @@
 		if (entry === undefined) {
 			console.error(
 				`[svelte-fluentui] ${key}.svg not found. If this icon is referenced only ` +
-					`through a dynamic name, add it to the fluentuiIcons({ include: [...] }) option.`
+					`through a dynamic name, add it to the svelteFluentUI({ iconsInclude: [...] }) option.`
 			)
 			error = `Icon not found: ${name}`
 			svgContent = ''
