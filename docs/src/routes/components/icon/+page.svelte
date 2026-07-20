@@ -295,15 +295,17 @@ export default defineConfig({
 		</ul>
 		<p><strong>JSON format</strong></p>
 		<pre><code>{`{
+  "sizes": [16, 20],
+  "variants": ["regular", "filled"],
   "icons": [
     "home",
     "settings",
-    "person",
     { "name": "history", "sizes": [16] },
     { "name": "star", "sizes": [16, 20], "variants": ["regular"] }
   ]
 }`}</code></pre>
-		<p>An entry is either a <strong>name</strong> (all configured sizes/variants) or an <strong>object</strong> with optional <code>sizes</code> / <code>variants</code>. Beyond just including an icon, the object form <strong>caps</strong> that icon's sizes/variants — including its auto-detected usage. A data-driven <code>{`<Icon name={item.icon} />`}</code> normally can't be pinned to a size so it pulls every size; listing it as <code>{`{ name: "history", sizes: [16] }`}</code> collapses it to only size 16. The <code>include</code> plugin option accepts the same shape: <code>{`include: ['home', { name: 'history', sizes: [16] }]`}</code>.</p>
+		<p><strong>Default <code>sizes</code> / <code>variants</code>.</strong> The single biggest lever: these set which sizes/variants are bundled for any icon whose size/variant can't be determined statically — chiefly data-driven usages like <code>{`<Icon name={item.icon} size={20} />`}</code>, where the dynamic name can't be paired with a size, so the icon would otherwise pull <em>every</em> size. Setting <code>"sizes": [16, 20]</code> caps that fallback to just those. Statically-sized usages (<code>{`<Icon name="star" size={48} />`}</code>) are always bundled at their exact size regardless. Equivalent to the plugin's <code>sizes</code> / <code>variants</code> options (an explicit plugin option wins over the config file).</p>
+		<p><strong>Per-icon entries.</strong> Each item in <code>icons</code> is either a <strong>name</strong> (uses the defaults above) or an <strong>object</strong> with its own <code>sizes</code> / <code>variants</code>, which <em>caps</em> that specific icon — including its auto-detected usage. The <code>include</code> plugin option accepts the same shape: <code>{`include: ['home', { name: 'history', sizes: [16] }]`}</code>.</p>
 		<p><strong>JavaScript format</strong></p>
 		<pre><code>{`// fluentui-icons.config.js
 export default [

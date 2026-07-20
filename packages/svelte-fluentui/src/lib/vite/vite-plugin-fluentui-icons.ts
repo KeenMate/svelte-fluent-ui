@@ -129,53 +129,76 @@ const IGNORED_DIRS = new Set([
 	'.output'
 ]);
 
+/** Parsed contents of a config file. */
+interface LoadedConfig {
+	icons: (string | IconInclude)[];
+	/** Default sizes for icons whose size can't be determined statically. */
+	sizes?: number[];
+	/** Default variants for icons whose variant can't be determined statically. */
+	variants?: ('regular' | 'filled')[];
+}
+
 /**
- * Load icons from a config file
+ * Normalise a raw config value (an array of icons, or an object with
+ * `icons`/`include` plus optional `sizes`/`variants` defaults).
  */
-async function loadConfigFile(
-	configPath: string,
-	verbose: boolean
-): Promise<(string | IconInclude)[]> {
+function normalizeConfig(raw: unknown): LoadedConfig | null {
+	if (Array.isArray(raw)) {
+		return { icons: raw };
+	}
+	if (raw && typeof raw === 'object') {
+		const obj = raw as Record<string, unknown>;
+		const icons = obj.icons ?? obj.include;
+		if (Array.isArray(icons)) {
+			return {
+				icons: icons as (string | IconInclude)[],
+				sizes: Array.isArray(obj.sizes) ? (obj.sizes as number[]) : undefined,
+				variants: Array.isArray(obj.variants)
+					? (obj.variants as ('regular' | 'filled')[])
+					: undefined
+			};
+		}
+	}
+	return null;
+}
+
+/**
+ * Load icons (and optional size/variant defaults) from a config file.
+ */
+async function loadConfigFile(configPath: string, verbose: boolean): Promise<LoadedConfig> {
+	const empty: LoadedConfig = { icons: [] };
 	if (!fs.existsSync(configPath)) {
-		return [];
+		return empty;
 	}
 
 	const ext = path.extname(configPath).toLowerCase();
 
 	try {
+		let raw: unknown;
 		if (ext === '.json') {
-			const content = fs.readFileSync(configPath, 'utf-8');
-			const config = JSON.parse(content);
-			const icons = config.icons || config.include || config;
-			if (Array.isArray(icons)) {
-				if (verbose) {
-					console.log(`[fluentui-icons] Loaded ${icons.length} icon(s) from ${configPath}`);
-				}
-				return icons;
-			}
-			console.warn(`[fluentui-icons] Config file ${configPath} does not contain an array of icons`);
-			return [];
-		}
-
-		if (ext === '.js' || ext === '.ts') {
+			raw = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+		} else if (ext === '.js' || ext === '.ts') {
 			const fileUrl = `file://${configPath.replace(/\\/g, '/')}`;
 			const module = await import(fileUrl);
-			const icons = module.default || module.icons || module.include;
-			if (Array.isArray(icons)) {
-				if (verbose) {
-					console.log(`[fluentui-icons] Loaded ${icons.length} icon(s) from ${configPath}`);
-				}
-				return icons;
-			}
-			console.warn(`[fluentui-icons] Config file ${configPath} does not export an array of icons`);
-			return [];
+			raw = module.default ?? module.icons ?? module.include ?? module;
+		} else {
+			console.warn(`[fluentui-icons] Unsupported config file format: ${ext}`);
+			return empty;
 		}
 
-		console.warn(`[fluentui-icons] Unsupported config file format: ${ext}`);
-		return [];
+		const config = normalizeConfig(raw);
+		if (!config) {
+			console.warn(`[fluentui-icons] Config file ${configPath} does not contain an icons array`);
+			return empty;
+		}
+
+		if (verbose) {
+			console.log(`[fluentui-icons] Loaded ${config.icons.length} icon(s) from ${configPath}`);
+		}
+		return config;
 	} catch (err) {
 		console.error(`[fluentui-icons] Error loading config file ${configPath}:`, err);
-		return [];
+		return empty;
 	}
 }
 
@@ -338,6 +361,13 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 	const opts = { ...DEFAULT_OPTIONS, ...options };
 	const includeEntries: (string | IconInclude)[] = [...opts.include];
 
+	// Effective fallback sizes/variants (used when a usage's size/variant can't
+	// be determined). Precedence: explicit plugin option > config file > default.
+	let effectiveSizes = opts.sizes;
+	let effectiveVariants = opts.variants;
+	const sizesFromOption = options.sizes !== undefined;
+	const variantsFromOption = options.variants !== undefined;
+
 	let config: ResolvedConfig;
 	let iconsSourcePath: string | null = null;
 	let isBuild = false;
@@ -368,8 +398,11 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 				}
 
 				if (configPath) {
-					const configIcons = await loadConfigFile(configPath, opts.verbose);
-					includeEntries.push(...configIcons);
+					const loaded = await loadConfigFile(configPath, opts.verbose);
+					includeEntries.push(...loaded.icons);
+					// Config-file defaults fill in only where the plugin option didn't.
+					if (!sizesFromOption && loaded.sizes) effectiveSizes = loaded.sizes;
+					if (!variantsFromOption && loaded.variants) effectiveVariants = loaded.variants;
 				}
 			}
 		},
@@ -411,8 +444,9 @@ export function fluentuiIcons(options: FluentUIIconsOptions = {}): Plugin {
 			for (const req of requests) {
 				names.add(req.name);
 				const override = overrides.get(req.name);
-				const sizes = req.size !== null ? [req.size] : (override?.sizes ?? opts.sizes);
-				const variants = req.variants !== null ? req.variants : (override?.variants ?? opts.variants);
+				const sizes = req.size !== null ? [req.size] : (override?.sizes ?? effectiveSizes);
+				const variants =
+					req.variants !== null ? req.variants : (override?.variants ?? effectiveVariants);
 				for (const size of sizes) {
 					for (const variant of variants) {
 						wanted.add(`${req.name}_${size}_${variant}`);
