@@ -442,6 +442,33 @@
 
 	// Should show tags - only for multi-select with selections
 	let showTags = $derived(selectedOptions.length > 0 && effectiveMultiple)
+
+	// Auto-open the dropdown when initial options arrive asynchronously while the
+	// input is already focused. Scenario: the control is autofocused (or the user
+	// focuses it) before a background fetch has populated `options`; on focus the
+	// list is still empty so nothing opens, and without this the loaded data stays
+	// inaccessible until the user types (which needlessly re-runs the search).
+	// Requires `showInitialOptions` (the opt-in for showing options on an empty
+	// query). Gated on the empty→non-empty transition so manually closing the
+	// dropdown (Escape) while focused doesn't immediately re-open it.
+	let hadOptions = false
+	$effect(() => {
+		const hasOptions = options.length > 0
+		const justLoaded = hasOptions && !hadOptions
+		hadOptions = hasOptions
+		if (
+			justLoaded &&
+			isFocused &&
+			showInitialOptions &&
+			!isOpen &&
+			!disabled &&
+			!readonly &&
+			!searchText.trim() &&
+			!hasSingleSelection
+		) {
+			filterOptions("")
+		}
+	})
 </script>
 
 <!-- svelte-ignore a11y_label_has_associated_control -->
@@ -455,7 +482,7 @@
 	{#if labelTemplate}
 		{@render labelTemplate()}
 	{:else if label}
-		<label class="fluent-label">
+		<label class="fluent-field-label">
 			{label}
 			{#if required}<span class="required-indicator">*</span>{/if}
 		</label>

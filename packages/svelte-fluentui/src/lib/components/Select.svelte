@@ -490,7 +490,7 @@
 
 <!-- svelte-ignore a11y_label_has_associated_control -->
 {#if hasLabel}
-	<label class="fluent-label" for={id}>
+	<label class="fluent-field-label" for={id}>
 		{#if label}{label}{/if}
 		{#if labelTemplate}{@render labelTemplate?.()}{/if}
 		{#if required}<span class="required-indicator">*</span>{/if}

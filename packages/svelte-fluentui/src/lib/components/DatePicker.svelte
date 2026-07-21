@@ -215,7 +215,7 @@
 
 <div class="fluent-datepicker {className}" style={style}>
 	{#if label || labelTemplate}
-		<label for={id} class="fluent-label">
+		<label for={id} class="fluent-field-label">
 			{#if label}{label}{/if}
 			{#if labelTemplate}{@render labelTemplate?.()}{/if}
 			{#if required}<span class="required-indicator">*</span>{/if}

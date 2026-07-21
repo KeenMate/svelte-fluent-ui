@@ -54,7 +54,7 @@
 </script>
 
 {#if label || labelTemplate}
-	<label class="fluent-label">
+	<label class="fluent-field-label">
 		{#if label}
 			{label}
 		{/if}

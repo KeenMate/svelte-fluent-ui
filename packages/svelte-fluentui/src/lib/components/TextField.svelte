@@ -165,7 +165,7 @@
 </script>
 
 {#if label || labelTemplate}
-	<label for={id} class="fluent-label">
+	<label for={id} class="fluent-field-label">
 		{#if label}
 			{label}
 		{/if}

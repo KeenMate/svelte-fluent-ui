@@ -347,7 +347,7 @@
 				<Divider />
 
 				<Stack orientation="vertical" gap="0.5rem">
-					<span class="fluent-label">Color</span>
+					<span class="fluent-field-label">Color</span>
 					<RadioGroup bind:value={mobileColor} name="mobile-color" orientation="horizontal">
 						<Radio value="black">Black</Radio>
 						<Radio value="white">White</Radio>
@@ -392,7 +392,7 @@
 					<Grid spacing={3}>
 						<GridItem xs={12} md={6}>
 							<Stack orientation="vertical" gap="0.5rem">
-								<span class="fluent-label">Printer type</span>
+								<span class="fluent-field-label">Printer type</span>
 								<RadioGroup bind:value={printerType} name="printer-type" orientation="vertical">
 									<Radio value="inkjet">Inkjet</Radio>
 									<Radio value="laser">Laser</Radio>
@@ -421,7 +421,7 @@
 					<Grid spacing={3}>
 						<GridItem xs={12} md={6} lg={4}>
 							<Stack orientation="vertical" gap="0.5rem">
-								<span class="fluent-label">Form factor</span>
+								<span class="fluent-field-label">Form factor</span>
 								<RadioGroup bind:value={computerFormFactor} name="computer-ff" orientation="horizontal">
 									<Radio value="laptop">Laptop</Radio>
 									<Radio value="desktop">Desktop</Radio>
@@ -497,13 +497,13 @@
 				<Grid spacing={3}>
 					<GridItem xs={12} md={6}>
 						<Stack orientation="vertical" gap="0.25rem">
-							<span class="fluent-label">License start date</span>
+							<span class="fluent-field-label">License start date</span>
 							<DatePicker bind:value={licenseStartDate} />
 						</Stack>
 					</GridItem>
 					<GridItem xs={12} md={6}>
 						<Stack orientation="vertical" gap="0.25rem">
-							<span class="fluent-label">Preferred install time</span>
+							<span class="fluent-field-label">Preferred install time</span>
 							<TimePicker bind:value={preferredInstallTime} />
 						</Stack>
 					</GridItem>
@@ -523,7 +523,7 @@
 				<Grid spacing={3}>
 					<GridItem xs={12} md={6} lg={4}>
 						<Stack orientation="vertical" gap="0.25rem">
-							<span class="fluent-label">Needed by</span>
+							<span class="fluent-field-label">Needed by</span>
 							<DatePicker bind:value={neededBy} />
 						</Stack>
 					</GridItem>

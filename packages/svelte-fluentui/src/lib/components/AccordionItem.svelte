@@ -242,6 +242,10 @@
 	}
 	.fluent-accordion-item__heading.toggle-start .fluent-accordion-item__end {
 		grid-column: 4;
+		/* The end slot is now the rightmost cell (the chevron moved to the
+		   leading edge), so it must supply the trailing inset the chevron's
+		   margin used to provide against the card edge. */
+		padding-inline-end: calc(var(--design-unit, 4) * 2 * 1px);
 	}
 
 	/* Animated collapse via grid-template-rows 0fr -> 1fr. */

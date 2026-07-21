@@ -152,7 +152,7 @@
 </script>
 
 {#if label || labelTemplate}
-	<label for={id} class="fluent-label">
+	<label for={id} class="fluent-field-label">
 		{label}
 		{#if labelTemplate}
 			{@render labelTemplate?.()}

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import {Accordion, AccordionItem, Button, Icon, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
+	import {Accordion, AccordionItem, Button, Icon, Label, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 	let accordionValue = $state<string | string[] | null>(null)
+	let deletedField = $state<string | null>(null)
 
 	// Expand / collapse all (multi mode). In multi mode the bound `value` IS the
 	// list of open item ids, so there's no imperative "open all" call: setting
@@ -10,6 +11,18 @@
 	// reassignment fans out to every item.
 	const expandAllIds = ["exp-1", "exp-2", "exp-3"]
 	let expandAllValue = $state<string | string[] | null>(null)
+
+	// "Standard Fields" form example: toggle on the left, a required-marker in the
+	// heading, and a field-name chip in the end slot. Exercises the trailing inset
+	// the end slot gets in togglePosition="start" so the chip clears the card edge.
+	const standardFields = [
+		{id: "sf-caller", label: "Caller", required: true, field: "Incident.caller_id"},
+		{id: "sf-ci", label: "Configuration Item", required: false, field: "Incident.cmdb_ci"},
+		{id: "sf-workgroup", label: "Default Assignment Workgroup", required: true, field: "Incident.assignment_group"},
+		{id: "sf-description", label: "Description", required: false, field: "Incident.description"},
+		{id: "sf-impact", label: "Impact", required: true, field: "Incident.impact"},
+		{id: "sf-bu", label: "Impacted Business Unit", required: false, field: "Incident.u_impacted_business_unit"}
+	]
 
 	type Property = {
 		name: string
@@ -281,6 +294,44 @@
 					{/snippet}
 				</Accordion>
 			</GridItem>
+
+			<GridItem xs={12}>
+				<h3>Form fields (end-slot chips, toggle on the left)</h3>
+				<p class="hint">
+					Toggle on the leading edge with a field-name chip in the <code>end</code> slot. The end
+					slot keeps a trailing inset in <code>togglePosition="start"</code> so the chip clears the
+					card edge.
+				</p>
+				<Accordion togglePosition="start" multi={true}>
+					{#snippet children()}
+						{#each standardFields as f (f.id)}
+							<AccordionItem id={f.id}>
+								{#snippet heading()}
+									<span class="field-heading">
+										{f.label}{#if f.required}<span class="field-required" aria-hidden="true">*</span>{/if}
+									</span>
+								{/snippet}
+								{#snippet end()}
+									<Stack orientation="horizontal" gap="0.5rem" verticalAlign="center">
+										<Label outline color="secondary">{f.field}</Label>
+										<Button
+											appearance="stealth"
+											aria-label="Delete {f.label}"
+											onclick={() => (deletedField = f.field)}
+										>
+											<Icon name="delete" size={16} />
+										</Button>
+									</Stack>
+								{/snippet}
+								<p>Bind this field to <code>{f.field}</code>.</p>
+							</AccordionItem>
+						{/each}
+					{/snippet}
+				</Accordion>
+				{#if deletedField}
+					<p class="hint">Delete clicked for <code>{deletedField}</code> (the header toggle didn't fire).</p>
+				{/if}
+			</GridItem>
 		</Grid>
 	</Card>
 
@@ -335,5 +386,12 @@
 		margin: 0 0 0.5rem;
 		font-size: 0.85rem;
 		color: var(--neutral-foreground-hint, #616161);
+	}
+	.field-heading {
+		font-weight: 600;
+	}
+	.field-required {
+		margin-inline-start: 0.25rem;
+		color: var(--fluent-color-danger-primary, #d13438);
 	}
 </style>

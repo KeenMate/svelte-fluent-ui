@@ -256,7 +256,7 @@
 			placeholder="Custom label"
 		>
 			{#snippet labelTemplate()}
-				<span class="fluent-label" data-testid="custom-label">Fruit <em>(custom)</em></span>
+				<span class="fluent-field-label" data-testid="custom-label">Fruit <em>(custom)</em></span>
 			{/snippet}
 		</Autocomplete>
 	</div>
