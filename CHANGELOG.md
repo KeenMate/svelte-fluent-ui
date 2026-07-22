@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.0-rc08] - 2026-07-21 [PUBLISHED]
+## [1.5.0] - 2026-07-22 [PUBLISHED]
 
 ### Fixed
 - **`Accordion` — `end`-slot content sat flush against the card edge with `togglePosition="start"`** - The heading is a 4-column grid whose column order flips with `togglePosition`: in the default (`end`) mode the chevron `__icon` is the rightmost cell and its `margin` (8px) supplied the right-edge inset, so the `end` slot sat safely inside it. With `togglePosition="start"` the chevron moves to the leading edge and `__end` becomes the rightmost cell — but it had no trailing inset of its own, so `end`-slot chips/badges/buttons pressed right up against the card border. The `toggle-start` rule now gives `__end` a matching `padding-inline-end` (`calc(var(--design-unit, 4) * 2 * 1px)` = 8px), restoring the inset the chevron used to provide.
