@@ -34,7 +34,10 @@
 		{name: "name", type: "string", default: "undefined", description: "Form name"},
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Auto focus on mount"},
-		{name: "autocomplete", type: "string", default: "undefined", description: 'Browser autocomplete ("off", "on", "email", "username", etc.)'}
+		{name: "autocomplete", type: "string", default: '"off"', description: 'Browser autocomplete ("off", "on", "email", "username", etc.)'},
+		{name: "maxlength", type: "number", default: "undefined", description: "Max length of the typed value (forwarded to the shadow `<input>`; browser blocks further input)"},
+		{name: "minlength", type: "number", default: "undefined", description: "Min required length (forwarded to the shadow `<input>`; flags tooShort on validation)"},
+		{name: "pattern", type: "string", default: "undefined", description: "Regex the value must match; participates in native validity (patternMismatch)"}
 	]
 
 	const callbacks: Property[] = [
@@ -121,6 +124,34 @@
 				type="password"
 				placeholder="Enter password"
 				autocomplete="current-password"
+			/>
+		</Stack>
+
+		<h3>Length &amp; pattern validation</h3>
+		<p>
+			<code>minlength</code>, <code>maxlength</code> and <code>pattern</code> are forwarded to the
+			inner <code>&lt;input&gt;</code>, so they participate in native form validity. <code>maxlength</code>
+			hard-caps typed length; <code>minlength</code> and <code>pattern</code> are validation-only.
+		</p>
+
+		<Stack orientation="vertical" gap="1rem">
+			<TextField
+				label="Max 10 characters"
+				placeholder="Can't type past 10"
+				maxlength={10}
+			/>
+
+			<TextField
+				label="At least 3 characters"
+				placeholder="Too short flags on submit"
+				minlength={3}
+				required
+			/>
+
+			<TextField
+				label="Digits only (pattern)"
+				placeholder="e.g. 12345"
+				pattern="[0-9]*"
 			/>
 		</Stack>
 
