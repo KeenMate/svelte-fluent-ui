@@ -19,6 +19,20 @@
 		visible?: boolean
 		/** Arbitrary context data passed to `ontabchange` when this tab becomes active. */
 		data?: Record<string, unknown>
+		/**
+		 * Guard called before Tabs navigates away from this tab while it is
+		 * active. Return `false` (or a Promise resolving to `false`) to veto
+		 * the switch — e.g. when the tab has unsaved changes. May be async so
+		 * it can await a confirm dialog.
+		 */
+		canLeave?: () => boolean | Promise<boolean>
+		/**
+		 * Guard called before this tab's close (×) button fires `oncloseclick`.
+		 * Return `false` (or a Promise resolving to `false`) to veto the close —
+		 * e.g. to confirm discarding unsaved data. Independent of `canLeave`.
+		 * May be async so it can await a confirm dialog.
+		 */
+		canClose?: () => boolean | Promise<boolean>
 		oncloseclick?: () => void
 	}
 
@@ -37,6 +51,8 @@
 		showClose = false,
 		visible = true,
 		data = undefined,
+		canLeave = undefined,
+		canClose = undefined,
 		oncloseclick = undefined
 	}: Props = $props()
 
@@ -78,6 +94,8 @@
 			showClose,
 			visible,
 			data,
+			canLeave,
+			canClose,
 			oncloseclick,
 			class: className,
 			style

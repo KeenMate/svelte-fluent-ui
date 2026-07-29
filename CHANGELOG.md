@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0-rc01] - 2026-07-29 [PUBLISHED]
+
+### Added
+- **`Tab` — `canLeave` guard to veto navigating away from a tab (unsaved-changes prompts)** - `Tabs` renders its own tablist and owns every tab switch, so a tab holding dirty/unsaved data previously had no way to block being navigated away from — clicking another tab (or keyboard/swipe/overflow-menu navigation) switched immediately. `Tab` now accepts an optional `canLeave?: () => boolean | Promise<boolean>`; before switching off the *currently active* tab, `Tabs` calls that tab's `canLeave` and cancels the switch if it resolves falsy. The guard is async-capable so it can `await` a confirm dialog / save prompt rather than only blocking synchronously. It's wired into every interaction-driven switch path (click, keyboard arrows/Home/End, swipe, and the menu-mode overflow list) through a single `canLeaveCurrent()` chokepoint; the internal auto-select-first-tab and overflow auto-swap effects deliberately bypass it. A consumer assigning `activeId` directly (external two-way binding) bypasses the guard by design — that's the consumer's own navigation to gate.
+- **`Tab` — `canClose` guard to veto the close (×) button** - Independent of `canLeave`: leaving a tab keeps it (and its data) alive whereas closing destroys it, so the two intents are guarded separately. `Tab` now accepts `canClose?: () => boolean | Promise<boolean>`; the close handler awaits it before firing `oncloseclick`, and a falsy resolve cancels the close (`oncloseclick` never fires). `canClose` guards the tab *being closed* (not necessarily the active one), and like `canLeave` it may be async to await a confirm dialog. Close continues to `stopPropagation()`, so clicking × never doubles as a tab activation.
+
+### Documentation
+- **`Tabs` — corrected the "built on `<fluent-tab>`" framing and dropped the dead `overflow` prop** - The demo page and component description said Tabs were "built on `<fluent-tab>`", but the Svelte rewrite renders native `<button role="tab">` + `role="tabpanel"` elements and only touches a FluentUI web component for the menu-mode overflow popover (`<fluent-menu>`); the copy now says so. The stale `overflow` prop (deprecated — it warns and does nothing, superseded by `responsive="menu"`) was removed from the Tabs slots table, the per-`Tab` properties table, and its redundant demo (the "Responsive modes" section already covers `responsive="menu"`). Added `canLeave`/`canClose` API rows and two live demos: a `canLeave` unsaved-changes guard, and a per-tab `canClose` confirm on the closable-tabs demo (with `Notes.txt` left unguarded to show the opt-out).
+
 ## [1.5.0] - 2026-07-22 [PUBLISHED]
 
 ### Fixed

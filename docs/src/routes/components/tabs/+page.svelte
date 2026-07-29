@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge, Slider} from "svelte-fluentui"
+	import {Tab, Tabs, QuickGrid, Stack, Grid, GridItem, Card, Icon, Badge, Slider, TextField} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
 
 	let verticalStripWidth = $state(200)
@@ -30,8 +30,7 @@
 	]
 
 	const tabsSlots: Property[] = [
-		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot containing the child <Tab> elements"},
-		{name: "end", type: "fluent-badge", default: "auto", description: "Overflow-count badge rendered automatically when `overflow` is non-empty"}
+		{name: "childContent", type: "SlotType", default: "undefined", description: "Slot containing the child <Tab> elements"}
 	]
 
 	const tabProperties: Property[] = [
@@ -41,7 +40,6 @@
 		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the tab"},
 		{name: "labelEditable", type: "boolean", default: "false", description: "Allows inline editing of the tab label"},
 		{name: "showClose", type: "boolean", default: "false", description: "Shows a close (×) button on the tab"},
-		{name: "overflow", type: "string", default: "undefined", description: "Overflow behaviour of this individual tab"},
 		{name: "visible", type: "boolean", default: "true", description: "Controls whether the tab is rendered"},
 		{name: "data", type: "Record<string, unknown>", default: "undefined", description: "Arbitrary context data surfaced to ontabchange when this tab is selected"},
 		{name: "class", type: "string", default: '""', description: "Custom class"},
@@ -49,7 +47,9 @@
 	]
 
 	const tabCallbacks: Property[] = [
-		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired when the tab's close (×) button is clicked"}
+		{name: "canLeave", type: "() => boolean | Promise<boolean>", default: "undefined", description: "Guard called on the active tab before Tabs switches to another tab. Return false (or resolve to false) to veto the switch — e.g. when the tab has unsaved changes. May be async to await a confirm dialog. Covers click, keyboard, swipe and overflow-menu navigation (not external activeId assignment)"},
+		{name: "canClose", type: "() => boolean | Promise<boolean>", default: "undefined", description: "Guard called before the tab's close (×) button fires oncloseclick. Return false (or resolve to false) to veto the close — e.g. to confirm discarding unsaved data. Independent of canLeave (leaving keeps the tab, closing destroys it). May be async"},
+		{name: "oncloseclick", type: "() => void", default: "undefined", description: "Fired when the tab's close (×) button is clicked (after canClose passes, if set)"}
 	]
 
 	const tabSlots: Property[] = [
@@ -86,27 +86,29 @@
 		closableTabs = closableTabs.filter(t => t.id !== id)
 	}
 
-	// Overflow menu demo
-	const overflowItems = [
-		{label: "Billing", onclick: () => console.log("billing clicked")},
-		{label: "Audit log", onclick: () => console.log("audit clicked")},
-		{label: "Archive", onclick: () => console.log("archive clicked")}
-	]
+	// Guarded switch (dirty data) demo — the active tab vetoes leaving while
+	// its field is non-empty. `canLeave` may be async; here we use a sync confirm.
+	let guardActiveId = $state("edit")
+	let draft = $state("")
+	function confirmLeaveIfDirty() {
+		if (!draft) return true
+		return confirm("You have unsaved changes. Discard them and switch tabs?")
+	}
 </script>
 
 <Stack orientation="vertical" gap="1rem">
 	<Meta
 		title="Tabs"
-		description="Svelte tabbed interface built on fluent-tab with horizontal/vertical orientations, overflow handling, closable/editable tabs, and swipe navigation."
+		description="Custom Svelte tabbed interface with horizontal/vertical orientations, overflow handling, closable/editable tabs, and swipe navigation."
 		keywords="svelte, fluentui, tabs, tab, panel, navigation, web components"
 	/>
 
 	<h1>Tabs</h1>
 
 	<p>
-		A tabbed interface built on <code>&lt;fluent-tab&gt;</code> with horizontal/vertical orientations,
-		overflow handling (scroll, wrap, or ellipsis menu), closable and editable tabs, and optional
-		swipe navigation between panels.
+		A custom tabbed interface rendering native <code>&lt;button role="tab"&gt;</code> elements, with
+		horizontal/vertical orientations, overflow handling (scroll, wrap, or ellipsis menu), closable
+		and editable tabs, and optional swipe navigation between panels.
 	</p>
 
 	<References links={[
@@ -345,8 +347,10 @@
 		<h3>Closable tabs</h3>
 		<p>
 			Set <code>showClose</code> on a tab and listen to <code>oncloseclick</code>
-			to get the "browser-style" closable tab UX. Close a tab below and watch
-			the list shrink.
+			to get the "browser-style" closable tab UX. Add a <code>canClose</code> guard
+			to confirm before destroying a tab (independent of <code>canLeave</code>). Closing
+			a tab below asks you to confirm — except <code>Notes.txt</code>, which has no guard
+			and closes immediately.
 		</p>
 		{#if closableTabs.length > 0}
 			<Tabs activeId={closableTabs[0].id}>
@@ -356,6 +360,7 @@
 							id={t.id}
 							label={t.label}
 							showClose
+							canClose={t.label === "Notes.txt" ? undefined : () => confirm(`Close ${t.label}?`)}
 							oncloseclick={() => closeTab(t.id)}
 						>
 							{#snippet icon()}<Icon name={t.icon} size={16} />{/snippet}
@@ -437,24 +442,28 @@
 			</p>
 		{/if}
 
-		<h3>Overflow menu</h3>
+		<h3>Blocking a switch (unsaved changes)</h3>
 		<p>
-			Pass an <code>overflow</code> array to <code>&lt;Tabs&gt;</code> to get
-			a badge + menu for items that don't belong in the main tab strip.
+			Give the active <code>&lt;Tab&gt;</code> a <code>canLeave</code> guard. Tabs calls it
+			before navigating away and cancels the switch if it returns <code>false</code> (it may
+			also be async and await a confirm dialog). Type into the field below, then try clicking
+			another tab — you'll be asked to confirm.
 		</p>
-		<Tabs overflow={overflowItems} activeId="o1">
+		<Tabs bind:activeId={guardActiveId}>
 			{#snippet childContent()}
-				<Tab id="o1" label="Home">
-					{#snippet icon()}<Icon name="home" size={16} />{/snippet}
-					{#snippet content()}<p>Home panel</p>{/snippet}
+				<Tab id="edit" label="Edit" canLeave={confirmLeaveIfDirty}>
+					{#snippet content()}
+						<Stack orientation="vertical" gap="0.5rem">
+							<p>This tab blocks leaving while the field below is non-empty.</p>
+							<TextField bind:value={draft} placeholder="Type something…" />
+						</Stack>
+					{/snippet}
 				</Tab>
-				<Tab id="o2" label="Projects">
-					{#snippet icon()}<Icon name="folder" size={16} />{/snippet}
-					{#snippet content()}<p>Projects panel</p>{/snippet}
+				<Tab id="preview" label="Preview">
+					{#snippet content()}<p>Preview panel — free to switch to once the field is empty (or you confirm).</p>{/snippet}
 				</Tab>
-				<Tab id="o3" label="Reports">
-					{#snippet icon()}<Icon name="chart" size={16} />{/snippet}
-					{#snippet content()}<p>Reports panel</p>{/snippet}
+				<Tab id="settings" label="Settings">
+					{#snippet content()}<p>Settings panel</p>{/snippet}
 				</Tab>
 			{/snippet}
 		</Tabs>

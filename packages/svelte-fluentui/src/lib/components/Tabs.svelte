@@ -19,6 +19,21 @@
 		showClose?: boolean
 		visible?: boolean
 		data?: Record<string, unknown>
+		/**
+		 * Guard invoked on the *currently active* tab before Tabs navigates
+		 * away from it. Return `false` (or a Promise resolving to `false`) to
+		 * veto the switch — e.g. when the tab holds unsaved/dirty data. May be
+		 * async so it can await a confirm dialog.
+		 */
+		canLeave?: () => boolean | Promise<boolean>
+		/**
+		 * Guard invoked before this tab's close (×) button fires `oncloseclick`.
+		 * Return `false` (or a Promise resolving to `false`) to veto the close —
+		 * e.g. to confirm discarding unsaved data. Independent of `canLeave`:
+		 * leaving keeps the tab alive, closing destroys it. Guards the tab being
+		 * closed (not necessarily the active one). May be async.
+		 */
+		canClose?: () => boolean | Promise<boolean>
 		oncloseclick?: () => void
 		class?: string
 		style?: string
@@ -310,10 +325,27 @@
 		}
 	}
 
-	function selectTab(tabId: string, focus = false) {
+	/*
+	 * A tab can veto being navigated away from: before switching off the
+	 * current tab we call its registered `canLeave()` guard (if any). A
+	 * falsy resolve cancels the switch, so a tab with dirty data can prompt
+	 * the user and stay put. The guard may be sync or async (return a
+	 * Promise) so it can await a confirm dialog. Only interaction-driven
+	 * switches (click, keyboard, swipe, overflow menu) route through here —
+	 * a consumer assigning `activeId` directly bypasses the guard by design.
+	 */
+	async function canLeaveCurrent(targetId: string): Promise<boolean> {
+		if (!activeId || activeId === targetId) return true
+		const current = orderedTabs.find(t => t.id === activeId)
+		if (!current?.canLeave) return true
+		return (await current.canLeave()) !== false
+	}
+
+	async function selectTab(tabId: string, focus = false) {
 		const tab = orderedTabs.find(t => t.id === tabId)
 		if (!tab || tab.disabled) return
 		if (activeId !== tabId) {
+			if (!(await canLeaveCurrent(tabId))) return
 			activeId = tabId
 			ontabchange?.({ tabId, data: tab.data })
 		}
@@ -357,9 +389,16 @@
 		}
 	}
 
-	function handleCloseClick(tab: TabEntry, e: MouseEvent) {
+	/*
+	 * Close is guarded independently of navigation: a tab can allow being left
+	 * (kept in memory) yet still confirm before being destroyed. We await the
+	 * closed tab's `canClose()` (if any) before firing `oncloseclick`; a falsy
+	 * resolve cancels the close.
+	 */
+	async function handleCloseClick(tab: TabEntry, e: MouseEvent) {
 		e.stopPropagation()
 		e.preventDefault()
+		if (tab.canClose && (await tab.canClose()) === false) return
 		tab.oncloseclick?.()
 	}
 
@@ -556,9 +595,12 @@
 	 * position with the clicked tab, so the selection stays in the strip after
 	 * it's activated. The displaced tab falls off into the overflow menu.
 	 */
-	function onOverflowTabClick(tabId: string) {
+	async function onOverflowTabClick(tabId: string) {
 		const tab = orderedTabs.find(t => t.id === tabId)
 		if (!tab || tab.disabled) return
+		// Guard before reordering/activating. When called from the auto-swap
+		// effect the tab is already active, so canLeaveCurrent short-circuits.
+		if (!(await canLeaveCurrent(tabId))) return
 
 		const currentOrder = displayOrder.length > 0
 			? [...displayOrder]
