@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0-rc03] - 2026-07-30 [PUBLISHED]
+
+### Fixed
+- **`QuickGrid` — floating row toolbar was rendered off-screen (looked like an empty toolbar)** - The row toolbar is placed by `PositioningRegion`, whose `matchWidth` prop defaults to `true` (so dropdowns match their input's width via Floating UI's `size` middleware). The toolbar's anchor is the grid *row*, so it was force-stretched to the full row width (e.g. 814px), overriding its inline `width: auto`. Placing that oversized box with the default `position="left"` then computed a large negative `left` (~ −481px), pushing the toolbar — icons and all — outside the viewport; the row appeared to have an empty toolbar even though the buttons were in the DOM. The toolbar now passes `matchWidth={false}`, so it keeps its natural content width and Floating UI positions it correctly beside the hovered row.
+
 ## [1.6.0-rc02] - 2026-07-30 [PUBLISHED]
 
 ### Added

@@ -1,6 +1,6 @@
 {
 	"name": "svelte-fluentui",
-	"version": "1.6.0-rc02",
+	"version": "1.6.0-rc03",
 	"description": "A Svelte wrapper library for Microsoft FluentUI web components",
 	"license": "MIT",
 	"author": "KeenMate",

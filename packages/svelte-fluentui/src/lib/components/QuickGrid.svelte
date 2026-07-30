@@ -2110,7 +2110,7 @@
 <div bind:this={containerRef} class="quickgrid-container" {style} onfocusout={handleGridFocusOut}>
 	<!-- Row toolbar (uses fixed positioning to float outside container) -->
 	{#if resolvedShowToolbar && hoveredRowIndex !== null && hoveredRowElement}
-		<PositioningRegion anchor={hoveredRowElement} visible={true} position={popupPosition} align={toolbarAlign} style="width: auto;">
+		<PositioningRegion anchor={hoveredRowElement} visible={true} position={popupPosition} align={toolbarAlign} matchWidth={false} style="width: auto;">
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				bind:this={popupElement}
