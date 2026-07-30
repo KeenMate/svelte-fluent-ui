@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0-rc02] - 2026-07-30 [PUBLISHED]
+
+### Added
+- **`QuickGrid` — row-toolbar items accept a custom `iconSnippet` (Font Awesome, inline SVG, any markup)** - Each `rowToolbar` item's icon was rendered strictly through the built-in `<Icon name={item.icon} />`, so its `icon` field only accepted a FluentUI icon name — there was no way to use a Font Awesome glyph or arbitrary SVG. `RowToolbarItem` now has an optional `iconSnippet?: Snippet` that takes precedence over `icon` when present; `icon` is correspondingly optional when a snippet is supplied. Predefined string items (`'add'`, `'delete'`, …) and existing `icon:`-based items are unchanged. Example: `rowToolbar={[{ id: 'del', title: 'Delete', iconSnippet: trashIcon, onclick }]}` with `{#snippet trashIcon()}<i class="fa-solid fa-trash"></i>{/snippet}`.
+
+### Fixed
+- **`svelteFluentUI` — icons rendered *inside* library components (e.g. the QuickGrid row toolbar) now bundle automatically** - The icon scanner walks the consuming project (`config.root`) and deliberately skips `node_modules`, so `<Icon>` usage inside svelte-fluentui's own components was invisible to auto-detection. A QuickGrid with `rowToolbar={['moveUp','moveDown','add','duplicate','delete']}` renders `arrow_up`/`arrow_down`/`add`/`copy`/`delete` internally — none of which the app's own source mentions — so unless they were hand-listed in `fluentui-icons.config.json`, the toolbar came up **completely empty** (the icons blanked). The plugin now also scans its own package's `components` directory (located relative to the plugin file via `import.meta.url`, so it resolves both from a published `dist/` install and from source in dev) and merges those internal icon requirements into the bundle. The whole library statically references only a handful of icons, so the added cost is negligible. Controlled by the new `iconsScanLibrary` option (default `true`); set it `false` to opt out.
+
 ## [1.6.0-rc01] - 2026-07-29 [PUBLISHED]
 
 ### Added

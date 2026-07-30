@@ -232,6 +232,7 @@
 			icon: "book",
 			items: [
 				{label: "Getting Started", href: "/getting-started"},
+				{label: "Working with Icons", href: "/guides/icons"},
 				{label: "Layout Example", href: "/layout-example"}
 			]
 		},

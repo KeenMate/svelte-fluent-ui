@@ -26,6 +26,7 @@
 import { type Plugin, type ResolvedConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 
 export type IconsMode = 'inline' | 'asset';
 
@@ -90,6 +91,17 @@ export interface SvelteFluentUIOptions {
 	iconsVariants?: ('regular' | 'filled')[];
 
 	/**
+	 * Also scan svelte-fluentui's own components for the icons they render
+	 * internally (e.g. the QuickGrid row-toolbar's `add`/`delete`/`copy`/
+	 * `arrow_up`/`arrow_down`). Those `<Icon>` usages live inside the library
+	 * package, which the project scan skips (`node_modules` is ignored), so
+	 * without this they'd never ship and render as blank. Costs a handful of
+	 * extra icons — the whole library statically references only a few.
+	 * @default true
+	 */
+	iconsScanLibrary?: boolean;
+
+	/**
 	 * Enable verbose logging
 	 * @default false
 	 */
@@ -114,8 +126,20 @@ const DEFAULT_OPTIONS: Required<Omit<SvelteFluentUIOptions, 'iconsConfigFile'>> 
 	iconsScanExtensions: ['.svelte', '.ts', '.js'],
 	iconsSizes: [16, 20, 24, 28, 32, 48],
 	iconsVariants: ['regular', 'filled'],
+	iconsScanLibrary: true,
 	verbose: false
 };
+
+// svelte-fluentui's own components live next to this plugin: in a published
+// install the plugin sits at `dist/vite/…` and components at `dist/components`;
+// in this repo's dev it's `src/lib/vite/…` and `src/lib/components`. Either way
+// `../components` relative to this file is the library's component source, so we
+// find its internal <Icon> usage without walking node_modules.
+const LIBRARY_COMPONENTS_DIR = path.resolve(
+	path.dirname(fileURLToPath(import.meta.url)),
+	'..',
+	'components'
+);
 
 // Directories that never contain first-party <Icon> usage worth scanning.
 const IGNORED_DIRS = new Set([
@@ -371,6 +395,8 @@ export function svelteFluentUI(options: SvelteFluentUIOptions = {}): Plugin {
 	let config: ResolvedConfig;
 	let iconsSourcePath: string | null = null;
 	let isBuild = false;
+	// The library's own components never change during a session — scan once.
+	let libraryRequests: IconRequest[] | null = null;
 
 	return {
 		name: 'vite-plugin-fluentui-icons',
@@ -423,6 +449,25 @@ export function svelteFluentUI(options: SvelteFluentUIOptions = {}): Plugin {
 			// `include` entry (a name pulls every size/variant; an object entry caps
 			// the sizes/variants for that name — even for its auto-detected usage).
 			const requests = scanProjectForIcons(config.root, opts.iconsScanExtensions);
+
+			// Also pull in the icons svelte-fluentui's own components render (e.g.
+			// the QuickGrid row toolbar). These live inside the library package,
+			// which the project scan skips, so without this they'd render blank.
+			if (opts.iconsScanLibrary) {
+				if (libraryRequests === null) {
+					libraryRequests = fs.existsSync(LIBRARY_COMPONENTS_DIR)
+						? scanProjectForIcons(LIBRARY_COMPONENTS_DIR, opts.iconsScanExtensions)
+						: [];
+					if (opts.verbose) {
+						console.log(
+							`[fluentui-icons] scanned library components at ${LIBRARY_COMPONENTS_DIR}: ` +
+								`${libraryRequests.length} internal icon request(s)`
+						);
+					}
+				}
+				requests.push(...libraryRequests);
+			}
+
 			const overrides = new Map<string, { sizes?: number[]; variants?: ('regular' | 'filled')[] }>();
 			for (const entry of includeEntries) {
 				const name = typeof entry === 'string' ? entry : entry.name;

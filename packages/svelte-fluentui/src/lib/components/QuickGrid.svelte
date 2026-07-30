@@ -176,7 +176,8 @@
 		id: string
 
 		// Display
-		icon: string  // FluentUI icon name (e.g. 'delete', 'arrow_up'), rendered via <Icon />
+		icon?: string  // FluentUI icon name (e.g. 'delete', 'arrow_up'), rendered via <Icon />. Optional when iconSnippet is given.
+		iconSnippet?: Snippet  // Custom icon renderer (Font Awesome, inline SVG, etc.); takes precedence over `icon`
 		title: string
 		label?: string  // Optional text label next to icon
 
@@ -1722,7 +1723,8 @@
 		// Full object - fill in defaults
 		return {
 			id: config.id,
-			icon: config.icon,
+			icon: config.icon ?? '',
+			iconSnippet: config.iconSnippet,
 			title: config.title,
 			label: config.label,
 			row: config.row ?? 1,
@@ -2134,7 +2136,11 @@
 									disabled={isDisabled}
 									onclick={() => handleToolbarItemClick(item)}
 								>
-									<Icon name={item.icon} size={16} />
+									{#if item.iconSnippet}
+										{@render item.iconSnippet()}
+									{:else}
+										<Icon name={item.icon} size={16} />
+									{/if}
 									{#if item.label}
 										<span class="row-toolbar-label">{item.label}</span>
 									{/if}
