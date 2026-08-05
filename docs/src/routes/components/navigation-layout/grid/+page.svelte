@@ -8,9 +8,21 @@
 		currentBreakpoint = size
 	}
 
-	// Container-query demo state
+	// Container-query demo state. cqMax/cbMax are measured from the demo column
+	// so the slider can drag the box out to the full available width (past the
+	// lg@900 stop), where the old --col cycle bug used to surface.
 	let cqBoxWidth = $state(760)
 	let cbBoxWidth = $state(760)
+	let cqMax = $state(1080)
+	let cbMax = $state(1080)
+
+	// Keep the box widths within the current measured max as the layout resizes.
+	$effect(() => {
+		if (cqBoxWidth > cqMax) cqBoxWidth = cqMax
+	})
+	$effect(() => {
+		if (cbBoxWidth > cbMax) cbBoxWidth = cbMax
+	})
 
 	function applyGlobalBreakpoints() {
 		// Reads --fluent-grid-breakpoint-* from :root, then applies these overrides.
@@ -179,17 +191,20 @@
 			With <code>container</code>, breakpoints resolve against the Grid's own width, not the
 			viewport. Drag the slider to resize the box — the columns reflow on the
 			<strong>box width ({cqBoxWidth}px)</strong>, and resizing the browser window does nothing.
-			Container breakpoints: &lt;480→1 · ≥480→sm · ≥640→md · ≥900→lg.
+			The slider now runs out to the full column width ({cqMax}px) so you can test past the
+			lg@900 stop. Container breakpoints: &lt;480→1 · ≥480→sm · ≥640→md · ≥900→lg.
 		</p>
-		<input type="range" min="240" max="1080" bind:value={cqBoxWidth} class="cq-slider" aria-label="Container width" />
-		<div class="cq-box" style="width: {cqBoxWidth}px;">
-			<Grid container spacing={2}>
+		<div class="cq-wrap" bind:clientWidth={cqMax}>
+			<input type="range" min="240" max={cqMax} bind:value={cqBoxWidth} class="cq-slider" aria-label="Container width" />
+			<div class="cq-box" style="width: {cqBoxWidth}px;">
+				<Grid container spacing={2}>
 				{#each [1, 2, 3, 4, 5, 6, 7, 8] as n}
 					<GridItem xs={12} sm={6} md={4} lg={3}>
 						<Card class="grid-card-layer3 grid-card-centered">Item {n}</Card>
 					</GridItem>
 				{/each}
 			</Grid>
+			</div>
 		</div>
 
 		<h3>Per-Grid container breakpoints</h3>
@@ -197,15 +212,17 @@
 			Override the thresholds for a single Grid with <code>containerBreakpoints</code>. This one
 			switches columns much earlier (sm@300, md@450, lg@600):
 		</p>
-		<input type="range" min="240" max="1080" bind:value={cbBoxWidth} class="cq-slider" aria-label="Container width" />
-		<div class="cq-box cq-box-alt" style="width: {cbBoxWidth}px;">
-			<Grid container containerBreakpoints={{sm: 300, md: 450, lg: 600}} spacing={2}>
-				{#each [1, 2, 3, 4, 5, 6, 7, 8] as n}
-					<GridItem xs={12} sm={6} md={4} lg={3}>
-						<Card class="grid-card-layer3 grid-card-centered">Item {n}</Card>
-					</GridItem>
-				{/each}
-			</Grid>
+		<div class="cq-wrap" bind:clientWidth={cbMax}>
+			<input type="range" min="240" max={cbMax} bind:value={cbBoxWidth} class="cq-slider" aria-label="Container width" />
+			<div class="cq-box cq-box-alt" style="width: {cbBoxWidth}px;">
+				<Grid container containerBreakpoints={{sm: 300, md: 450, lg: 600}} spacing={2}>
+					{#each [1, 2, 3, 4, 5, 6, 7, 8] as n}
+						<GridItem xs={12} sm={6} md={4} lg={3}>
+							<Card class="grid-card-layer3 grid-card-centered">Item {n}</Card>
+						</GridItem>
+					{/each}
+				</Grid>
+			</div>
 		</div>
 
 		<h3>App-wide breakpoint config</h3>
@@ -374,9 +391,12 @@
 		margin: 0.5rem 0;
 	}
 
+	.cq-wrap {
+		width: 100%;
+	}
+
 	.cq-slider {
 		width: 100%;
-		max-width: 1080px;
 		margin: 0.25rem 0 0.75rem;
 	}
 

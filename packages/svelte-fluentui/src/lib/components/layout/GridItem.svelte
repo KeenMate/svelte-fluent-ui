@@ -570,6 +570,17 @@
 	div[data-cq][data-xxl="11"] { --xxl: 11; }
 	div[data-cq][data-xxl="12"] { --xxl: 12; }
 
+	/* Register --col as a number that falls back to 12 (full width) if a value
+	   ever becomes invalid at computed-value time, instead of collapsing to the
+	   guaranteed-invalid empty value (which turns flex-basis into `auto` and
+	   shrinks items to content width). Belt-and-suspenders now that the fallback
+	   chains no longer self-reference --col. */
+	@property --col {
+		syntax: "<number>";
+		inherits: false;
+		initial-value: 12;
+	}
+
 	/* Base: mobile-first, sized from --col (defaults to --xs, else 12 = full).
 	   Two attributes ([data-cq][data-xs]) outspecify the 1-attr viewport rules,
 	   so container items never pick up viewport flex-basis regardless of order. */
@@ -586,18 +597,18 @@
 	   (configureGridBreakpoints / --fluent-grid-breakpoint-* vars) disable these
 	   defaults and replace them with generated rules — no threshold overlap. */
 	@container (min-width: 480px) {
-		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--sm, var(--col)); }
+		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--sm, var(--xs, 12)); }
 	}
 	@container (min-width: 640px) {
-		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--md, var(--col)); }
+		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--md, var(--sm, var(--xs, 12))); }
 	}
 	@container (min-width: 900px) {
-		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--lg, var(--col)); }
+		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--lg, var(--md, var(--sm, var(--xs, 12)))); }
 	}
 	@container (min-width: 1200px) {
-		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--xl, var(--col)); }
+		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--xl, var(--lg, var(--md, var(--sm, var(--xs, 12))))); }
 	}
 	@container (min-width: 1600px) {
-		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--xxl, var(--col)); }
+		:global(html:not(.fluent-grid-custom-bp)) div[data-cq=""][data-xs] { --col: var(--xxl, var(--xl, var(--lg, var(--md, var(--sm, var(--xs, 12)))))); }
 	}
 </style>

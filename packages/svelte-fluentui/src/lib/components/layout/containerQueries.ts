@@ -49,6 +49,25 @@ const CUSTOM_BP_CLASS = "fluent-grid-custom-bp"
 
 const STOPS: ReadonlyArray<keyof GridBreakpoints> = ["sm", "md", "lg", "xl", "xxl"]
 
+// Full mobile-first order, incl. the base `xs` stop. Used to build the `--col`
+// fallback chain (see colChain).
+const COL_ORDER = ["xs", "sm", "md", "lg", "xl", "xxl"] as const
+
+// Resolve `--col` at a given stop as "this stop, else the nearest smaller stop,
+// else 12 (full width)". Chaining through the breakpoint vars this way — instead
+// of `var(--<key>, var(--col))` — is critical: a `var(--col)` fallback makes the
+// declaration syntactically self-referential, which CSS cycle detection treats
+// as invalid-at-computed-value-time (empty `--col`) regardless of whether the
+// fallback is actually taken. That empty value collapses flex-basis to `auto`
+// and the columns shrink to content width. The chain never names `--col`, so no
+// cycle. Keep in sync with the static default rules in GridItem.svelte.
+function colChain(key: keyof GridBreakpoints): string {
+	let expr = "12"
+	const end = COL_ORDER.indexOf(key)
+	for (let i = 0; i <= end; i++) expr = `var(--${COL_ORDER[i]}, ${expr})`
+	return expr
+}
+
 const supportsConstructed =
 	typeof document !== "undefined" &&
 	typeof CSSStyleSheet !== "undefined" &&
@@ -87,7 +106,7 @@ function buildRules(name: string, bp: GridBreakpoints): string {
 	const q = name === "" ? "" : `${name} `
 	const sel = `div[data-cq="${name}"][data-xs]`
 	return STOPS.map(
-		(key) => `@container ${q}(min-width: ${bp[key]}px){${sel}{--col:var(--${key},var(--col)) !important}}`
+		(key) => `@container ${q}(min-width: ${bp[key]}px){${sel}{--col:${colChain(key)} !important}}`
 	).join("")
 }
 

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0-rc04] - 2026-08-05 [PUBLISHED]
+
+### Fixed
+- **`Grid` container-query mode: items no longer collapse to content width at certain container widths.** In `<Grid container>` mode, the `--col` sizing variable used a self-referential fallback (`var(--md, var(--col))`) in both the runtime rule generator (`containerQueries.ts`) and the static default-container rules (`GridItem.svelte`). CSS cycle detection is syntactic — it counts the unused fallback too — so `--col` was flagged as a cycle and resolved to the empty (invalid) value, collapsing `flex-basis` to `auto` and packing items to their content width. Chromium only tripped this during incremental style recalc, making it intermittent and width-dependent. Fallbacks now chain through the breakpoint vars only (`var(--md, var(--sm, var(--xs, 12)))`), which never reference `--col`, so there is no cycle.
+
+### Internal
+- Registered `--col` via `@property` (`syntax: "<number>"`, `initial-value: 12`) so any future invalid value clamps to full width instead of collapsing to `auto`.
+
 ## [1.6.0-rc03] - 2026-07-30 [PUBLISHED]
 
 ### Fixed
