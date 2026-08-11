@@ -21,6 +21,7 @@
 <script lang="ts">
 	import {setContext, untrack, tick} from "svelte"
 	import PositioningRegion from "./PositioningRegion.svelte"
+	import Chip from "./Chip.svelte"
 	import Option from "./Option.svelte"
 	import OptionGroup from "./OptionGroup.svelte"
 	import type {OptionItem, SelectedValue, SlotType} from "../types/index.js"
@@ -43,6 +44,9 @@
 		placeholder?: string
 		position?: "above" | "below"
 		disabled?: boolean
+		/** Non-editable: the value shows but can't be changed (no typing, no opening,
+		 * chips can't be removed). Unlike `disabled`, it stays focusable and un-dimmed. */
+		readonly?: boolean
 		appearance?: "outline" | "filled"
 		required?: boolean
 		autofocus?: boolean
@@ -64,8 +68,17 @@
 		 * listbox matches the control width; when set it uses this width instead
 		 * (and stops matching), so the list can be wider or narrower than the input. */
 		dropdownWidth?: string
-		/** Accepted for API compatibility; combobox is single-select. */
+		/** Multi-select: render selected values as removable chips inside the control
+		 * and keep the input as a filter (it never collapses to a single label).
+		 * `value`/`onchange` carry the full array in both modes. */
 		multiple?: boolean
+		/** Multi-select only: keep the dropdown open after each pick so several can
+		 * be chosen in a row (default `true`). Set `false` to close on each pick. */
+		keepOpen?: boolean
+		/** Multi-select only: where the selected-value chips render. `inline` (default)
+		 * keeps them inside the control; `above`/`below` render them as a wrapping row
+		 * outside the control (matching Autocomplete's `tagsPosition`). */
+		tagsPosition?: "inline" | "above" | "below"
 		minSearchLength?: number
 		/** Text shown inside the dropdown when the filter matches no options. */
 		noDataText?: string
@@ -99,6 +112,7 @@
 		placeholder = undefined,
 		position = undefined,
 		disabled = false,
+		readonly = false,
 		appearance = "outline",
 		required = false,
 		autofocus = false,
@@ -114,6 +128,8 @@
 		maxDropdownHeight = undefined,
 		dropdownWidth = undefined,
 		multiple = false,
+		keepOpen = true,
+		tagsPosition = "inline",
 		minSearchLength = undefined,
 		noDataText = "No results found",
 		noDataTemplate = undefined,
@@ -128,7 +144,8 @@
 	// ---------- Selection state (shared with <Option> via context) ----------
 	// Single-select: clicking an option SETS the value (never deselects), which
 	// is why we provide our own context instead of createSelectedOptions (whose
-	// toggle would clear an already-selected option).
+	// toggle would clear an already-selected option). Multi-select: `toggle` adds
+	// or removes the value from the array (clicking a selected chip's row removes it).
 
 	function normalize(v: SelectedValue): string[] {
 		if (v == null) return []
@@ -149,7 +166,14 @@
 		},
 		toggle(val: string) {
 			if (val == null) return
-			selectionState.value = [val]
+			if (multiple) {
+				const cur = selectionState.value
+				selectionState.value = cur.includes(val)
+					? cur.filter(x => x !== val)
+					: [...cur, val]
+			} else {
+				selectionState.value = [val]
+			}
 		}
 	}
 
@@ -199,6 +223,10 @@
 	// option set churns with every query, so the selected option can leave the DOM;
 	// this keeps the input showing the right text after it's gone.
 	let selectedLabel = $state("")
+	// Value -> label cache for multi-select chips: a picked option can scroll out
+	// of the (async) option set, so we remember its label at pick time to keep the
+	// chip labelled after its <Option> leaves the DOM.
+	let labelCache = $state<Record<string, string>>({})
 	// Debounce timer for onsearch.
 	let searchTimer: ReturnType<typeof setTimeout> | undefined = undefined
 	// True from the moment a keystroke schedules an onsearch until the resulting
@@ -251,8 +279,14 @@
 		}
 		// Async fallback: the selected option may no longer be rendered (its query
 		// scrolled past). Use the label cached when it was chosen.
+		if (labelCache[val]) return labelCache[val]
 		if (val === selectedSingle && selectedLabel) return selectedLabel
 		return ""
+	}
+
+	// Label for a selected chip — never blank (falls back to the raw value).
+	function chipLabel(val: string): string {
+		return getOptionText(val) || val
 	}
 
 	function toFilterOption(el: HTMLElement): ComboboxFilterOption {
@@ -284,7 +318,21 @@
 		return () => obs.disconnect()
 	})
 
-	const inputDisplay = $derived(isFiltering ? typed : displayText)
+	// Single-select: the input shows the selected label when idle. Multi-select:
+	// the input is purely a filter — selected values live in chips — so it only
+	// ever shows what's being typed (blank when idle).
+	const inputDisplay = $derived(multiple ? typed : (isFiltering ? typed : displayText))
+
+	// Chips render inside the control only in inline tags mode; above/below push them
+	// to a separate row outside, leaving the control as a plain single-line filter.
+	const inlineTags = $derived(multiple && tagsPosition === "inline")
+	const externalTags = $derived(multiple && tagsPosition !== "inline" && selectionState.value.length > 0)
+
+	// Hide the placeholder once inline chips occupy the control (multi-select). With
+	// external tags the control stays empty, so keep the placeholder visible.
+	const effectivePlaceholder = $derived(
+		inlineTags && selectionState.value.length > 0 ? "" : placeholder
+	)
 
 	// ---------- Filtering ----------
 	function visibleOptionEls(): HTMLElement[] {
@@ -381,7 +429,7 @@
 	}
 
 	function openDropdown() {
-		if (disabled) return
+		if (disabled || readonly) return
 		if (!meetsSearchThreshold()) return
 		isOpen = true
 		tick().then(() => { applyFilter(); highlightInitial() })
@@ -408,16 +456,45 @@
 		onchange?.(selectionState.value.length ? [...selectionState.value] : [])
 	}
 
-	function selectByValue(val: string) {
-		// Cache the label before the option can leave the DOM (async churn).
-		const el = getOptionEls(listEl).find(o => optionValue(o) === val)
+	// Cache a value's label before its <Option> can leave the DOM (async churn).
+	function cacheLabel(val: string, el?: HTMLElement | null) {
+		const opt = el
+			?? getOptionEls(listEl).find(o => optionValue(o) === val)
 			?? getOptionEls(sourceEl).find(o => optionValue(o) === val)
-		if (el) selectedLabel = optionText(el)
-		ctx.toggle(val) // single-select: sets [val]
+		if (opt) {
+			const t = optionText(opt)
+			selectedLabel = t
+			labelCache = {...labelCache, [val]: t}
+		}
+	}
+
+	// Shared post-pick side effects. Single-select closes; multi-select clears the
+	// filter and (with keepOpen) stays open so more can be picked in a row.
+	function afterSelect(val: string) {
 		isFiltering = false
 		typed = ""
 		emitChange()
-		closeDropdown()
+		if (multiple && keepOpen) {
+			// Re-show the full list (filter cleared) and re-anchor the highlight on
+			// the just-toggled row; keep focus in the input for continued typing.
+			tick().then(() => {
+				applyFilter()
+				const vis = visibleOptionEls()
+				const i = vis.findIndex(el => optionValue(el) === val)
+				highlightedIndex = i >= 0 ? i : (vis.length ? 0 : -1)
+				scrollHighlightedIntoView()
+			})
+			inputEl?.focus()
+		} else {
+			closeDropdown()
+		}
+	}
+
+	// Keyboard path (Enter): we toggle selection ourselves, then run side effects.
+	function selectByValue(val: string) {
+		cacheLabel(val)
+		ctx.toggle(val)
+		afterSelect(val)
 	}
 
 	// Click path: Option.svelte already called ctx.toggle by the time this
@@ -426,11 +503,18 @@
 		const optEl = (ev.target as HTMLElement | null)?.closest(".fluent-option") as HTMLElement | null
 		if (!optEl) return
 		if (optEl.hasAttribute("disabled")) { ev.preventDefault(); return }
-		selectedLabel = optionText(optEl) // cache before async churn removes it
-		isFiltering = false
-		typed = ""
+		const val = optionValue(optEl)
+		cacheLabel(val, optEl)
+		afterSelect(val)
+	}
+
+	// Remove a selected value (chip × button, or Backspace on an empty filter).
+	function removeValue(val: string, ev?: MouseEvent) {
+		ev?.stopPropagation()
+		if (disabled || readonly) return
+		selectionState.value = selectionState.value.filter(v => v !== val)
 		emitChange()
-		closeDropdown()
+		inputEl?.focus()
 	}
 
 	// Debounced server-side search notification. The parent updates `options`
@@ -461,7 +545,7 @@
 
 	// ---------- Input handlers ----------
 	function handleInput(ev: Event & {inputType?: string}) {
-		if (disabled) return
+		if (disabled || readonly) return
 		const el = ev.target as HTMLInputElement
 		isFiltering = true
 		typed = el.value
@@ -490,7 +574,12 @@
 	}
 
 	function handleKeydown(ev: KeyboardEvent) {
-		if (disabled) return
+		if (disabled || readonly) return
+		// Multi-select: Backspace on an empty filter removes the last chip.
+		if (ev.key === "Backspace" && multiple && typed === "" && selectionState.value.length > 0) {
+			removeValue(selectionState.value[selectionState.value.length - 1])
+			return
+		}
 		switch (ev.key) {
 			case "ArrowDown":
 				ev.preventDefault()
@@ -542,17 +631,18 @@
 	}
 
 	function handleFocus() {
-		if (disabled) return
-		// Select the display text so the first keystroke replaces it instead of
-		// appending to the selected option's label.
-		queueMicrotask(() => inputEl?.select())
+		if (disabled || readonly) return
+		// Single-select: select the display text so the first keystroke replaces it
+		// instead of appending to the selected option's label. Multi-select: the
+		// input is an empty filter, so there's nothing to select.
+		if (!multiple) queueMicrotask(() => inputEl?.select())
 	}
 
 	// Clicking the control padding (not the input or the indicator button)
 	// focuses the input and opens. The input and indicator handle their own
 	// clicks so we don't double-fire against the indicator's toggle.
 	function handleControlClick(ev: MouseEvent) {
-		if (disabled) return
+		if (disabled || readonly) return
 		if (ev.target === controlEl) {
 			inputEl?.focus()
 			if (!isOpen) openDropdown()
@@ -560,21 +650,34 @@
 	}
 
 	function handleInputClick() {
-		if (disabled) return
+		if (disabled || readonly) return
 		if (!isOpen) openDropdown()
 	}
 
-	// ---------- Close on outside pointerdown ----------
+	// ---------- Close on outside pointerdown / focus move ----------
 	$effect(() => {
 		if (!isOpen) return
-		function onDown(ev: PointerEvent) {
+		// Shared test: does the event's path touch our control or portalled list?
+		function isInside(ev: Event): boolean {
 			const path = ev.composedPath()
-			if (controlEl && path.includes(controlEl)) return
-			if (listEl && path.includes(listEl)) return
-			closeDropdown(false)
+			return !!(controlEl && path.includes(controlEl)) || !!(listEl && path.includes(listEl))
+		}
+		function onDown(ev: PointerEvent) {
+			if (!isInside(ev)) closeDropdown(false)
+		}
+		// Focus moving outside (e.g. a modal dialog opening and trapping focus, or
+		// Tab-ing away) closes the popover too — otherwise it floats above the modal,
+		// since the popover z-layer sits above the modal layer by design. refocus=false
+		// so we don't yank focus back out of whatever just opened.
+		function onFocusIn(ev: FocusEvent) {
+			if (!isInside(ev)) closeDropdown(false)
 		}
 		document.addEventListener("pointerdown", onDown, true)
-		return () => document.removeEventListener("pointerdown", onDown, true)
+		document.addEventListener("focusin", onFocusIn, true)
+		return () => {
+			document.removeEventListener("pointerdown", onDown, true)
+			document.removeEventListener("focusin", onFocusIn, true)
+		}
 	})
 
 	// ---------- Computed ----------
@@ -620,6 +723,20 @@
 	</Option>
 {/snippet}
 
+{#snippet externalChips()}
+	<div class="combobox-external-chips">
+		{#each selectionState.value as val (val)}
+			<Chip
+				text={chipLabel(val)}
+				variant="external"
+				showRemove={!disabled && !readonly}
+				removeLabel={`Remove ${chipLabel(val)}`}
+				onremove={(e) => removeValue(val, e)}
+			/>
+		{/each}
+	</div>
+{/snippet}
+
 {#snippet optionList()}
 	{#if children}
 		{@render children()}
@@ -662,6 +779,11 @@
 		{@render optionList()}
 	</div>
 
+	<!-- Tags ABOVE (multi-select, tagsPosition="above") -->
+	{#if externalTags && tagsPosition === "above"}
+		{@render externalChips()}
+	{/if}
+
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
@@ -669,10 +791,26 @@
 		class="combobox-control {appearance} {className}"
 		class:open={isOpen}
 		class:disabled
+		class:readonly
+		class:multiple
+		class:tags-inline={inlineTags}
 		style={controlStyle()}
 		{...(title ? {title} : {})}
 		onclick={handleControlClick}
 	>
+		<!-- Inline tags: selected values render as removable chips before the input. -->
+		{#if inlineTags}
+			{#each selectionState.value as val (val)}
+				<Chip
+					text={chipLabel(val)}
+					variant="inline"
+					contrast={readonly || appearance === "filled"}
+					showRemove={!disabled && !readonly}
+					removeLabel={`Remove ${chipLabel(val)}`}
+					onremove={(e) => removeValue(val, e)}
+				/>
+			{/each}
+		{/if}
 		<!-- svelte-ignore a11y_autofocus -->
 		<input
 			bind:this={inputEl}
@@ -685,9 +823,10 @@
 			aria-autocomplete={doInline ? (doListFilter ? "both" : "inline") : (doListFilter ? "list" : "none")}
 			aria-label={ariaLabel ?? label}
 			value={inputDisplay}
-			{placeholder}
+			placeholder={effectivePlaceholder}
 			{disabled}
-			{required}
+			{readonly}
+			required={multiple ? false : required}
 			{autofocus}
 			autocomplete="off"
 			oninput={handleInput}
@@ -700,7 +839,7 @@
 			class="combobox-indicator"
 			tabindex="-1"
 			aria-hidden="true"
-			{disabled}
+			disabled={disabled || readonly}
 			onclick={toggleDropdown}
 		>
 			<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
@@ -708,6 +847,11 @@
 			</svg>
 		</button>
 	</div>
+
+	<!-- Tags BELOW (multi-select, tagsPosition="below") -->
+	{#if externalTags && tagsPosition === "below"}
+		{@render externalChips()}
+	{/if}
 
 	{#if isOpen && controlEl}
 		<PositioningRegion
@@ -723,6 +867,7 @@
 				bind:this={listEl}
 				id={listboxId}
 				role="listbox"
+				aria-multiselectable={multiple ? "true" : null}
 				tabindex="-1"
 				class="combobox-listbox"
 				style={[
@@ -747,9 +892,16 @@
 		</PositioningRegion>
 	{/if}
 
-	<!-- Participate in HTML form submission. -->
+	<!-- Participate in HTML form submission. Multi-select emits one hidden input
+	     per selected value (standard multi-value form encoding). -->
 	{#if name}
-		<input type="hidden" {name} {required} value={selectedSingle} />
+		{#if multiple}
+			{#each selectionState.value as val (val)}
+				<input type="hidden" {name} value={val} />
+			{/each}
+		{:else}
+			<input type="hidden" {name} {required} value={selectedSingle} />
+		{/if}
 	{/if}
 </div>
 
@@ -779,7 +931,7 @@
 		min-width: 200px;
 	}
 
-	.combobox-control:hover:not(.disabled) {
+	.combobox-control:hover:not(.disabled):not(.readonly) {
 		background: var(--neutral-fill-input-hover, #f5f5f5);
 	}
 
@@ -798,7 +950,7 @@
 		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
 	}
 
-	.combobox-control.filled:hover:not(.disabled) {
+	.combobox-control.filled:hover:not(.disabled):not(.readonly) {
 		background: var(--neutral-fill-secondary-hover, #ebebeb);
 	}
 
@@ -811,6 +963,13 @@
 	.combobox-control.disabled {
 		opacity: 0.4;
 		cursor: not-allowed;
+	}
+
+	/* Readonly: value shows but can't be changed. Non-dimmed (unlike disabled), but
+	   a neutral-secondary fill signals it's inert, matching Autocomplete/TextField. */
+	.combobox-control.readonly {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		cursor: default;
 	}
 
 	.combobox-input {
@@ -834,10 +993,49 @@
 		cursor: not-allowed;
 	}
 
+	/* ===== Multi-select control + chips ===== */
+	/* Inline tags: let chips wrap onto multiple rows; a little vertical padding keeps
+	 * them off the border once the control grows past one line. (External tags render
+	 * outside the control, so the control stays single-line and skips this.) */
+	.combobox-control.multiple.tags-inline {
+		flex-wrap: wrap;
+		padding-block: calc(var(--design-unit, 4) * 1px);
+	}
+
+	/* In multi mode the input is just a filter — let it shrink but keep a usable
+	 * typing width so it doesn't collapse to nothing between chips. */
+	.combobox-control.multiple .combobox-input {
+		flex: 1 1 60px;
+		min-width: 60px;
+	}
+
+	/* Selection chips (inline + above/below) are rendered by the shared Chip
+	   component (Chip.svelte); their styling and `--fluent-chip-*` tokens live
+	   there. Inline chips pass contrast={readonly || filled} so they stay visible
+	   when the control background matches the chip fill. */
+
+	/* ===== External chips row (tagsPosition above/below) ===== */
+	/* A wrapping row that sits outside the control; the chips themselves are the
+	   shared Chip component with variant="external" (self-bordered). */
+	.combobox-external-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--fluent-chip-gap, 0.25rem);
+		padding-block: calc(var(--design-unit, 4) * 1px);
+	}
+
+	/* Full-height square hitbox (Blazor-style) rather than a bare glyph, so the
+	 * whole toggle area is clickable, not just the 12px chevron. A negative
+	 * inline-end margin pulls it flush to the control's end edge, reclaiming the
+	 * control's end padding. No hover background — Microsoft's control doesn't
+	 * have one. */
 	.combobox-indicator {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		align-self: stretch;
+		width: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
+		margin-inline-end: calc(var(--design-unit, 4) * -2 * 1px);
 		background: transparent;
 		border: none;
 		padding: 0;

@@ -1,9 +1,30 @@
 <script lang="ts">
-	import {Select, Option, OptionGroup, Stack, Grid, GridItem, Card, QuickGrid, Slider} from "svelte-fluentui";
+	import {Select, Option, OptionGroup, Stack, Grid, GridItem, Card, QuickGrid, Slider, Icon} from "svelte-fluentui";
 	import {References, Meta} from "$lib/components";
 
 	// Two-way binding example
 	let selectedFruit = $state("apple");
+
+	// Icons-in-options example
+	let selectedStatus = $state("available");
+
+	// Readonly examples
+	let readonlySingle = $state("apple");
+	let readonlyMulti = $state<string[]>(["apple", "cherry"]);
+
+	// Trailing-icon example
+	let selectedUser = $state("jean");
+	const users = [
+		{ id: "jean",      name: "Jean (Martin)" },
+		{ id: "antonio",   name: "António (Langa)" },
+		{ id: "julie",     name: "Julie (Smith)" },
+		{ id: "nur",       name: "Nur (Sari)" },
+		{ id: "jose",      name: "Jose (Hernandez)" },
+		{ id: "bert",      name: "Bert (de Vries)" },
+		{ id: "jaques",    name: "Jaques (Martin)" },
+		{ id: "elizabeth", name: "Elizabeth (Johnson)" },
+		{ id: "jakob",     name: "Jakob (Berger)" }
+	];
 
 	// Data binding example
 	type Language = {
@@ -81,6 +102,7 @@
 		{name: "autofocus", type: "boolean", default: "undefined", description: "Focus on first render"},
 		{name: "class", type: "string", default: '""', description: "CSS class(es)"},
 		{name: "disabled", type: "boolean", default: "undefined", description: "Disables the select"},
+		{name: "readonly", type: "boolean", default: "false", description: "Non-editable: the value shows but can't be changed (dropdown won't open, options can't be toggled). Unlike disabled, it stays focusable and un-dimmed."},
 		{name: "height", type: "string", default: "undefined", description: "Height (e.g., '200px')"},
 		{name: "id", type: "string", default: "undefined", description: "Element ID"},
 		{name: "label", type: "string", default: "undefined", description: "Visible label"},
@@ -208,6 +230,56 @@
 			{/snippet}
 		</Select>
 
+		<h3>Icons in options</h3>
+		<p>
+			Each <code>&lt;Option&gt;</code> accepts an <code>icon</code> snippet, rendered before the label.
+			Pair it with the <code>&lt;Icon&gt;</code> component for FluentUI glyphs — here the presence icons
+			are coloured via <code>color</code> (<code>success</code> / <code>warning</code> / <code>error</code> / <code>neutral</code>).
+		</p>
+		<Select label="Status" bind:value={selectedStatus} width="260px">
+			{#snippet children()}
+				<Option value="available">
+					{#snippet icon()}<Icon name="presence_available" size={16} variant="filled" color="success" />{/snippet}
+					Available
+				</Option>
+				<Option value="busy">
+					{#snippet icon()}<Icon name="presence_busy" size={16} variant="filled" color="error" />{/snippet}
+					Busy
+				</Option>
+				<Option value="dnd">
+					{#snippet icon()}<Icon name="presence_dnd" size={16} variant="filled" color="error" />{/snippet}
+					Do not disturb
+				</Option>
+				<Option value="away">
+					{#snippet icon()}<Icon name="presence_away" size={16} variant="filled" color="warning" />{/snippet}
+					Away
+				</Option>
+				<Option value="offline">
+					{#snippet icon()}<Icon name="presence_offline" size={16} variant="regular" color="neutral" />{/snippet}
+					Offline
+				</Option>
+			{/snippet}
+		</Select>
+		<p>Selected: <code>{selectedStatus}</code></p>
+
+		<h3>Trailing icon in options</h3>
+		<p>
+			The <code>icon</code> snippet is at the <em>start</em> (before the label). For an <strong>end</strong>-side icon,
+			just place it in the option's content after the text — <code>&lt;Option&gt;</code> children are arbitrary markup
+			and the row is a flex container, so the glyph sits inline after the label. Add <code>margin-inline-start:auto</code>
+			to the icon to push it to the end edge instead.
+		</p>
+		<Select label="User" bind:value={selectedUser} width="260px">
+			{#snippet children()}
+				{#each users as u}
+					<Option value={u.id}>
+						{u.name} <Icon name="person" size={16} variant="regular" color="accent" />
+					</Option>
+				{/each}
+			{/snippet}
+		</Select>
+		<p>Selected: <code>{selectedUser}</code></p>
+
 		<h3>Single select (default)</h3>
 		<p>Standard dropdown select. Open it and press a letter repeatedly to cycle type-ahead (e.g. <code>b</code> → Banana → Blackberry → Blueberry).</p>
 		<Select label="Choose a fruit">
@@ -289,6 +361,35 @@
 							<Option value="1">Enabled</Option>
 							<Option value="2" disabled>Disabled option</Option>
 							<Option value="3">Enabled</Option>
+						{/snippet}
+					</Select>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Readonly states</h3>
+		<p><code>readonly</code> shows the value but won't open and can't be changed. Unlike <code>disabled</code> it stays focusable and un-dimmed.</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Readonly (single)</strong>
+					<Select label="Fruit" bind:value={readonlySingle} readonly>
+						{#snippet children()}
+							<Option value="apple">Apple</Option>
+							<Option value="banana">Banana</Option>
+							<Option value="cherry">Cherry</Option>
+						{/snippet}
+					</Select>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Readonly (multiple)</strong>
+					<Select label="Fruits" multiple readonly bind:value={readonlyMulti}>
+						{#snippet children()}
+							<Option value="apple">Apple</Option>
+							<Option value="banana">Banana</Option>
+							<Option value="cherry">Cherry</Option>
 						{/snippet}
 					</Select>
 				</Stack>

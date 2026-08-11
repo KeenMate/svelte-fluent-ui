@@ -74,6 +74,13 @@
 	]
 
 	// State for each example
+	let readonlyValue = $state<string[]>(["medium"])
+	let readonlyMultiValue = $state<string[]>(["small", "large"])
+	let multiValue = $state<string[]>(["3"])
+	let multiClosingValue = $state<string[]>([])
+	let tagsInlineValue = $state<string[]>(["1", "3"])
+	let tagsAboveValue = $state<string[]>(["1", "3"])
+	let tagsBelowValue = $state<string[]>(["1", "3"])
 	let groupedValue = $state<string[]>([])
 	let basicValue = $state<string[]>([])
 	let preselectedValue = $state<string[]>(["3"])
@@ -169,6 +176,9 @@
 		{name: "id", type: "string", default: "Required", description: "Unique identifier"},
 		{name: "value", type: "string[]", default: "[]", description: "Selected value(s) (bindable)"},
 		{name: "options", type: "OptionItem[]", default: "undefined", description: "Array of option items"},
+		{name: "multiple", type: "boolean", default: "false", description: "Multi-select: selected values render as removable chips and the input stays a filter. value/onchange carry the full array."},
+		{name: "keepOpen", type: "boolean", default: "true", description: "Multi-select only: keep the dropdown open after each pick so several can be chosen in a row. Set false to close on each pick."},
+		{name: "tagsPosition", type: '"inline" | "above" | "below"', default: '"inline"', description: "Multi-select only: where the selected-value chips render — inside the control (inline), or as a wrapping row above/below it."},
 		{name: "label", type: "string", default: "undefined", description: "Label text displayed above the combobox"},
 		{name: "placeholder", type: "string", default: "undefined", description: "Placeholder text"},
 		{name: "autocomplete", type: '"inline" | "list" | "both" | "none"', default: "undefined", description: "Autocomplete behavior"},
@@ -183,6 +193,7 @@
 		{name: "position", type: '"above" | "below"', default: "undefined", description: "Dropdown position"},
 		{name: "appearance", type: '"outline" | "filled"', default: "outline", description: "Visual style"},
 		{name: "disabled", type: "boolean", default: "false", description: "Disable the combobox"},
+		{name: "readonly", type: "boolean", default: "false", description: "Non-editable: the value shows but can't be changed (no typing, dropdown won't open, chips can't be removed). Unlike disabled, it stays focusable and un-dimmed."},
 		{name: "required", type: "boolean", default: "false", description: "Required field"},
 		{name: "open", type: "boolean", default: "false", description: "Dropdown open state"},
 		{name: "autofocus", type: "boolean", default: "false", description: "Auto focus on mount"},
@@ -258,6 +269,65 @@
 			</GridItem>
 		</Grid>
 
+		<h3>Multiple selection</h3>
+		<p>
+			Set <code>multiple</code> to select several values. Picked options render as removable chips inside
+			the control and the input stays a filter (type to narrow, click or <kbd>Enter</kbd> to toggle,
+			<kbd>Backspace</kbd> on an empty filter removes the last chip). By default the dropdown stays open after
+			each pick (<code>keepOpen</code>, default <code>true</code>) so you can choose several in a row — the
+			right-hand example sets <code>keepOpen={false}</code> to close on each pick.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>keepOpen (default)</strong>
+					<Combobox id="multi" bind:value={multiValue} options={songs} multiple label="Select songs" placeholder="Filter songs…" />
+					<small>Selected: {multiValue.length ? multiValue.join(", ") : "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>keepOpen={"{false}"}</strong>
+					<Combobox id="multi-closing" bind:value={multiClosingValue} options={songs} multiple keepOpen={false} label="Select songs" placeholder="Filter songs…" />
+					<small>Selected: {multiClosingValue.length ? multiClosingValue.join(", ") : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Tags position</h3>
+		<p>
+			With <code>multiple</code>, control where the selected-value chips render using the
+			<code>tagsPosition</code> prop. Default is <code>"inline"</code> (chips inside the control, like
+			FluentUI Blazor); <code>"above"</code> / <code>"below"</code> render them as a wrapping row
+			outside the control while the input stays a plain filter.
+		</p>
+		<Grid columns={3} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Inline (default)</strong>
+					<small style="color: var(--neutral-foreground-hint);">Chips appear inside the control</small>
+					<Combobox id="tags-inline" bind:value={tagsInlineValue} options={songs} multiple tagsPosition="inline" label="Select songs" placeholder="Filter songs…" />
+					<small>Selected: {tagsInlineValue.length ? tagsInlineValue.join(", ") : "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Above</strong>
+					<small style="color: var(--neutral-foreground-hint);">Chips appear above the control</small>
+					<Combobox id="tags-above" bind:value={tagsAboveValue} options={songs} multiple tagsPosition="above" label="Select songs" placeholder="Filter songs…" />
+					<small>Selected: {tagsAboveValue.length ? tagsAboveValue.join(", ") : "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Below</strong>
+					<small style="color: var(--neutral-foreground-hint);">Chips appear below the control</small>
+					<Combobox id="tags-below" bind:value={tagsBelowValue} options={songs} multiple tagsPosition="below" label="Select songs" placeholder="Filter songs…" />
+					<small>Selected: {tagsBelowValue.length ? tagsBelowValue.join(", ") : "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
 		<h3>From a list of Option&lt;T&gt; items</h3>
 		<Grid columns={2} gap="1rem">
 			<GridItem>
@@ -308,6 +378,26 @@
 						<Option value="medium" disabled>Medium</Option>
 						<Option value="large" disabled>Large</Option>
 					</Combobox>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Readonly examples</h3>
+		<p>
+			<code>readonly</code> shows the value but blocks changes — no typing, the dropdown won't open, and
+			(in multi-select) chips can't be removed. Unlike <code>disabled</code> it stays focusable and un-dimmed.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Readonly (single)</strong>
+					<Combobox id="readonly" bind:value={readonlyValue} options={sizes} readonly label="Size" />
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Readonly (multi)</strong>
+					<Combobox id="readonly-multi" bind:value={readonlyMultiValue} options={sizes} multiple readonly label="Sizes" />
 				</Stack>
 			</GridItem>
 		</Grid>

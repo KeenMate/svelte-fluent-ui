@@ -10,6 +10,7 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
 	import PositioningRegion from "./PositioningRegion.svelte"
+	import Chip from "./Chip.svelte"
 
 	type OptionItem<T = any> = {
 		value: T
@@ -35,6 +36,8 @@
 		showOverlayOnEmptyResults?: boolean
 		showInitialOptions?: boolean
 		initialOptionsCount?: number
+		/** Multi-select only: keep the dropdown open after each pick so several can
+		 * be chosen in a row (default `true`). Set `false` to close on each pick. */
 		keepOpen?: boolean
 		width?: string
 		height?: string
@@ -63,6 +66,10 @@
 		// renders only when neither is active, so a search icon doesn't fight a clear button.
 		startIcon?: Snippet
 		endIcon?: Snippet
+		/** Show a built-in accent-coloured magnifier in the end slot (FluentUI Blazor look).
+		 * Renders by default when nothing higher-priority occupies the slot (clear button,
+		 * loading spinner, or a custom `endIcon` all take precedence). Set false to hide it. */
+		showSearchIcon?: boolean
 		class?: string
 		style?: string
 		initialSearchQuery?: string
@@ -89,7 +96,7 @@
 		showOverlayOnEmptyResults = true,
 		showInitialOptions = false,
 		initialOptionsCount = undefined,
-		keepOpen = false,
+		keepOpen = true,
 		width = undefined,
 		height = undefined,
 		maxDropdownHeight = undefined,
@@ -107,6 +114,7 @@
 		optionTemplate = undefined,
 		startIcon = undefined,
 		endIcon = undefined,
+		showSearchIcon = true,
 		class: className = "",
 		style = "",
 		initialSearchQuery = "",
@@ -118,6 +126,12 @@
 	let searchText = $state("")
 	let isOpen = $state(false)
 	let filteredOptions = $state<OptionItem[]>([])
+	// Value -> label cache. A selected option can come from an async `onoptionssearch`
+	// result set that isn't part of the local `options` prop; once selected, that
+	// result set churns and the option's text is lost, so a chip would fall back to
+	// the raw value id. We remember each picked option's text here so getOptionText
+	// can resolve chips regardless of which source they came from.
+	let labelCache = $state<Record<string, string>>({})
 	let highlightedIndex = $state(-1)
 	let containerElement = $state<HTMLElement | undefined>(undefined)
 	let inputElement = $state<HTMLInputElement | undefined>(undefined)
@@ -226,6 +240,10 @@
 			return
 		}
 
+		// Remember this option's label before its (possibly async) source list
+		// churns, so the chip stays named even when it's not in the `options` prop.
+		labelCache = {...labelCache, [option.value]: option.text}
+
 		// Single-select replaces the previous value; multi-select appends.
 		selectedOptions = effectiveMultiple
 			? [...selectedOptions, option.value]
@@ -253,10 +271,14 @@
 		onselectedoptionschange?.(selectedOptions)
 	}
 
-	// Get display text for a selected value
+	// Get display text for a selected value. Prefer the local `options` prop, then
+	// the label cached at selection time (covers async `onoptionssearch` results
+	// that aren't in `options`), and only then fall back to the raw value.
 	function getOptionText(value: any): string {
 		const option = options.find(opt => opt.value === value)
-		return option ? option.text : String(value)
+		if (option) return option.text
+		if (labelCache[value] != null) return labelCache[value]
+		return String(value)
 	}
 
 	// Close dropdown and call ondismissed callback
@@ -280,6 +302,34 @@
 		filteredOptions = available.slice(0, maxOptionsSearch)
 		highlightedIndex = filteredOptions.length > 0 ? 0 : -1
 		isOpen = filteredOptions.length > 0 || showOverlayOnEmptyResults
+	}
+
+	// Toggle the dropdown from the search-icon button: close if open, otherwise
+	// focus the input and open it using the SAME query-aware path as focus/typing.
+	// stopPropagation keeps the container's click handler (which only focuses the
+	// input) from also firing.
+	//
+	// Why not just showAllOptions(): with an empty query and showInitialOptions on,
+	// focusing already shows the curated initial list. showAllOptions() would then
+	// *also* fire an async onoptionssearch("") that replaces those initial items a
+	// moment later — the "5 items flash then get swapped" bug. So when there's a
+	// curated initial list to show, we don't kick off a search; we only force the
+	// full "show everything" list when there's nothing better to display.
+	function toggleDropdown(event: MouseEvent) {
+		event.stopPropagation()
+		if (disabled || readonly) return
+		if (isOpen) {
+			closeDropdown()
+		} else {
+			inputElement?.focus()
+			if (searchText.trim()) {
+				filterOptions(searchText)
+			} else if (showInitialOptions && options.length > 0) {
+				filterOptions("")
+			} else {
+				showAllOptions()
+			}
+		}
 	}
 
 	// Handle keyboard navigation
@@ -353,17 +403,36 @@
 	function handleContainerClick(event: MouseEvent) {
 		// Don't focus if clicking remove button or clear button
 		const target = event.target as HTMLElement
-		if (target.closest('.chip-remove, .clear-button')) {
+		if (target.closest('.fluent-chip-remove, .clear-button')) {
 			return
 		}
 		inputElement?.focus()
 	}
 
-	// Handle click outside
-	function handleClickOutside(event: MouseEvent) {
-		if (containerElement && !containerElement.contains(event.target as Node)) {
-			closeDropdown()
-		}
+	// Handle outside pointerdown. Uses `pointerdown` (capture) rather than a
+	// bubbling `click` so opening another control (Combobox/Autocomplete/Select)
+	// closes this one immediately, before focus moves — matching Combobox.
+	// Guarded to ignore presses inside our own control or the portalled options
+	// list, so clicking an option still selects it instead of just closing.
+	function handleOutsidePointerDown(event: PointerEvent) {
+		const target = event.target as Element | null
+		if (!target) return
+		if (containerElement && containerElement.contains(target)) return
+		if (target.closest?.('.options-list, .positioning-region')) return
+		closeDropdown()
+	}
+
+	// Close on outside focus move. Opening a modal dialog traps focus inside it
+	// (and Tab-ing away moves focus to another field); either way focus lands
+	// outside our control, so the dropdown must close — otherwise it floats above
+	// the modal, since the popover z-layer sits above the modal layer by design.
+	// Same in/out guards as the pointerdown handler (own control or portalled list).
+	function handleOutsideFocusIn(event: FocusEvent) {
+		const target = event.target as Element | null
+		if (!target) return
+		if (containerElement && containerElement.contains(target)) return
+		if (target.closest?.('.options-list, .positioning-region')) return
+		closeDropdown()
 	}
 
 	// Close dropdown on outside scroll. The options list itself is scrollable
@@ -381,16 +450,22 @@
 		closeDropdown()
 	}
 
-	// Add click-outside and outside-scroll listeners
+	// Add outside-pointerdown and outside-scroll listeners
 	$effect(() => {
 		if (isOpen) {
-			document.addEventListener("click", handleClickOutside)
+			// `capture: true` so we see the press before it reaches (and opens)
+			// another control, and before focus changes.
+			document.addEventListener("pointerdown", handleOutsidePointerDown, true)
 			// `capture: true` because most page scroll containers don't bubble
 			// scroll events to document; capture phase reliably catches them.
 			window.addEventListener("scroll", handleOutsideScroll, true)
+			// `capture: true` so a focus trap (modal opening) is caught even if a
+			// handler in between stops propagation.
+			document.addEventListener("focusin", handleOutsideFocusIn, true)
 			return () => {
-				document.removeEventListener("click", handleClickOutside)
+				document.removeEventListener("pointerdown", handleOutsidePointerDown, true)
 				window.removeEventListener("scroll", handleOutsideScroll, true)
+				document.removeEventListener("focusin", handleOutsideFocusIn, true)
 			}
 		}
 	})
@@ -493,22 +568,12 @@
 		{#if tagsPosition === 'above' && showTags}
 			<div class="selected-options">
 				{#each selectedOptions as value}
-					<span class="external-chip">
-						<span class="chip-text">{getOptionText(value)}</span>
-						{#if !disabled && !readonly}
-							<button
-								type="button"
-								class="chip-remove"
-								onclick={(e) => removeOption(value, e)}
-								aria-label="Remove {getOptionText(value)}"
-								title="Remove {getOptionText(value)}"
-							>
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
-								</svg>
-							</button>
-						{/if}
-					</span>
+					<Chip
+						text={getOptionText(value)}
+						variant="external"
+						showRemove={!disabled && !readonly}
+						onremove={(e) => removeOption(value, e)}
+					/>
 				{/each}
 			</div>
 		{/if}
@@ -531,32 +596,29 @@
 			aria-expanded={isOpen}
 			aria-haspopup="listbox"
 		>
-			<!-- Start icon slot (e.g. search magnifying glass) -->
-			{#if startIcon}
-				<div class="input-start">
-					{@render startIcon()}
-				</div>
-			{/if}
+			<!-- Main box: start icon + chips + input. In inline (tags) mode this is a
+				 flex:1 wrapping box; the end slot below is a separate flex box always at
+				 the end, so removing/adding chips only reflows here and never moves the
+				 magnifier. In non-inline mode this wrapper is display:contents (transparent),
+				 leaving the single-line input + absolutely-placed icons untouched. -->
+			<div class="autocomplete-input-main">
+				<!-- Start icon slot (e.g. search magnifying glass) -->
+				{#if startIcon}
+					<div class="input-start">
+						{@render startIcon()}
+					</div>
+				{/if}
 
 			<!-- Tags INLINE (if tagsPosition === 'inline') -->
 			{#if tagsPosition === 'inline' && showTags}
 				{#each selectedOptions as value}
-					<span class="inline-chip">
-						<span class="chip-text">{getOptionText(value)}</span>
-						{#if !disabled && !readonly}
-							<button
-								type="button"
-								class="chip-remove"
-								onclick={(e) => removeOption(value, e)}
-								aria-label="Remove {getOptionText(value)}"
-								title="Remove {getOptionText(value)}"
-							>
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
-								</svg>
-							</button>
-						{/if}
-					</span>
+					<Chip
+						text={getOptionText(value)}
+						variant="inline"
+						contrast={readonly || appearance === 'filled'}
+						showRemove={!disabled && !readonly}
+						onremove={(e) => removeOption(value, e)}
+					/>
 				{/each}
 			{/if}
 
@@ -577,12 +639,14 @@
 				onkeydown={handleKeyDown}
 				onfocus={handleInputFocus}
 				onblur={handleInputBlur}
-			/>
+				/>
+			</div>
 
-			<!-- End slot: clear button OR loading indicator OR custom endIcon (in that priority).
-				 Only renders when something will show inside, so the `:has(.input-end)` padding
-				 rule on the input doesn't reserve space for an empty slot. -->
-			{#if (hasSingleSelection && !disabled && !readonly) || showLoading || endIcon}
+			<!-- End slot: clear button OR loading indicator OR custom endIcon OR the built-in
+				 search magnifier (in that priority). Only renders when something will show
+				 inside, so the `:has(.input-end)` padding rule on the input doesn't reserve
+				 space for an empty slot. -->
+			{#if (hasSingleSelection && !disabled && !readonly) || showLoading || endIcon || showSearchIcon}
 				<div class="input-end">
 					{#if hasSingleSelection && !disabled && !readonly}
 						<button
@@ -605,6 +669,20 @@
 						</div>
 					{:else if endIcon}
 						{@render endIcon()}
+					{:else if showSearchIcon}
+						<button
+							type="button"
+							class="search-button"
+							tabindex="-1"
+							onclick={toggleDropdown}
+							aria-label={isOpen ? "Close options" : "Show options"}
+							disabled={disabled || readonly}
+						>
+							<!-- FluentUI ic_fluent_search_16_regular -->
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+								<path d="M11.0195 11.7266C10.0658 12.5217 8.83875 13 7.5 13C4.46243 13 2 10.5376 2 7.5C2 4.46243 4.46243 2 7.5 2C10.5376 2 13 4.46243 13 7.5C13 8.83875 12.5217 10.0658 11.7266 11.0195L14.8535 14.1464C15.0488 14.3417 15.0488 14.6583 14.8535 14.8536C14.6583 15.0488 14.3417 15.0488 14.1464 14.8536L11.0195 11.7266ZM12 7.5C12 5.01472 9.98528 3 7.5 3C5.01472 3 3 5.01472 3 7.5C3 9.98528 5.01472 12 7.5 12C9.98528 12 12 9.98528 12 7.5Z"/>
+							</svg>
+						</button>
 					{/if}
 				</div>
 			{/if}
@@ -614,22 +692,12 @@
 		{#if tagsPosition === 'below' && showTags}
 			<div class="selected-options">
 				{#each selectedOptions as value}
-					<span class="external-chip">
-						<span class="chip-text">{getOptionText(value)}</span>
-						{#if !disabled && !readonly}
-							<button
-								type="button"
-								class="chip-remove"
-								onclick={(e) => removeOption(value, e)}
-								aria-label="Remove {getOptionText(value)}"
-								title="Remove {getOptionText(value)}"
-							>
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-									<path d="m4.4 4.55.07-.08a.75.75 0 0 1 .98-.07l.08.07L12 10.94l6.47-6.47a.75.75 0 1 1 1.06 1.06L13.06 12l6.47 6.47c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L12 13.06l-6.47 6.47a.75.75 0 0 1-1.06-1.06L10.94 12 4.47 5.53a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"/>
-								</svg>
-							</button>
-						{/if}
-					</span>
+					<Chip
+						text={getOptionText(value)}
+						variant="external"
+						showRemove={!disabled && !readonly}
+						onremove={(e) => removeOption(value, e)}
+					/>
 				{/each}
 			</div>
 		{/if}
@@ -714,10 +782,35 @@
 		min-height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
 	}
 
-	/* ===== Input Container: Inline Mode (mimics fluent-text-field) ===== */
-	.autocomplete-input-container.inline-mode {
+	/* Main box (start icon + chips + input). Non-inline: transparent, so the
+	   single-line input keeps its full-width layout and the absolutely-placed
+	   start/end icons are unaffected. Inline: a flex:1 box whose chips + input
+	   wrap internally, sitting beside the separate end-slot box. */
+	.autocomplete-input-main {
+		display: contents;
+	}
+
+	.autocomplete-input-container.inline-mode .autocomplete-input-main {
+		flex: 1 1 auto;
+		min-width: 0;
 		display: flex;
 		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px;
+		/* Vertical padding lives here (not on the container) so wrapped chip rows get
+		   breathing room off the top/bottom edges, while single-row height still lands
+		   on the control height — padding the container instead would clash with the
+		   fixed control-height end-slot square and grow the single-row control. */
+		padding-block: calc(var(--design-unit, 4) * 1px);
+	}
+
+	/* ===== Input Container: Inline Mode (mimics fluent-text-field) ===== */
+	/* Two side-by-side flex boxes: the wrapping main box (chips + input) and the
+	   end slot (magnifier/clear/loading). nowrap here so the end slot stays a
+	   separate box always at the end; the chips wrap inside the main box instead. */
+	.autocomplete-input-container.inline-mode {
+		display: flex;
+		flex-wrap: nowrap;
 		align-items: center;
 		gap: 4px;
 		min-height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
@@ -770,57 +863,10 @@
 		box-shadow: 0 1px 0 0 var(--accent-fill-rest, #0078d4);
 	}
 
-	/* ===== Inline Chips =====
-	   Inline chips share the same height + typography as external chips so picking a value
-	   doesn't visually shrink it on its way into the input. The only intentional difference
-	   is the border: inline chips sit inside the input's own border so adding another would
-	   double up; external chips are standalone elements and need their own.
-
-	   Sizing tokens (`--fluent-autocomplete-chip-*`) drive both inline and external chip
-	   geometry, so theme overrides apply everywhere chips render. Defaults are in rem so
-	   chips scale with the user's root font-size. */
-	.inline-chip {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--fluent-autocomplete-chip-gap, 0.25rem);
-		padding: var(--fluent-autocomplete-chip-padding-y, 0.125rem) var(--fluent-autocomplete-chip-padding-x, 0.5rem);
-		background: var(--neutral-fill-secondary-rest, #f0f0f0);
-		border-radius: calc(var(--control-corner-radius, 4) * 1px);
-		font-size: var(--fluent-autocomplete-chip-font-size, 0.875rem);
-		line-height: var(--fluent-autocomplete-chip-line-height, 1.4);
-		white-space: nowrap;
-		max-width: var(--fluent-autocomplete-chip-max-width, 9.375rem);
-		color: var(--neutral-foreground-rest, #242424);
-	}
-
-	.chip-text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.chip-remove {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: transparent;
-		border: none;
-		padding: var(--fluent-autocomplete-chip-remove-padding, 0.125rem);
-		cursor: pointer;
-		color: var(--neutral-foreground-hint, #717171);
-		border-radius: var(--fluent-border-radius-sm);
-		flex-shrink: 0;
-		transition: color 0.1s ease, background 0.1s ease;
-	}
-
-	.chip-remove:hover {
-		background: var(--neutral-fill-secondary-hover, #e0e0e0);
-		color: var(--neutral-foreground-rest, #242424);
-	}
-
-	.chip-remove:focus {
-		outline: 1px solid var(--accent-fill-rest, #0078d4);
-		outline-offset: 1px;
-	}
+	/* Selection chips (inline + above/below) are rendered by the shared Chip
+	   component (Chip.svelte); their styling and `--fluent-chip-*` tokens live
+	   there. Inline chips pass contrast={readonly || filled} so they stay visible
+	   when the field background matches the chip fill. */
 
 	/* ===== Native Input ===== */
 	.autocomplete-native-input {
@@ -886,11 +932,20 @@
 	}
 
 	/* ===== Input End Slot ===== */
+	/* A fixed control-height square that centers whatever it holds. The clear
+	   button, loading spinner, custom endIcon and the search magnifier are all
+	   different sizes, so without a fixed centering box the glyph would land at a
+	   slightly different spot for each — swapping between them (e.g. loading →
+	   magnifier) then looks like the icon jumps. Centering inside a constant square
+	   pins every variant to the same point. */
 	.input-end {
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
-		padding-left: 4px;
+		justify-content: center;
+		box-sizing: border-box;
+		inline-size: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
+		block-size: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
 		color: var(--neutral-foreground-hint, #707070);
 	}
 
@@ -914,8 +969,11 @@
 		padding-left: 32px;
 	}
 
+	/* The end slot is a control-height square pinned to the inline-end; reserve
+	   enough room that the text never runs under it (same clearance for every
+	   icon variant, since they now share one box). */
 	.autocomplete-input-container:not(.inline-mode):has(.input-end) .autocomplete-native-input {
-		padding-right: 32px;
+		padding-inline-end: 44px;
 	}
 
 	/* ===== Selected Options Container (above/below modes) ===== */
@@ -928,49 +986,24 @@
 		overflow-y: auto;
 	}
 
-	/* External chips (above/below modes) - FluentUI Blazor style.
-	   Same `--fluent-autocomplete-chip-*` tokens as inline chips. Adds a 1px border
-	   since these aren't sitting inside the input's own border. */
-	.external-chip {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--fluent-autocomplete-chip-gap, 0.25rem);
-		padding: var(--fluent-autocomplete-chip-padding-y, 0.125rem) var(--fluent-autocomplete-chip-padding-x, 0.5rem);
-		background: var(--neutral-fill-secondary-rest, #f5f5f5);
-		color: var(--neutral-foreground-rest, #242424);
-		border: 1px solid var(--neutral-stroke-rest, #d1d1d1);
-		border-radius: calc(var(--control-corner-radius, 4) * 1px);
-		font-size: var(--fluent-autocomplete-chip-font-size, 0.875rem);
-		line-height: var(--fluent-autocomplete-chip-line-height, 1.4);
-		font-weight: 400;
-		white-space: nowrap;
-	}
-
-	.external-chip .chip-text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: var(--fluent-autocomplete-chip-text-max-width, 12.5rem);
-	}
-
-	.external-chip .chip-remove {
+	/* ===== Built-in Search Icon (toggles the dropdown) =====
+	   Full-height square hitbox so the whole toggle area is clickable, not just
+	   the 16px glyph (matching the Combobox toggle). No hover — like Microsoft. */
+	.search-button {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		width: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
+		height: calc((var(--base-height-multiplier, 8) + var(--density, 0)) * var(--design-unit, 4) * 1px);
 		background: transparent;
 		border: none;
-		padding: var(--fluent-autocomplete-chip-remove-padding, 0.125rem);
+		padding: 0;
 		cursor: pointer;
-		color: var(--error-foreground-rest, #c42b1c);
-		border-radius: var(--fluent-border-radius-sm);
+		color: var(--accent-fill-rest, #0078d4);
 	}
 
-	.external-chip .chip-remove:hover {
-		color: var(--error-foreground-hover, #a32315);
-	}
-
-	.external-chip .chip-remove:focus {
-		outline: 1px solid var(--accent-fill-rest, #0078d4);
-		outline-offset: 1px;
+	.search-button:disabled {
+		cursor: not-allowed;
 	}
 
 	/* ===== Clear Button ===== */

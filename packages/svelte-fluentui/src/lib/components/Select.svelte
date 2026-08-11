@@ -37,6 +37,9 @@
 		position?: "above" | "below"
 		multiple?: boolean
 		disabled?: boolean
+		/** Non-editable: the value shows but can't be changed (dropdown won't open,
+		 * options can't be toggled). Unlike `disabled`, it stays focusable and un-dimmed. */
+		readonly?: boolean
 		appearance?: "outline" | "filled"
 		required?: boolean
 		autofocus?: boolean
@@ -73,6 +76,7 @@
 		position = undefined,
 		multiple = false,
 		disabled = false,
+		readonly = false,
 		appearance = "outline",
 		required = false,
 		autofocus = false,
@@ -116,6 +120,7 @@
 		},
 		toggle(val: string) {
 			if (val == null) return
+			if (readonly) return // readonly: block user-driven selection (Option click path)
 			if (multiple) {
 				const cur = selectionState.value
 				selectionState.value = cur.includes(val)
@@ -218,7 +223,7 @@
 	}
 
 	function openDropdown() {
-		if (disabled || multiple) return
+		if (disabled || multiple || readonly) return
 		isOpen = true
 		tick().then(() => {
 			const opts = enabledOptionEls(listEl)
@@ -245,6 +250,7 @@
 	// click event to ride. Mutates selection via ctx.toggle (which has the right
 	// mode-aware semantics), fires onchange, and closes in single mode.
 	function selectByValue(val: string, el?: HTMLElement) {
+		if (readonly) return
 		const optEl = el ?? getOptionEls(multiple ? inlineListEl : listEl)
 			.find(o => optionValue(o) === val)
 
@@ -265,6 +271,7 @@
 	// double-toggle in multi mode and cancel the user's click. We only handle
 	// the post-selection side effects: onchange + close-on-single.
 	function handleListClick(ev: MouseEvent) {
+		if (readonly) return
 		const target = ev.target as HTMLElement | null
 		if (!target) return
 		const optEl = target.closest(".fluent-option") as HTMLElement | null
@@ -349,7 +356,7 @@
 	}
 
 	function handleTriggerKeydown(ev: KeyboardEvent) {
-		if (disabled) return
+		if (disabled || readonly) return
 
 		if (!isOpen) {
 			switch (ev.key) {
@@ -420,18 +427,32 @@
 		})
 	})
 
-	// ---------- Close on outside pointerdown ----------
+	// ---------- Close on outside pointerdown / focus move ----------
 	$effect(() => {
 		if (!isOpen) return
-		function onDown(ev: PointerEvent) {
+		// Shared test: does the event's path touch our trigger or portalled list?
+		function isInside(ev: Event): boolean {
 			const path = ev.composedPath()
-			if (triggerEl && path.includes(triggerEl)) return
-			if (listEl && path.includes(listEl)) return
-			closeDropdown(false)
+			return !!(triggerEl && path.includes(triggerEl)) || !!(listEl && path.includes(listEl))
+		}
+		function onDown(ev: PointerEvent) {
+			if (!isInside(ev)) closeDropdown(false)
+		}
+		// Focus moving outside (e.g. a modal dialog opening and trapping focus, or
+		// Tab-ing away) closes the popover too — otherwise it floats above the modal,
+		// since the popover z-layer sits above the modal layer by design (so popovers
+		// opened INSIDE a dialog work). Don't refocus the trigger — that would yank
+		// focus back out of whatever just opened.
+		function onFocusIn(ev: FocusEvent) {
+			if (!isInside(ev)) closeDropdown(false)
 		}
 		// Use capture so we beat any handler that stops propagation.
 		document.addEventListener("pointerdown", onDown, true)
-		return () => document.removeEventListener("pointerdown", onDown, true)
+		document.addEventListener("focusin", onFocusIn, true)
+		return () => {
+			document.removeEventListener("pointerdown", onDown, true)
+			document.removeEventListener("focusin", onFocusIn, true)
+		}
 	})
 
 	// ---------- Multi-mode height calculation (maxVisibleOptions) ----------
@@ -507,9 +528,11 @@
 		role="listbox"
 		tabindex="0"
 		aria-multiselectable="true"
+		aria-readonly={readonly ? "true" : null}
 		aria-label={ariaLabel || label}
 		class="select-listbox-inline {appearance} {className}"
 		class:disabled
+		class:readonly
 		style={(multiListStyle() ? multiListStyle() + "; " : "") + style}
 		{title}
 		onclick={handleListClick}
@@ -536,11 +559,13 @@
 		aria-expanded={isOpen}
 		aria-controls={listboxId}
 		aria-label={ariaLabel || label}
+		aria-readonly={readonly ? "true" : null}
 		{disabled}
 		{autofocus}
 		{title}
 		class="select-trigger {appearance} {className}"
 		class:open={isOpen}
+		class:readonly
 		style={(triggerStyle() ? triggerStyle() + "; " : "") + style}
 		onclick={toggleDropdown}
 		onkeydown={handleTriggerKeydown}
@@ -629,7 +654,7 @@
 		min-width: 200px;
 	}
 
-	.select-trigger:hover:not(:disabled) {
+	.select-trigger:hover:not(:disabled):not(.readonly) {
 		background: var(--neutral-fill-input-hover, #f5f5f5);
 	}
 
@@ -649,7 +674,7 @@
 		border-radius: calc(var(--control-corner-radius, 4) * 1px) calc(var(--control-corner-radius, 4) * 1px) 0 0;
 	}
 
-	.select-trigger.filled:hover:not(:disabled) {
+	.select-trigger.filled:hover:not(:disabled):not(.readonly) {
 		background: var(--neutral-fill-secondary-hover, #ebebeb);
 	}
 
@@ -662,6 +687,13 @@
 	.select-trigger:disabled {
 		opacity: 0.4;
 		cursor: not-allowed;
+	}
+
+	/* Readonly: value shows but the dropdown won't open. Non-dimmed (unlike
+	   disabled), with a neutral-secondary fill + default cursor to signal it's inert. */
+	.select-trigger.readonly {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
+		cursor: default;
 	}
 
 	.select-trigger-value {
@@ -733,5 +765,20 @@
 	.select-listbox-inline.disabled {
 		opacity: 0.4;
 		pointer-events: none;
+	}
+
+	/* Readonly multi-select: value shows but options can't be toggled (blocked in
+	   ctx.toggle). Keep it non-dimmed and scrollable, but make the rows read as
+	   inert — no pointer cursor, no hover highlight. */
+	.select-listbox-inline.readonly :global(.fluent-option) {
+		cursor: default;
+	}
+
+	.select-listbox-inline.readonly :global(.fluent-option:hover:not([disabled])) {
+		background: transparent;
+	}
+
+	.select-listbox-inline.readonly :global(.fluent-option[aria-selected="true"]:hover:not([disabled])) {
+		background: var(--neutral-fill-secondary-rest, #f5f5f5);
 	}
 </style>
