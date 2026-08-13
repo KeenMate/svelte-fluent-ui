@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Button from "./Button.svelte"
+
 	type Props = {
 		/** Placeholder text shown in the pill. */
 		placeholder?: string
@@ -24,67 +26,76 @@
 	}: Props = $props()
 </script>
 
-<button
-	type="button"
-	class="cp-trigger cp-trigger--{size} {className}"
-	aria-label={placeholder}
-	{onclick}
->
+{#snippet searchIcon()}
 	<svg class="cp-trigger-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
 		<path d="M7 1.75a5.25 5.25 0 1 0 3.215 9.4l3.067 3.068a.75.75 0 1 0 1.061-1.061l-3.066-3.066A5.25 5.25 0 0 0 7 1.75zM3.25 7a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0z" fill="currentColor"/>
 	</svg>
+{/snippet}
+
+{#snippet kbdHint()}
+	<span class="cp-trigger-kbd">{shortcut}</span>
+{/snippet}
+
+<!--
+	A launcher styled like a search field, built on the native Fluent button so it
+	inherits Fluent's focus/hover/press states. It stays a button (opens the
+	CommandPalette on click) — the search-box layout (icon · placeholder · shortcut)
+	is composed via the button's start / default / end slots, and the `::part`
+	overrides below only relax the control's centred layout so the placeholder fills
+	and the shortcut hint pins to the trailing edge.
+-->
+<Button
+	appearance="neutral"
+	type="button"
+	class={`cp-trigger cp-trigger--${size} ${className}`.trim()}
+	aria-label={placeholder}
+	start={searchIcon}
+	end={shortcut ? kbdHint : undefined}
+	{onclick}
+>
 	<span class="cp-trigger-label">{placeholder}</span>
-	{#if shortcut}
-		<span class="cp-trigger-kbd">{shortcut}</span>
-	{/if}
-</button>
+</Button>
 
 <style>
-	.cp-trigger {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.375rem 0.625rem;
-		background: var(--neutral-layer-2, #f5f5f5);
-		border: 1px solid var(--neutral-stroke-layer-rest, #e0e0e0);
-		border-radius: 6px;
-		color: var(--neutral-foreground-hint, #888);
-		cursor: pointer;
-		font-family: var(--body-font, inherit);
-		font-size: 0.875rem;
+	/* Widen the control into a search-field pill (Fluent's host min-width is ~1 line height). */
+	:global(fluent-button.cp-trigger) {
 		min-width: 200px;
-		transition: background 120ms ease, border-color 120ms ease;
 	}
-
-	.cp-trigger:hover {
-		background: var(--neutral-fill-secondary-hover, #ebebeb);
-		border-color: var(--neutral-stroke-rest, #c8c8c8);
-	}
-
-	.cp-trigger:focus-visible {
-		outline: calc(var(--focus-stroke-width, 2) * 1px) solid var(--focus-stroke-outer);
-		outline-offset: 1px;
-	}
-
-	.cp-trigger--small {
-		padding: 0.25rem 0.5rem;
-		font-size: 0.8125rem;
+	:global(fluent-button.cp-trigger--small) {
 		min-width: 160px;
 	}
-
-	.cp-trigger--large {
-		padding: 0.5rem 0.75rem;
-		font-size: 0.9375rem;
+	:global(fluent-button.cp-trigger--large) {
 		min-width: 240px;
 	}
 
+	/* Left-align the row and let the placeholder grow so the shortcut sits at the end. */
+	:global(fluent-button.cp-trigger::part(control)) {
+		width: 100%;
+		justify-content: flex-start;
+		gap: 0.5rem;
+	}
+	:global(fluent-button.cp-trigger::part(content)) {
+		flex: 1 1 auto;
+		justify-content: flex-start;
+	}
+
+	/* Slotted content — muted "placeholder" look, matching a real search input. */
 	.cp-trigger-icon {
 		flex-shrink: 0;
+		color: var(--neutral-foreground-hint);
 	}
 
 	.cp-trigger-label {
-		flex: 1;
+		color: var(--neutral-foreground-hint);
+		font-weight: 400;
 		text-align: start;
+	}
+
+	:global(fluent-button.cp-trigger--small) .cp-trigger-label {
+		font-size: 0.8125rem;
+	}
+	:global(fluent-button.cp-trigger--large) .cp-trigger-label {
+		font-size: 0.9375rem;
 	}
 
 	.cp-trigger-kbd {
@@ -95,6 +106,7 @@
 		background: var(--neutral-layer-1, #ffffff);
 		font-size: 0.7rem;
 		font-weight: 500;
+		color: var(--neutral-foreground-hint);
 	}
 
 	@media (max-width: 768px) {
@@ -102,9 +114,8 @@
 		.cp-trigger-kbd {
 			display: none;
 		}
-		.cp-trigger {
+		:global(fluent-button.cp-trigger) {
 			min-width: auto;
-			padding: 0.5rem;
 		}
 	}
 </style>

@@ -25,6 +25,28 @@ function createThemeStore() {
 		console.log('[Svelte FluentUI Theme Store] baseLayerLuminance.setValueFor() completed - this will regenerate --neutral-layer-* colors!')
 	}
 
+	// Swap the palette without letting interactive-feedback transitions animate the
+	// change. Our custom controls (Combobox, Autocomplete, Select, InputFile,
+	// CommandPaletteTrigger, …) and the Fluent switch track carry short
+	// background/border transitions for hover/focus; those otherwise fire when the
+	// theme tokens change, producing a lagging colour fade that reads as a glitch.
+	// `.fluent-theme-switching` (see theme.scss) disables every transition; we apply
+	// the theme, force a synchronous reflow so the new colours paint immediately,
+	// then re-enable transitions after two frames.
+	function applyTheme(theme: Theme) {
+		if (!BROWSER) return
+		const root = document.documentElement
+		root.classList.add("fluent-theme-switching")
+		root.setAttribute("data-theme", theme)
+		updateFluentUITheme(theme)
+		void root.offsetHeight
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				root.classList.remove("fluent-theme-switching")
+			})
+		})
+	}
+
 	return {
 		subscribe,
 		toggle: () =>
@@ -32,16 +54,14 @@ function createThemeStore() {
 				const newTheme = current === "light" ? "dark" : "light"
 				if (BROWSER) {
 					localStorage.setItem("fluent-theme", newTheme)
-					document.documentElement.setAttribute("data-theme", newTheme)
-					updateFluentUITheme(newTheme)
+					applyTheme(newTheme)
 				}
 				return newTheme
 			}),
 		set: (theme: Theme) => {
 			if (BROWSER) {
 				localStorage.setItem("fluent-theme", theme)
-				document.documentElement.setAttribute("data-theme", theme)
-				updateFluentUITheme(theme)
+				applyTheme(theme)
 			}
 			set(theme)
 		},

@@ -87,7 +87,7 @@
 </style>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-<div class="fluent-toast" id={id} tabindex="0">
+<div class="fluent-toast fluent-toast--show" id={id} tabindex="0">
 	<div class="toast-header">
 		<div class="fluent-toast-title">{title}</div>
 

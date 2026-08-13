@@ -18,7 +18,12 @@
 }
 
 // Header component
-.header {
+// Tag-qualified (`header.header`, not bare `.header`) so this layout styling
+// only targets the real <header> element the Header component renders. FluentUI
+// adds `class="header"` to its data-grid header ROW host, which a bare `.header`
+// rule would hijack — forcing `display: flex` over the row's shadow
+// `:host { display: grid }` and collapsing the header cells to the left.
+header.header {
 	display: flex;
 	align-items: center;
 	background-color: var(--neutral-layer-2);

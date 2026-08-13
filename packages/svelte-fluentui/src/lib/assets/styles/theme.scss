@@ -178,3 +178,23 @@ body {
 	color: var(--neutral-foreground-rest);
 	transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+// While a theme swap is in flight the theme store adds `.fluent-theme-switching`
+// to <html> for two frames (see stores/theme.ts). Interactive-feedback transitions
+// on our custom controls (Combobox, Autocomplete, Select, InputFile,
+// CommandPaletteTrigger, …) and the body itself otherwise animate their
+// background/border from the old palette to the new one, producing a lagging colour
+// fade that reads as a glitch. Kill every transition for that brief window so the
+// palette flips instantly, in step with the rest of the page.
+html.fluent-theme-switching,
+html.fluent-theme-switching *,
+html.fluent-theme-switching *::before,
+html.fluent-theme-switching *::after {
+	transition: none !important;
+}
+
+// The Fluent switch track is `transition: all 0.2s` inside its shadow DOM, out of
+// reach of the universal selector above — suppress it through its exposed part.
+html.fluent-theme-switching fluent-switch::part(switch) {
+	transition: none !important;
+}

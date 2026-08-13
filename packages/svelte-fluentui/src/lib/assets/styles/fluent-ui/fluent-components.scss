@@ -356,7 +356,15 @@ td.grid-cell-placeholder:after {
 	align-content: start;
 }
 
-.column-header {
+// Tag-qualified (`th.column-header`, not bare `.column-header`) so this
+// Blazor-legacy table styling can't leak onto FluentUI's data-grid cell host,
+// which carries `class="column-header"` for its own `:host(.column-header)`
+// styling. A bare rule overrode the cell's shadow padding with `… 1px …`
+// (1px sides vs the cell's normal ~12px) and centered the text, shoving the
+// header labels left and out of line with the left-aligned data cells. QuickGrid
+// renders `<th class="column-header">` and styles it with its own component-
+// scoped rules, so it is unaffected.
+th.column-header {
 	font-weight: 600;
 	text-align: center;
 	position: relative;

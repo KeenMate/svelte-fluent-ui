@@ -116,11 +116,13 @@
 			const currentSettings = $settings
 			if (currentSettings.themeMode === "system") {
 				const systemTheme = mediaQuery.matches ? "dark" : "light"
+				document.documentElement.classList.add("fluent-theme-switching")
 				document.documentElement.setAttribute("data-theme", systemTheme)
 				baseLayerLuminance.setValueFor(
 					document.documentElement,
 					systemTheme === "dark" ? StandardLuminance.DarkMode : StandardLuminance.LightMode
 				)
+				endThemeTransitionSuppression()
 			}
 		}
 
@@ -130,6 +132,21 @@
 			mediaQuery.removeEventListener("change", handleSystemThemeChange)
 		}
 	})
+
+	// Disable transitions for the couple of frames a theme swap takes, so
+	// interactive-feedback transitions on custom controls (Combobox, Autocomplete,
+	// Select, InputFile, CommandPaletteTrigger, …) and the Fluent switch track don't
+	// animate their colours from the old palette to the new one (see the
+	// `.fluent-theme-switching` rule in the library's theme.scss).
+	function endThemeTransitionSuppression() {
+		const root = document.documentElement
+		void root.offsetHeight
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				root.classList.remove("fluent-theme-switching")
+			})
+		})
+	}
 
 	// Function to apply theme settings (called explicitly when settings change)
 	function applyThemeSettings() {
@@ -142,6 +159,8 @@
 		if (effectiveTheme === "system") {
 			effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 		}
+
+		document.documentElement.classList.add("fluent-theme-switching")
 
 		// Apply theme attribute
 		document.documentElement.setAttribute("data-theme", effectiveTheme)
@@ -170,6 +189,8 @@
 				neutralBaseColor.setValueFor(document.documentElement, neutralSwatch)
 			} catch (e) {
 				console.error("Error applying FluentUI design tokens:", e)
+			} finally {
+				endThemeTransitionSuppression()
 			}
 		})
 

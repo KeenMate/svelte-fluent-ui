@@ -19,6 +19,7 @@
 		{name: "ariaRowCount", type: "number", default: "undefined", description: "Total number of rows (for accessibility)"},
 		{name: "class", type: "string", default: '""', description: "Custom CSS classes"},
 		{name: "generateHeader", type: "string", default: "undefined", description: 'Header option: "none", "default", "sticky"'},
+		{name: "gridTemplateColumns", type: "string", default: "undefined", description: 'CSS grid-template-columns applied to every row (e.g. "1fr 1fr", "2fr 100px"). Recommended when composing rows manually — without it column widths are auto-generated and can misalign header vs. data rows.'},
 		{name: "id", type: "string", default: "undefined", description: "Element ID"},
 		{name: "role", type: "string", default: '"grid"', description: "ARIA role"},
 		{name: "style", type: "string", default: '""', description: "Inline styles"}
@@ -65,7 +66,7 @@
 		<h2>Examples</h2>
 
 		<h3>Basic DataGrid</h3>
-		<DataGrid ariaRowCount={sampleData.length + 1} generateHeader="sticky">
+		<DataGrid ariaRowCount={sampleData.length + 1} generateHeader="sticky" gridTemplateColumns="1fr 1fr">
 			<DataGridRow rowType="header">
 				<DataGridCell cellType="columnheader" gridColumn={1}>Name</DataGridCell>
 				<DataGridCell cellType="columnheader" gridColumn={2}>Age</DataGridCell>
@@ -80,7 +81,7 @@
 		</DataGrid>
 
 		<h3>Empty DataGrid</h3>
-		<DataGrid ariaRowCount={2} generateHeader="sticky">
+		<DataGrid ariaRowCount={2} generateHeader="sticky" gridTemplateColumns="1fr 1fr">
 			<DataGridRow rowType="header">
 				<DataGridCell cellType="columnheader" gridColumn={1}>Column 1</DataGridCell>
 				<DataGridCell cellType="columnheader" gridColumn={2}>Column 2</DataGridCell>

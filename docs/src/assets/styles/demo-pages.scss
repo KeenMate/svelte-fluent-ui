@@ -1,3 +1,6 @@
-@use "./layout.scss";
+// Docs-only styles. All library styles (layout, theme, nav, fluent-ui,
+// components, fluent-blazor-compat, …) come from `svelte-fluentui/styles.scss`,
+// imported in +layout.svelte — do NOT re-add copies here. Only genuinely
+// docs-specific styling belongs in this tree (demo-page chrome + the site look).
 @use "./components.scss";
 @use "./microsoft-site.scss";

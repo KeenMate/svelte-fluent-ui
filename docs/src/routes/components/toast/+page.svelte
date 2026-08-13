@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {Toast, QuickGrid, Stack, Grid, GridItem, Card} from "svelte-fluentui"
 	import {References, Meta} from "$lib/components"
-	let showToast = false
+	let showToast = $state(false)
 	let toastId = "demo-toast"
 
 	function handleTopAction() {

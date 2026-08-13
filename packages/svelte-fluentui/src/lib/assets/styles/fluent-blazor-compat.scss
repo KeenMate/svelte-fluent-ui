@@ -254,6 +254,16 @@ fluent-card {
 // DataGrid
 // =============================================================================
 
+// When a <DataGrid gridTemplateColumns="…"> is used, the wrapper also exposes the
+// value as an inheriting custom property. FluentUI already applies the template
+// to each row imperatively; this rule pins it on *every* row (header included)
+// deterministically as a safety net, independent of FluentUI's per-row timing.
+// The value inherits down the light-DOM tree, and FluentUI's inline style (same
+// value) still wins where present, so this only fills any gap it leaves.
+fluent-data-grid[grid-template-columns] > fluent-data-grid-row {
+	grid-template-columns: var(--fluent-data-grid-template-columns);
+}
+
 .fluent-data-grid {
 	--fluent-data-grid-resize-handle-color: var(--accent-fill-rest);
 	--fluent-data-grid-resize-handle-width: 1px;
@@ -457,6 +467,27 @@ fluent-dialog .fluent-dialog-footer {
 
 fluent-radio {
 	margin: calc(var(--design-unit) * 1px) 0;
+}
+
+// =============================================================================
+// Input border consistency
+// FluentUI's text inputs paint a faint "input recipe" underline
+// (--neutral-stroke-input-*) whose light sides all but vanish on a dark
+// background, while the custom controls (Autocomplete/Combobox/Select) draw a
+// full 1px box from --neutral-stroke-rest. Paint the web components with the
+// same full box so every field shares one border treatment in both themes.
+// Focus and validation accents still come from the components' own ::after line
+// and the state rules in _field.scss (which override border-bottom-color).
+// =============================================================================
+
+fluent-text-field::part(root),
+fluent-number-field::part(root),
+fluent-search::part(root),
+fluent-text-area::part(control),
+fluent-select::part(control),
+fluent-combobox::part(control) {
+	border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
+	border-image: none;
 }
 
 // =============================================================================
