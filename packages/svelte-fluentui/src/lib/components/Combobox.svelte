@@ -638,15 +638,17 @@
 		if (!multiple) queueMicrotask(() => inputEl?.select())
 	}
 
-	// Clicking the control padding (not the input or the indicator button)
-	// focuses the input and opens. The input and indicator handle their own
-	// clicks so we don't double-fire against the indicator's toggle.
+	// Clicking anywhere in the control's empty area — its own padding or the
+	// wrapping main box around the chips/input — focuses the input and opens. The
+	// input opens via its own handler; the indicator toggles via its own; and chip
+	// remove buttons handle their own click. We exclude those so we don't double-fire
+	// against the indicator's toggle or steal a chip removal.
 	function handleControlClick(ev: MouseEvent) {
 		if (disabled || readonly) return
-		if (ev.target === controlEl) {
-			inputEl?.focus()
-			if (!isOpen) openDropdown()
-		}
+		const target = ev.target as HTMLElement | null
+		if (target?.closest(".combobox-indicator, .fluent-chip-remove")) return
+		inputEl?.focus()
+		if (!isOpen) openDropdown()
 	}
 
 	function handleInputClick() {
@@ -670,7 +672,19 @@
 		// since the popover z-layer sits above the modal layer by design. refocus=false
 		// so we don't yank focus back out of whatever just opened.
 		function onFocusIn(ev: FocusEvent) {
-			if (!isInside(ev)) closeDropdown(false)
+			if (isInside(ev)) return
+			// Our listbox is portalled OUT of the control's DOM subtree (top layer),
+			// so a modal dialog's focus trap treats it as "outside" and yanks focus
+			// back to an element inside the dialog (e.g. its close button). That
+			// bounce would otherwise close the dropdown mid-click, before the option
+			// selection commits. If focus landed inside the SAME dialog that owns the
+			// control, keep the dropdown open — it's the trap fighting the portal, not
+			// the user leaving. Focus moving into a DIFFERENT dialog (or with no owning
+			// dialog at all) still closes, as intended.
+			const controlDialog = controlEl?.closest("fluent-dialog, [role='dialog']")
+			const target = ev.target as Node | null
+			if (controlDialog && target && controlDialog.contains(target)) return
+			closeDropdown(false)
 		}
 		document.addEventListener("pointerdown", onDown, true)
 		document.addEventListener("focusin", onFocusIn, true)
@@ -798,42 +812,49 @@
 		{...(title ? {title} : {})}
 		onclick={handleControlClick}
 	>
-		<!-- Inline tags: selected values render as removable chips before the input. -->
-		{#if inlineTags}
-			{#each selectionState.value as val (val)}
-				<Chip
-					text={chipLabel(val)}
-					variant="inline"
-					contrast={readonly || appearance === "filled"}
-					showRemove={!disabled && !readonly}
-					removeLabel={`Remove ${chipLabel(val)}`}
-					onremove={(e) => removeValue(val, e)}
-				/>
-			{/each}
-		{/if}
-		<!-- svelte-ignore a11y_autofocus -->
-		<input
-			bind:this={inputEl}
-			{id}
-			type="text"
-			class="combobox-input"
-			role="combobox"
-			aria-expanded={isOpen}
-			aria-controls={listboxId}
-			aria-autocomplete={doInline ? (doListFilter ? "both" : "inline") : (doListFilter ? "list" : "none")}
-			aria-label={ariaLabel ?? label}
-			value={inputDisplay}
-			placeholder={effectivePlaceholder}
-			{disabled}
-			{readonly}
-			required={multiple ? false : required}
-			{autofocus}
-			autocomplete="off"
-			oninput={handleInput}
-			onkeydown={handleKeydown}
-			onfocus={handleFocus}
-			onclick={handleInputClick}
-		/>
+		<!-- Wrapping main box: chips + input. Kept as its own flex:1 box (rather than
+		     direct children of the control) so chips wrap INSIDE it while the
+		     indicator stays a separate box at the end — that lets the indicator span
+		     the control's full height once chips wrap onto multiple rows, matching
+		     Autocomplete's toggle. -->
+		<div class="combobox-main">
+			<!-- Inline tags: selected values render as removable chips before the input. -->
+			{#if inlineTags}
+				{#each selectionState.value as val (val)}
+					<Chip
+						text={chipLabel(val)}
+						variant="inline"
+						contrast={readonly || appearance === "filled"}
+						showRemove={!disabled && !readonly}
+						removeLabel={`Remove ${chipLabel(val)}`}
+						onremove={(e) => removeValue(val, e)}
+					/>
+				{/each}
+			{/if}
+			<!-- svelte-ignore a11y_autofocus -->
+			<input
+				bind:this={inputEl}
+				{id}
+				type="text"
+				class="combobox-input"
+				role="combobox"
+				aria-expanded={isOpen}
+				aria-controls={listboxId}
+				aria-autocomplete={doInline ? (doListFilter ? "both" : "inline") : (doListFilter ? "list" : "none")}
+				aria-label={ariaLabel ?? label}
+				value={inputDisplay}
+				placeholder={effectivePlaceholder}
+				{disabled}
+				{readonly}
+				required={multiple ? false : required}
+				{autofocus}
+				autocomplete="off"
+				oninput={handleInput}
+				onkeydown={handleKeydown}
+				onfocus={handleFocus}
+				onclick={handleInputClick}
+			/>
+		</div>
 		<button
 			type="button"
 			class="combobox-indicator"
@@ -972,6 +993,19 @@
 		cursor: default;
 	}
 
+	/* Wrapping main box: holds the chips + input and grows/wraps internally, while
+	   the indicator stays a separate box at the control's end. This is what lets the
+	   indicator span the full control height when chips wrap (see .combobox-indicator).
+	   Single-line by default; wrapping + vertical padding are added only in inline-tags
+	   mode below. */
+	.combobox-main {
+		display: flex;
+		flex: 1 1 auto;
+		min-width: 0;
+		align-items: center;
+		gap: 4px;
+	}
+
 	.combobox-input {
 		flex: 1;
 		min-width: 0;
@@ -994,10 +1028,12 @@
 	}
 
 	/* ===== Multi-select control + chips ===== */
-	/* Inline tags: let chips wrap onto multiple rows; a little vertical padding keeps
-	 * them off the border once the control grows past one line. (External tags render
-	 * outside the control, so the control stays single-line and skips this.) */
-	.combobox-control.multiple.tags-inline {
+	/* Inline tags: let chips wrap onto multiple rows INSIDE the main box; a little
+	 * vertical padding keeps them off the border once it grows past one line. The
+	 * control itself stays nowrap (two boxes: wrapping main + indicator) so the
+	 * indicator can span the full height. (External tags render outside the control,
+	 * so it stays single-line and skips this.) */
+	.combobox-control.multiple.tags-inline .combobox-main {
 		flex-wrap: wrap;
 		padding-block: calc(var(--design-unit, 4) * 1px);
 	}
@@ -1024,11 +1060,13 @@
 		padding-block: calc(var(--design-unit, 4) * 1px);
 	}
 
-	/* Full-height square hitbox (Blazor-style) rather than a bare glyph, so the
-	 * whole toggle area is clickable, not just the 12px chevron. A negative
-	 * inline-end margin pulls it flush to the control's end edge, reclaiming the
-	 * control's end padding. No hover background — Microsoft's control doesn't
-	 * have one. */
+	/* Full-height hitbox (Blazor-style) rather than a bare glyph, so the whole toggle
+	 * area is clickable, not just the 12px chevron. `align-self: stretch` on the
+	 * nowrap control makes it span the ENTIRE control height, including when the main
+	 * box has grown to multiple wrapped chip rows — matching Autocomplete's toggle.
+	 * The glyph stays centered via the flex centering. A negative inline-end margin
+	 * pulls it flush to the control's end edge, reclaiming the control's end padding.
+	 * No hover background — Microsoft's control doesn't have one. */
 	.combobox-indicator {
 		display: inline-flex;
 		align-items: center;

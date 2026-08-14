@@ -444,7 +444,19 @@
 		// opened INSIDE a dialog work). Don't refocus the trigger — that would yank
 		// focus back out of whatever just opened.
 		function onFocusIn(ev: FocusEvent) {
-			if (!isInside(ev)) closeDropdown(false)
+			if (isInside(ev)) return
+			// Our listbox is portalled OUT of the trigger's DOM subtree (top layer),
+			// so a modal dialog's focus trap treats it as "outside" and yanks focus
+			// back to an element inside the dialog (e.g. its close button). That
+			// bounce would otherwise close the dropdown mid-click, before the option
+			// selection commits. If focus landed inside the SAME dialog that owns the
+			// trigger, keep the dropdown open — it's the trap fighting the portal, not
+			// the user leaving. Focus moving into a DIFFERENT dialog (or with no owning
+			// dialog at all) still closes, as intended.
+			const triggerDialog = triggerEl?.closest("fluent-dialog, [role='dialog']")
+			const target = ev.target as Node | null
+			if (triggerDialog && target && triggerDialog.contains(target)) return
+			closeDropdown(false)
 		}
 		// Use capture so we beat any handler that stops propagation.
 		document.addEventListener("pointerdown", onDown, true)

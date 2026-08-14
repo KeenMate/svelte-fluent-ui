@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0-rc07] - 2026-08-14 [PUBLISHED]
+
+### Fixed
+- **Select / Combobox / Autocomplete — selections inside a modal `Dialog` now commit.** When a
+  dropdown was opened inside a modal `<Dialog>`, clicking an option did nothing (the value never
+  changed). The FAST modal focus trap bounced focus to an element inside the dialog when the
+  portalled (top-layer) listbox was interacted with, firing the control's outside-close handler and
+  tearing down the dropdown before the click registered. `onFocusIn` now keeps the dropdown open when
+  focus lands inside the trigger's own dialog.
+- **Toast renders above QuickGrid's floating popovers.** Toasts appeared *under* QuickGrid's context
+  menu, column filters, and floating row toolbar. Those use the browser top layer (Popover API),
+  which paints above any `z-index` — so the toast's `z-index: 1080` could never win. The toast
+  container is now promoted into the top layer too (with a z-index fallback), resetting the UA
+  `[popover]` defaults so its fixed positioning is preserved.
+- **Autocomplete — `keepOpen` no longer gets stuck on "No results found".** After a keep-open pick the
+  list refreshes to the remaining options instead of rendering an empty "No results"; selecting the
+  last option closes the dropdown; and removing a chip re-surfaces the freed option and clears a stale
+  empty state.
+- **Autocomplete — duplicate selection prevented.** Async `onoptionssearch` results now exclude
+  already-selected values (matching the client-side filter), plus a guard in the selection handler, so
+  the same value can no longer be picked twice into two chips.
+
+### Changed
+- **Autocomplete — inline toggle hitbox spans the full height and sits flush.** The built-in
+  magnifier's clickable area now covers the whole control height when chips wrap onto multiple rows,
+  and it's pulled flush to the trailing edge so it aligns with Combobox's toggle (previously ~8px
+  farther from the edge).
+- **Combobox — toggle indicator spans the full control height.** The control was restructured into a
+  wrapping main box plus a separate indicator box (matching Autocomplete), so the toggle hitbox covers
+  the entire height even across multiple wrapped chip rows.
+
 ## [1.6.0-rc06] - 2026-08-13 [PUBLISHED]
 
 ### Added

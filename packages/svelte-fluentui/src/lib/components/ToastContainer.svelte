@@ -2,6 +2,34 @@
 	import {toast, type Toast, type ToastPosition} from "../stores/toast.js"
 	import {onMount} from "svelte"
 	import DismissIcon from "./icons/DismissIcon.svelte"
+	import {portal} from "../actions/portal.js"
+
+	// Promote the toast container into the browser top layer via the Popover API.
+	// The top layer paints above ALL z-indexed content — including elements that
+	// other components (e.g. QuickGrid's context menu, column filters, and floating
+	// row toolbar) put in the top layer through PositioningRegion. A plain z-index
+	// (even our $z-index-toast: 1080) can never beat a top-layer popover, so without
+	// this a grid popover would render on top of toasts. Falls back to the CSS
+	// z-index when the API is unavailable (older browsers).
+	function topLayer(node: HTMLElement & {showPopover?: () => void; hidePopover?: () => void}) {
+		// Unsupported: drop the `popover` attribute so the UA's
+		// `:not(:popover-open){display:none}` can't hide the element; z-index fallback.
+		if (typeof node.showPopover !== "function") {
+			node.removeAttribute("popover")
+			return
+		}
+		try {
+			node.showPopover()
+		} catch {
+			node.removeAttribute("popover")
+			return
+		}
+		return {
+			destroy() {
+				try { node.hidePopover?.() } catch { /* already hidden */ }
+			}
+		}
+	}
 
 	let toasts = $state<Toast[]>([])
 	let mountedToasts = $state(new Set<string>())
@@ -70,7 +98,13 @@
 
 {#each Object.entries(toastsByPosition) as [position, positionToasts]}
 	{#if positionToasts.length > 0}
-		<div id="toast-container-{position}" class="fluent-toast-container fluent-toast-container--{position}">
+		<div
+			use:portal
+			use:topLayer
+			popover="manual"
+			id="toast-container-{position}"
+			class="fluent-toast-container fluent-toast-container--{position}"
+		>
 			{#each positionToasts as toastItem (toastItem.id)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->

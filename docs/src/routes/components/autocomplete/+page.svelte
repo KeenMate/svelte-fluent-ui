@@ -29,6 +29,15 @@
 		{ value: "kotlin", text: "Kotlin" }
 	]
 
+	// Elixir and Erlang are intentionally NOT in programmingLanguages, so the
+	// "initial values + search" demo can show the base list on focus while these
+	// two surface only when the user searches.
+	const searchOnlyLanguages = [
+		...programmingLanguages,
+		{ value: "elixir", text: "Elixir" },
+		{ value: "erlang", text: "Erlang" }
+	]
+
 	// People data with icons
 	const people = [
 		{ value: "1", text: "John Doe", email: "john.doe@example.com", icon: "Person" },
@@ -53,6 +62,8 @@
 	let singleSelectValue = $state<string[]>([])
 	let maxSelectValue = $state<string[]>([])
 	let keepOpenValue = $state<string[]>([])
+	let keepOpenClosingValue = $state<string[]>([])
+	let langSearchValue = $state<string[]>([])
 	let asyncValue = $state<string[]>([])
 	let initialOptionsValue = $state<string[]>([])
 	let debounceValue = $state<string[]>([])
@@ -100,6 +111,16 @@
 		)
 	}
 
+	// Search across the extended language list (which includes Elixir & Erlang).
+	// Used with showInitialOptions + options={programmingLanguages}: the base list
+	// shows on focus, and typing surfaces the search-only entries.
+	async function handleLanguageSearch(searchText: string) {
+		await new Promise(resolve => setTimeout(resolve, 300))
+		return searchOnlyLanguages.filter(l =>
+			l.text.toLowerCase().includes(searchText.toLowerCase())
+		)
+	}
+
 	async function handlePeopleSearch(searchText: string) {
 		await new Promise(resolve => setTimeout(resolve, 400))
 		return people.filter(p =>
@@ -141,7 +162,7 @@
 		{name: "showOverlayOnEmptyResults", type: "boolean", default: "true", description: "Show dropdown on no results"},
 		{name: "showInitialOptions", type: "boolean", default: "false", description: "Show options on focus when empty"},
 		{name: "initialOptionsCount", type: "number", default: "maxOptionsSearch", description: "Initial options count limit"},
-		{name: "keepOpen", type: "boolean", default: "false", description: "Keep dropdown open after selection"},
+		{name: "keepOpen", type: "boolean", default: "true", description: "Multi-select only: keep the dropdown open after each pick so several can be chosen in a row. Set false to close on each selection (single-select always closes)."},
 		{name: "selectValueOnTab", type: "boolean", default: "true", description: "Select highlighted option on Tab key"},
 		{name: "tagsPosition", type: '"inline" | "above" | "below"', default: '"inline"', description: "Position of selected tags: inside input (inline), above input, or below input"},
 		{name: "immediateDelay", type: "number", default: "0", description: "Debounce delay in ms before search"},
@@ -337,20 +358,48 @@
 			</GridItem>
 		</Grid>
 
-		<h3>Close via code</h3>
-		<p>Use <code>keepOpen</code> to control whether the dropdown closes after selection.</p>
+		<h3>Keep open on selection (keepOpen)</h3>
+		<p>
+			In multi-select, <code>keepOpen</code> (default <code>true</code>) keeps the dropdown open after
+			each pick so you can select several options in a row. Set it to <code>false</code> to close the
+			dropdown on every selection. (Single-select always closes on pick.)
+		</p>
+		<p>
+			Both use <code>showInitialOptions</code> + <code>onoptionssearch</code>: focus shows the core
+			languages, and typing searches the extended set — <strong>Elixir</strong> and <strong>Erlang</strong>
+			appear only when you search (type <code>e</code>, <code>eli</code>, or <code>erl</code>).
+		</p>
 		<Grid columns={2} gap="1rem">
 			<GridItem>
 				<Stack orientation="vertical" gap="0.5rem">
-					<strong>keepOpen = true</strong>
+					<strong>keepOpen = true (default)</strong>
+					<small style="color: var(--neutral-foreground-hint);">Dropdown stays open — pick several in a row.</small>
 					<Autocomplete
 						bind:selectedOptions={keepOpenValue}
 						options={programmingLanguages}
+						onoptionssearch={handleLanguageSearch}
+						showInitialOptions={true}
 						keepOpen={true}
 						label="Programming languages"
-						placeholder="Type to search..."
+						placeholder="Focus for core list, search for Elixir/Erlang..."
 					/>
 					<small>Selected: {keepOpenValue.join(", ") || "None"}</small>
+				</Stack>
+			</GridItem>
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>keepOpen = false</strong>
+					<small style="color: var(--neutral-foreground-hint);">Dropdown closes after each pick.</small>
+					<Autocomplete
+						bind:selectedOptions={keepOpenClosingValue}
+						options={programmingLanguages}
+						onoptionssearch={handleLanguageSearch}
+						showInitialOptions={true}
+						keepOpen={false}
+						label="Programming languages"
+						placeholder="Focus for core list, search for Elixir/Erlang..."
+					/>
+					<small>Selected: {keepOpenClosingValue.join(", ") || "None"}</small>
 				</Stack>
 			</GridItem>
 		</Grid>
@@ -371,6 +420,30 @@
 						placeholder="Select from popular or search all..."
 					/>
 					<small>Selected: {initialOptionsValue.join(", ") || "None"}</small>
+				</Stack>
+			</GridItem>
+		</Grid>
+
+		<h3>Search-only items with initial values</h3>
+		<p>
+			Combine <code>showInitialOptions</code> with <code>onoptionssearch</code>: the initial list (shown
+			on focus, from <code>options</code>) holds the core languages, while <strong>Elixir</strong> and
+			<strong>Erlang</strong> live only in the search dataset. Focus to see the initial values, then type
+			<code>e</code>, <code>eli</code>, or <code>erl</code> to surface the search-only entries.
+		</p>
+		<Grid columns={2} gap="1rem">
+			<GridItem>
+				<Stack orientation="vertical" gap="0.5rem">
+					<strong>Initial values + search</strong>
+					<Autocomplete
+						bind:selectedOptions={langSearchValue}
+						options={programmingLanguages}
+						onoptionssearch={handleLanguageSearch}
+						showInitialOptions={true}
+						label="Programming languages"
+						placeholder="Focus for core list, search for Elixir/Erlang..."
+					/>
+					<small>Selected: {langSearchValue.join(", ") || "None"}</small>
 				</Stack>
 			</GridItem>
 		</Grid>

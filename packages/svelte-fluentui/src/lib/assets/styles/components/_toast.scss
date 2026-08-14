@@ -17,6 +17,23 @@
 	flex-direction: column;
 	gap: $spacing-md;
 
+	// The container is promoted into the browser top layer via the Popover API
+	// (see ToastContainer.svelte) so it paints above other top-layer popovers such
+	// as QuickGrid's context menu / column filters. Undo the UA `[popover]` defaults
+	// (centered `inset`, `margin: auto`, border, padding, opaque background, sizing
+	// caps) so our fixed position offsets below still drive placement. z-index stays
+	// as the fallback for browsers without the Popover API.
+	inset: auto;
+	margin: 0;
+	border: 0;
+	padding: 0;
+	width: auto;
+	height: auto;
+	max-width: none;
+	max-height: none;
+	overflow: visible;
+	background: transparent;
+
 	// Position variations
 	&--top-right {
 		top: $spacing-lg;

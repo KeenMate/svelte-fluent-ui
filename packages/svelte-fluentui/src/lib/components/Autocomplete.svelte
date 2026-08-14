@@ -163,7 +163,9 @@
 		try {
 			if (onoptionssearch) {
 				const results = await onoptionssearch(text)
-				filteredOptions = results.slice(0, maxOptionsSearch)
+				// Exclude already-selected options so a picked value can't reappear in
+				// the list and be selected twice — matching the client-side branch below.
+				filteredOptions = results.filter(r => !isSelected(r.value)).slice(0, maxOptionsSearch)
 			} else {
 				// Default filtering: contains (case insensitive)
 				// Filter out already selected options to avoid duplicates
@@ -236,6 +238,11 @@
 	function selectOption(option: OptionItem) {
 		if (disabled || readonly || option.disabled) return
 
+		// Never add the same value twice in multi-select (would render a duplicate
+		// chip). The list already excludes selected options, so this is a safety net
+		// for any path that surfaces an already-picked value.
+		if (effectiveMultiple && isSelected(option.value)) return
+
 		if (effectiveMultiple && maxSelectedOptions && selectedOptions.length >= maxSelectedOptions) {
 			return
 		}
@@ -249,15 +256,45 @@
 			? [...selectedOptions, option.value]
 			: [option.value]
 		searchText = ""
-		filteredOptions = []
 		highlightedIndex = -1
 
-		// Always close after a single-select pick; multi-select honors keepOpen / max-cap.
-		if (!effectiveMultiple || !keepOpen || (maxSelectedOptions && selectedOptions.length >= maxSelectedOptions)) {
+		// Multi-select honors keepOpen / max-cap; single-select always closes.
+		const stayOpen = effectiveMultiple && keepOpen &&
+			!(maxSelectedOptions && selectedOptions.length >= maxSelectedOptions)
+
+		if (stayOpen) {
+			// Keep the dropdown open, but refresh the list so it shows the REMAINING
+			// options (the just-picked one is now excluded) instead of the empty list —
+			// otherwise it would render "No results found". The filter is cleared, so
+			// reuse the same empty-query path as focus/toggle (initial options, async
+			// re-query, or the full remaining list).
+			refreshOpenList()
+			// Sync sources: if nothing is left to pick (everything is selected), don't
+			// leave an empty "No results found" dropdown hanging open — close it. (Async
+			// results aren't known synchronously, so leave those to performSearch.)
+			if (!onoptionssearch && filteredOptions.length === 0) {
+				closeDropdown()
+			}
+		} else {
+			filteredOptions = []
 			closeDropdown()
 		}
 
 		onselectedoptionschange?.(selectedOptions)
+	}
+
+	// Refresh the currently-open dropdown list to reflect the current selection and
+	// filter, via the same query-aware path as focus/toggle. Used after a keep-open
+	// pick (to drop the just-selected option) and after removing a chip (to re-surface
+	// the freed option and clear a stale "No results found").
+	function refreshOpenList() {
+		if (searchText.trim()) {
+			filterOptions(searchText)
+		} else if (showInitialOptions && options.length > 0) {
+			filterOptions("")
+		} else {
+			showAllOptions()
+		}
 	}
 
 	// Remove selected option
@@ -268,6 +305,11 @@
 		if (disabled || readonly) return
 
 		selectedOptions = selectedOptions.filter(v => v !== value)
+		// If the dropdown is open, refresh it so the freed option reappears and any
+		// stale "No results found" (from when everything was selected) is cleared.
+		if (isOpen) {
+			refreshOpenList()
+		}
 		onselectedoptionschange?.(selectedOptions)
 	}
 
@@ -432,6 +474,15 @@
 		if (!target) return
 		if (containerElement && containerElement.contains(target)) return
 		if (target.closest?.('.options-list, .positioning-region')) return
+		// The options list is portalled OUT of our control's DOM subtree (top layer),
+		// so a modal dialog's focus trap treats it as "outside" and yanks focus back
+		// to an element inside the dialog (e.g. its close button). That bounce would
+		// otherwise close the dropdown mid-click, before an option pick commits. If
+		// focus landed inside the SAME dialog that owns the control, keep it open —
+		// it's the trap fighting the portal, not the user leaving. Focus into a
+		// DIFFERENT dialog (or with no owning dialog) still closes, as intended.
+		const controlDialog = containerElement?.closest("fluent-dialog, [role='dialog']")
+		if (controlDialog && controlDialog.contains(target)) return
 		closeDropdown()
 	}
 
@@ -949,10 +1000,31 @@
 		color: var(--neutral-foreground-hint, #707070);
 	}
 
-	/* Non-inline mode: position end slot inside input */
+	/* Inline (chips) mode: the end slot — and the toggle button inside it — stretch
+	   to the full control height, so the toggle hitbox spans the whole input even
+	   when it has grown taller from multiple wrapped chip rows. The glyph stays
+	   centered via the flex centering below, but the clickable area is now full
+	   height instead of a small centered square. */
+	.autocomplete-input-container.inline-mode .input-end {
+		align-self: stretch;
+		block-size: auto;
+		/* Reclaim the container's inline-end padding so the icon sits flush to the
+		   control edge, matching Combobox's toggle (which uses the same negative
+		   margin). Without this the icon is one padding-step (8px) farther in. */
+		margin-inline-end: calc(var(--design-unit, 4) * -2 * 1px);
+	}
+
+	.autocomplete-input-container.inline-mode .search-button,
+	.autocomplete-input-container.inline-mode .clear-button {
+		height: 100%;
+	}
+
+	/* Non-inline mode: position end slot inside input, flush to the trailing edge so
+	   the icon sits the same distance from the edge as Combobox's toggle (the icon is
+	   centered in a control-height box, so flush ≈ 16px glyph inset). */
 	.autocomplete-input-container:not(.inline-mode) .input-end {
 		position: absolute;
-		right: 8px;
+		right: 0;
 		top: 50%;
 		transform: translateY(-50%);
 	}

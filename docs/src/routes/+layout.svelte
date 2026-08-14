@@ -198,6 +198,17 @@
 		// baseLayerLuminance.setValueFor() call which causes circular dependencies
 	}
 
+	// Apply the FluentUI design tokens (luminance / accent / neutral) live whenever
+	// any site setting changes — not only when the settings dialog closes. The
+	// library store's applySettings() sets `data-theme` and a few raw CSS vars, but
+	// the docs' dark/light rendering is driven by FluentUI's baseLayerLuminance,
+	// which lives in applyThemeSettings(). Without this effect, picking "Dark" in
+	// the dialog only flipped `data-theme` and appeared to do nothing until close.
+	$effect(() => {
+		void $settings // track: re-run on any settings change
+		applyThemeSettings()
+	})
+
 	// Derive the effective theme for UI display
 	let effectiveTheme = $derived.by(() => {
 		const siteSettings = $settings
